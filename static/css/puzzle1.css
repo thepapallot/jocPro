@@ -1,0 +1,79 @@
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: black;
+    color: white;
+    padding: 20px;
+    transition: background 0.5s;
+}
+
+#solved-container {
+    margin-bottom: 20px;
+    font-size: 3em; /* Increased font size */
+    color: green;
+    text-align: center; /* Center the text */
+}
+
+#solved-container .correct {
+    display: inline-block; /* Make the solved operation as wide as its content */
+    font-weight: bold; /* Make the solved text bold */
+    margin: 10px 15px; /* Add spacing between solved items */
+    padding: 5px 10px; /* Add padding around the text */
+    background: green; /* Remove the green background */
+    color: white; /* Green tick color */
+    font-size: 2em; /* Ensure the font size matches incorrect operations */
+    text-align: center;
+    border-radius: 8px; /* Optional: Rounded corners for consistency */
+}
+
+#solved-container .incorrect {
+    display: inline-block; /* Make the incorrect operation as wide as its content */
+    font-weight: bold; /* Make the incorrect text bold */
+    margin: 10px 15px; /* Add spacing between incorrect items */
+    padding: 5px 10px; /* Add padding around the text */
+    background: red; /* Red background for incorrect operations */
+    color: white; /* White text color */
+    font-size: 2em; /* Ensure the font size matches correct operations */
+    border-radius: 8px; /* Rounded corners for consistency */
+}
+
+.timer {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.phase {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+#puzzle-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 columns */
+    grid-gap: 15px;
+    justify-items: center;
+    align-items: center;
+}
+
+.op {
+    font-size: 1.5em;
+    padding: 10px 15px;
+    background: #333;
+    border-radius: 8px;
+    color: white;
+    text-align: center;
+    transition: all 0.5s ease;
+}
+
+.correct {
+    background: none; /* Remove the green background */
+    color: green; /* Green tick color */
+    font-size: 2em; /* Ensure the font size matches incorrect operations */
+    text-align: center;
+}
+
+.incorrect {
+    background: red;
+    color: white;
+    font-size: 2em; /* Ensure the font size matches correct operations */
+}
