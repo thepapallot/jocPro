@@ -33,6 +33,7 @@ def play_video():
 @app.route('/puzzle1')
 def puzzle1():
     mqtt_client.start_phase()
+    mqtt_client.send_message("FROM_FLASK", "P1Start")  # Send MQTT message for puzzle start
     push_state_update({"start_timer": True})  # Send start_timer flag
     return render_template('puzzle1.html')
 

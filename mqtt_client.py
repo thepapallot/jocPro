@@ -26,7 +26,7 @@ class MQTTClient:
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
-        self.client.subscribe("P1")
+        self.client.subscribe("TO_FLASK")
 
     def on_message(self, client, userdata, msg):
         topic = msg.topic
@@ -67,7 +67,7 @@ class MQTTClient:
             result = a + b
             for operation in self.operations_with_metadata:
                 if operation[0] == result and operation[2] == "N":
-                    # ✅ Correct sum
+                    # ✅ Correct sum n
                     operation[2] = "Y"  # Mark as solved
                     solved_text = f"{a} + {b} = {result}"
                     print("✅ Acierto:", solved_text)
@@ -76,6 +76,11 @@ class MQTTClient:
                         "operations": self.operations_with_metadata.copy(),
                         "solved": {"result": result, "text": solved_text}
                     })
+
+                    # Check if all operations are solved
+                    if all(op[2] == "Y" for op in self.operations_with_metadata):
+                        print("🎉 Puzzle completed!")
+                        self.send_message("FROM_FLASK", "P1End")  # Send MQTT message for puzzle completion
                     return
 
             # ❌ Incorrect sum, restart the game after 5 seconds
