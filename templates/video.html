@@ -37,7 +37,7 @@
         });
 
         video.onended = function() {
-            window.location.href = "{{ url_for('puzzle1') }}";
+            window.location.href = "{{ url_for('puzzle', puzzle_id=1) }}"; // Correct endpoint
         };
     </script>
 </body>

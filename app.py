@@ -5,7 +5,7 @@ import json
 import time
 
 app = Flask(__name__)
-mqtt_client = MQTTClient(app) 
+mqtt_client = MQTTClient(app)
 
 # Queue to stream game state to frontend
 state_queue = queue.Queue()
@@ -30,12 +30,14 @@ def start():
 def play_video():
     return render_template('video.html')
 
-@app.route('/puzzle1')
-def puzzle1():
-    mqtt_client.start_phase()
-    mqtt_client.send_message("FROM_FLASK", "P1Start")  # Send MQTT message for puzzle start
-    push_state_update({"start_timer": True})  # Send start_timer flag
-    return render_template('puzzle1.html')
+@app.route('/puzzle/<int:puzzle_id>')
+def puzzle(puzzle_id):
+    mqtt_client.start_puzzle(puzzle_id)
+    mqtt_client.send_message("FROM_FLASK", f"P{puzzle_id}Start")  # Send MQTT message for puzzle start
+    if( puzzle_id == 1 ):
+        push_state_update({"start_timer": True, "puzzle_id": puzzle_id})  # Send start_timer flag
+    return render_template(f'puzzle{puzzle_id}.html')
+
 
 @app.route('/state_stream')
 def state_stream():
@@ -54,6 +56,6 @@ def current_state():
 @app.route('/timer_expired', methods=['POST'])
 def timer_expired():
     print("Timer expired. Resetting puzzle.")
-    mqtt_client.start_phase()  # Reset the puzzle
+    mqtt_client.reset_current_puzzle()  # Reset the current puzzle
     push_state_update({"start_timer": True})  # Send start_timer flag to restart the timer
     return '', 204

@@ -18,6 +18,7 @@ class MQTTClient:
         self.suma_results = [5,6,7,8,9,30,32,33,34,41,42,43,44,10,11,12,28,29,31,35,36,37,38,39,40,13,15,16,27,14,17,24,25,26,18,20,21,23,22]
         self.current_operations = []
         self.operations_with_metadata = []
+        self.current_puzzle = 1  # Track the current puzzle
         self.start_time = time.time()
         self.update_callback = None
         self.processing_wrong_result = False  # Flag to prevent processing during reset
@@ -33,10 +34,16 @@ class MQTTClient:
         payload = msg.payload.decode()
         print(f"Received MQTT message on topic '{topic}': {payload}")  # Debugging log
 
-        if topic == "P1":
+        if topic == "TO_FLASK":
             try:
-                a, b = map(int, payload.split(','))
-                self.check_sum_or_reset(a, b)
+                parts = payload.split(',')
+                puzzle_id = parts[0]
+                if puzzle_id == f"P{self.current_puzzle}":
+                    if self.current_puzzle == 1:
+                        a, b = map(int, parts[1:])
+                        self.check_sum_or_reset(a, b)
+                    elif self.current_puzzle == 2:
+                        self.handle_puzzle_2(parts[1])
             except Exception as e:
                 print("Invalid message payload:", payload, "Error:", e)
 
@@ -67,7 +74,7 @@ class MQTTClient:
             result = a + b
             for operation in self.operations_with_metadata:
                 if operation[0] == result and operation[2] == "N":
-                    # ✅ Correct sum n
+                    # ✅ Correct sum
                     operation[2] = "Y"  # Mark as solved
                     solved_text = f"{a} + {b} = {result}"
                     print("✅ Acierto:", solved_text)
@@ -81,6 +88,7 @@ class MQTTClient:
                     if all(op[2] == "Y" for op in self.operations_with_metadata):
                         print("🎉 Puzzle completed!")
                         self.send_message("FROM_FLASK", "P1End")  # Send MQTT message for puzzle completion
+                        self.push_update({"puzzle_solved": True})  # Notify frontend
                     return
 
             # ❌ Incorrect sum, restart the game after 5 seconds
@@ -94,6 +102,10 @@ class MQTTClient:
             # Start a separate thread to handle the reset logic
             reset_thread = threading.Thread(target=self.handle_reset_with_timer)
             reset_thread.start()
+
+    def handle_puzzle_2(self, message):
+        print(f"Handling Puzzle 2 with message: {message}")
+        # Add logic for Puzzle 2 here
 
     def handle_reset_with_timer(self):
         # Wait 5 seconds before resetting the game
@@ -112,6 +124,26 @@ class MQTTClient:
             return {
                 "operations": self.operations_with_metadata.copy()
             }
+
+    def start_puzzle(self, puzzle_id):
+        with self.lock:
+            self.current_puzzle = puzzle_id
+            self.reset_operations()
+            print(f"Starting Puzzle {puzzle_id} with operations:", self.operations_with_metadata)  # Debugging log
+            self.push_update({
+                "operations": self.operations_with_metadata.copy(),
+                "puzzle_id": puzzle_id
+            })
+
+    def reset_current_puzzle(self):
+        with self.lock:
+            self.reset_operations()
+            self.push_update({
+                "operations": self.operations_with_metadata.copy(),
+                "start_timer": True,
+                "puzzle_id": self.current_puzzle
+            })
+            print(f"🔄 Current Puzzle {self.current_puzzle} reset.")
 
     def start_phase(self):
         with self.lock:

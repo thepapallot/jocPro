@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle 2</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle2.css') }}">
+</head>
+<body>
+    <div id="puzzle2-container">
+        <div id="number-grid">
+            <!-- Grid of numbers from 1 to 10 -->
+            {% for i in range(1, 11) %}
+                <div class="grid-cell">{{ i }}</div>
+            {% endfor %}
+        </div>
+        <div id="laberint-container">
+            <img src="{{ url_for('static', filename='images/Laberint.png') }}" alt="Laberint">
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/puzzle2.js') }}"></script>
+</body>
+</html>

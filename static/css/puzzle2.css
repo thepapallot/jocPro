@@ -1,0 +1,48 @@
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#puzzle2-container {
+    display: flex;
+    width: 90%;
+    height: 90%;
+}
+
+#number-grid {
+    display: grid;
+    grid-template-rows: repeat(10, 1fr); /* 10 rows */
+    grid-template-columns: 1fr; /* 1 column */
+    gap: 10px;
+    width: 40%; /* Left side */
+    margin-right: 5%;
+}
+
+.grid-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: red; /* Change background color to red */
+    border-radius: 8px;
+    font-size: 2em;
+    color: white;
+}
+
+#laberint-container {
+    width: 55%; /* Right side */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#laberint-container img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+}

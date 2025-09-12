@@ -22,6 +22,27 @@ eventSource.onmessage = function(event) {
         const data = JSON.parse(event.data);
         console.log("Received data from state_queue:", data); // Debugging log
 
+        // Stop the timer and display "Puzzle 1 completed" message
+        if (data.puzzle_solved) {
+            console.log("Puzzle 1 completed."); // Debugging log
+            clearInterval(timerInterval); // Stop the timer
+            const completedMessage = document.createElement('div');
+            completedMessage.id = 'puzzle-completed-message';
+            completedMessage.textContent = "Puzzle 1 completed";
+            completedMessage.style.fontSize = '3em';
+            completedMessage.style.color = 'green';
+            completedMessage.style.textAlign = 'center';
+            completedMessage.style.marginTop = '20px';
+            document.body.appendChild(completedMessage);
+
+            // Redirect directly to Puzzle 2 after 20 seconds
+            setTimeout(() => {
+                console.log("Redirecting to Puzzle 2.");
+                window.location.href = "/puzzle/2"; // Directly redirect to Puzzle 2
+            }, 20000); // 20 seconds
+            return;
+        }
+
         // Start the timer when the puzzle starts
         if (data.start_timer) {
             console.log("Starting the timer."); // Debugging log
