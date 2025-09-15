@@ -22,13 +22,18 @@ mqtt_client.set_update_callback(push_state_update)
 def welcome():
     return render_template('welcome.html')
 
-@app.route('/start', methods=['POST'])
+@app.route('/start', methods=['GET', 'POST'])  # Allow both GET and POST methods
 def start():
-    return redirect(url_for('play_video'))
+    return redirect(url_for('play_video_intro'))
 
-@app.route('/video')
-def play_video():
-    return render_template('video.html')
+@app.route('/videoIntro')
+def play_video_intro():
+    print("Hola penya")
+    return render_template('videoIntro.html')
+
+@app.route('/videoGrups')
+def play_video_groups():
+    return render_template('videoGroups.html')
 
 @app.route('/puzzle/<int:puzzle_id>')
 def puzzle(puzzle_id):
@@ -59,3 +64,4 @@ def timer_expired():
     mqtt_client.reset_current_puzzle()  # Reset the current puzzle
     push_state_update({"start_timer": True})  # Send start_timer flag to restart the timer
     return '', 204
+

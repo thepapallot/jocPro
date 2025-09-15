@@ -1,12 +1,39 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Welcome</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: black;
+        }
+        video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Puzzle Game</h1>
-    <form action="{{ url_for('start') }}" method="post">
-        <button type="submit">Start Game</button>
-    </form>
+    <video id="welcome-video" autoplay loop muted>
+        <source src="{{ url_for('static', filename='videos/Video_inicial.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <script>
+        const video = document.getElementById('welcome-video');
+
+        // Redirect to the start route when the user clicks anywhere on the screen
+        document.body.addEventListener('click', () => {
+            console.log("Screen clicked. Sending POST request to /start.");
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{{ url_for('start') }}";
+            document.body.appendChild(form);
+            form.submit();
+        });
+    </script>
 </body>
 </html>
