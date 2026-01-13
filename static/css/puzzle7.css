@@ -1,0 +1,103 @@
+/* Add Computer font */
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    margin: 0;
+    font-family: 'Computer', sans-serif; /* was sans-serif */
+    background: url('/static/images/puzzle7/P7fons.png') no-repeat center center fixed;
+    background-size: cover; /* cover the entire viewport */
+    transition: background 0.5s;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0; /* Remove global padding to avoid layout shift */
+}
+
+#top-area {
+    /* replace flex with 3-col grid */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    padding: 6px 30px; /* was 10px 30px */
+    gap: 20px;
+    position: relative;
+    box-sizing: border-box;
+    height: 30vh;           /* constrain header height */
+    min-height: 200px;      /* optional floor */
+    overflow: hidden;       /* prevent video from pushing layout */
+}
+
+/* Ensure the middle cell video scales within its grid cell */
+#top-center video,
+#top-center img {
+    /* Make video smaller so it doesn't push layout */
+    width: auto;          /* was 100% */
+    height: auto;         /* was 100% */
+    max-width: 85%;   /* was 70% */
+    max-height: 85%;  /* was 70% */
+    object-fit: contain;
+    display: block;
+    border: 0;
+    outline: none;
+    margin-top: -50px; /* was -30px */
+}
+
+/* optional helper for cells */
+.top-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Nudge all items in top cells slightly upward */
+.top-cell > * {
+    margin-top: -16px; /* was -10px */
+}
+
+/* Raise left title more than the generic nudge */
+#top-left .level-title {
+    margin-top: -36px; /* was inherited -16px; move it further up */
+}
+
+/* Left title styling */
+.level-title {
+    font-family: 'Computer', sans-serif; /* was 'Chau Philomene' */
+    font-size: 16em; /* tweak as needed */
+    font-weight: 700;
+    color: #7fd0ff; /* light blue */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+}
+
+#cards-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 18px; /* was 24px */
+    width: min(1650px, 96vw); /* was 1400px / 95vw */
+    margin: 0 auto;
+    align-items: center;
+    justify-items: center;
+}
+
+.p7-card {
+    width: 100%;
+    max-width: 300px; /* was 240px */
+    height: auto;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+}

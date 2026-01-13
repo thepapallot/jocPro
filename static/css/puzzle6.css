@@ -1,0 +1,141 @@
+/* Add Computer font */
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    margin: 0;
+    font-family: 'Computer', sans-serif;
+    background: url('/static/images/puzzle6/P6fons.png') no-repeat center center fixed;
+    background-size: cover;
+    transition: background 0.5s;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0;
+}
+
+#top-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 20px 10px 20px 40px;
+    gap: 40px;
+    box-sizing: border-box;
+    height: 40vh;
+    min-height: 250px;
+}
+
+/* Left section */
+#top-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.level-title {
+    font-family: 'Computer', sans-serif;
+    font-size: 17em;
+    font-weight: 700;
+    color: #7fd0ff;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+#top-gif {
+    width: auto;
+    height: auto;
+    max-width: 100%;       /* was 80% */
+    max-height: 320px;     /* was 200px */
+    object-fit: contain;
+    display: block;
+}
+
+/* Right section - Countdown and Message */
+#top-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+#countdown {
+    font-family: 'Computer', sans-serif;
+    font-size: 25em;
+    font-weight: 700;
+    color: #7fd0ff;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    user-select: none;
+}
+
+#countdown.expired {
+    color: #4caf50;  /* green for success (was red #ff3b3b) */
+    text-shadow: 0 4px 14px rgba(76, 175, 80, 0.7);
+}
+
+#countdown.failure {
+    color: #ff3b3b;  /* red for failure/reset */
+    text-shadow: 0 4px 14px rgba(255, 59, 59, 0.7);
+}
+
+#message {
+    font-family: 'Computer', sans-serif;
+    font-size: 5em;
+    font-weight: bold;
+    color: #ff3b3b;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    text-align: center;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+/* Bottom area */
+#bottom-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+    #top-area {
+        grid-template-columns: 1fr;
+        height: auto;
+        gap: 20px;
+    }
+    
+    .level-title {
+        font-size: 6em;
+    }
+    
+    #countdown {
+        font-size: 10em;
+    }
+    
+    #message {
+        font-size: 2em;
+    }
+    
+    #top-gif {
+        max-height: 200px;   /* was 150px */
+    }
+}

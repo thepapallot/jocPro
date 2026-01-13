@@ -5,15 +5,32 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle2.css') }}">
 </head>
 <body>
-    <div id="puzzle2-container">
-        <div id="number-grid">
-            <!-- Grid of numbers from 1 to 10 -->
-            {% for i in range(1, 11) %}
-                <div class="grid-cell">{{ i }}</div>
-            {% endfor %}
-        </div>
-        <div id="laberint-container">
-            <img src="{{ url_for('static', filename='images/Laberint.png') }}" alt="Laberint">
+    <div id="puzzle2-container" data-seq-index="{{ puzzle_index }}">
+        <div id="puzzle2-layout">
+            <div id="title-area">
+                <div id="top-left" class="top-cell">
+                    <span class="level-title">Nivel 2</span>
+                </div>
+                <div id="top-right" class="top-cell">
+                    <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 2 animation" />
+                </div>
+            </div>
+
+            <div id="progress-area">
+                <div id="players">
+                    {% for p in range(1, 11) %}
+                    <div class="player-row" data-player="{{ p }}">
+                        <div class="player-label">Player {{ p }}</div>
+                        <div class="bar-outer">
+                            <div class="bar-inner" id="bar-player-{{ p }}"><span class="bar-text">0 / 5</span></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div id="image-area">
+                <img src="{{ url_for('static', filename='images/puzzle2/Laberint.png') }}" alt="Laberint">
+            </div>
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/puzzle2.js') }}"></script>

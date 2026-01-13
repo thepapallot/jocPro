@@ -5,9 +5,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle1.css') }}">
 </head>
 <body>
-    <div id="timer">02:00</div> <!-- Timer display -->
-    <div id="puzzle-container"></div>
-
+    <div id="top-area">
+        <div id="top-left" class="top-cell">
+            <span class="level-title">NIVEL 1</span>
+        </div>
+        <div id="top-center" class="top-cell">
+            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 1 animation" />
+        </div>
+        <div id="top-right" class="top-cell">
+            <div id="timer">02:00</div>
+        </div>
+    </div>
+    <div id="bottom-area">
+        <div id="puzzle-container"></div>
+    </div>
     <script src="{{ url_for('static', filename='js/puzzle1.js') }}"></script>
 </body>
 </html>

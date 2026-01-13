@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <title>Intro Video</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: black;
+        }
+        video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <video id="intro" width="800" autoplay>
+        <source src="{{ url_for('static', filename='videos/JocsSuperats/JocSuperat' + idx_puzzle_id|string + '.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <script>
+        const video = document.getElementById('intro');
+        const nextPuzzleIndexStr = "{{ idx_puzzle_id }}"; // current (1-based) solved puzzle position
+        const currentIndex = nextPuzzleIndexStr ? parseInt(nextPuzzleIndexStr, 10) : null;
+        const nextPuzzleIndex = (currentIndex === null || Number.isNaN(currentIndex)) ? null : (currentIndex + 1);
+        console.log("Current puzzle index:", currentIndex);
+        console.log("Next puzzle index:", nextPuzzleIndex);
+        // Request fullscreen when the user clicks on the video
+        video.addEventListener('click', () => {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) { // Safari
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { // IE11
+                video.msRequestFullscreen();
+            }
+        });
+
+        video.onended = function() {
+            if (nextPuzzleIndex === null || Number.isNaN(nextPuzzleIndex)) {
+                window.location.href = "{{ url_for('welcome') }}?redirect_flag=start";
+            } else {
+                window.location.href = "{{ url_for('welcome') }}?redirect_flag=puzzle" + nextPuzzleIndex;
+            }
+        };
+    </script>
+</body>
+</html>

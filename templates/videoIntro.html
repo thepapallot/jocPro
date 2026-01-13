@@ -37,7 +37,8 @@
         });
 
         video.onended = function() {
-            window.location.href = "{{ url_for('play_video_groups') }}"; // Correct endpoint
+            window.location.href = "{{ url_for('welcome', redirect_flag='puzzle1') }}"; // Correct endpoint
+            //window.location.href = "{{ url_for('puzzle', puzzle_id=1) }}"; // Correct endpoint
         };
     </script>
 </body>

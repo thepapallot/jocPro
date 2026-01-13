@@ -1,0 +1,250 @@
+/* Add Computer font */
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    margin: 0;
+    font-family: 'Computer', sans-serif; /* was sans-serif */
+    background: url('/static/images/puzzle4/P4fons.png') no-repeat center center fixed;
+    background-size: cover; /* cover the entire viewport */
+    transition: background 0.5s;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0; /* Remove global padding to avoid layout shift */
+}
+
+#top-area {
+    /* replace flex with 3-col grid */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    padding: 6px 30px; /* was 10px 30px */
+    gap: 20px;
+    position: relative;
+    box-sizing: border-box;
+    height: 30vh;           /* constrain header height */
+    min-height: 200px;      /* optional floor */
+    overflow: hidden;       /* prevent video from pushing layout */
+}
+
+/* Ensure the middle cell video scales within its grid cell */
+#top-center video,
+#top-center img {
+    /* Make video smaller so it doesn't push layout */
+    width: auto;          /* was 100% */
+    height: auto;         /* was 100% */
+    max-width: 85%;   /* was 70% */
+    max-height: 85%;  /* was 70% */
+    object-fit: contain;
+    display: block;
+    border: 0;
+    outline: none;
+    margin-top: -50px; /* was -30px */
+}
+
+/* optional helper for cells */
+.top-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Nudge all items in top cells slightly upward */
+.top-cell > * {
+    margin-top: -16px; /* was -10px */
+}
+
+/* Raise left title more than the generic nudge */
+#top-left .level-title {
+    margin-top: -36px; /* was inherited -16px; move it further up */
+}
+
+/* Left title styling */
+.level-title {
+    font-family: 'Computer', sans-serif; /* was 'Chau Philomene' */
+    font-size: 16em; /* tweak as needed */
+    font-weight: 700;
+    color: #7fd0ff; /* light blue */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+}
+
+/* Timer in right cell (no absolute positioning) */
+#top-right {
+    justify-content: flex-end;
+}
+
+#streak {
+    position: static;            /* was absolute */
+    margin-right: 100px;          /* was 35px: move timer a bit to the left */
+    font-family: 'Computer', sans-serif; /* was 'Nivel1', sans-serif */
+    font-size: 16em; /* Adjust to match "Nivel 1" size */
+    font-weight: bold;
+    color: #7fd0ff; /* light blue; #timer.expired will override to red on timeout */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    z-index: 1;
+    user-select: none;
+}
+
+#bottom-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*justify-content: center;*/
+    padding: 40px;
+    box-sizing: border-box;
+    gap: 40px;
+}
+
+#status-section {
+    text-align: center;
+    margin: 20px;
+}
+
+#status-text {
+    font-family: 'Computer', sans-serif;
+    font-size: 3em;
+    font-weight: bold;
+    color: #7fd0ff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+#status-text.storing {
+    color: #4caf50; /* green when storing */
+}
+
+#status-text.playing-sample {
+    color: #ff9800; /* orange when playing sample */
+}
+
+#status-text.completed {
+    color: #4caf50; /* green for completion */
+    font-size: 4em; /* larger text */
+}
+
+#progress-section {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    max-width: 900px;
+    margin: 30px;
+}
+
+.streak-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.streak-label {
+    font-family: 'Computer', sans-serif;
+    font-size: 2em;
+    font-weight: bold;
+    color: #7fd0ff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+.progress-boxes {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.progress-box {
+    width: 80px;
+    height: 80px;
+    border: 4px solid #7fd0ff;
+    background: rgba(127, 208, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Computer', sans-serif;
+    font-size: 3.5em; /* increased from 2.5em */
+    font-weight: bold;
+    color: #7fd0ff;
+}
+
+.progress-box.filled {
+    background: #7fd0ff; /* green fill */
+    border-color: #7fd0ff;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
+    color: black;
+}
+
+.progress-box.flash-correct {
+    animation: flashGreen 10s ease-in-out;
+}
+
+.progress-box.flash-wrong {
+    animation: flashRed 5s ease-in-out;
+}
+
+@keyframes flashGreen {
+    0%, 16.66%, 33.32%, 49.98%, 66.64%, 83.3% { 
+        background: #4caf50; 
+        border-color: #4caf50; 
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+    }
+    8.33%, 24.99%, 41.65%, 58.31%, 74.97%, 91.63%, 100% {
+        background: rgba(127, 208, 255, 0.1);
+        border-color: #7fd0ff;
+        box-shadow: none;
+    }
+}
+
+@keyframes flashRed {
+    0%, 16.66%, 33.32%, 49.98%, 66.64%, 83.3% { 
+        background: #f44336; 
+        border-color: #f44336; 
+        box-shadow: 0 0 20px rgba(244, 67, 54, 0.8);
+    }
+    8.33%, 24.99%, 41.65%, 58.31%, 74.97%, 91.63%, 100% {
+        background: rgba(127, 208, 255, 0.1);
+        border-color: #7fd0ff;
+        box-shadow: none;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+    #status-text {
+        font-size: 1.8em;
+    }
+    
+    .streak-label {
+        font-size: 1.5em;
+    }
+    
+    .progress-box {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .progress-boxes {
+        gap: 10px;
+    }
+    
+    #progress-section {
+        gap: 20px;
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle 6</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle6.css') }}">
+</head>
+<body>
+    <div id="top-area">
+        <div id="top-left">
+            <span class="level-title">NIVEL 6</span>
+            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 6 animation" />
+        </div>
+        <div id="top-right">
+            <div id="message"></div>
+            <div id="countdown">05:00</div>
+        </div>
+    </div>
+    <div id="bottom-area">
+    </div>
+    <script src="{{ url_for('static', filename='js/puzzle6.js') }}"></script>
+</body>
+</html>

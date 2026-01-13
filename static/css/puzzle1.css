@@ -1,17 +1,118 @@
+/* Add Computer font (OTF) */
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 700; /* use same file if no bold variant */
+    font-style: normal;
+    font-display: swap;
+}
+
 body {
     margin: 0;
-    font-family: sans-serif;
-    background: black;
-    color: white;
-    padding: 20px;
+    font-family: 'Computer', sans-serif; /* was sans-serif */
+    background: url('/static/images/puzzle1/P1fons.png') no-repeat center center fixed;
+    background-size: cover; /* cover the entire viewport */
     transition: background 0.5s;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0; /* Remove global padding to avoid layout shift */
+}
+
+#top-area {
+    /* replace flex with 3-col grid */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    padding: 6px 30px; /* was 10px 30px */
+    gap: 20px;
+    position: relative;
+    box-sizing: border-box;
+    height: 30vh;           /* constrain header height */
+    min-height: 200px;      /* optional floor */
+    overflow: hidden;       /* prevent video from pushing layout */
+}
+
+/* Ensure the middle cell video scales within its grid cell */
+#top-center video,
+#top-center img {
+    /* Make video smaller so it doesn't push layout */
+    width: auto;          /* was 100% */
+    height: auto;         /* was 100% */
+    max-width: 85%;   /* was 70% */
+    max-height: 85%;  /* was 70% */
+    object-fit: contain;
+    display: block;
+    border: 0;
+    outline: none;
+    margin-top: -50px; /* was -30px */
+}
+
+/* optional helper for cells */
+.top-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Nudge all items in top cells slightly upward */
+.top-cell > * {
+    margin-top: -16px; /* was -10px */
+}
+
+/* Raise left title more than the generic nudge */
+#top-left .level-title {
+    margin-top: -36px; /* was inherited -16px; move it further up */
+}
+
+/* Left title styling */
+.level-title {
+    font-family: 'Computer', sans-serif; /* was 'Chau Philomene' */
+    font-size: 16em; /* tweak as needed */
+    font-weight: bold; /* changed from 700 to bold */
+    color: #7fd0ff; /* light blue */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+}
+
+/* Timer in right cell (no absolute positioning) */
+#top-right {
+    justify-content: flex-end;
+}
+
+#bottom-area {
+    flex: 1 0 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* center horizontally */
+    padding: 10px 40px 40px;
+    box-sizing: border-box;
+    overflow: auto;
+    position: relative; /* allow absolute children */
+    padding-top: 165px; /* was 120px – adjusted for lowered solved-container */
 }
 
 #solved-container {
     margin-bottom: 20px;
-    font-size: 3em; /* Increased font size */
+    font-size: 1.2em; /* Adjusted font size */
     color: green;
-    text-align: center; /* Center the text */
+    text-align: center; /* Adjusted text alignment */
+    position: absolute;
+    top: 60px; /* was 15px – push solved ops lower */
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    margin: 0;
+    width: auto;
+    max-width: 90%;
+    white-space: nowrap;
 }
 
 #solved-container .correct {
@@ -24,6 +125,7 @@ body {
     font-size: 2em; /* Ensure the font size matches incorrect operations */
     text-align: center;
     border-radius: 8px; /* Optional: Rounded corners for consistency */
+    white-space: nowrap;
 }
 
 #solved-container .incorrect {
@@ -35,6 +137,39 @@ body {
     color: white; /* White text color */
     font-size: 2em; /* Ensure the font size matches correct operations */
     border-radius: 8px; /* Rounded corners for consistency */
+    white-space: nowrap;
+}
+
+#solved-container .message {
+    display: inline-block;
+    margin: 10px 15px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    white-space: nowrap;
+    background: none;      /* remove background */
+    color: #ff3b3b;        /* red text */
+    font-size: 3em; /* bigger message */
+    line-height: 1.1;
+}
+
+#solved-container .message.error {
+    background: none;      /* remove background */
+    color: #ff3b3b;        /* red text */
+}
+
+#round-indicator {
+    position: absolute;
+    top: 0;              /* was 24px – stick to the very top of bottom-area */
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Computer', sans-serif;
+    font-size: 3.5em;
+    color: #fff;            /* text over black square in background */
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    letter-spacing: 1px;
+    pointer-events: none;   /* purely informational */
+    z-index: 2;
 }
 
 .timer {
@@ -49,20 +184,56 @@ body {
 
 #puzzle-container {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 columns */
+    grid-template-columns: repeat(5, auto); /* do not stretch columns */
+    grid-template-rows: repeat(3, 1fr);
     grid-gap: 15px;
     justify-items: center;
     align-items: center;
+    align-self: center;
+    justify-self: center;
+    justify-content: center; /* center items inside grid */
+    width: max-content; /* shrink to fit content so centering is visible */
+    margin: 0 auto;
+}
+
+.grid-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 160px;
+    min-height: 110px;
+}
+
+.empty-cell {
+    /* Invisible placeholder preserving layout */
+    opacity: 0;
+    pointer-events: none;
 }
 
 .op {
-    font-size: 1.5em;
-    padding: 10px 15px;
-    background: #333;
-    border-radius: 8px;
-    color: white;
+    font-size: 2em; /* Increase font size */
+    padding: 20px 25px; /* Add more padding */
+    border: 3px solid #ff66cc;    /* was 1px */
+    background: #7fd0ff;          /* light blue like the timer */
+    color: #000;                   /* make +, = and numbers black */
     text-align: center;
     transition: all 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* Increase spacing between elements */
+}
+
+.op img.operand {
+    width: 60px; /* Increase the width of the operand images */
+    height: 60px; /* Increase the height of the operand images */
+}
+
+/* Green completed cell inside the grid */
+.op.correct {
+    background: #2e7d32;  /* green */
+    color: #fff;          /* white text */
+    font-weight: 700;
 }
 
 .correct {
@@ -76,4 +247,70 @@ body {
     background: red;
     color: white;
     font-size: 2em; /* Ensure the font size matches correct operations */
+}
+
+/* New timer styling */
+#timer {
+    position: static;            /* was absolute */
+    margin-right: 100px;          /* was 35px: move timer a bit to the left */
+    font-family: 'Computer', sans-serif; /* was 'Nivel1', sans-serif */
+    font-size: 17em; /* Adjust to match “Nivel 1” size */
+    font-weight: 700;
+    color: #7fd0ff; /* light blue; #timer.expired will override to red on timeout */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    z-index: 1;
+    user-select: none;
+}
+
+#timer.expired {
+    color: #ff3b3b;
+    text-shadow: 0 4px 14px rgba(255, 59, 59, 0.7);
+}
+
+/* Responsive tweak */
+@media (max-width: 800px) {
+    #top-area {
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 15px 15px 5px;
+        gap: 10px;
+    }
+    .level-title {
+        font-size: 2.2em;
+    }
+    #timer {
+        font-size: 3em;
+        margin-right: 20px; /* slightly more space on mobile too */
+    }
+    #solved-container {
+        font-size: 1.6em;
+        left: 15px;
+        right: 15px;
+        top: 40px; /* was 10px */
+        max-width: 95%;
+        transform: translateX(-50%);
+    }
+    #bottom-area {
+        padding-top: 125px; /* was 90px */
+    }
+    #top-center video,
+    #top-center img {
+        max-width: 70%;  /* was 60% */
+        max-height: 70%; /* was 60% */
+        margin-top: -26px; /* was -18px */
+    }
+    .top-cell > * {
+        margin-top: -10px; /* was -6px */
+    }
+    /* Smaller but still raised on mobile */
+    #top-left .level-title {
+        margin-top: -20px;
+    }
+    #round-indicator {
+        top: 0; /* was 18px */
+        font-size: 1.6em;
+    }
+    #solved-container .message {
+        font-size: 1.2em; /* responsive size */
+    }
 }

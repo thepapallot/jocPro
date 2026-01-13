@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle 4</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle4.css') }}">
+</head>
+<body>
+    <div id="top-area">
+        <div id="top-left" class="top-cell">
+            <span class="level-title">NIVEL 4</span>
+        </div>
+        <div id="top-center" class="top-cell">
+            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 4 animation" />
+        </div>
+        <div id="top-right" class="top-cell">
+            <div id="streak">1/2</div>
+        </div>
+    </div>
+    <div id="bottom-area">
+        <div id="status-section">
+            <span id="status-text">Estado: No se está registrando</span>
+        </div>
+        <div id="progress-section">
+            <div id="streak1-container" class="streak-container"> 
+                <div class="progress-boxes">
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                </div>
+            </div>
+            <div id="streak2-container" class="streak-container">
+                <div class="progress-boxes">
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                    <div class="progress-box"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/puzzle4.js') }}"></script>
+</body>
+</html>

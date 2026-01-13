@@ -1,0 +1,215 @@
+/* Add Computer font */
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    margin: 0;
+    font-family: 'Computer', sans-serif;
+    background: url('/static/images/puzzle8/P8fons.png') no-repeat center center fixed;
+    background-size: cover;
+    transition: background 0.5s;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0;
+}
+
+#top-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    padding: 6px 30px;
+    gap: 20px;
+    position: relative;
+    box-sizing: border-box;
+    height: 30vh;
+    min-height: 200px;
+    overflow: hidden;
+}
+
+#top-center video,
+#top-center img {
+    width: auto;
+    height: auto;
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+    display: block;
+    border: 0;
+    outline: none;
+    margin-top: -50px;
+}
+
+.top-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-cell > * {
+    margin-top: -16px;
+}
+
+#top-left .level-title {
+    margin-top: -36px;
+}
+
+.level-title {
+    font-family: 'Computer', sans-serif;
+    font-size: 16em;
+    font-weight: 700;
+    color: #7fd0ff;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+}
+
+#top-right {
+    justify-content: flex-end;
+}
+
+#streak {
+    position: static;
+    margin-right: 100px;
+    font-family: 'Computer', sans-serif;
+    font-size: 16em;
+    font-weight: bold;
+    color: #7fd0ff;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    z-index: 1;
+    user-select: none;
+}
+
+/* Bottom grid */
+#bottom-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 60px 60px;
+    box-sizing: border-box;
+}
+
+#p8-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 28px;
+    width: min(1650px, 96vw);
+    align-items: center;
+    justify-items: center;
+}
+
+.p8-frame {
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 1 / 1;
+    border: 4px solid #ff66cc;
+    background: #6b696959;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out, box-shadow 200ms ease-in-out;
+}
+
+/* Result feedback */
+.p8-frame.p8-correct {
+    background-color: rgba(46, 204, 113, 0.25);
+    border-color: #2ecc71;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.7) inset;
+}
+.p8-frame.p8-wrong {
+    background-color: rgba(231, 76, 60, 0.25);
+    border-color: #e74c3c;
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.7) inset;
+}
+
+/* Uniform inner container so all frames behave the same */
+.p8-slot {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;  /* center vertically */
+    justify-content: center; /* center horizontally */
+}
+
+/* NEW: duo layout for round 2 inputs */
+.p8-slot.p8-duo {
+    justify-content: space-evenly;
+    gap: 6%;
+}
+.p8-slot.p8-duo .p8-symbol-mask {
+    width: 42%;
+    height: 42%;
+}
+
+/* NEW: trio layout */
+.p8-slot.p8-trio {
+    justify-content: space-evenly;
+    gap: 4%;
+}
+.p8-slot.p8-trio .p8-symbol-mask {
+    width: 30%;
+    height: 30%;
+}
+
+/* Number overlay during the "numbers" phase */
+.p8-number {
+    font-family: 'Computer', sans-serif;
+    font-weight: 700;
+    font-size: 6rem;
+    line-height: 1;
+    color: #7fd0ff;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    user-select: none;
+}
+
+/* Masked symbols (all use background-color for tint) */
+.p8-symbol-mask {
+    width: 80%;
+    height: 80%;
+    background-color: #808080; /* neutral until colored */
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    transition: background-color 200ms ease-in-out;
+}
+
+/* Per-symbol mask-image bindings */
+.p8-symbol-mask.p8-alpha  { -webkit-mask-image: url('/static/images/puzzle8/alpha.svg');  mask-image: url('/static/images/puzzle8/alpha.svg'); }
+.p8-symbol-mask.p8-beta   { -webkit-mask-image: url('/static/images/puzzle8/beta.svg');   mask-image: url('/static/images/puzzle8/beta.svg'); }
+.p8-symbol-mask.p8-delta  { -webkit-mask-image: url('/static/images/puzzle8/delta.svg');  mask-image: url('/static/images/puzzle8/delta.svg'); }
+.p8-symbol-mask.p8-epsilon{ -webkit-mask-image: url('/static/images/puzzle8/epsilon.svg');mask-image: url('/static/images/puzzle8/epsilon.svg'); }
+.p8-symbol-mask.p8-gamma  { -webkit-mask-image: url('/static/images/puzzle8/gamma.svg');  mask-image: url('/static/images/puzzle8/gamma.svg'); }
+.p8-symbol-mask.p8-lambda { -webkit-mask-image: url('/static/images/puzzle8/lambda.svg'); mask-image: url('/static/images/puzzle8/lambda.svg'); }
+.p8-symbol-mask.p8-mu     { -webkit-mask-image: url('/static/images/puzzle8/mu.svg');     mask-image: url('/static/images/puzzle8/mu.svg'); }
+.p8-symbol-mask.p8-omega  { -webkit-mask-image: url('/static/images/puzzle8/omega.svg');  mask-image: url('/static/images/puzzle8/omega.svg'); }
+.p8-symbol-mask.p8-pi     { -webkit-mask-image: url('/static/images/puzzle8/pi.svg');     mask-image: url('/static/images/puzzle8/pi.svg'); }
+.p8-symbol-mask.p8-sigma  { -webkit-mask-image: url('/static/images/puzzle8/sigma.svg');  mask-image: url('/static/images/puzzle8/sigma.svg'); }
+
+/* Color classes using background-color (applied by JS) */
+.p8-symbol-mask.p8-color-white  { background-color: #ffffff; }
+.p8-symbol-mask.p8-color-black  { background-color: #000000; }
+.p8-symbol-mask.p8-color-red    { background-color: #ff0000; }
+.p8-symbol-mask.p8-color-yellow { background-color: #ffcc00; }
+.p8-symbol-mask.p8-color-green  { background-color: #00aa00; }
+.p8-symbol-mask.p8-color-blue   { background-color: #0066ff; }
+
+/* Remove img-based coloring */
+/* .p8-symbol { deprecated for puzzle8 coloring } */

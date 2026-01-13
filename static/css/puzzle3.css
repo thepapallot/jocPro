@@ -1,0 +1,224 @@
+/* Add Computer font */
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    margin: 0;
+    font-family: 'Computer', sans-serif; /* was sans-serif */
+    background: url('/static/images/puzzle3/P3fons.png') no-repeat center center fixed;
+    background-size: cover; /* cover the entire viewport */
+    transition: background 0.5s;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0; /* Remove global padding to avoid layout shift */
+}
+
+#top-area {
+    /* replace flex with 3-col grid */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    padding: 6px 30px; /* was 10px 30px */
+    gap: 20px;
+    position: relative;
+    box-sizing: border-box;
+    height: 30vh;           /* constrain header height */
+    min-height: 200px;      /* optional floor */
+    overflow: hidden;       /* prevent video from pushing layout */
+}
+
+/* Ensure the middle cell video scales within its grid cell */
+#top-center video,
+#top-center img {
+    /* Make video smaller so it doesn't push layout */
+    width: auto;          /* was 100% */
+    height: auto;         /* was 100% */
+    max-width: 85%;   /* was 70% */
+    max-height: 85%;  /* was 70% */
+    object-fit: contain;
+    display: block;
+    border: 0;
+    outline: none;
+    margin-top: -50px; /* was -30px */
+}
+
+/* optional helper for cells */
+.top-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Nudge all items in top cells slightly upward */
+.top-cell > * {
+    margin-top: -16px; /* was -10px */
+}
+
+/* Raise left title more than the generic nudge */
+#top-left .level-title {
+    margin-top: -36px; /* was inherited -16px; move it further up */
+}
+
+/* Left title styling */
+.level-title {
+    font-family: 'Computer', sans-serif; /* was 'Chau Philomene' */
+    font-size: 16em; /* tweak as needed */
+    font-weight: 700;
+    color: #7fd0ff; /* light blue */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+}
+
+/* Timer in right cell (no absolute positioning) */
+#top-right {
+    justify-content: flex-end;
+}
+
+#streak {
+    position: static;            /* was absolute */
+    margin-right: 100px;          /* was 35px: move timer a bit to the left */
+    font-family: 'Computer', sans-serif; /* was 'Nivel1', sans-serif */
+    font-size: 16em; /* Adjust to match “Nivel 1” size */
+    font-weight: 700;
+    color: #7fd0ff; /* light blue; #timer.expired will override to red on timeout */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    z-index: 1;
+    user-select: none;
+}
+
+#bottom-area {
+    flex: 1 0 70%;
+    display: flex;
+    flex-direction: column; /* stack vertically */
+    padding: 10px 40px 40px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+#puzzle-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* fill bottom-area */
+    gap: 12px;
+}
+
+/* Player status at top */
+#player-status {
+    display: flex;
+    gap: 10px; /* increased from 6px */
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center; /* center chips horizontally */
+    margin: 20px 30px 50px 30px;
+    padding: 8px 0;
+}
+
+/* Question area in middle (narrower) */
+#question-area {
+    flex: 0 0 auto; /* don't expand, size to content */
+    max-height: 150px; /* constrain height */
+    background: rgba(17,17,17,0.9);
+    border: 5px solid #9b59b6; /* metallic purple */
+    box-shadow: 0 0 12px rgba(155,89,182,0.6); /* glow effect */
+    border-radius: 10px;
+    margin: 20px 300px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* center vertically */
+    align-items: center; /* center horizontally */
+    overflow: auto;
+}
+
+#question-text {
+    font-size: 50px;
+    font-weight: 600;
+    margin: 0; /* remove margin for true centering */
+    color: #fff; /* white */
+    text-align: center; /* center text inside */
+}
+
+/* Feedback styling */
+#feedback {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 600;
+    min-height: 30px;
+}
+#feedback.ok {
+    color: #3ecb54;
+}
+#feedback.err {
+    color: #ff3b3b;
+}
+
+/* Answer area at bottom (takes remaining space) */
+#answer-area {
+    display: grid; /* changed from flex */
+    grid-template-columns: 1fr 1fr; /* 2 columns */
+    grid-template-rows: auto auto auto; /* 3 rows */
+    gap: 15px; /* spacing between cells */
+    flex: 1; /* take remaining space */
+    margin: 50px 400px;
+    overflow-y: auto;
+}
+
+.answer-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+
+.answer-index {
+    font-weight: 700;
+    font-size: 40px;
+    width: 32px;
+    text-align: center;
+    color: #5aa5ff;
+}
+.answer-text {
+    flex: 1;
+    font-size: 40px;
+    color: #fff; /* white */
+}
+.answer-row.correct { background: #1f5530; border-color: #2fa860; }
+.answer-row.wrong { background: #552020; border-color: #a82f2f; }
+
+.player-chip {
+    width: auto; /* was 36px */
+    min-width: 80px; /* accommodate "Caja N" */
+    height: 40px; /* slightly taller */
+    padding: 0 10px; /* add horizontal padding */
+    border-radius: 6px;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px; /* larger font */
+    border: 2px solid #1a1a1a; /* black metal */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6); /* metallic depth */
+    color: #888;
+}
+.player-chip.done { background: #28602a; border-color: #3ecb54; color: #fff; }
+.player-chip.answered { background: #1e335d; border-color: #3d6ad1; color: #fff; }
+.player-chip.correct { background: #1f5530; border-color: #2fa860; color: #fff; }
+.player-chip.wrong { background: #552020; border-color: #a82f2f; color: #fff; }

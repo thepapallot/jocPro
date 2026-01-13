@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle 3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle3.css') }}">
+</head>
+<body>
+    <div id="top-area">
+        <div id="top-left" class="top-cell">
+            <span class="level-title">NIVEL 3</span>
+        </div>
+        <div id="top-center" class="top-cell">
+            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 1 animation" />
+        </div>
+        <div id="top-right" class="top-cell">
+            <div id="streak">1/10</div>
+        </div>
+    </div>
+    <div id="bottom-area">
+        <div id="puzzle-container">
+            <div id="player-status"></div>
+            <div id="question-area">
+                <div id="question-text"></div>
+            </div>
+            <div id="answer-area"></div>
+            <div id="feedback"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/puzzle3.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+/* Add Computer font */
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    margin: 0;
+    font-family: 'Computer', sans-serif; /* was sans-serif */
+    background: url('/static/images/puzzle5/P5fons.png') no-repeat center center fixed;
+    background-size: cover; /* cover the entire viewport */
+    transition: background 0.5s;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0; /* Remove global padding to avoid layout shift */
+}
+
+#top-area {
+    /* replace flex with 3-col grid */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    padding: 6px 30px; /* was 10px 30px */
+    gap: 20px;
+    position: relative;
+    box-sizing: border-box;
+    height: 30vh;           /* constrain header height */
+    min-height: 200px;      /* optional floor */
+    overflow: hidden;       /* prevent video from pushing layout */
+}
+
+/* Ensure the middle cell video scales within its grid cell */
+#top-center video,
+#top-center img {
+    /* Make video smaller so it doesn't push layout */
+    width: auto;          /* was 100% */
+    height: auto;         /* was 100% */
+    max-width: 85%;   /* was 70% */
+    max-height: 85%;  /* was 70% */
+    object-fit: contain;
+    display: block;
+    border: 0;
+    outline: none;
+    margin-top: -50px; /* was -30px */
+}
+
+/* optional helper for cells */
+.top-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Nudge all items in top cells slightly upward */
+.top-cell > * {
+    margin-top: -16px; /* was -10px */
+}
+
+/* Raise left title more than the generic nudge */
+#top-left .level-title {
+    margin-top: -36px; /* was inherited -16px; move it further up */
+}
+
+/* Left title styling */
+.level-title {
+    font-family: 'Computer', sans-serif; /* was 'Chau Philomene' */
+    font-size: 16em; /* tweak as needed */
+    font-weight: 700;
+    color: #7fd0ff; /* light blue */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+}
+
+/* Timer in right cell (no absolute positioning) */
+#top-right {
+    justify-content: flex-end;
+}
+
+#streak {
+    position: static;            /* was absolute */
+    margin-right: 100px;          /* was 35px: move timer a bit to the left */
+    font-family: 'Computer', sans-serif; /* was 'Nivel1', sans-serif */
+    font-size: 16em; /* Adjust to match "Nivel 1" size */
+    font-weight: bold;
+    color: #7fd0ff; /* light blue; #timer.expired will override to red on timeout */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    z-index: 1;
+    user-select: none;
+}
+
+#bottom-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 5px 40px 40px 40px;
+    box-sizing: border-box;
+    gap: 40px;
+}
+
+/* Top section: Objective */
+#objective-section {
+    text-align: center;
+}
+
+#objective-text {
+    font-family: 'Computer', sans-serif;
+    font-size: 10em;
+    font-weight: bold;
+    color: #7fd0ff;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+/* Middle section: Player boxes */
+#players-section {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.player-box {
+    width: 160px;          /* was 120px */
+    height: 160px;         /* was 120px */
+    border: 4px solid #ff66cc; /* purple border */
+    background: rgba(127, 208, 255, 0.1);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;     /* keep space-between */
+    font-family: 'Computer', sans-serif;
+    font-weight: bold;
+    color: #7fd0ff;
+    transition: all 0.3s ease;
+    padding: 10px;         /* was 8px */
+    box-sizing: border-box;
+}
+
+.box-label {
+    font-size: 2.5em;      /* was 2em */
+    text-align: center;
+    width: 100%;
+}
+
+.box-time {
+    font-size: 3em;      /* was 1.8em */
+    text-align: center;
+    width: 100%;
+    min-height: 50px;      /* was 40px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;      /* NEW: move time upward closer to label */
+}
+
+.player-box.filled {
+    background: #7fd0ff;
+    color: #000;
+    box-shadow: 0 0 15px rgba(127, 208, 255, 0.8);
+}
+
+.player-box.filled .box-label {
+    color: #000;
+}
+
+.player-box.filled .box-time {
+    color: #000;
+}
+
+/* Bottom section: Error counter */
+#error-section {
+    text-align: center;
+}
+
+#error-text {
+    font-family: 'Computer', sans-serif;
+    font-size: 5.5em;
+    font-weight: bold;
+    color: #7fd0ff;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    transition: color 0.3s ease;  /* smooth color transition */
+}
+
+#error-text.success-result {
+    color: #4caf50;  /* green for success */
+    text-shadow: 0 4px 10px rgba(76, 175, 80, 0.6);
+}
+
+#error-text.failure-result {
+    color: #f44336;  /* red for failure */
+    text-shadow: 0 4px 10px rgba(244, 67, 54, 0.6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+    #objective-text {
+        font-size: 3em;
+    }
+    
+    .player-box {
+        width: 110px;      /* was 90px */
+        height: 110px;     /* was 90px */
+        font-size: 0.9em;
+    }
+    
+    .box-label {
+        font-size: 1.4em;  /* was 1em */
+    }
+    
+    .box-time {
+        font-size: 1.6em;  /* was 1.4em */
+        min-height: 35px;  /* was 30px */
+    }
+    
+    #error-text {
+        font-size: 2em;
+    }
+    
+    #players-section {
+        gap: 15px;
+    }
+}

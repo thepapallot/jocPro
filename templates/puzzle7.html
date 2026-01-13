@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle 7</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle7.css') }}">
+</head>
+<body>
+    <div id="top-area">
+        <div id="top-left" class="top-cell">
+            <span class="level-title">NIVEL 7</span>
+        </div>
+        <div id="top-center" class="top-cell">
+            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 5 animation" />
+        </div>
+        <div id="top-right" class="top-cell">
+        </div>
+    </div>
+    <div id="bottom-area">
+        <div id="cards-grid">
+            <img class="p7-card" data-box="0" src="{{ url_for('static', filename='images/puzzle7/c0.png') }}" alt="c0" />
+            <img class="p7-card" data-box="1" src="{{ url_for('static', filename='images/puzzle7/c1.png') }}" alt="c1" />
+            <img class="p7-card" data-box="2" src="{{ url_for('static', filename='images/puzzle7/c2.png') }}" alt="c2" />
+            <img class="p7-card" data-box="3" src="{{ url_for('static', filename='images/puzzle7/c3.png') }}" alt="c3" />
+            <img class="p7-card" data-box="4" src="{{ url_for('static', filename='images/puzzle7/c4.png') }}" alt="c4" />
+
+            <img class="p7-card" data-box="5" src="{{ url_for('static', filename='images/puzzle7/c5.png') }}" alt="c5" />
+            <img class="p7-card" data-box="6" src="{{ url_for('static', filename='images/puzzle7/c6.png') }}" alt="c6" />
+            <img class="p7-card" data-box="7" src="{{ url_for('static', filename='images/puzzle7/c7.png') }}" alt="c7" />
+            <img class="p7-card" data-box="8" src="{{ url_for('static', filename='images/puzzle7/c8.png') }}" alt="c8" />
+            <img class="p7-card" data-box="9" src="{{ url_for('static', filename='images/puzzle7/c9.png') }}" alt="c9" />
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/puzzle7.js') }}"></script>
+</body>
+</html>

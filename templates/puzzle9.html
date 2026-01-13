@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle 9</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle9.css') }}">
+</head>
+<body>
+    <div id="top-area">
+        <div id="top-left" class="top-cell">
+            <span class="level-title">NIVEL 9</span>
+        </div>
+        <div id="top-center" class="top-cell">
+            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 5 animation" />
+        </div>
+        <div id="top-right" class="top-cell">
+            <img id="p9-start" src="{{ url_for('static', filename='images/puzzle9/start.png') }}" alt="Start" />
+        </div>
+    </div>
+    <div id="bottom-area">
+    </div>
+    <script src="{{ url_for('static', filename='js/puzzle9.js') }}"></script>
+</body>
+</html>

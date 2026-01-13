@@ -23,14 +23,22 @@
         Your browser does not support the video tag.
     </video>
     <script>
-        const video = document.getElementById('welcome-video');
+        const redirectFlag = "{{ redirect_flag }}";
+        const idxStr = "{{ idx }}";  // will be empty string if None
+        const puzzleIdx = idxStr ? parseInt(idxStr, 10) : null;
 
-        // Redirect to the start route when the user clicks anywhere on the screen
         document.body.addEventListener('click', () => {
-            console.log("Screen clicked. Sending POST request to /start.");
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = "{{ url_for('start') }}";
+
+            if (redirectFlag === "start") {
+                form.action = "{{ url_for('play_video_groups') }}";
+            } else if (redirectFlag.startsWith("puzzle") && puzzleIdx !== null) {
+                form.action = `/videoPuzzles/${puzzleIdx}`;
+            } else {
+                form.action = "{{ url_for('play_video_groups') }}";
+            }
+
             document.body.appendChild(form);
             form.submit();
         });

@@ -1,48 +1,195 @@
+/* Add Computer font (OTF) */
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 700; /* use same file if no bold variant */
+    font-style: normal;
+    font-display: swap;
+}
+
+html, body { height:100vh; }
 body {
     margin: 0;
-    font-family: sans-serif;
-    background: black;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    font-family: 'Computer',sans-serif;
+    background: none; /* moved to #puzzle2-container */
+    overflow: hidden;
 }
 
 #puzzle2-container {
-    display: flex;
-    width: 90%;
-    height: 90%;
+    width: 100%;
+    height: 100%;
+    padding: 0; /* remove padding so content aligns with background divisions */
+    box-sizing: border-box;
+    background: url('/static/images/puzzle2/P2fons.png') no-repeat center center;
+    background-size: cover;
 }
 
-#number-grid {
+#puzzle2-layout {
     display: grid;
-    grid-template-rows: repeat(10, 1fr); /* 10 rows */
-    grid-template-columns: 1fr; /* 1 column */
-    gap: 10px;
-    width: 40%; /* Left side */
-    margin-right: 5%;
+    height: 100%;
+    gap: 0; /* no gaps so areas align with background */
+    grid-template-columns: 33% 67%;
+    grid-template-rows: 20% 80%; 
+    grid-template-areas:
+        "title image"
+        "progress image";
 }
 
-.grid-cell {
+/* place sections into the grid areas */
+#title-area {
+    grid-area: title;
     display: flex;
-    justify-content: center;
+    align-items: center;           /* vertical alignment */
+    justify-content: space-between;/* left title, right gif */
+    padding: 8px 12px;
+}
+
+/* left title cell */
+#top-left .level-title {
+    font-family: 'Computer', sans-serif;
+    font-size: 120px;     /* adjust to fit */
+    font-weight: 700;
+    color: #7fd0ff;      /* light blue */
+    text-shadow: 0 3px 8px rgba(0,0,0,0.5);
+    letter-spacing: 1px;
+    line-height: 1;
+    white-space: nowrap;
+    padding-left: 16px; /* add some left padding */
+}
+
+/* right gif cell */
+#top-right {
+    display: flex;
     align-items: center;
-    background: red; /* Change background color to red */
+    justify-content: flex-end;
+}
+
+#top-gif {
+    height: 225px;        /* constrained size */
+    width: auto;
+    max-height: calc(100% - 16px);
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+}
+
+#progress-area { 
+    grid-area: progress; 
+    padding: 20px 12px 8px 12px;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between; /* distribute rows evenly */
+    overflow-y: auto; /* safety fallback */
+}
+
+#image-area { grid-area: image; height: 100%; display: flex; justify-content: center; align-items: center; }
+
+#level-title {
+    font-family: 'Computer', sans-serif; /* was 'Chau Philomene' */
+    font-size: 20em; /* tweak as needed */
+    font-weight: 700;
+    color: #7fd0ff; /* light blue */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+}
+
+h2 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    line-height: 34px;
+}
+
+#players {
+    display: flex;
+    flex-direction: column;
+    gap: 0; /* remove gap, spacing handled by justify-content */
+    flex: 1; /* fill available space */
+    justify-content: space-between; /* evenly space rows */
+}
+
+.player-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: auto; /* let it grow to fill space */
+    flex: 1; /* equal height distribution */
+    padding: 2px 5px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    backdrop-filter: saturate(110%) blur(2px);
+}
+
+.player-label {
+    width: 85px; /* reduced from 90px */
+    padding-left: 15px;
+    font-weight: 600;
+    font-size: 30px; /* reduced from 15px */
+    text-align: left;
+    color: #9b59b6; /* purple */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.bar-outer {
+    flex: 1;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid transparent; /* reduced from 2px */
     border-radius: 8px;
-    font-size: 2em;
-    color: white;
+    border-image: linear-gradient(135deg, #9b59b6, #7fd0ff) 1; /* purple → light blue */
+    border-image-slice: 1;
+    position: relative;
+    overflow: hidden;
 }
 
-#laberint-container {
-    width: 55%; /* Right side */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.bar-inner {
+    background: #2f8dff;
+    height: 100%;
+    width: 0%;
+    transition: width .45s ease;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
 }
 
-#laberint-container img {
+.bar-inner.complete {
+    background: #27c56d;
+}
+
+.bar-text {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: #fff;
+    font-size: 30px; /* reduced from 12px */
+    letter-spacing: .5px;
+    pointer-events: none;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+#image-area img {
+    width: auto;
+    height: auto;
     max-width: 100%;
     max-height: 100%;
-    border-radius: 8px;
+    object-fit: contain;
+    border: 0;
+    border-radius: 0;
+    display: block;
+    margin: 0 auto;
+    margin-inline: auto;
+    object-position: center center;
 }
+
+body.alarm-mode #image-area img {
+    filter: brightness(0.8) sepia(0.3) hue-rotate(-10deg) saturate(1.5);
+}
+
