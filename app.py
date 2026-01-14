@@ -41,10 +41,6 @@ def welcome():
         idx=idx
     )
 
-@app.route('/videoGrups', methods=['GET', 'POST'])
-def play_video_groups(): 
-    return render_template('videoGroups.html')
-
 @app.route('/videoIntro')
 def play_video_intro():
     return render_template('videoIntro.html')
