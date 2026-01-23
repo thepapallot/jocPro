@@ -415,7 +415,7 @@ class Puzzle3(PuzzleBase):
             "total_players": self.total_players
         })
 
-    def _schedule_next_question(self, delay=2):
+    def _schedule_next_question(self, delay=5):
         def _later():
             time.sleep(delay)
             with self.lock:

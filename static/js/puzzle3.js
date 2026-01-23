@@ -99,9 +99,10 @@
         const rows = answerAreaEl.querySelectorAll('.answer-row');
         rows.forEach(r => {
             const idx = parseInt(r.dataset.answerIndex,10);
-            if (idx === correct_answer) {
+            console.log('Checking answer row', idx, correct_answer, player_answers);
+            if ((idx+1) === correct_answer) {
                 //r.classList.add('correct');
-            } else if (Object.values(player_answers).includes(idx)) {
+            } else if (Object.values(player_answers).includes(idx+1)) {
                 // some player chose this wrong one
                 r.classList.add('wrong');
             }
