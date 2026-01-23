@@ -1226,7 +1226,7 @@ class Puzzle8(PuzzleBase):
     def on_start(self):
         with self.lock:
             self._cancel_timers()
-            self.round = 3  # start from round 1 normally
+            self.round = 1  # start from round 1 normally
             self.phase = "idle"
             self.target_symbols_order = []
             self.target_colors_per_symbol = {}
