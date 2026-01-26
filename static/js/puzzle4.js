@@ -1,19 +1,74 @@
 (function() {
     const statusEl = document.getElementById('p4-status');
+    // Use the audio element from HTML (muted+autoplay)
     let audioEl = document.getElementById('p4-audio');
-    if (!audioEl) {
-        audioEl = document.createElement('audio');
-        audioEl.id = 'p4-audio';
-        audioEl.style.display = 'none';
-        document.body.appendChild(audioEl);
+    if (audioEl) {
+        audioEl.autoplay = true;
+        audioEl.muted = true;
+        audioEl.setAttribute('playsinline', '');
+        audioEl.preload = 'auto';
     }
+
+    // Use the hidden unlock video injected by the template (real MP4)
+    const unlockVid = document.getElementById('p4-unlock-video');
+
     let solved = false;
     let pendingUrl = null;
-    let showingCompletion = false;  // NEW: flag to prevent box updates during completion
+    let showingCompletion = false;
+    let sampleUrlPlaying = null;
+    let snapshotLoaded = false;
+    let mediaReady = false; // NEW: only play audio after unlock video is playing
+    let audioStarting = false; // NEW: guard while starting
 
-    // Remove awaitingUnmute logic; auto-unmute after muted start
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = AudioCtx ? new AudioCtx() : null;
+    // Focus window and start unlock video ASAP
+    function startUnlockVideo() {
+        try { window.focus(); } catch {}
+        if (unlockVid) {
+            try { unlockVid.play().catch(()=>{}); } catch {}
+        }
+    }
+
+    // When the unlock video is actually playing, mark mediaReady
+    if (unlockVid) {
+        unlockVid.addEventListener('playing', () => {
+            mediaReady = true;
+            // If we had a pending url, start it now
+            if (pendingUrl) {
+                const url = pendingUrl; pendingUrl = null;
+                play(url, () => {
+                    fetch('/puzzle4_sample_finished', { method: 'POST', headers: {'Content-Type': 'application/json'} }).catch(()=>{});
+                });
+            }
+        }, { once: true });
+        // Fallback: if it stalls, try to kick it every second
+        const kick = setInterval(() => {
+            if (mediaReady) { clearInterval(kick); return; }
+            try { unlockVid.play().catch(()=>{}); } catch {}
+        }, 1000);
+    }
+
+    // Simple unmute loop (element-only)
+    function unmuteElement() {
+        let attempts = 0;
+        const maxAttempts = 10;
+        const timer = setInterval(() => {
+            attempts += 1;
+            try {
+                audioEl.muted = false;
+                audioEl.removeAttribute('muted');
+                audioEl.volume = 1.0;
+            } catch {}
+            // Stop when unmuted or max attempts
+            if (!audioEl.muted || attempts >= maxAttempts) {
+                clearInterval(timer);
+            }
+        }, 200);
+    }
+
+    // Remove active retry spam; we won’t call play() at all
+    function scheduleRetry() {
+        // ...no-op now: keep signature to minimize diffs...
+    }
 
     function setListening() {
         if (solved || !statusEl) return;
@@ -23,68 +78,99 @@
 
     function play(url, onEnd) {
         if (!url || !audioEl) return;
-        console.log('[P4] play request:', url);
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume().catch(()=>{});
+        console.log('[P4] play request (autoplay via muted element):', url);
+
+        // Ensure unlock video is already playing
+        if (!mediaReady) {
+            pendingUrl = url;
+            try { unlockVid && unlockVid.play().catch(()=>{}); } catch {}
+            return;
         }
 
-        // Prepare element
+        if (sampleUrlPlaying === url && (audioStarting || (!audioEl.paused && !audioEl.ended))) {
+            return;
+        }
+        audioStarting = true;
+
+        // Always keep muted before attempting to play (policy-friendly)
+        audioEl.setAttribute('muted', '');
+        audioEl.muted = true;
         audioEl.autoplay = true;
         audioEl.preload = 'auto';
         audioEl.setAttribute('playsinline', '');
         audioEl.onended = null;
-        audioEl.pause();
+        audioEl.loop = false;
 
-        // Set source and try unmuted first
-        audioEl.src = url;
-        audioEl.currentTime = 0;
-        audioEl.volume = 1.0;
-        audioEl.muted = false;
-        if (onEnd) audioEl.onended = onEnd;
-
-        const p = audioEl.play();
-        if (p && typeof p.then === 'function') {
-            p.then(() => {
-                console.log('[P4] unmuted playback started');
-            }).catch(err => {
-                console.warn('[P4] unmuted play blocked, trying muted...', err);
-                tryMutedAutoplay(url, onEnd);
-            });
+        // Only set src if it differs to avoid repeated 206 fetches
+        const absolute = new URL(url, window.location.origin).href;
+        if (audioEl.src !== absolute) {
+            audioEl.src = url;
+            audioEl.load();
+        } else {
+            try { audioEl.currentTime = 0; } catch {}
         }
+
+        // Hook end
+        audioEl.onended = () => {
+            audioStarting = false;
+            if (sampleUrlPlaying === url) sampleUrlPlaying = null;
+            if (typeof onEnd === 'function') onEnd();
+        };
+
+        // Try to start playback while muted (allowed by policy)
+        let tries = 0;
+        const tryStart = () => {
+            tries += 1;
+            const p = audioEl.play();
+            if (p && typeof p.then === 'function') {
+                p.then(() => {
+                    // started; unmute will be handled by 'playing' below
+                }).catch(() => {
+                    if (tries < 5) setTimeout(tryStart, 250);
+                    else audioStarting = false;
+                });
+            }
+        };
+        tryStart();
+
+        // Unmute shortly after it starts playing
+        const tryUnmuteSoon = () => setTimeout(unmuteElement, 300);
+        audioEl.addEventListener('playing', tryUnmuteSoon, { once: true });
+        audioEl.addEventListener('canplay', tryUnmuteSoon, { once: true });
+        setTimeout(unmuteElement, 1200); // fallback
     }
 
-    function tryMutedAutoplay(url, onEnd) {
-        audioEl.onended = onEnd || null;
-        // Ensure attribute + property both set (helps some browsers)
-        audioEl.setAttribute('muted', '');
-        audioEl.muted = true;
-
-        const p2 = audioEl.play();
-        if (p2 && typeof p2.then === 'function') {
-            p2.then(() => {
-                console.log('[P4] muted playback started; auto-unmuting shortly...');
-                // Auto-unmute shortly after start (works on most desktop browsers)
-                setTimeout(() => {
-                    audioEl.muted = false;
-                    audioEl.removeAttribute('muted');
-                    console.log('[P4] auto-unmuted');
-                }, 150);
-            }).catch(err => {
-                console.warn('[P4] muted play also blocked; will retry on first user interaction', err);
-                pendingUrl = url;
-            });
+    // Extra hooks: finish starting flag and ensure play kicks on data ready
+    audioEl.addEventListener('playing', () => {
+        audioStarting = false;
+        if (audioEl.muted) {
+            console.log('[P4] playing event: attempting unmute');
+            unmuteElement();
         }
-    }
+    });
+    audioEl.addEventListener('loadeddata', () => {
+        if (audioEl.paused) {
+            audioEl.play().catch(()=>{});
+        }
+    });
 
     // Debug hooks
     audioEl.addEventListener('play', () => console.log('[P4] audio element play event'));
     audioEl.addEventListener('ended', () => console.log('[P4] audio ended'));
     audioEl.addEventListener('error', () => console.warn('[P4] audio error', audioEl.error));
 
+    // Retry if page becomes visible again (route transitions can start hidden)
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            console.log('[P4] visibilitychange triggers retry');
+            startUnlockVideo();
+            // No explicit retries; pendingUrl will be handled when mediaReady flips
+        }
+    });
+
     function updateStatus(storing, playingSample) {
         const statusEl = document.getElementById('status-text');
         if (!statusEl) return;
-        
         if (playingSample) {
             statusEl.textContent = 'Reproduciendo muestra';
             statusEl.classList.remove('storing');
@@ -165,6 +251,8 @@
     }
 
     function handleUpdate(d) {
+        console.log('[P4] handleUpdate called with:', d);
+        
         if (!d || d.puzzle_id !== 4) return;
         
         console.log('[P4] handleUpdate received:', d);
@@ -181,17 +269,29 @@
             }
         }
         
-        // Handle sample song playback
+        // Handle sample song playback (DEDUPE)
         if (d.sample_song && d.playing_sample) {
-            console.log('[P4] Playing sample song:', d.sample_song.url);
-            play(d.sample_song.url, () => {
-                // When sample finishes, send message to backend
-                console.log('[P4] Sample finished, notifying backend');
-                fetch('/puzzle4_sample_finished', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'}
-                }).catch(err => console.error('[P4] Failed to notify sample finish:', err));
-            });
+            const url = d.sample_song.url;
+            // Only start if not already started for this URL
+            if (sampleUrlPlaying !== url || audioEl.paused || audioEl.ended) { // NEW
+                console.log('[P4] Playing sample song:', url);
+                sampleUrlPlaying = url; // mark as started
+                play(url, () => {
+                    // When sample finishes, send message to backend
+                    console.log('[P4] Sample finished, notifying backend');
+                    fetch('/puzzle4_sample_finished', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'}
+                    }).catch(err => console.error('[P4] Failed to notify sample finish:', err));
+                });
+            } else {
+                console.log('[P4] Sample already playing, skip');
+            }
+        }
+
+        // If backend indicates sample stopped, clear guard (so next sample can start)
+        if (d.playing_sample === false && sampleUrlPlaying) { // NEW
+            sampleUrlPlaying = null;
         }
         
         // Handle completion message
@@ -239,6 +339,8 @@
     }
 
     function loadSnapshot() {
+        if (snapshotLoaded) return; // NEW: avoid double fetch
+        snapshotLoaded = true;      // NEW
         fetch('/current_state')
             .then(r => r.json())
             .then(d => handleUpdate(d))
@@ -265,25 +367,11 @@
             streakEl.textContent = '1/2';
         }
 
-        // Silent unlock: on first user interaction, retry any pending playback
-        const tryPending = () => {
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume().catch(()=>{});
-            }
-            if (pendingUrl) {
-                const url = pendingUrl;
-                pendingUrl = null;
-                play(url);
-            }
-            document.removeEventListener('click', tryPending);
-            document.removeEventListener('touchstart', tryPending);
-            document.removeEventListener('keydown', tryPending);
-        };
-        document.addEventListener('click', tryPending, { once: true });
-        document.addEventListener('touchstart', tryPending, { once: true });
-        document.addEventListener('keydown', tryPending, { once: true });
+        // Start unlock video early
+        startUnlockVideo();
 
+        // No WebAudio graph — keep element-only flow
         initSSE();
-        setTimeout(loadSnapshot, 600);
+        setTimeout(loadSnapshot, 600); // kept, but guarded by snapshotLoaded
     });
 })();

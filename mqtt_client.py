@@ -601,24 +601,38 @@ class Puzzle4(PuzzleBase):
             self.history = []
             self.solved = False
             self.playing_sample = True
-            self.mqtt_client.push_update({
-                "puzzle_id": self.id, "streak": 0, "total_required": 2, "storing": False,
-                "current_progress": 0, "played_sequence": [], "playing_sample": True,
-                "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak1_sample}"}, "listening": True
-            })
-            self._play_sample_with_delay(self.streak1_sample, self.streak1_sample_duration)
+            # Delay initial push so the frontend is ready before autoplay
+            def _later():
+                time.sleep(3)
+                with self.lock:
+                    if self.solved:
+                        return
+                    # Push sample start after delay
+                    self.mqtt_client.push_update({
+                        "puzzle_id": self.id, "streak": 0, "total_required": 2, "storing": False,
+                        "current_progress": 0, "played_sequence": [], "playing_sample": True,
+                        "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak1_sample}"}, "listening": True
+                    })
+                    # Start unblock timer after pushing
+                    self._play_sample_with_delay(self.streak1_sample, self.streak1_sample_duration)
+            threading.Thread(target=_later, daemon=True).start()
 
     def reset(self):
         self.on_start()
 
     def get_state(self):
         with self.lock:
-            return {
+            state = {
                 "puzzle_id": self.id, "streak": self.streak, "total_required": self.total_required,
                 "storing": self.storing, "current_progress": self.current_progress,
                 "played_sequence": self.played_sequence.copy(), "history": self.history[-25:],
                 "puzzle_solved": self.solved, "playing_sample": self.playing_sample
             }
+            # NEW: include sample_song in snapshot while sample is playing
+            if self.playing_sample:
+                sample_rel = self.streak1_sample if self.streak == 0 else self.streak2_sample
+                state["sample_song"] = {"url": f"/static/{self.AUDIO_SUBDIR}{sample_rel}"}
+            return state
 
     def handle_message(self, parts):
         if len(parts) < 2: return

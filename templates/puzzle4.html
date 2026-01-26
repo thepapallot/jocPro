@@ -43,6 +43,11 @@
             </div>
         </div>
     </div>
+    <video id="p4-unlock-video" muted autoplay playsinline loop style="position:fixed;left:-10000px;top:0;width:1px;height:1px;">
+        <source src="{{ url_for('static', filename='videos/Video_inicial.mp4') }}" type="video/mp4">
+    </video>
+    <!-- NEW: muted autoplay audio (no source set initially) -->
+    <audio id="p4-audio" autoplay muted playsinline style="display:none"></audio>
     <script src="{{ url_for('static', filename='js/puzzle4.js') }}"></script>
 </body>
 </html>
