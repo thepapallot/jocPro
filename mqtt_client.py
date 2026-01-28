@@ -554,7 +554,7 @@ class Puzzle4(PuzzleBase):
         self.streak1_required_order = ["5", "1", "8", "3"]
         self.streak2_track_map = {
             0: ("0", f"{self.streak2_folder}/pista3.mp3"), 1: ("1", f"{self.streak2_folder}/pista2.mp3"),
-            2: ("2", f"{self.streak2_folder}/pista7.mp3"), 3: ("3", "WrongSongs/wrong8. mp3"),
+            2: ("2", f"{self.streak2_folder}/pista7.mp3"), 3: ("3", "WrongSongs/wrong8.mp3"),
             4: ("4", "WrongSongs/wrong7.mp3"), 5: ("5", f"{self.streak2_folder}/pista6.mp3"),
             6: ("6", f"{self.streak2_folder}/pista1.mp3"), 7: ("7", f"{self.streak2_folder}/pista8.mp3"),
             8: ("8", f"{self.streak2_folder}/pista5.mp3"), 9: ("9", f"{self.streak2_folder}/pista4.mp3"),
