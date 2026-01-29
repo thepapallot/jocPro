@@ -1036,7 +1036,7 @@ class Puzzle6(PuzzleBase):
                     # Solved
                     self.solved = True
                     self.active = False
-                    self.mqtt_client.send_message("FROM_FLASK", "P6_End")
+                    self.mqtt_client.send_message("FROM_FLASK", "P6End")
                     self.mqtt_client.push_update({
                         "puzzle_id": self.id,
                         "puzzle_solved": True
