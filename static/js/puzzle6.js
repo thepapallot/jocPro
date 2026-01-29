@@ -105,8 +105,8 @@
 
         if (d.countdown_reset) {
             const r = d.countdown_reset;
-            const msg = r.message || `Error: Caja ${r.box} sin energía. Vuelta a empezar en 5 segundos`;
-            handleReset(r.waiting_seconds || 5, msg);
+            const msg = r.message || `Error: Caja ${r.box} sin energía. Vuelta a empezar en 10 segundos`;
+            handleReset(r.waiting_seconds || 10, msg);
         }
 
         if (d.puzzle_solved && !solved) {

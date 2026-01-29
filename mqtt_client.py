@@ -1096,21 +1096,20 @@ class Puzzle6(PuzzleBase):
             self.restart_pending = True
             self.last_reset_box = box
             self.last_reset_message = f"Caja Numero {box} sin energía, cargando sistema..."
-            self.restart_deadline = __import__("time").time() + 5
-            # NEW: notify failure
-            self.mqtt_client.send_message("FROM_FLASK", "P6Fail")
+            self.restart_deadline = __import__("time").time() + 10
+            #self.mqtt_client.send_message("FROM_FLASK", "P6Fail")
             self.mqtt_client.push_update({
                 "puzzle_id": self.id,
                 "countdown_reset": {
                     "box": box,
                     "message": self.last_reset_message,
-                    "waiting_seconds": 5
+                    "waiting_seconds": 10
                 }
             })
             # Schedule restart
             def _later():
                 import time
-                time.sleep(5)
+                time.sleep(10)
                 with self.lock:
                     if self.solved:
                         return
