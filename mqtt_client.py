@@ -1125,6 +1125,19 @@ class Puzzle7(PuzzleBase):
         self.lock = threading.Lock()
         self.solved_boxes = set()
         self.solved = False
+        # NEW: solutions per box (string codes with leading zeros preserved)
+        self.solution_codes = {
+            0: "0424",
+            1: "4143",
+            2: "1234",
+            3: "1134",
+            4: "3333",
+            5: "4310",
+            6: "1143",
+            7: "2220",
+            8: "1111",
+            9: "2234",
+        }
 
     def on_start(self):
         with self.lock:
@@ -1148,8 +1161,8 @@ class Puzzle7(PuzzleBase):
             }
 
     def handle_message(self, parts):
-        # Expect: P7,boxIndex
-        if len(parts) < 2:
+        # Expect: P7,boxIndex,code (code is a string like "0341")
+        if len(parts) < 3:
             return
         try:
             box = int(parts[1])
@@ -1157,23 +1170,32 @@ class Puzzle7(PuzzleBase):
             return
         if not (0 <= box <= 9):
             return
+        code = parts[2].strip()  # keep as string to preserve leading zeros
 
         with self.lock:
             if self.solved:
                 return
+            # If already solved, ignore any further checks
             if box in self.solved_boxes:
                 return
 
-            self.solved_boxes.add(box)
+            expected = self.solution_codes.get(box)
+            if expected is None:
+                return  # no configured solution, ignore
 
-            # Push incremental update for this box
+            # Validate received code for this box
+            if code != expected:
+                return  # wrong code, do nothing
+
+            # Correct: mark solved
+            self.solved_boxes.add(box)
             self.mqtt_client.push_update({
                 "puzzle_id": self.id,
                 "solved_box": box,
                 "solved_boxes": sorted(self.solved_boxes)
             })
 
-            # Puzzle solved?
+            # If all boxes solved, finish puzzle
             if len(self.solved_boxes) >= 10:
                 self.solved = True
                 self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
