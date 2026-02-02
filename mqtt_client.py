@@ -1238,6 +1238,7 @@ class Puzzle8(PuzzleBase):
         self.palette = ["yellow", "black", "white", "red", "blue", "green"]
         # Flow state
         self.token_numbers = [18, 14, 17, 5, 20, 10, 13, 31, 35, 22]
+
         self.round_total = 3
         self.round = 0
         self.phase = "idle"
@@ -1264,6 +1265,10 @@ class Puzzle8(PuzzleBase):
         self.symbol_code_map = {
             0: "alpha", 1: "beta", 2: "delta", 3: "epsilon", 4: "gamma",
             5: "lambda", 6: "mu", 7: "omega", 8: "pi", 9: "sigma"
+        }
+        self.numbers_code_map = {
+            0: 5, 1: 10, 2: 13, 3: 14, 4: 17,
+            5: 18, 6: 20, 7: 22, 8: 31, 9: 35
         }
         self.solved = False
 
@@ -1484,9 +1489,10 @@ class Puzzle8(PuzzleBase):
                     return
                 symbol_name = self.symbol_code_map.get(symbol_code)
                 color_name = self.color_code_map.get(color_code)
+                token_number_mapped = self.numbers_code_map.get(token_number)
                 if symbol_name is None or color_name is None: return
                 try:
-                    box = self.token_numbers.index(token_number)
+                    box = self.token_numbers.index(token_number_mapped)
                 except ValueError:
                     return
             else:
