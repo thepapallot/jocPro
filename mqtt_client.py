@@ -1254,11 +1254,11 @@ class Puzzle8(PuzzleBase):
         self.player_symbols = {}            # boxIndex -> list of symbols in order
         # Map numeric MQTT color codes to names
         self.color_code_map = {
-            0: "yellow",
-            1: "black",
-            2: "white",
-            3: "red",
-            4: "blue",
+            2: "yellow",
+            4: "black",
+            6: "white",
+            1: "red",
+            3: "blue",
             5: "green",
         }
         # NEW: map numeric symbol codes to names (alpha=0, beta=1, delta=2, epsilon=3, gamma=4, lambda=5, mu=6, omega=7, pi=8, sigma=9)
