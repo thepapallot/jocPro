@@ -75,11 +75,14 @@ def puzzle(puzzle_id):
     # Ensure puzzle_id is in configured order
     if puzzle_id not in PUZZLE_ORDER:
         return "Invalid puzzle", 404
-    mqtt_client.start_puzzle(puzzle_id)
+    # Stop any running puzzle and start the requested one (handles F5 or revisits)
+    mqtt_client.stop_current_puzzle()
+    #mqtt_client.start_puzzle(puzzle_id)
+    # Keep MQTT start message for hardware side-effects if needed
     puzzle_index = PUZZLE_ORDER.index(puzzle_id) + 1  # 1-based sequence position
-    mqtt_client.send_message("FROM_FLASK", f"P{puzzle_id}Start")  # Send MQTT message for puzzle start
+    mqtt_client.send_message("FROM_FLASK", f"P{puzzle_id}Start")
     if puzzle_id == 1:
-        push_state_update({"start_timer": True, "puzzle_id": puzzle_id})  # Send start_timer flag
+        push_state_update({"start_timer": True, "puzzle_id": puzzle_id})
     return render_template(f'puzzle{puzzle_id}.html')
 
 @app.route('/puzzle4_sample_finished', methods=['POST'])
@@ -87,6 +90,28 @@ def puzzle4_sample_finished():
     # Simulate MQTT message: P4,4,0 (button 4 = sample finished)
     mqtt_client.puzzles[4].handle_message(['P4', '4', '0'])
     return '', 204
+
+#To start the puzzle from frontend
+@app.route('/start_puzzle/<int:puzzle_id>', methods=['POST'])
+def start_puzzle_route(puzzle_id):
+    # Validate puzzle_id in configured order
+    if puzzle_id not in PUZZLE_ORDER:
+        return jsonify({"error": "invalid puzzle"}), 404
+    # Prevent restarting if already current
+    if mqtt_client.current_puzzle_id == puzzle_id:
+        return jsonify({"status": "already_started"}), 200
+    mqtt_client.start_puzzle(puzzle_id)
+    return jsonify({"status": "started", "puzzle_id": puzzle_id}), 200
+
+
+@app.route('/restart_puzzle/<int:puzzle_id>', methods=['POST'])
+def restart_puzzle_route(puzzle_id):
+    if puzzle_id not in PUZZLE_ORDER:
+        return jsonify({"error": "invalid puzzle"}), 404
+    # Stop whatever is running, then start requested puzzle
+    mqtt_client.stop_current_puzzle()
+    mqtt_client.start_puzzle(puzzle_id)
+    return jsonify({"status": "restarted", "puzzle_id": puzzle_id}), 200
 
 @app.route('/state_stream')
 def state_stream():

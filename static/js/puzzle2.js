@@ -1,5 +1,3 @@
-console.log("Puzzle 2 loaded.");
-
 (function () {
     const TOTAL = 5;
     let redirected = false;
@@ -67,6 +65,11 @@ console.log("Puzzle 2 loaded.");
 
     function initSSE() {
         const es = new EventSource("/state_stream");
+        es.onopen = () => {
+            // Start Puzzle 2 when SSE is connected
+            fetch("/start_puzzle/2", { method: "POST" })
+                .catch(err => console.warn("Failed to start puzzle 2:", err));
+        };
         es.onmessage = (evt) => {
             try {
                 const data = JSON.parse(evt.data);

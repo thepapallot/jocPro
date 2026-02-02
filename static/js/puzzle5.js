@@ -215,7 +215,6 @@
     }
 
     function initSSE() {
-        console.log('[P5] Initializing SSE');
         const es = new EventSource('/state_stream');
         es.onmessage = evt => { 
             try { 
@@ -224,19 +223,16 @@
                 console.error('[P5] SSE parse error:', e);
             } 
         };
-        es.onopen = () => loadSnapshot('initSSE'); // Ensure snapshot loaded on connection
+        es.onopen = () => {
+            // Start Puzzle 2 when SSE is connected
+            fetch("/start_puzzle/5", { method: "POST" })
+                .catch(err => console.warn("Failed to start puzzle 5:", err));
+        };
         es.onerror = () => console.error('[P5] SSE error');
-        console.log('[P5] SSE initialized');
+        
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('[P5] Puzzle 5 script loaded'); 
-
-        // Don’t override real state with a placeholder; snapshot will render correct UI.
-        initSSE();
-        loadSnapshot('addEventListener'); // NEW/RESTORED: ensures handleUpdate runs on reload even if no SSE events arrive
-        console.log('[P5] Initialization complete');
-    });
+    document.addEventListener('DOMContentLoaded', initSSE);
 
     // Clean up interval on page unload
     window.addEventListener('beforeunload', () => {

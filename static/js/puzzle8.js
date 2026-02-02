@@ -215,12 +215,13 @@
     function initSSE() {
         const es = new EventSource('/state_stream');
         es.onmessage = evt => { try { handleUpdate(JSON.parse(evt.data)); } catch {} };
-        es.onopen = () => loadSnapshotOnce();
+        es.onopen = () => {
+            // Start Puzzle 2 when SSE is connected
+            fetch("/start_puzzle/8", { method: "POST" })
+                .catch(err => console.warn("Failed to start puzzle 8:", err));
+        };
         es.onerror = () => {};
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        initSSE();
-        loadSnapshotOnce();
-    });
+    document.addEventListener('DOMContentLoaded',initSSE);
 })();

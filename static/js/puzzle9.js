@@ -37,11 +37,12 @@
         es.onmessage = evt => {
             try { handleUpdate(JSON.parse(evt.data)); } catch {}
         };
-        es.onopen = () => loadSnapshot();
+        es.onopen = () => {
+            // Start Puzzle 2 when SSE is connected
+            fetch("/start_puzzle/9", { method: "POST" })
+                .catch(err => console.warn("Failed to start puzzle 9:", err));
+        };
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        initSSE();
-        loadSnapshot();
-    });
+    document.addEventListener('DOMContentLoaded',initSSE);
 })();

@@ -33,6 +33,10 @@ class PuzzleBase:
         # Default behavior: full reset
         self.reset()
 
+    def on_stop(self):
+        # Optional cleanup hook for timers/threads in derived puzzles
+        pass
+
 class Puzzle1(PuzzleBase):
     def __init__(self, mqtt_client, puzzle_id):
         super().__init__(mqtt_client, puzzle_id)
@@ -376,6 +380,18 @@ class Puzzle2(PuzzleBase):
                         "expected": expected
                     }
                 })
+
+    def on_stop(self):
+        with self.lock:
+            # Cancel any scheduled alarm timers and unblock
+            if self.alarm_timer:
+                try:
+                    self.alarm_timer.cancel()
+                except Exception:
+                    pass
+                self.alarm_timer = None
+            self.input_blocked = False
+            self.alarm_mode = False
 
 class Puzzle3(PuzzleBase):
     def __init__(self, mqtt_client, puzzle_id):
@@ -1119,6 +1135,15 @@ class Puzzle6(PuzzleBase):
             import threading
             threading.Thread(target=_later, daemon=True).start()
 
+    def on_stop(self):
+        with self.lock:
+            # Stop countdown and any pending restart
+            self.active = False
+            self.restart_pending = False
+            self.restart_deadline = None
+            # monitor thread will exit on next tick due to active=False
+            self.last_sent_remaining = None
+
 class Puzzle7(PuzzleBase):
     def __init__(self, mqtt_client, puzzle_id):
         super().__init__(mqtt_client, puzzle_id)
@@ -1480,6 +1505,19 @@ class Puzzle8(PuzzleBase):
             if all(len(self.player_colors.get(i, [])) >= required for i in range(10)):
                 self._evaluate_inputs_locked()
 
+    def on_stop(self):
+        with self.lock:
+            # Cancel all scheduled timers and clear phase
+            for t in self._timers:
+                try:
+                    t.cancel()
+                except Exception:
+                    pass
+            self._timers.clear()
+            self.phase = "idle"
+            self.player_colors.clear()
+            self.player_symbols.clear()
+
 class Puzzle9(PuzzleBase):
     def __init__(self, mqtt_client, puzzle_id):
         super().__init__(mqtt_client, puzzle_id)
@@ -1665,13 +1703,22 @@ class MQTTClient:
             if puzzle_id not in self.puzzles:
                 print(f"Puzzle {puzzle_id} not registered")
                 return
-
-            # NEW: avoid restarting the same puzzle on browser refresh (F5)
-            #if self.current_puzzle_id == puzzle_id:
-                #return
-
+            # Stop any current puzzle before starting a new one
+            if self.current_puzzle_id in self.puzzles:
+                try:
+                    self.puzzles[self.current_puzzle_id].on_stop()
+                except Exception as e:
+                    print(f"Error stopping puzzle {self.current_puzzle_id}: {e}")
             self.current_puzzle_id = puzzle_id
             self.puzzles[puzzle_id].on_start()
+
+    def stop_current_puzzle(self):
+        with self.lock:
+            if self.current_puzzle_id in self.puzzles:
+                try:
+                    self.puzzles[self.current_puzzle_id].on_stop()
+                finally:
+                    self.current_puzzle_id = None
 
     def reset_current_puzzle(self):
         with self.lock:

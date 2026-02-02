@@ -349,9 +349,19 @@
 
     function initSSE() {
         const es = new EventSource('/state_stream');
+        
         es.onmessage = evt => { try { handleUpdate(JSON.parse(evt.data)); } catch(e) {} };
-        es.onopen = () => loadSnapshot();
+        es.onopen = () => {
+            // Start Puzzle 2 when SSE is connected
+            fetch("/start_puzzle/4", { method: "POST" })
+                .catch(err => console.warn("Failed to start puzzle 4:", err));
+        };
         es.onerror = () => {};
+
+
+        /*es.onmessage = evt => { try { handleUpdate(JSON.parse(evt.data)); } catch(e) {} };
+        es.onopen = () => loadSnapshot();
+        es.onerror = () => {};*/
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -372,6 +382,6 @@
 
         // No WebAudio graph — keep element-only flow
         initSSE();
-        setTimeout(loadSnapshot, 600); // kept, but guarded by snapshotLoaded
+        //setTimeout(loadSnapshot, 600); // kept, but guarded by snapshotLoaded
     });
 })();

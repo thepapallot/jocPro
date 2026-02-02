@@ -137,12 +137,13 @@
                 console.error('[P6] SSE error:', e);
             }
         };
-        es.onopen = () => loadSnapshot();
+        es.onopen = () => {
+            // Start Puzzle 6 when SSE is connected
+            fetch("/start_puzzle/6", { method: "POST" })
+                .catch(err => console.warn("Failed to start puzzle 2:", err));
+        };
         es.onerror = () => console.error('[P6] SSE connection error');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        initSSE();
-        setTimeout(loadSnapshot, 400);
-    });
+    document.addEventListener('DOMContentLoaded', initSSE);
 })();

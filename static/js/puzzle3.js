@@ -174,14 +174,19 @@
                 handleUpdate(JSON.parse(evt.data));
             } catch(e) {}
         };
-        es.onopen = () => loadSnapshot();
+        es.onopen = () => {
+            // Start Puzzle 3 when SSE is connected
+            fetch('/start_puzzle/3', { method: 'POST' })
+                .catch(err => console.warn("Failed to start puzzle 3:", err));
+        };
+        //es.onopen = () => loadSnapshot();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         initPlayers();
         initSSE();
-        setTimeout(() => {
+        /*setTimeout(() => {
             if (!questionTextEl.textContent) loadSnapshot();
-        }, 700);
+        }, 700);*/
     });
 })();
