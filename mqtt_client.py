@@ -1532,9 +1532,9 @@ class Puzzle9(PuzzleBase):
         self.box_tokens = {i: None for i in range(0, 10)}
         # CHANGED: solution remapped so "Box 10 -> Token 22" becomes box 0
         self.solution = {
-            1: 18, 2: 14, 3: 17, 4: 5, 5: 20,
-            6: 10, 7: 13, 8: 31, 9: 35, 0: 22
-        }
+            1: 6, 2: 3, 3: 7, 4: 0, 5: 8,
+            6: 4, 7: 2, 8: 1, 9: 9, 0: 5
+        } ## 0->5, 1->10, 2->13, 3->14, 4->17, 5->18, 6->20, 7->22, 8->31, 9->35  
         self.solved = False
         self._good_timer_running = False
 
