@@ -82,7 +82,7 @@ body {
 
 #progress-area { 
     grid-area: progress; 
-    padding: 20px 12px 8px 12px;
+    padding: 20px 0px 8px 0px;
     display: flex; 
     flex-direction: column; 
     justify-content: space-between; /* distribute rows evenly */
@@ -156,6 +156,24 @@ h2 {
     box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
 }
 
+/* NEW: flash red effect when a token is mistaken */
+@keyframes barErrorFlash {
+    0% { background-color: #d32f2f; }
+    50% { background-color: #8b0000; }
+    100% { background-color: #d32f2f; }
+}
+
+.bar-inner.error-flash {
+    background-color: #d32f2f !important;
+    animation-name: barErrorFlash !important;
+    animation-duration: 0.8s !important;
+    animation-timing-function: ease-in-out !important;
+    animation-iteration-count: infinite !important;
+    transition: none !important;
+    will-change: background-color;
+}
+
+/* Keep complete state, but error-flash will override via !important */
 .bar-inner.complete {
     background: #27c56d;
 }

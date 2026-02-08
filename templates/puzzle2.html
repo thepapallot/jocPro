@@ -18,9 +18,10 @@
 
             <div id="progress-area">
                 <div id="players">
-                    {% for p in range(1, 11) %}
+                    {% set token_map = [5, 13, 17, 22, 10, 20, 35, 31, 14, 18] %}
+                    {% for p in range(1, 10 + 1) %}
                     <div class="player-row" data-player="{{ p }}">
-                        <div class="player-label">Player {{ p }}</div>
+                        <div class="player-label">Token {{ token_map[p-1] }}</div>
                         <div class="bar-outer">
                             <div class="bar-inner" id="bar-player-{{ p }}"><span class="bar-text">0 / 5</span></div>
                         </div>

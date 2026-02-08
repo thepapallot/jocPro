@@ -290,7 +290,7 @@ class Puzzle2(PuzzleBase):
             self.mqtt_client.push_update({
                 "puzzle_id": self.id,
                 "play_alarm_sound": {
-                    "url": "/static/audios/effects/alarma.mp3"
+                    "url": "/static/audios/effects/canvi_laberint.wav"
                 }
             })
         # Schedule actual mode change after 5s
@@ -324,7 +324,7 @@ class Puzzle2(PuzzleBase):
             self.mqtt_client.push_update({
                 "puzzle_id": self.id,
                 "play_normal_sound": {
-                    "url": "/static/audios/effects/backToNormal.mp3"
+                    "url": "/static/audios/effects/canvi_laberint.wav"
                 }
             })
         # Schedule actual mode change after 5s
@@ -396,6 +396,11 @@ class Puzzle2(PuzzleBase):
                 for p in self.progress:
                     if self.progress[p] < 5:
                         self.progress[p] = 0
+
+                # NEW: block further input for 4 seconds during the reset/flash effect
+                self.input_blocked = True
+                self.block_until = time.time() + 4
+
                 self.mqtt_client.push_update({
                     "puzzle_id": self.id,
                     "players": self._snapshot(),
@@ -405,6 +410,15 @@ class Puzzle2(PuzzleBase):
                         "expected": expected
                     }
                 })
+
+                # NEW: automatically unblock after 4 seconds
+                def _unblock_later():
+                    time.sleep(4)
+                    with self.lock:
+                        self.input_blocked = False
+                        self.block_until = 0
+                        print(f"[Puzzle2] Error flash finished, input unblocked")
+                threading.Thread(target=_unblock_later, daemon=True).start()
 
     def on_stop(self):
         with self.lock:
