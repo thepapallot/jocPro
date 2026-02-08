@@ -45,17 +45,21 @@ def welcome():
 def play_video_intro():
     return render_template('videoIntro.html')
 
-@app.route('/videoPuzzles/<int:idx_puzzle_id>', methods=['GET', 'POST'])
+@app.route('/videoPuzzles/<int:idx_puzzle_id>', methods=['GET','POST'])
 def play_video_puzzles(idx_puzzle_id): 
     return render_template('videoPuzzle.html', idx_puzzle_id=idx_puzzle_id)
 
-@app.route('/explicacioPuzzles/<int:idx_puzzle_id>', methods=['GET', 'POST'])
+@app.route('/direct/<int:idx_puzzle_id>', methods=['GET'])
+def play_directa_explicacio_puzzles(idx_puzzle_id): 
+    # Render a page that immediately submits a POST to /videoPuzzles/<idx>
+    return render_template('directaExplicacioPuzzle.html', idx_puzzle_id=idx_puzzle_id)
+
+@app.route('/explicacioPuzzles/<int:idx_puzzle_id>', methods=['GET','POST'])
 def play_explicacio_puzzles(idx_puzzle_id): 
     puzzle_id = 0
     if 0 <= idx_puzzle_id < len(PUZZLE_ORDER):
         puzzle_id= PUZZLE_ORDER[idx_puzzle_id-1]  # index mapping
     return render_template('explicacioPuzzle.html', puzzle_id=puzzle_id)
-
 
 
 @app.route('/puzzleSuperat/<int:puzzle_id>', methods=['GET', 'POST'])

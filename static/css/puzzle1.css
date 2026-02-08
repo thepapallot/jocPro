@@ -186,7 +186,8 @@ body {
     display: grid;
     grid-template-columns: repeat(5, auto); /* do not stretch columns */
     grid-template-rows: repeat(3, 1fr);
-    grid-gap: 15px;
+    column-gap: 5px;
+    row-gap: 0; /* minimize space between rows */
     justify-items: center;
     align-items: center;
     align-self: center;
@@ -200,19 +201,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 160px;
-    min-height: 110px;
+    min-width: 220px;   /* was 160px */
+    min-height: 120px;  /* was 150px – reduce vertical spacing */
+    padding: 0;         /* ensure no extra space inside cells */
+    margin: 0;          /* ensure no external margins */
 }
 
-.empty-cell {
-    /* Invisible placeholder preserving layout */
-    opacity: 0;
-    pointer-events: none;
-}
-
+/* Ensure operation boxes keep consistent size even when content changes */
 .op {
     font-size: 2em; /* Increase font size */
-    padding: 20px 25px; /* Add more padding */
+    padding: 10px 15px; /* Add more padding */
     border: 3px solid #ff66cc;    /* was 1px */
     background: #7fd0ff;          /* light blue like the timer */
     color: #000;                   /* make +, = and numbers black */
@@ -222,6 +220,9 @@ body {
     align-items: center;
     justify-content: center;
     gap: 15px; /* Increase spacing between elements */
+    box-sizing: border-box;        /* NEW: include padding/border in size */
+    width: 280px;       /* was 160px */
+    height: 100px;      /* was 110px */
 }
 
 .op img.operand {
@@ -234,6 +235,7 @@ body {
     background: #2e7d32;  /* green */
     color: #fff;          /* white text */
     font-weight: 700;
+    /* Keep same dimensions as .op (no overrides to width/height/padding) */
 }
 
 .correct {

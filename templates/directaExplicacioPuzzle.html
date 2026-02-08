@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Ir a Video Puzzle</title>
+</head>
+<body>
+    <script>
+        // Auto-submit POST to /videoPuzzles/<idx>
+        (function() {
+            const puzzleIdx = {{ idx_puzzle_id | tojson }};
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/videoPuzzles/${puzzleIdx}`;
+            document.body.appendChild(form);
+            form.submit();
+        })();
+    </script>
+</body>
+</html>

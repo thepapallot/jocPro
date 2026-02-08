@@ -19,6 +19,21 @@
     let timerRunning = false;
     let currentRound = null; // NEW: track current round
 
+    // NEW: simple sound effect helper
+    function playEffect(file) {
+        try {
+            const audio = new Audio(`/static/audios/effects/${file}`);
+            audio.play().catch(() => {}); // ignore autoplay restrictions
+        } catch (e) {
+            console.warn("Failed to play effect:", file, e);
+        }
+    }
+
+    // NEW: helper to clear solved container before adding new content
+    function clearSolvedContainer() {
+        solvedContainer.innerHTML = '';
+    }
+
     function cellMappingForRound(round) {
         if (round === 1) return {1:3,2:6,3:10,4:13};
         if (round === 2) return {1:3,2:6,3:7,4:8,5:9,6:10,7:13};
@@ -120,16 +135,19 @@
 
             // Stop the timer and display "Puzzle 1 completed" message
             if (data.puzzle_solved) {
+                // NEW: play final level completed effect
+                playEffect('nivel_completado.wav');
+
                 console.log("Puzzle 1 completed."); // Debugging log
                 clearInterval(timerInterval); // Stop the timer
-                const completedMessage = document.createElement('div');
+                /*const completedMessage = document.createElement('div');
                 completedMessage.id = 'puzzle-completed-message';
                 completedMessage.textContent = "Puzzle 1 completed";
                 completedMessage.style.fontSize = '3em';
                 completedMessage.style.color = 'green';
                 completedMessage.style.textAlign = 'center';
                 completedMessage.style.marginTop = '20px';
-                document.body.appendChild(completedMessage);
+                document.body.appendChild(completedMessage);*/
 
                 // Redirect directly to Puzzle 2 after 20 seconds
                 setTimeout(() => {
@@ -148,6 +166,31 @@
                 startTimer();
             }
 
+            // NEW: streak completed (round finished) – we will wait and then countdown handled by ticks
+            if (data.streak_completed) {
+                // Ensure we show only this info
+                clearSolvedContainer();
+                const msg = document.createElement('div');
+                msg.className = 'message';
+                msg.textContent = 'Ronda completada';
+                solvedContainer.appendChild(msg);
+            }
+
+            // NEW: display 5-second countdown to next round
+            if (data.countdown_next_round && typeof data.countdown_next_round.seconds === 'number') {
+                clearSolvedContainer();
+                const seconds = data.countdown_next_round.seconds;
+                const cd = document.createElement('div');
+                cd.className = 'message';
+                cd.textContent = `Seguiente ronda en ${seconds}...`;
+                solvedContainer.appendChild(cd);
+            }
+
+            // NEW: play streak completed sound when the next round starts
+            if (data.round_start) {
+                playEffect('fase_completada.wav');
+            }
+
             // NEW: round change handling
             if (data.round !== undefined) {
                 if (currentRound === null) currentRound = data.round;
@@ -162,6 +205,9 @@
 
             // Display solved operations at the top
             if (data.solved) {
+                // NEW: clear before showing solved item
+                clearSolvedContainer();
+
                 const solvedElement = document.createElement('div');
                 solvedElement.className = 'correct';
                 solvedElement.textContent = data.solved.text; // Example: "7 + 7 = 14"
@@ -174,6 +220,9 @@
                     solvedOperation.classList.add('correct');
                 }
 
+                // NEW: play correct effect on completion
+                playEffect('correcte.wav');
+
                 // Remove solved operation from the top after 3 seconds
                 setTimeout(() => {
                     solvedElement.remove();
@@ -182,6 +231,12 @@
 
             // Display incorrect operation in red
             if (data.incorrect) {
+                // NEW: clear before showing incorrect message
+                clearSolvedContainer();
+
+                // NEW: play incorrect effect
+                playEffect('incorrecte.wav');
+
                 // Stop timer until reset arrives
                 clearInterval(timerInterval);
                 timerRunning = false;
@@ -202,6 +257,9 @@
                 // 2) After 2s: clear error message and show "Reseteando operaciones"
                 setTimeout(() => {
                     if (errEl.parentNode) errEl.remove();
+
+                    // NEW: clear before showing reset message
+                    clearSolvedContainer();
 
                     const resetEl = document.createElement('div');
                     resetEl.className = 'message error';
@@ -251,6 +309,12 @@
                 timer = 0;
                 updateTimerDisplay();
                 timerElement.classList.add('expired');
+
+                // NEW: play phase not completed effect
+                playEffect('fase_nocompletada.wav');
+
+                // NEW: clear before showing timeout message
+                clearSolvedContainer();
 
                 // Show timeout message in red for 5s
                 const timeoutMsg = document.createElement('div');

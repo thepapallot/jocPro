@@ -114,18 +114,43 @@ class Puzzle1(PuzzleBase):
                     # Round completion?
                     if all(o[2] == "Y" for o in self.operations_with_metadata):
                         if self.round < 3:
-                            # Advance to next round
-                            self.round += 1
-                            self.processing_wrong_result = False
-                            self._reset_operations()
-                            # Notify round transition with fresh ops
+                            # NEW: emit streak completed, then countdown, then advance round
+                            next_round = self.round + 1
+
+                            # 1) Notify streak completion (frontend already shows last solved for ~3s)
                             self.mqtt_client.push_update({
-                                "puzzle_id": self.id,  # added
-                                "operations": self.operations_with_metadata.copy(),
+                                "puzzle_id": self.id,
+                                "streak_completed": True,
                                 "round": self.round,
-                                "round_start": True,
-                                "start_timer": True  # NEW: reset timer for new round
+                                "next_round": next_round
                             })
+
+                            def _countdown_and_advance():
+                                import time
+                                # 2) Wait 3 seconds to keep the last "solved" message
+                                time.sleep(3)
+                                # 3) Send countdown ticks: 5..1
+                                for sec in range(5, 0, -1):
+                                    self.mqtt_client.push_update({
+                                        "puzzle_id": self.id,
+                                        "countdown_next_round": {"seconds": sec},
+                                        "round": self.round,
+                                        "next_round": next_round
+                                    })
+                                    time.sleep(1)
+                                # 4) Advance to next round and start
+                                with self.lock:
+                                    self.round = next_round
+                                    self.processing_wrong_result = False
+                                    self._reset_operations()
+                                    self.mqtt_client.push_update({
+                                        "puzzle_id": self.id,
+                                        "operations": self.operations_with_metadata.copy(),
+                                        "round": self.round,
+                                        "round_start": True,
+                                        "start_timer": True
+                                    })
+                            threading.Thread(target=_countdown_and_advance, daemon=True).start()
                         else:
                             # Final puzzle solved
                             self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")

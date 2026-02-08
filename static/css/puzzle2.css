@@ -128,9 +128,9 @@ h2 {
 
 .player-label {
     width: 85px; /* reduced from 90px */
-    padding-left: 15px;
+    padding-left: 0px;
     font-weight: 600;
-    font-size: 30px; /* reduced from 15px */
+    font-size: 33px; /* reduced from 15px */
     text-align: left;
     color: #9b59b6; /* purple */
     text-shadow: 0 1px 2px rgba(0,0,0,0.4);
@@ -168,7 +168,7 @@ h2 {
     transform: translateY(-50%);
     text-align: center;
     color: #fff;
-    font-size: 30px; /* reduced from 12px */
+    font-size: 60px; /* reduced from 12px */
     letter-spacing: .5px;
     pointer-events: none;
     font-weight: 600;
