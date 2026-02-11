@@ -15,7 +15,8 @@
     }
     const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
-    const BTN_SOUND_URL = "/static/audios/effects/boto.wav"; // NEW
+    const BTN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
+
 
     function format(sec) {
         if (sec < 0) sec = 0;

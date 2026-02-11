@@ -23,6 +23,7 @@
     const ROUND_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const ROUND_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+    const BEEP_COUNTDOWN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
 
     function showCountdownMessage(message, waitingSeconds) {
         console.log('[P5] Showing countdown message:', message, waitingSeconds);
@@ -47,6 +48,8 @@
                 remaining = Math.max(0, remaining - 1);
                 if (remaining > 0) {
                     objectiveEl.textContent = `${baseMessage} ${remaining} segundo${remaining !== 1 ? 's' : ''}`;
+                    // Play beep each second during countdown
+                    playSound(BEEP_COUNTDOWN_SOUND_URL);
                 } else {
                     clearInterval(countdownInterval);
                     countdownInterval = null;

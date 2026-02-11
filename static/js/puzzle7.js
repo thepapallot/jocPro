@@ -17,7 +17,8 @@
     function setSolved(box) {
         const img = cards.get(box);
         if (!img) return;
-        img.src = `/static/images/puzzle7/c${box}ok.png`;
+        //img.src = `/static/images/puzzle7/c${box}ok.png`;
+        img.src = `/static/images/puzzle7/ok.png`;
     }
 
     function handleUpdate(d) {

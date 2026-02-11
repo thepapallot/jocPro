@@ -127,7 +127,7 @@
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
     const PHASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";       // NEW
     const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";     // NEW
-    const LLETRES_SOUND_URL = "/static/audios/effects/lletres.wav";                // NEW
+    const LLETRES_SOUND_URL = "/static/audios/effects/apareix_contingut.wav";                // NEW
 
     function handleUpdate(d) {
         if (!d || d.puzzle_id !== 8) return;

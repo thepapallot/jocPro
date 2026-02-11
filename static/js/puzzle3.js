@@ -16,6 +16,7 @@
     const CORRECT_SOUND_URL = "/static/audios/effects/correcte.wav";
     const INCORRECT_SOUND_URL = "/static/audios/effects/incorrecte.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
+    const APAREIX_SOUND_URL = "/static/audios/effects/apareix_contingut.wav"; // NEW
 
     // Sound block window to avoid overlap after correct/incorrect
     let soundBlockUntil = 0;
@@ -70,6 +71,9 @@
     }
 
     function renderQuestion(qObj, streak, target, answeredPlayers = [], answeredMap = {}) {
+        // Play content appears sound on new question
+        playSound(APAREIX_SOUND_URL);
+
         currentQuestionId = qObj.id;
         questionTextEl.textContent = qObj.q;
         answerAreaEl.innerHTML = ""; // clear answer area
