@@ -119,6 +119,16 @@
         }
     }
 
+    // Short effect player
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(err => console.warn("Audio play failed:", err));
+    }
+    const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
+    const PHASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";       // NEW
+    const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";     // NEW
+    const LLETRES_SOUND_URL = "/static/audios/effects/lletres.wav";                // NEW
+
     function handleUpdate(d) {
         if (!d || d.puzzle_id !== 8) return;
 
@@ -134,21 +144,27 @@
             updateStreak(d.round);
         }
 
-        // Explicit clear
+        // Explicit clear (beginning of idle phase)
         if (d.clear) {
             clearGrid();
+            // Play start-of-phase sound for idle
+            playSound(LLETRES_SOUND_URL);
         }
 
-        // Numbers phase
+        // Numbers phase start
         if (Array.isArray(d.token_numbers)) {
             renderNumbers(d.token_numbers);
+            // Play start-of-phase sound for numbers
+            playSound(LLETRES_SOUND_URL);
             return;
         }
 
-        // Tokens phase (show target order and colors)
+        // Tokens phase start (when symbols arrive with phase 'tokens')
         if (Array.isArray(d.symbols) && d.phase === 'tokens') {
             symbolsOrder = d.symbols.slice();
             renderSymbols(symbolsOrder);
+            // Play start-of-phase sound for tokens
+            playSound(LLETRES_SOUND_URL);
         }
         if (d.phase === 'tokens' && d.colors) {
             applyColorsMap(d.colors);
@@ -182,23 +198,33 @@
             if (typeof box === 'number' && typeof color === 'string') {
                 colorBox(box, color, typeof symbol === 'string' ? symbol : undefined);
             }
+            // Play boto.wav on each input update
+            playSound(BTN_SOUND_URL);
             return;
         }
 
         // Input result feedback (optional UI handling could be added here)
         // d.input_result = { success: true|false }
 
-        // NEW: results feedback per box
-        if (d.input_result && d.input_result.box_results) {
-            const results = d.input_result.box_results; // { "0": true, "1": false, ... } or numeric keys
-            Object.entries(results).forEach(([boxStr, ok]) => {
-                const box = Number(boxStr);
-                const slot = document.querySelector(`#p8-grid .p8-slot[data-index="${box}"]`);
-                if (!slot || !slot.parentElement) return;
-                const frame = slot.parentElement; // .p8-frame
-                frame.classList.remove('p8-correct', 'p8-wrong');
-                frame.classList.add(ok ? 'p8-correct' : 'p8-wrong');
-            });
+        // NEW: results feedback per box + phase sound
+        if (d.input_result) {
+            if (d.input_result.box_results) {
+                const results = d.input_result.box_results; // { "0": true, "1": false, ... } or numeric keys
+                Object.entries(results).forEach(([boxStr, ok]) => {
+                    const box = Number(boxStr);
+                    const slot = document.querySelector(`#p8-grid .p8-slot[data-index="${box}"]`);
+                    if (!slot || !slot.parentElement) return;
+                    const frame = slot.parentElement; // .p8-frame
+                    frame.classList.remove('p8-correct', 'p8-wrong');
+                    frame.classList.add(ok ? 'p8-correct' : 'p8-wrong');
+                });
+            }
+            // Play phase result sound
+            if (d.input_result.success === true) {
+                playSound(PHASE_OK_SOUND_URL);
+            } else if (d.input_result.success === false) {
+                playSound(PHASE_KO_SOUND_URL);
+            }
             return;
         }
     }

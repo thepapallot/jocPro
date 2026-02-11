@@ -4,6 +4,25 @@
     const answerAreaEl = document.getElementById('answer-area'); // was answersEl inside question-area
     const playerStatusEl = document.getElementById('player-status');
     const feedbackEl = document.getElementById('feedback'); // ADD THIS LINE
+    // Preload boto.wav
+    const btnSoundEl = document.getElementById('btn-sound');
+
+    // Consistent sound helper (same as puzzles 1 and 2)
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(err => console.warn("Audio play failed:", err));
+    }
+    const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
+    const CORRECT_SOUND_URL = "/static/audios/effects/correcte.wav";
+    const INCORRECT_SOUND_URL = "/static/audios/effects/incorrecte.wav";
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
+
+    // Sound block window to avoid overlap after correct/incorrect
+    let soundBlockUntil = 0;
+    function playSoundAndBlock(url, ms) {
+        playSound(url);
+        soundBlockUntil = Date.now() + ms;
+    }
 
     const TOTAL_PLAYERS = 10;
     let currentQuestionId = null;
@@ -39,6 +58,10 @@
             chip.classList.remove('correct','wrong');
             chip.classList.add('answered');
         }
+        // Play boto.wav on each player submission (delay if blocked)
+        const now = Date.now();
+        const delay = soundBlockUntil > now ? (soundBlockUntil - now) : 0;
+        setTimeout(() => playSound(BTN_SOUND_URL), delay);
     }
 
     function applyAnsweredMap(map) {
@@ -85,6 +108,8 @@
     }
 
     function showSolved() {
+        // Play puzzle completion sound
+        playSound(PUZZLE_COMPLETE_SOUND_URL);
         feedbackEl.className = 'ok';
         feedbackEl.textContent = 'Nivel superado!';
         setTimeout(() => {
@@ -119,9 +144,13 @@
             }
         });
         if (success) {
+            // Play correct sound and block 500ms to hear it well
+            playSoundAndBlock(CORRECT_SOUND_URL, 500);
             feedbackEl.className = 'ok';
             feedbackEl.textContent = `Respuestas correctas! ${streak}/${target}`;
         } else {
+            // Play incorrect sound and block 500ms to hear it well
+            playSoundAndBlock(INCORRECT_SOUND_URL, 500);
             feedbackEl.className = 'err';
             feedbackEl.textContent = `Algunas respuestas incorrectas. Reseteando Preguntas.`;
         }

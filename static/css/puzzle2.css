@@ -173,6 +173,24 @@ h2 {
     will-change: background-color;
 }
 
+/* Bar border turns red and glows during error flash */
+.bar-outer.error-flash {
+    border-color: #d32f2f !important;
+    box-shadow: 0 0 10px rgba(211, 47, 47, 0.8) inset, 0 0 8px rgba(211, 47, 47, 0.6);
+    border-image: none !important; /* override gradient */
+}
+
+/* Token label turns red during error flash */
+.player-label.error-flash {
+    color: #d32f2f !important;
+    text-shadow: 0 1px 6px rgba(211, 47, 47, 0.7) !important;
+}
+
+/* Optional: row glow while flashing (subtle) */
+.player-row.error-flash {
+    box-shadow: 0 0 8px rgba(211, 47, 47, 0.5) inset;
+}
+
 /* Keep complete state, but error-flash will override via !important */
 .bar-inner.complete {
     background: #27c56d;

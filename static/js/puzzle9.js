@@ -4,6 +4,14 @@
     let solved = false;
     let snapshotLoaded = false;
 
+    // Short effect player
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(err => console.warn("Audio play failed:", err));
+    }
+    const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+
     function applyStatus(status) {
         if (!statusImg || !status) return;
         // status is one of: start | half | wrong | good
@@ -17,8 +25,15 @@
             applyStatus(d.status);
         }
 
+        // Play boto.wav for each box update
+        if (d.box_update) {
+            playSound(BTN_SOUND_URL);
+        }
+
         if (d.puzzle_solved && !solved) {
             solved = true;
+            // Play final completion sound
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
             setTimeout(() => (window.location.href = '/puzzleSuperat/9'), 500);
         }
     }

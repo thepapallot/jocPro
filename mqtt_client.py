@@ -580,10 +580,10 @@ class Puzzle3(PuzzleBase):
                     return
                 # Advance to next question or restart with new set
                 if all_correct:
-                    self._schedule_next_question(delay=3)  # increased from 2 to 3
+                    self._schedule_next_question(delay=5)  # increased from 2 to 3
                 else:
                     def _later():
-                        time.sleep(3)  # increased from 2 to 3
+                        time.sleep(5)  # increased from 2 to 3
                         with self.lock:
                             self._push_question()
                     threading.Thread(target=_later, daemon=True).start()
@@ -1022,15 +1022,15 @@ class Puzzle5(PuzzleBase):
                         })
                         self._schedule_round_start(next_round, delay=10)  # changed from 3 to 10
                 else:
-                    # Retry same round after color display - keep 3 seconds for retry
+                    # Retry same round after color display - keep 9 seconds for retry
                     self.round_times[round_number] = {}
                     self.waiting = True
                     self.mqtt_client.push_update({
                         "puzzle_id": self.id,
-                        "countdown_message": f"Ronda {round_number} reinicia en 3 segundos",
-                        "waiting_seconds": 3
+                        "countdown_message": f"Ronda {round_number} reinicia en 9 segundos",
+                        "waiting_seconds": 9
                     })
-                    self._schedule_round_start(round_number, delay=3)
+                    self._schedule_round_start(round_number, delay=9)
         
         threading.Thread(target=_delayed_evaluation, daemon=True).start()
 

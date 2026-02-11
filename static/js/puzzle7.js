@@ -6,6 +6,14 @@
     let solved = false;
     let snapshotLoaded = false;
 
+    // Short effect player
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(err => console.warn("Audio play failed:", err));
+    }
+    const BOX_OK_SOUND_URL = "/static/audios/effects/correcte.wav";
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+
     function setSolved(box) {
         const img = cards.get(box);
         if (!img) return;
@@ -21,10 +29,14 @@
 
         if (typeof d.solved_box === 'number') {
             setSolved(d.solved_box);
+            // Play per-box completion sound
+            playSound(BOX_OK_SOUND_URL);
         }
 
         if (d.puzzle_solved && !solved) {
             solved = true;
+            // Play puzzle completion sound
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
             setTimeout(() => (window.location.href = '/puzzleSuperat/7'), 1500);
         }
     }

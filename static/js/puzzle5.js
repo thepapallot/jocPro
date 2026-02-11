@@ -14,6 +14,16 @@
     let lastRoundResult = null;  // Track if we just showed a result
     let snapshotRequested = false; // NEW: prevent double fetch on initial load
 
+    // Sound helpers and URLs
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(err => console.warn("Audio play failed:", err));
+    }
+    const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
+    const ROUND_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
+    const ROUND_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+
     function showCountdownMessage(message, waitingSeconds) {
         console.log('[P5] Showing countdown message:', message, waitingSeconds);
         playersSection.style.display = 'none';
@@ -175,22 +185,35 @@
             updateErrorCounter(d.total, d.limit);
         }
 
+        // Play boto.wav for each player_time event
+        if (d.player_time) {
+            playSound(BTN_SOUND_URL);
+        }
+
         // Update player boxes
         if (d.times) {
             updatePlayerBoxes(d.times);
         }
 
-        // Handle round result with color feedback
+        // Handle round result with color feedback and sound
         if (d.round_result) {
             const rr = d.round_result;
             const result = rr.success ? 'success' : 'failure';
             lastRoundResult = result;  // Remember we showed a result
             updateErrorCounter(rr.total, rr.limit, result);
+            // Play corresponding round result sound
+            if (rr.success) {
+                playSound(ROUND_OK_SOUND_URL);
+            } else {
+                playSound(ROUND_KO_SOUND_URL);
+            }
         }
 
         // Puzzle solved
         if (d.puzzle_solved && !solved) {
             solved = true;
+            // Play final puzzle completion sound
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
             if (countdownInterval) {
                 clearInterval(countdownInterval);
                 countdownInterval = null;

@@ -13,6 +13,27 @@
     const activeErrorPlayers = new Set();
     let queuedSnapshot = null;
 
+    // NEW: alarm flash toggler during transition
+    let alarmFlashInterval = null;
+    function startAlarmFlash(durationMs = 5000) {
+        stopAlarmFlash();
+        let on = true;
+        // immediate toggle kick
+        setAlarmMode(on);
+        alarmFlashInterval = setInterval(() => {
+            on = !on;
+            setAlarmMode(on);
+        }, 1000);
+        // stop after duration
+        setTimeout(() => stopAlarmFlash(), durationMs);
+    }
+    function stopAlarmFlash() {
+        if (alarmFlashInterval) {
+            clearInterval(alarmFlashInterval);
+            alarmFlashInterval = null;
+        }
+    }
+
     function setProgress(player, progress) {
         const el = document.getElementById(`bar-player-${player}`);
         if (!el) return;
@@ -53,11 +74,27 @@
     function startErrorFlash(player) {
         errorBlockUntil = Date.now() + 4000;
         activeErrorPlayers.add(player);
-        const el = document.getElementById(`bar-player-${player}`);
-        if (el) el.classList.add("error-flash");
+        const barInner = document.getElementById(`bar-player-${player}`);
+        const row = document.querySelector(`.player-row[data-player="${player}"]`);
+        const barOuter = row ? row.querySelector('.bar-outer') : null;
+        const label = row ? row.querySelector('.player-label') : null;
+
+        if (barInner) barInner.classList.add("error-flash");
+        if (barOuter) barOuter.classList.add("error-flash");
+        if (label) label.classList.add("error-flash");
+        if (row) row.classList.add("error-flash");
+
         setTimeout(() => {
-            const el2 = document.getElementById(`bar-player-${player}`);
-            if (el2) el2.classList.remove("error-flash");
+            const elInner = document.getElementById(`bar-player-${player}`);
+            const elRow = document.querySelector(`.player-row[data-player="${player}"]`);
+            const elOuter = elRow ? elRow.querySelector('.bar-outer') : null;
+            const elLabel = elRow ? elRow.querySelector('.player-label') : null;
+
+            if (elInner) elInner.classList.remove("error-flash");
+            if (elOuter) elOuter.classList.remove("error-flash");
+            if (elLabel) elLabel.classList.remove("error-flash");
+            if (elRow) elRow.classList.remove("error-flash");
+
             activeErrorPlayers.delete(player);
             if (activeErrorPlayers.size === 0) {
                 errorBlockUntil = 0;
@@ -107,9 +144,25 @@
         }
 
         if (data.players) applySnapshot(data.players);
-        if (data.play_alarm_sound) playSound(data.play_alarm_sound.url);
-        if (data.play_normal_sound) playSound(data.play_normal_sound.url);
-        if (data.alarm_mode !== undefined) setAlarmMode(data.alarm_mode);
+
+        // Play alarm sound and start flashing alarm mode every second during the transition
+        if (data.play_alarm_sound) {
+            playSound(data.play_alarm_sound.url);
+            startAlarmFlash(5000); // flash for 5s while sound plays
+        }
+
+        // Play normal sound; stop flashing (final state comes via alarm_mode)
+        if (data.play_normal_sound) {
+            playSound(data.play_normal_sound.url);
+            stopAlarmFlash(); // stop any previous flash
+        }
+
+        // Honor explicit alarm_mode state (stop any flashing and set final state)
+        if (data.alarm_mode !== undefined) {
+            stopAlarmFlash();
+            setAlarmMode(!!data.alarm_mode);
+        }
+
         if (data.puzzle_solved && !redirected) {
             redirected = true;
             playSound(PUZZLE_COMPLETE_SOUND_URL); // NEW

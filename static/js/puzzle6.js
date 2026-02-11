@@ -8,6 +8,15 @@
     let countdownTimer = null;
     let resetTimer = null;
 
+    // Sound helper and URLs
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(err => console.warn("Audio play failed:", err));
+    }
+    const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+    const BTN_SOUND_URL = "/static/audios/effects/boto.wav"; // NEW
+
     function format(sec) {
         if (sec < 0) sec = 0;
         const m = Math.floor(sec / 60);
@@ -30,6 +39,11 @@
         if (!active || solved || endTime == null) return;
         const remaining = Math.round((endTime - Date.now()) / 1000);
         countdownEl.textContent = format(remaining);
+
+        // Play boto.wav on each second tick while main countdown is active
+        if (remaining > 0) {
+            playSound(BTN_SOUND_URL);
+        }
         
         // Add expired class when time runs out
         if (remaining <= 0) {
@@ -43,7 +57,9 @@
         active = false;
         clearInterval(countdownTimer);
         clearInterval(resetTimer);
-        
+        // Play KO sound on reset
+        playSound(PHASE_KO_SOUND_URL);
+
         // Show error message
         messageEl.textContent = msg;
         
@@ -101,6 +117,8 @@
 
         if (d.countdown_tick && active && !solved) {
             countdownEl.textContent = format(d.countdown_tick.remaining);
+            // Optional: also play on server ticks (every 10s). Comment out to keep per-second only.
+            // playSound(BTN_SOUND_URL);
         }
 
         if (d.countdown_reset) {
@@ -117,6 +135,8 @@
             countdownEl.textContent = '00:00';
             countdownEl.classList.add('expired');
             messageEl.textContent = '';
+            // Play final puzzle completion sound
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
             setTimeout(() => window.location.href = '/puzzleSuperat/6', 3000);
         }
     }

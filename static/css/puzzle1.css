@@ -186,7 +186,7 @@ body {
     display: grid;
     grid-template-columns: repeat(5, auto); /* do not stretch columns */
     grid-template-rows: repeat(3, 1fr);
-    column-gap: 5px;
+    column-gap: 20px; /* was 5px */
     row-gap: 0; /* minimize space between rows */
     justify-items: center;
     align-items: center;
@@ -201,10 +201,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 220px;   /* was 160px */
+    min-width: 280px;   /* was 160px */
     min-height: 120px;  /* was 150px – reduce vertical spacing */
     padding: 0;         /* ensure no extra space inside cells */
     margin: 0;          /* ensure no external margins */
+}
+
+/* Match empty cell size to .op dimensions */
+.grid-cell.empty-cell {
+    width: 280px;   /* same as .op width */
+    height: 120px;  /* same as .op height */
 }
 
 /* Ensure operation boxes keep consistent size even when content changes */

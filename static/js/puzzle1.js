@@ -55,6 +55,13 @@
         roundIndicator.textContent = `${round}/3`;
     }
 
+    // Helper: target size per round (4, 7, 15)
+    function getRoundTargetSize(round) {
+        if (round === 1) return 4;
+        if (round === 2) return 7;
+        return 15;
+    }
+
     function renderOperations(operations) {
         const list = Array.isArray(operations) ? operations : [];
         // Determine round: prefer currentRound, else infer by operations count
@@ -160,6 +167,7 @@
 
             // Start the timer when the puzzle starts
             if (data.start_timer) {
+                playEffect('apareix_contingut.wav');
                 console.log("Starting the timer."); // Debugging log
                 // Clear expired (red) visual state
                 timerElement.classList.remove('expired');
@@ -174,6 +182,8 @@
                 msg.className = 'message';
                 msg.textContent = 'Ronda completada';
                 solvedContainer.appendChild(msg);
+                // Play streak completed sound here (when all ops are correctly completed)
+                playEffect('fase_completada.wav');
             }
 
             // NEW: display 5-second countdown to next round
@@ -182,15 +192,13 @@
                 const seconds = data.countdown_next_round.seconds;
                 const cd = document.createElement('div');
                 cd.className = 'message';
-                cd.textContent = `Seguiente ronda en ${seconds}...`;
+                cd.textContent = `Seguiente ronda en ${seconds}`;
                 solvedContainer.appendChild(cd);
+                // NEW: play per-second countdown beep
+                playEffect('beep_countdown.wav');
             }
 
-            // NEW: play streak completed sound when the next round starts
-            if (data.round_start) {
-                playEffect('fase_completada.wav');
-            }
-
+        
             // NEW: round change handling
             if (data.round !== undefined) {
                 if (currentRound === null) currentRound = data.round;
@@ -220,8 +228,14 @@
                     solvedOperation.classList.add('correct');
                 }
 
-                // NEW: play correct effect on completion
-                playEffect('correcte.wav');
+                // Determine if this is the last op in the round; if so, skip correcte.wav
+                const roundTarget = getRoundTargetSize(currentRound || inferRoundByCount(document.querySelectorAll('.op').length));
+                const completedCount = document.querySelectorAll('.op.correct').length;
+                const isLastOpOfRound = completedCount >= roundTarget;
+
+                if (!isLastOpOfRound) {
+                    playEffect('correcte.wav');
+                }
 
                 // Remove solved operation from the top after 3 seconds
                 setTimeout(() => {

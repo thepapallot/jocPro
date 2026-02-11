@@ -20,6 +20,16 @@
     let mediaReady = false; // NEW: only play audio after unlock video is playing
     let audioStarting = false; // NEW: guard while starting
 
+    // Short effect player (same pattern as other puzzles)
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(err => console.warn("Audio play failed:", err));
+    }
+    const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
+    const FASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";         // NEW
+    const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";       // NEW
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
+
     // Focus window and start unlock video ASAP
     function startUnlockVideo() {
         try { window.focus(); } catch {}
@@ -65,10 +75,6 @@
         }, 200);
     }
 
-    // Remove active retry spam; we won’t call play() at all
-    function scheduleRetry() {
-        // ...no-op now: keep signature to minimize diffs...
-    }
 
     function setListening() {
         if (solved || !statusEl) return;
@@ -171,17 +177,29 @@
     function updateStatus(storing, playingSample) {
         const statusEl = document.getElementById('status-text');
         if (!statusEl) return;
+
+        const previous = statusEl.textContent || '';
+        let nextText = previous;
+
         if (playingSample) {
-            statusEl.textContent = 'Reproduciendo muestra';
+            nextText = 'Reproduciendo muestra';
             statusEl.classList.remove('storing');
             statusEl.classList.add('playing-sample');
         } else if (storing) {
-            statusEl.textContent = 'Estado: Registrando';
+            nextText = 'Estado: Registrando';
             statusEl.classList.add('storing');
             statusEl.classList.remove('playing-sample');
         } else {
-            statusEl.textContent = 'Estado: No se está registrando';
+            nextText = 'Estado: No se está registrando';
             statusEl.classList.remove('storing', 'playing-sample');
+        }
+
+        // Apply new text
+        statusEl.textContent = nextText;
+
+        // Play boto.wav whenever we change to an "Estado:" text
+        if (nextText !== previous && nextText.startsWith('Estado:')) {
+            playSound(BTN_SOUND_URL);
         }
     }
 
@@ -250,6 +268,9 @@
         }, 10000); // 10 seconds
     }
 
+    // Track current attempt length to decide if reset has something to clear
+    let currentAttemptCount = 0; // NEW
+
     function handleUpdate(d) {
         console.log('[P4] handleUpdate called with:', d);
         
@@ -257,6 +278,13 @@
         
         console.log('[P4] handleUpdate received:', d);
         
+        // NEW: Play boto.wav on reset_attempt only if there was something to reset
+        if (d.reset_attempt) {
+            if (currentAttemptCount > 0) {
+                playSound(BTN_SOUND_URL);
+            }
+        }
+
         if (d.listening) setListening();
         
         // Update streak display - show current song (1-based) / total
@@ -315,6 +343,15 @@
         // Handle sequence validation feedback
         if (d.sequence_correct !== undefined) {
             flashBoxes(d.sequence_correct);
+            // Play KO effect immediately when wrong combination is entered
+            if (d.sequence_correct === false) {
+                playSound(FASE_KO_SOUND_URL);
+            }
+        }
+
+        // Play OK effect when a streak (song) is completed
+        if (d.song_completed) {
+            playSound(FASE_OK_SOUND_URL);
         }
         
         // Update progress boxes ONLY if not showing completion
@@ -323,6 +360,11 @@
             console.log('[P4] Updating boxes - streak:', d.streak, 'played_sequence:', playedSeq);
             updateProgressBoxes(d.streak, d.current_progress || 0, playedSeq);
         }
+
+        // NEW: Refresh attempt length tracker whenever backend sends played_sequence
+        if (Array.isArray(d.played_sequence)) {
+            currentAttemptCount = d.played_sequence.length;
+        }
         
         if (d.play && !solved) {
             play(d.play.url);
@@ -330,6 +372,8 @@
         if (d.puzzle_solved && !solved) {
             solved = true;
             showingCompletion = false;  // Reset flag
+            // Play final puzzle completion effect
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
             if (statusEl) {
                 statusEl.textContent = 'Song Completed';
                 statusEl.className = 'status solved';
