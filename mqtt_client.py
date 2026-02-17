@@ -416,7 +416,6 @@ class Puzzle2(PuzzleBase):
                     time.sleep(4)
                     with self.lock:
                         self.input_blocked = False
-                        self.block_until = 0
                         print(f"[Puzzle2] Error flash finished, input unblocked")
                 threading.Thread(target=_unblock_later, daemon=True).start()
 
@@ -595,24 +594,24 @@ class Puzzle4(PuzzleBase):
         self.AUDIO_SUBDIR = "audios/"
         self.streak1_folder = "P4_F1"
         self.streak2_folder = "P4_F2"
-        self.streak1_sample = f"{self.streak1_folder}/song.mp3"
-        self.streak2_sample = f"{self.streak2_folder}/song.mp3"
+        self.streak1_sample = f"{self.streak1_folder}/song.wav"
+        self.streak2_sample = f"{self.streak2_folder}/song.wav"
         self.streak1_sample_duration = 25  # seconds
         self.streak2_sample_duration = 36  # seconds
         self.streak1_track_map = {
-            0: ("0", "WrongSongs/wrong2.mp3"), 1: ("1", f"{self.streak1_folder}/pista2.mp3"),
-            2: ("2", "WrongSongs/wrong5.mp3"), 3: ("3", f"{self.streak1_folder}/pista4.mp3"),
-            4: ("4", "WrongSongs/wrong1.mp3"), 5: ("5", f"{self.streak1_folder}/pista1.mp3"),
-            6: ("6", "WrongSongs/wrong3.mp3"), 7: ("7", "WrongSongs/wrong4.mp3"),
-            8: ("8", f"{self.streak1_folder}/pista3.mp3"), 9: ("9", "WrongSongs/wrong6.mp3"),
+            0: ("0", "WrongSongs/wrong2.wav"), 1: ("1", f"{self.streak1_folder}/pista2.wav"),
+            2: ("2", "WrongSongs/wrong5.wav"), 3: ("3", f"{self.streak1_folder}/pista4.wav"),
+            4: ("4", "WrongSongs/wrong1.wav"), 5: ("5", f"{self.streak1_folder}/pista1.wav"),
+            6: ("6", "WrongSongs/wrong3.wav"), 7: ("7", "WrongSongs/wrong4.wav"),
+            8: ("8", f"{self.streak1_folder}/pista3.wav"), 9: ("9", "WrongSongs/wrong6.wav"),
         }
         self.streak1_required_order = ["5", "1", "8", "3"]
         self.streak2_track_map = {
-            0: ("0", f"{self.streak2_folder}/pista3.mp3"), 1: ("1", f"{self.streak2_folder}/pista2.mp3"),
-            2: ("2", f"{self.streak2_folder}/pista7.mp3"), 3: ("3", "WrongSongs/wrong8.mp3"),
-            4: ("4", "WrongSongs/wrong7.mp3"), 5: ("5", f"{self.streak2_folder}/pista6.mp3"),
-            6: ("6", f"{self.streak2_folder}/pista1.mp3"), 7: ("7", f"{self.streak2_folder}/pista8.mp3"),
-            8: ("8", f"{self.streak2_folder}/pista5.mp3"), 9: ("9", f"{self.streak2_folder}/pista4.mp3"),
+            0: ("0", f"{self.streak2_folder}/pista3.wav"), 1: ("1", f"{self.streak2_folder}/pista2.wav"),
+            2: ("2", f"{self.streak2_folder}/pista7.wav"), 3: ("3", "WrongSongs/wrong8.wav"),
+            4: ("4", "WrongSongs/wrong7.wav"), 5: ("5", f"{self.streak2_folder}/pista6.wav"),
+            6: ("6", f"{self.streak2_folder}/pista1.wav"), 7: ("7", f"{self.streak2_folder}/pista8.wav"),
+            8: ("8", f"{self.streak2_folder}/pista5.wav"), 9: ("9", f"{self.streak2_folder}/pista4.wav"),
         }
         self.streak2_required_order = ["6", "1", "0", "9", "8", "5", "2", "7"]
         self.total_required = 2
@@ -643,7 +642,11 @@ class Puzzle4(PuzzleBase):
                         "puzzle_id": self.id,
                         "playing_sample": False,
                         "streak": self.streak,
-                        "total_required": self.total_required
+                        "total_required": self.total_required,
+                        "current_progress": self.current_progress,
+                        "played_sequence": [],
+                        "storing": False
+
                     })
         threading.Thread(target=_delayed_unblock, daemon=True).start()
 
@@ -664,7 +667,7 @@ class Puzzle4(PuzzleBase):
                         return
                     # Push sample start after delay
                     self.mqtt_client.push_update({
-                        "puzzle_id": self.id, "streak": 0, "total_required": 2, "storing": False,
+                        "puzzle_id": self.id, "streak": -1, "total_required": 2, "storing": False,
                         "current_progress": 0, "played_sequence": [], "playing_sample": True,
                         "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak1_sample}"}, "listening": True
                     })
@@ -683,10 +686,90 @@ class Puzzle4(PuzzleBase):
                 "played_sequence": self.played_sequence.copy(), "history": self.history[-25:],
                 "puzzle_solved": self.solved, "playing_sample": self.playing_sample
             }
-            # NEW: include sample_song in snapshot while sample is playing
-            if self.playing_sample:
-                sample_rel = self.streak1_sample if self.streak == 0 else self.streak2_sample
-                state["sample_song"] = {"url": f"/static/{self.AUDIO_SUBDIR}{sample_rel}"}
+            is_correct = self.played_sequence == self._get_current_required_order()
+
+            if is_correct:
+                self.streak += 1
+                temp_sequence = self.played_sequence.copy()
+                self.played_sequence = []
+                self.storing = False
+                self.current_progress = 0
+                self.playing_sample = True
+                self.validating = False
+                if self.streak >= self.total_required:
+                    # Show "Nivel Completado" message
+                    self.mqtt_client.push_update({
+                        "puzzle_id": self.id,
+                        "show_completion": True,
+                        "streak": self.streak,
+                        "total_required": self.total_required
+                    })
+                    
+                    # Wait 10 seconds showing completion message
+                    time.sleep(5)
+                    
+                    # Then solve the puzzle
+                    self.solved = True
+                    self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+                    self.mqtt_client.push_update({
+                        "puzzle_id": self.id,
+                        "puzzle_solved": True,
+                        "streak": self.streak,
+                        "total_required": self.total_required,
+                        "played_sequence": temp_sequence,
+                        "play_final": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_folder}/correcta.mp3"}
+                    })
+                else:
+                    def _later():
+                        time.sleep(1)
+                        self.mqtt_client.push_update({
+                                "puzzle_id": self.id, "sample_countdown_seconds": 5,"streak": -1
+                            })
+                        time.sleep(2)
+                        self.mqtt_client.push_update({
+                                "puzzle_id": self.id, "sample_countdown_seconds": 4,"streak": -1
+                            })
+                        time.sleep(2)
+                        self.mqtt_client.push_update({
+                                "puzzle_id": self.id, "sample_countdown_seconds": 3,"streak": -1
+                            })
+                        time.sleep(2)
+                        self.mqtt_client.push_update({
+                                "puzzle_id": self.id, "sample_countdown_seconds": 2,"streak": -1,
+                            })
+                        time.sleep(2)
+                        self.mqtt_client.push_update({
+                                "puzzle_id": self.id, "sample_countdown_seconds": 1,"streak": -1,
+                            })
+                        time.sleep(2)
+                        with self.lock:
+                            if self.solved:
+                                return
+                            # Push sample start after delay
+                            self.mqtt_client.push_update({
+                                "puzzle_id": self.id, "streak": -1, "total_required": 2, "storing": False,
+                                "current_progress": 0, "played_sequence": [], "playing_sample": True,
+                                "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"}, "listening": True
+                            })
+                            # Start unblock timer after pushing
+                            self._play_sample_with_delay(self.streak2_sample, self.streak2_sample_duration)
+                    threading.Thread(target=_later, daemon=True).start()
+
+            else:
+                # Wrong sequence
+                self.current_progress = 0
+                self.played_sequence = []
+                self.validating = False
+                self.mqtt_client.push_update({
+                    "puzzle_id": self.id,
+                    "streak": self.streak,
+                    "total_required": self.total_required,
+                    "current_progress": 0,
+                    "played_sequence": []
+                })
+
+
+            # Song has finished, so do next step
             return state
 
     def handle_message(self, parts):
@@ -699,12 +782,6 @@ class Puzzle4(PuzzleBase):
         with self.lock:
             if self.solved: return
             
-            if button == 4:
-                # Manual sample finish (can be kept as backup)
-                self.playing_sample = False
-                self.mqtt_client.push_update({"puzzle_id": self.id, "playing_sample": False, "streak": self.streak, "total_required": self.total_required})
-                return
-            
             if self.playing_sample:
                 print(f"[Puzzle4] Ignoring input while playing sample")
                 return
@@ -714,6 +791,14 @@ class Puzzle4(PuzzleBase):
                 print(f"[Puzzle4] Ignoring input during validation")
                 return
             
+            if button == 4:
+                if self.streak == 0:
+                    self.mqtt_client.push_update({"puzzle_id": self.id, "play_mostra": True, "url": f"/static/{self.AUDIO_SUBDIR}{self.streak1_sample}"})
+                elif self.streak == 1:
+                    self.mqtt_client.push_update({"puzzle_id": self.id, "play_mostra": True, "url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"})
+                    
+                return
+
             if button == 3:
                 self.storing = True
                 self.current_progress = 0
@@ -751,95 +836,30 @@ class Puzzle4(PuzzleBase):
                     if len(self.played_sequence) >= len(required_order):
                         # Mark as validating to block further input
                         self.validating = True
-                        
-                        def _validate_after_delay():
-                            time.sleep(2)  # wait 2 seconds before validation
-                            with self.lock:
-                                is_correct = self.played_sequence == required_order
-                                print(f"[Puzzle4] Validating: Expected={required_order}, Got={self.played_sequence}, Correct={is_correct}")
-                                
-                                # Send validation result (triggers green/red flash)
-                                self.mqtt_client.push_update({
-                                    "puzzle_id": self.id,
-                                    "sequence_correct": is_correct,
-                                    "streak": self.streak,
-                                    "total_required": self.total_required
-                                })
-                                
-                                # Wait 10 seconds while flashing
-                                time.sleep(10)
-                                
-                                if is_correct:
-                                    self.streak += 1
-                                    temp_sequence = self.played_sequence.copy()
-                                    self.played_sequence = []
-                                    self.storing = False
-                                    self.current_progress = 0
-                                    self.validating = False
-                                    
-                                    if self.streak >= self.total_required:
-                                        # Show "Nivel Completado" message
-                                        self.mqtt_client.push_update({
-                                            "puzzle_id": self.id,
-                                            "show_completion": True,
-                                            "streak": self.streak,
-                                            "total_required": self.total_required
-                                        })
-                                        
-                                        # Wait 10 seconds showing completion message
-                                        time.sleep(5)
-                                        
-                                        # Then solve the puzzle
-                                        self.solved = True
-                                        self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
-                                        self.mqtt_client.push_update({
-                                            "puzzle_id": self.id,
-                                            "puzzle_solved": True,
-                                            "streak": self.streak,
-                                            "total_required": self.total_required,
-                                            "played_sequence": temp_sequence,
-                                            "play_final": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_folder}/correcta.mp3"}
-                                        })
-                                    else:
-                                        # Advance to next streak - play sample
-                                        self.playing_sample = True
-                                        sample_url = f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"
-                                        self.mqtt_client.push_update({
-                                            "puzzle_id": self.id,
-                                            "song_completed": True,
-                                            "streak": self.streak,
-                                            "total_required": self.total_required,
-                                            "storing": False,
-                                            "current_progress": 0,
-                                            "played_sequence": [],
-                                            "playing_sample": True,
-                                            "sample_song": {"url": sample_url}
-                                        })
-                                        self._play_sample_with_delay(self.streak2_sample, self.streak2_sample_duration)
-                                else:
-                                    # Wrong sequence
-                                    self.current_progress = 0
-                                    self.played_sequence = []
-                                    self.validating = False
-                                    self.mqtt_client.push_update({
-                                        "puzzle_id": self.id,
-                                        "streak": self.streak,
-                                        "total_required": self.total_required,
-                                        "current_progress": 0,
-                                        "played_sequence": []
-                                    })
-                        
-                        threading.Thread(target=_validate_after_delay, daemon=True).start()
-                
+                        # Validate
+                        is_correct = self.played_sequence == required_order
+                        print(f"[Puzzle4] Validating: Expected={required_order}, Got={self.played_sequence}, Correct={is_correct}")
+
                 # Always push play event
-                self.mqtt_client.push_update({
-                    "puzzle_id": self.id,
-                    "play": {"track": track_name, "code": song, "url": f"/static/{rel_path_full}"},
-                    "current_progress": len(self.played_sequence),
-                    "streak": self.streak,
-                    "total_required": self.total_required,
-                    "played_sequence": self.played_sequence.copy()
-                })
+                if (self.validating):
+                    self.mqtt_client.push_update({
+                        "puzzle_id": self.id,
+                        "sequence_correct": is_correct,
+                        "play": {"track": track_name, "code": song, "url": f"/static/{rel_path_full}"},
+                        "current_progress": len(self.played_sequence),
+                        "streak": self.streak,
+                        "total_required": self.total_required,
+                        "played_sequence": self.played_sequence.copy()
+                    })
+                else:
+                    self.mqtt_client.push_update({
+                        "puzzle_id": self.id,
+                        "play": {"track": track_name, "code": song, "url": f"/static/{rel_path_full}"},
+                        "current_progress": len(self.played_sequence),
+                        "streak": self.streak,
+                        "total_required": self.total_required,
+                        "played_sequence": self.played_sequence.copy()
+                    })
 
 class Puzzle5(PuzzleBase):
     def __init__(self, mqtt_client, puzzle_id):
