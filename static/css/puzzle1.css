@@ -101,7 +101,7 @@ body {
 
 #solved-container {
     margin-bottom: 20px;
-    font-size: 1.2em; /* Adjusted font size */
+    font-size: 2em; /* was 1.2em */
     color: green;
     text-align: center; /* Adjusted text alignment */
     position: absolute;
@@ -111,7 +111,7 @@ body {
     right: auto;
     margin: 0;
     width: auto;
-    max-width: 90%;
+    max-width: 95%; /* was 90% */
     white-space: nowrap;
 }
 
@@ -119,10 +119,10 @@ body {
     display: inline-block; /* Make the solved operation as wide as its content */
     font-weight: bold; /* Make the solved text bold */
     margin: 10px 15px; /* Add spacing between solved items */
-    padding: 5px 10px; /* Add padding around the text */
+    padding: 8px 16px; /* was 5px 10px */
     background: green; /* Remove the green background */
     color: white; /* Green tick color */
-    font-size: 2em; /* Ensure the font size matches incorrect operations */
+    font-size: 2.5em; /* was 2em */
     text-align: center;
     border-radius: 8px; /* Optional: Rounded corners for consistency */
     white-space: nowrap;
@@ -132,10 +132,10 @@ body {
     display: inline-block; /* Make the incorrect operation as wide as its content */
     font-weight: bold; /* Make the incorrect text bold */
     margin: 10px 15px; /* Add spacing between incorrect items */
-    padding: 5px 10px; /* Add padding around the text */
+    padding: 8px 16px; /* was 5px 10px */
     background: red; /* Red background for incorrect operations */
     color: white; /* White text color */
-    font-size: 2em; /* Ensure the font size matches correct operations */
+    font-size: 2.5em; /* was 2em */
     border-radius: 8px; /* Rounded corners for consistency */
     white-space: nowrap;
 }
@@ -143,13 +143,13 @@ body {
 #solved-container .message {
     display: inline-block;
     margin: 10px 15px;
-    padding: 6px 12px;
+    padding: 8px 16px; /* was 6px 12px */
     border-radius: 8px;
     font-weight: bold;
     white-space: nowrap;
     background: none;      /* remove background */
     color: #ff3b3b;        /* red text */
-    font-size: 3em; /* bigger message */
+    font-size: 2.5em; /* was 3em */
     line-height: 1.1;
 }
 
@@ -215,8 +215,8 @@ body {
 
 /* Ensure operation boxes keep consistent size even when content changes */
 .op {
-    font-size: 2em; /* Increase font size */
-    padding: 10px 15px; /* Add more padding */
+    font-size: 3.5em; /* Increase font size */
+    padding: 10px 5px; /* Add more padding */
     border: 3px solid #ff66cc;    /* was 1px */
     background: #7fd0ff;          /* light blue like the timer */
     color: #000;                   /* make +, = and numbers black */
@@ -241,6 +241,7 @@ body {
     background: #2e7d32;  /* green */
     color: #fff;          /* white text */
     font-weight: 700;
+    font-size: 3.5em;
     /* Keep same dimensions as .op (no overrides to width/height/padding) */
 }
 
