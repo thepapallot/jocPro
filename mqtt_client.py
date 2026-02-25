@@ -63,8 +63,13 @@ class Puzzle1(PuzzleBase):
             self.mqtt_client.push_update({
                 "operations": self.operations_with_metadata.copy(),
                 "puzzle_id": self.id,
-                "round": self.round
+                "round": self.round,
+                "start_timer": True
             })
+
+    def on_stop(self):
+        with self.lock:
+            None
 
     def reset(self):
         with self.lock:
@@ -1703,6 +1708,7 @@ class MQTTClient:
         self.lock = threading.Lock()
         self.update_callback = None
         self.current_puzzle_id = None
+        self.current_puzzle_index = None  # index in puzzle_order of current_puzzle_id
 
         # Puzzle registry
         self.puzzles = {}
@@ -1804,3 +1810,8 @@ class MQTTClient:
                     puzzle.on_timer_expired()
                 else:
                     puzzle.reset()
+
+    def set_current_sequence_index(self, index):
+        with self.lock:
+            if 0 <= index <= len(self.puzzle_order):
+                self.current_puzzle_index = index

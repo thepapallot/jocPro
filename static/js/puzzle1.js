@@ -134,7 +134,10 @@
 
     function handleUpdate(data) {
         try {
-            const data = JSON.parse(event.data);
+            // data is already a parsed object - remove the JSON.parse(event.data) line
+            if (!data || typeof data !== 'object') return;
+            if (data.keep_alive) return; // ignore keep-alive messages
+
             console.log("Received data from state_queue:", data); // Debugging log
 
             // Ensure only puzzle 1 data processed
@@ -147,15 +150,7 @@
 
                 console.log("Puzzle 1 completed."); // Debugging log
                 clearInterval(timerInterval); // Stop the timer
-                /*const completedMessage = document.createElement('div');
-                completedMessage.id = 'puzzle-completed-message';
-                completedMessage.textContent = "Puzzle 1 completed";
-                completedMessage.style.fontSize = '3em';
-                completedMessage.style.color = 'green';
-                completedMessage.style.textAlign = 'center';
-                completedMessage.style.marginTop = '20px';
-                document.body.appendChild(completedMessage);*/
-
+                timerRunning = false; // NEW: set timerRunning to false
                 // Redirect directly to Puzzle 2 after 20 seconds
                 setTimeout(() => {
                     console.log("Redirecting to Puzzle 2.");
@@ -184,6 +179,10 @@
                 solvedContainer.appendChild(msg);
                 // Play streak completed sound here (when all ops are correctly completed)
                 playEffect('fase_completada.wav');
+
+                // NEW: stop the timer
+                clearInterval(timerInterval);
+                timerRunning = false;
             }
 
             // NEW: display 5-second countdown to next round
@@ -352,44 +351,31 @@
     }
 
     function initSSE() {
-        // SSE already initialized above
         const es = new EventSource("/state_stream");
+
         es.onopen = () => {
-            // Start Puzzle 2 when SSE is connected
+            console.log("SSE connection opened.");
             fetch("/start_puzzle/1", { method: "POST" })
                 .catch(err => console.warn("Failed to start puzzle 1:", err));
         };
+
         es.onmessage = (evt) => {
             try {
+                console.log("Received SSE message:", evt.data); // Debugging log
                 const data = JSON.parse(evt.data);
-                handleUpdate(data);
+                handleUpdate(data);  // Process the received data
             } catch (e) {
                 console.warn("Bad SSE data", e);
             }
         };
 
+        es.onerror = () => {
+            console.error("SSE connection lost. Attempting to reconnect...");
+            es.close();  // Close the current connection
+            setTimeout(initSSE, 5000);  // Retry after 5 seconds
+        };
     }
 
-    
     document.addEventListener('DOMContentLoaded', initSSE);
-    
-
-    /*eventSource.onopen = function() {
-        console.log("SSE connection opened."); // Debugging log
-        loadCurrentState(); // fetch snapshot after connection
-    };*/
-
-
-
-    
-    /*=> {
-        // Fallback if SSE opens slowly
-        setTimeout(() => {
-            if (!document.querySelector('.op')) {
-                loadCurrentState();
-            }
-        }, 500);
-    });*/
-
 
 })();
