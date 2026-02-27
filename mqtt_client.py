@@ -879,7 +879,6 @@ class Puzzle5(PuzzleBase):
         self.waiting = False
 
     def on_start(self):
-        print("Hola Manola")
         with self.lock:
             self.current_round = 0
             self.round_times = {}
@@ -887,16 +886,14 @@ class Puzzle5(PuzzleBase):
             self.active_round = False
             self.waiting = True
             # Push countdown message
-            print("PRE PUSH")
             self.mqtt_client.push_update({
                 "puzzle_id": self.id,
                 "countdown_message": "Ronda empieza en 10 segundos",
-                "waiting_seconds": 10
+                "waiting_seconds": 10,
+                "objective": self.round_objectives[1],
             })
-            print("POST PUSH")
             # Schedule round 1
             self._schedule_round_start(1, delay=10)
-            print("FINAL")
 
     def reset(self):
         # Full restart identical to on_start
@@ -1043,7 +1040,8 @@ class Puzzle5(PuzzleBase):
                         self.mqtt_client.push_update({
                             "puzzle_id": self.id,
                             "countdown_message": f"Ronda {next_round} empieza en 10 segundos",
-                            "waiting_seconds": 10
+                            "waiting_seconds": 10,
+                            "objective": self.round_objectives[round_number + 1],
                         })
                         self._schedule_round_start(next_round, delay=10)  # changed from 3 to 10
                 else:
@@ -1053,7 +1051,8 @@ class Puzzle5(PuzzleBase):
                     self.mqtt_client.push_update({
                         "puzzle_id": self.id,
                         "countdown_message": f"Ronda {round_number} reinicia en 9 segundos",
-                        "waiting_seconds": 9
+                        "waiting_seconds": 9,
+                        "objective": self.round_objectives[round_number]
                     })
                     self._schedule_round_start(round_number, delay=9)
         

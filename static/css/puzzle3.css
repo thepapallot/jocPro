@@ -118,12 +118,12 @@ body {
 
 /* Player status at top */
 #player-status {
-    display: flex;
-    gap: 10px; /* increased from 6px */
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, auto); /* exactly 5 per row */
+    gap: 10px;
+    justify-content: center;
     align-items: center;
-    justify-content: center; /* center chips horizontally */
-    margin: 20px 30px 50px 30px;
+    margin: 20px 30px 10px 30px;
     padding: 8px 0;
 }
 
@@ -145,7 +145,7 @@ body {
 }
 
 #question-text {
-    font-size: 50px;
+    font-size: 70px;
     font-weight: 600;
     margin: 0; /* remove margin for true centering */
     color: #fff; /* white */
@@ -174,8 +174,8 @@ body {
     grid-template-rows: auto auto auto; /* 3 rows */
     gap: 15px; /* spacing between cells */
     flex: 1; /* take remaining space */
-    margin: 50px 400px;
-    overflow-y: auto;
+    margin: 30px 300px;
+    /*overflow-y: auto;*/
 }
 
 .answer-row {
@@ -197,25 +197,25 @@ body {
 }
 .answer-text {
     flex: 1;
-    font-size: 40px;
+    font-size: 55px;
     color: #fff; /* white */
 }
 .answer-row.correct { background: #1f5530; border-color: #2fa860; }
 .answer-row.wrong { background: #552020; border-color: #a82f2f; }
 
 .player-chip {
-    width: auto; /* was 36px */
-    min-width: 80px; /* accommodate "Caja N" */
-    height: 40px; /* slightly taller */
-    padding: 0 10px; /* add horizontal padding */
-    border-radius: 6px;
+    width: auto;
+    min-width: 140px; /* was 80px */
+    height: 70px; /* was 40px */
+    padding: 0 18px; /* was 0 10px */
+    border-radius: 8px; /* was 6px */
     background: #222;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 35px; /* larger font */
-    border: 2px solid #1a1a1a; /* black metal */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.6); /* metallic depth */
+    font-size: 50px; /* was 35px */
+    border: 2px solid #1a1a1a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
     color: #888;
 }
 .player-chip.done { background: #28602a; border-color: #3ecb54; color: #fff; }

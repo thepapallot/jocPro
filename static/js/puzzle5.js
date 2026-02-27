@@ -81,6 +81,13 @@
         }
     }
 
+    function showObjectiveText(objective) {
+        if (objective !== undefined && objective !== null) {
+            roundObjectives = objective; // update local state
+        }
+        objectiveEl.textContent = `OBJETIVO: ${roundObjectives} sec`;
+    }
+
     function updateStreak(round) {
         if (streakEl && round) {
             streakEl.textContent = `${round}/3`;
@@ -165,8 +172,37 @@
                 lastRoundResult = null;
             }
             
-            // NOW hide boxes and show countdown
-            showCountdownMessage(d.countdown_message, d.waiting_seconds);
+            showObjectiveText(d.objective);  // show objective before countdown
+
+            // Show objective + countdown together
+            const objectiveText = `OBJETIVO: ${roundObjectives} sec`;
+            playersSection.style.display = 'none';
+            errorSection.style.display = 'none';
+
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+
+            const baseMessage = (d.countdown_message || '').replace(/\d+\s*segundos?/, '').trim() || d.countdown_message || '';
+
+            if (d.waiting_seconds && d.waiting_seconds > 0) {
+                let remaining = d.waiting_seconds;
+                objectiveEl.textContent = `${objectiveText}\n\n${baseMessage} ${remaining} segundo${remaining !== 1 ? 's' : ''}`;
+                countdownInterval = setInterval(() => {
+                    remaining = Math.max(0, remaining - 1);
+                    if (remaining > 0) {
+                        objectiveEl.textContent = `${objectiveText}\n\n${baseMessage} ${remaining} segundo${remaining !== 1 ? 's' : ''}`;
+                        playSound(BEEP_COUNTDOWN_SOUND_URL);
+                    } else {
+                        clearInterval(countdownInterval);
+                        countdownInterval = null;
+                    }
+                }, 1000);
+            } else {
+                objectiveEl.textContent = `${objectiveText}\n\n${d.countdown_message}`;
+            }
+
             return;
         }
 

@@ -3,7 +3,7 @@
     const questionTextEl = document.getElementById('question-text');
     const answerAreaEl = document.getElementById('answer-area'); // was answersEl inside question-area
     const playerStatusEl = document.getElementById('player-status');
-    const feedbackEl = document.getElementById('feedback'); // ADD THIS LINE
+    //const feedbackEl = document.getElementById('feedback'); // ADD THIS LINE
     // Preload boto.wav
     const btnSoundEl = document.getElementById('btn-sound');
 
@@ -92,8 +92,8 @@
             answerAreaEl.appendChild(row); // append to answer-area
         });
         streakEl.textContent = `${streak + 1}/${target}`; // show current question number
-        feedbackEl.textContent = "";
-        feedbackEl.className = "";
+        //feedbackEl.textContent = "";
+        //feedbackEl.className = "";
         resetPlayerChips(answeredPlayers); // Reset all chip styling first
     }
 
@@ -102,20 +102,20 @@
     }
 
     function showWrong(player, answer, expected) {
-        feedbackEl.className = 'err';
-        feedbackEl.textContent = `Se ha encontrado al menos una respuesta incorrecta. Reseteando preguntas.`;
+        //feedbackEl.className = 'err';
+        //feedbackEl.textContent = `Se ha encontrado al menos una respuesta incorrecta. Reseteando preguntas.`;
     }
 
     function showQuestionComplete(streak, target) {
-        feedbackEl.className = 'ok';
-        feedbackEl.textContent = `Pregunta completada correctamente!`;
+        //feedbackEl.className = 'ok';
+        //feedbackEl.textContent = `Pregunta completada correctamente!`;
     }
 
     function showSolved() {
         // Play puzzle completion sound
         playSound(PUZZLE_COMPLETE_SOUND_URL);
-        feedbackEl.className = 'ok';
-        feedbackEl.textContent = 'Nivel superado!';
+        //feedbackEl.className = 'ok';
+        //feedbackEl.textContent = 'Nivel superado!';
         setTimeout(() => {
             window.location.href = '/puzzleSuperat/3';
         }, 1200);
@@ -150,15 +150,14 @@
         if (success) {
             // Play correct sound and block 500ms to hear it well
             playSoundAndBlock(CORRECT_SOUND_URL, 500);
-            feedbackEl.className = 'ok';
-            feedbackEl.textContent = `Respuestas correctas! ${streak}/${target}`;
+            //feedbackEl.className = 'ok';
+            //feedbackEl.textContent = `Respuestas correctas! ${streak}/${target}`;
         } else {
             // Play incorrect sound and block 500ms to hear it well
             playSoundAndBlock(INCORRECT_SOUND_URL, 500);
-            feedbackEl.className = 'err';
-            feedbackEl.textContent = `Algunas respuestas incorrectas. Reseteando Preguntas.`;
+            //feedbackEl.className = 'err';
+            //feedbackEl.textContent = `Algunas respuestas incorrectas. Reseteando Preguntas.`;
         }
-        setStreak(streak, target);
     }
 
     function handleUpdate(data) {
@@ -171,6 +170,7 @@
                 data.answered_players || [],
                 data.answered_map || {}
             );
+            setStreak(streak, target);
         }
         if (data.player_answer) {
             updatePlayerAnswered(data.player_answer.player);
@@ -218,8 +218,5 @@
     document.addEventListener('DOMContentLoaded', () => {
         initPlayers();
         initSSE();
-        /*setTimeout(() => {
-            if (!questionTextEl.textContent) loadSnapshot();
-        }, 700);*/
     });
 })();

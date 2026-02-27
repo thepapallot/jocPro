@@ -27,6 +27,8 @@
         const nextPuzzleIndexStr = "{{ idx_puzzle_id }}"; // current (1-based) solved puzzle position
         const currentIndex = nextPuzzleIndexStr ? parseInt(nextPuzzleIndexStr, 10) : null;
         const nextPuzzleIndex = (currentIndex === null || Number.isNaN(currentIndex)) ? null : (currentIndex + 1);
+        const isFinal = {{ 'true' if final else 'false' }};
+        const provaFinal = {{ 'true' if prova_final else 'false' }};
         console.log("Current puzzle index:", currentIndex);
         console.log("Next puzzle index:", nextPuzzleIndex);
         // Request fullscreen when the user clicks on the video
@@ -43,6 +45,13 @@
         video.onended = function() {
             if (nextPuzzleIndex === null || Number.isNaN(nextPuzzleIndex)) {
                 window.location.href = "{{ url_for('welcome') }}?redirect_flag=start";
+            } else if (isFinal) {
+                if (provaFinal) {
+                    const indexFinal = -1;
+                    window.location.href = "{{ url_for('welcome') }}?redirect_flag=indexFinal";
+                } else {
+                    window.location.href = "{{ url_for('final') }}";
+                }
             } else {
                 window.location.href = "{{ url_for('welcome') }}?redirect_flag=puzzle" + nextPuzzleIndex;
             }

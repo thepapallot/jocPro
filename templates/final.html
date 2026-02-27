@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <title>Final</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: black;
+        }
+        video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <video id="final-video" autoplay>
+        <source src="{{ url_for('static', filename='videos/final/end.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <script>
+        const video = document.getElementById('final-video');
+        video.onended = function() {
+            video.style.display = 'none'; // hide video, leaving black background
+        };
+    </script>
+</body>
+</html>

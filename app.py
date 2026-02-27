@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, Response, jsonify, stream_with_context
 from mqtt_client import MQTTClient
-from config import PUZZLE_ORDER  # Import PUZZLE_ORDER from config.py
+from config import PUZZLE_ORDER, PROVA_FINAL  # Import PUZZLE_ORDER from config.py
 import queue
 import json
 import time
@@ -74,8 +74,14 @@ def puzzle_superat(puzzle_id):
     return render_template(
         'videoSuperat.html',
         idx_puzzle_id=idx+1,
-        final=final
+        final=final,
+        prova_final=PROVA_FINAL
     )
+
+@app.route('/final', methods=['GET', 'POST'])
+def final():
+    return render_template('final.html')
+
 
 @app.route('/puzzle/<int:puzzle_id>', methods=['GET', 'POST'])
 def puzzle(puzzle_id):

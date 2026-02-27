@@ -122,6 +122,8 @@ body {
     font-weight: bold;
     color: #7fd0ff;
     text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    white-space: pre-line; /* allows \n line breaks */
+    text-align: center;
 }
 
 /* Middle section: Player boxes */
