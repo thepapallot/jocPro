@@ -1,16 +1,14 @@
 from flask import Flask, render_template, redirect, url_for, request, Response, jsonify, stream_with_context
-from mqtt import MQTTClient, create_puzzles
+from mqtt_client import MQTTClient
 from config import PUZZLE_ORDER, PROVA_FINAL  # Import PUZZLE_ORDER from config.py
 import queue
 import json
+import time
 import threading
 
 app = Flask(__name__)
 
 mqtt_client = MQTTClient(app, puzzle_order=PUZZLE_ORDER)
-
-# Create puzzles based on PUZZLE_ORDER
-create_puzzles(mqtt_client, PUZZLE_ORDER)
 
 # Per-client SSE queues
 _sse_clients_lock = threading.Lock()
