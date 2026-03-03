@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 import threading
 
-from abc import ABC, abstractmethod
-import threading
-
 class BasePuzzle(ABC):
     def __init__(self, puzzle_id, mqtt_client):
         self.id = puzzle_id
