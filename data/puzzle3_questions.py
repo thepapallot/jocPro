@@ -1,5 +1,5 @@
 QUESTIONS = [
-    {"id": 1, "q": "¿Qué océano es el más grande?", "answers": ["Pacífico", "Índico", "Ártico", "Antártico", "Austral", "Atlántico"], "correct": 1},
+    {"id": 1, "q": "¿Qué ramon es el más grande?", "answers": ["Pacífico", "Índico", "Ártico", "Antártico", "Austral", "Atlántico"], "correct": 1},
     {"id": 2, "q": "¿En qué año llegó el ser humano a la Luna?", "answers": ["1965", "1967", "1968", "1969", "1971", "1973"], "correct": 4},
     {"id": 3, "q": "¿Cuál es el país más grande del mundo por superficie?", "answers": ["Canadá", "China", "Estados Unidos", "Brasil", "Rusia", "Australia"], "correct": 5},
     {"id": 4, "q": "¿Quién pintó La noche estrellada?", "answers": ["Monet", "Picasso", "Van Gogh", "Dalí", "Rembrandt", "Goya"], "correct": 3},
