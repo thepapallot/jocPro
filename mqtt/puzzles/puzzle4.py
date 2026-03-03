@@ -129,22 +129,99 @@ class Puzzle4(BasePuzzle):
         with self.lock:
             self.playing_sample = False
             self.validating = False
-            
+
+
     def get_state(self):
-        """Return current puzzle state"""
         with self.lock:
-            return {
-                "puzzle_id": self.id,
-                "streak": self.streak,
+            state = {
                 "total_required": self.total_required,
-                "storing": self.storing,
-                "current_progress": self.current_progress,
-                "played_sequence": self.played_sequence.copy(),
-                "history": self.history[-25:],
-                "puzzle_solved": self.solved,
-                "playing_sample": self.playing_sample
+                "storing": self.storing, "current_progress": self.current_progress,
+                "played_sequence": self.played_sequence.copy(), "history": self.history[-25:],
+                "puzzle_solved": self.solved, "playing_sample": self.playing_sample
             }
-            
+            is_correct = self.played_sequence == self._get_current_required_order()
+
+            if is_correct:
+                self.streak += 1
+                temp_sequence = self.played_sequence.copy()
+                self.played_sequence = []
+                self.storing = False
+                self.current_progress = 0
+                self.playing_sample = True
+                self.validating = False
+                if self.streak >= self.total_required:
+                    # Show "Nivel Completado" message
+                    self._push({
+                        "show_completion": True,
+                        "streak": self.streak,
+                        "total_required": self.total_required
+                    })
+                    
+                    # Wait 10 seconds showing completion message
+                    time.sleep(5)
+                    
+                    # Then solve the puzzle
+                    self.solved = True
+                    self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+                    self._push({
+                        "puzzle_solved": True,
+                        "streak": self.streak,
+                        "total_required": self.total_required,
+                        "played_sequence": temp_sequence,
+                        "play_final": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_folder}/correcta.mp3"}
+                    })
+                else:
+                    def _later():
+                        time.sleep(1)
+                        self._push({
+                                "sample_countdown_seconds": 5,"streak": -1
+                            })
+                        time.sleep(2)
+                        self._push({
+                                "sample_countdown_seconds": 4,"streak": -1
+                            })
+                        time.sleep(2)
+                        self._push({
+                                "sample_countdown_seconds": 3,"streak": -1
+                            })
+                        time.sleep(2)
+                        self._push({
+                                "sample_countdown_seconds": 2,"streak": -1,
+                            })
+                        time.sleep(2)
+                        self._push({
+                                "sample_countdown_seconds": 1,"streak": -1,
+                            })
+                        time.sleep(2)
+                        with self.lock:
+                            if self.solved:
+                                return
+                            # Push sample start after delay
+                            self._push({
+                                "streak": -1, "total_required": 2, "storing": False,
+                                "current_progress": 0, "played_sequence": [], "playing_sample": True,
+                                "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"}, "listening": True
+                            })
+                            # Start unblock timer after pushing
+                            self._play_sample_with_delay(self.streak2_sample, self.streak2_sample_duration)
+                    threading.Thread(target=_later, daemon=True).start()
+
+            else:
+                # Wrong sequence
+                self.current_progress = 0
+                self.played_sequence = []
+                self.validating = False
+                self._push({
+                    "streak": self.streak,
+                    "total_required": self.total_required,
+                    "current_progress": 0,
+                    "played_sequence": []
+                })
+
+
+            # Song has finished, so do next step
+            return state
+
     def handle_message(self, parts):
         """Handle MQTT message: P4,button,song"""
         if len(parts) < 2:
@@ -284,82 +361,89 @@ class Puzzle4(BasePuzzle):
                     "played_sequence": self.played_sequence.copy()
                 })
                 
-    def _handle_validation(self, is_correct):
-        """Handle sequence validation result"""
-        if is_correct:
-            with self.lock:
-                self.streak += 1
-                temp_sequence = self.played_sequence.copy()
-                self.played_sequence = []
-                self.storing = False
+    def handle_message(self, parts):
+        if len(parts) < 2: return
+        try:
+            button = int(parts[1])
+            song = int(parts[2]) if len(parts) >= 3 else 0
+        except ValueError: return
+        
+        with self.lock:
+            if self.solved: return
+            
+            if self.playing_sample:
+                print(f"[Puzzle4] Ignoring input while playing sample")
+                return
+            
+            # NEW: Block input during validation
+            if self.validating:
+                print(f"[Puzzle4] Ignoring input during validation")
+                return
+            
+            if button == 4:
+                if self.streak == 0:
+                    self._push({"play_mostra": True, "url": f"/static/{self.AUDIO_SUBDIR}{self.streak1_sample}"})
+                elif self.streak == 1:
+                    self._push({"play_mostra": True, "url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"})
+                    
+                return
+
+            if button == 3:
+                self.storing = True
                 self.current_progress = 0
-                self.playing_sample = True
-                self.validating = False
+                self.played_sequence = []
+                self._push({"storing": True, "streak": self.streak, "total_required": self.total_required, "current_progress": 0, "played_sequence": []})
+                return
+            
+            if button == 1:
+                self.storing = False
+                self._push({"storing": False, "streak": self.streak, "total_required": self.total_required})
+                return
+            
+            if button == 2:
+                self.current_progress = 0
+                self.played_sequence = []
+                self._push({"reset_attempt": True, "streak": self.streak, "total_required": self.total_required, "current_progress": 0, "played_sequence": []})
+                return
+            
+            if button == 0:
+                track_map = self._get_current_track_map()
+                required_order = self._get_current_required_order()
+                if song not in track_map: return
+                track_name, rel_path = track_map[song]
+                rel_path_full = f"{self.AUDIO_SUBDIR}{rel_path}"
+                full_fs_path = os.path.join(self.mqtt_client.app.static_folder, rel_path_full)
+                if not os.path.exists(full_fs_path):
+                    print(f"[Puzzle4] Audio file NOT FOUND: {full_fs_path}")
+                self.history.append(track_name)
                 
-                # Check if puzzle solved
-                if self.streak >= self.total_required:
-                    # Show completion message
-                    self._push({
-                        "show_completion": True,
-                        "streak": self.streak,
-                        "total_required": self.total_required
-                    })
+                if self.storing:
+                    if len(self.played_sequence) < len(required_order):
+                        self.played_sequence.append(str(song))
                     
-                    time.sleep(5)
-                    
-                    # Solve puzzle
-                    self.solved = True
-                    self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+                    # Check if sequence is complete (all boxes filled)
+                    if len(self.played_sequence) >= len(required_order):
+                        # Mark as validating to block further input
+                        self.validating = True
+                        # Validate
+                        is_correct = self.played_sequence == required_order
+                        print(f"[Puzzle4] Validating: Expected={required_order}, Got={self.played_sequence}, Correct={is_correct}")
+
+                # Always push play event
+                if (self.validating):
                     self._push({
-                        "puzzle_solved": True,
+                        "sequence_correct": is_correct,
+                        "play": {"track": track_name, "code": song, "url": f"/static/{rel_path_full}"},
+                        "current_progress": len(self.played_sequence),
                         "streak": self.streak,
                         "total_required": self.total_required,
-                        "played_sequence": temp_sequence,
-                        "play_final": {
-                            "url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_folder}/correcta.mp3"
-                        }
+                        "played_sequence": self.played_sequence.copy()
                     })
                 else:
-                    # Countdown to next streak sample
-                    for sec in [5, 4, 3, 2, 1]:
-                        time.sleep(2)
-                        with self.lock:
-                            self._push({
-                                "sample_countdown_seconds": sec,
-                                "streak": -1
-                            })
-                            
-                    time.sleep(2)
-                    
-                    # Play streak 2 sample
-                    with self.lock:
-                        if self.solved:
-                            return
-                        self._push({
-                            "streak": -1,
-                            "total_required": 2,
-                            "storing": False,
-                            "current_progress": 0,
-                            "played_sequence": [],
-                            "playing_sample": True,
-                            "sample_song": {
-                                "url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"
-                            },
-                            "listening": True
-                        })
-                        self._play_sample_with_delay(
-                            self.streak2_sample,
-                            self.streak2_sample_duration
-                        )
-        else:
-            # Wrong sequence - reset
-            with self.lock:
-                self.current_progress = 0
-                self.played_sequence = []
-                self.validating = False
-                self._push({
-                    "streak": self.streak,
-                    "total_required": self.total_required,
-                    "current_progress": 0,
-                    "played_sequence": []
-                })
+                    self._push({
+                        "play": {"track": track_name, "code": song, "url": f"/static/{rel_path_full}"},
+                        "current_progress": len(self.played_sequence),
+                        "streak": self.streak,
+                        "total_required": self.total_required,
+                        "played_sequence": self.played_sequence.copy()
+                    })
