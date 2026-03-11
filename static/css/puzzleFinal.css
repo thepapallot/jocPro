@@ -1,0 +1,117 @@
+@font-face {
+    font-family: 'Computer';
+    src: url('/static/fonts/Computer.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: url('/static/images/puzzleFinal/PFinalfons.png') center center / cover no-repeat;
+}
+
+#bottom-area {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+}
+
+#puzzle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+#fase-gif {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    z-index: 2;
+}
+
+#timer-overlay {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    z-index: 3;
+    display: none;
+
+    font-family: 'Computer', monospace;
+    font-size: 20em;
+    color: #00ffe7;
+    text-shadow:
+        0 0 8px #0066ff,
+        0 0 20px #0066ff,
+        0 0 40px #0066ff;
+    letter-spacing: 10px;
+
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+#timer-display {
+    font-size: 1.5em;
+    color: white;
+    font-family: monospace;
+}
+
+#wrong-img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    z-index: 4;
+}
+
+#good-img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    z-index: 4;
+}
+
+#wait-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 5;
+}
+
+#wait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#countdown-number {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15em;
+    font-family: monospace;
+    font-weight: bold;
+    color: #00ffe7;
+    text-shadow:
+        0 0 8px #0066ff,
+        0 0 20px #0066ff,
+        0 0 40px #0066ff;
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle Final</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzleFinal.css') }}">
+</head>
+<body>
+    <div id="bottom-area">
+        <div id="puzzle-container">
+            <img id="fase-gif" src="" alt="" style="display:none;">
+            <img id="wrong-img" src="{{ url_for('static', filename='images/puzzleFinal/wrong.png') }}" alt="wrong" style="display:none;">
+            <img id="good-img" src="{{ url_for('static', filename='images/puzzleFinal/good.png') }}" alt="good" style="display:none;">
+            <div id="wait-screen" style="display:none;">
+                <img id="wait-img" src="{{ url_for('static', filename='images/puzzleFinal/wait.png') }}" alt="wait">
+                <div id="countdown-number"></div>
+            </div>
+        </div>
+        <div id="timer-overlay"></div>
+    </div>
+    <script src="{{ url_for('static', filename='js/puzzleFinal.js') }}"></script>
+</body>
+</html>

@@ -33,9 +33,12 @@ def welcome():
         raw = redirect_flag[len('puzzle'):]
         try:
             idx = int(raw)
-               
+
         except ValueError:
             pass
+    #elif redirect_flag == 'indexFinal':
+     #   idx = -1
+
     return render_template(
         'welcome.html',
         redirect_flag=redirect_flag,
@@ -80,28 +83,37 @@ def puzzle_superat(puzzle_id):
         prova_final=PROVA_FINAL
     )
 
+@app.route('/videoJocFinal', methods=['GET','POST'])
+def play_joc_final(): 
+    return render_template('videojocFinal.html')
+
 @app.route('/final', methods=['GET', 'POST'])
 def final():
     return render_template('final.html')
 
 
+@app.route('/puzzle/final', methods=['GET', 'POST'])
+def puzzle_final():
+    print("STARTING PUZZLE FINAL")
+    mqtt_client.stop_current_puzzle()
+    #mqtt_client.send_message("FROM_FLASK", f"PFinalStart")
+    mqtt_client.set_current_sequence_index(-1)
+    return render_template(f'puzzleFinal.html', current_level=-1)
+
 @app.route('/puzzle/<int:puzzle_id>', methods=['GET', 'POST'])
 def puzzle(puzzle_id):
     print("STARTING PUZZLE", puzzle_id)
+    
     # Ensure puzzle_id is in configured order
     if puzzle_id not in PUZZLE_ORDER:
         return "Invalid puzzle", 404
-    # Stop any running puzzle and start the requested one (handles F5 or revisits)
+    
     mqtt_client.stop_current_puzzle()
-    #mqtt_client.start_puzzle(puzzle_id)
-    # Keep MQTT start message for hardware side-effects if needed
+    
     puzzle_index = PUZZLE_ORDER.index(puzzle_id) + 1  # 1-based sequence position
     mqtt_client.set_current_sequence_index(puzzle_index)
     mqtt_client.send_message("FROM_FLASK", f"P{puzzle_id}Start")
-    #if puzzle_id == 1:
-        #push_state_update({"start_timer": True, "puzzle_id": puzzle_id})
 
-    print(f"Rendering puzzle{puzzle_id}.html with current_level={mqtt_client.current_puzzle_index}")    
     return render_template(f'puzzle{puzzle_id}.html', current_level=mqtt_client.current_puzzle_index)
 
 @app.route('/puzzle4_sample_finished', methods=['POST'])
@@ -125,6 +137,11 @@ def start_puzzle_route(puzzle_id):
     mqtt_client.start_puzzle(puzzle_id)
     return jsonify({"status": "started", "puzzle_id": puzzle_id}), 200
 
+@app.route('/start_puzzle_final', methods=['POST'])
+def start_puzzle_final():
+    #mqtt_client.send_message("FROM_FLASK", f"PFinalStart")
+    mqtt_client.start_puzzle(-1)
+    return jsonify({"status": "started", "puzzle_id": "final"}), 200
 
 @app.route('/restart_puzzle/<int:puzzle_id>', methods=['POST'])
 def restart_puzzle_route(puzzle_id):

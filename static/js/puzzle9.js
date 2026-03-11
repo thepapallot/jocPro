@@ -38,15 +38,6 @@
         }
     }
 
-    function loadSnapshot() {
-        if (snapshotLoaded) return;
-        snapshotLoaded = true;
-        fetch('/current_state')
-            .then(r => r.json())
-            .then(handleUpdate)
-            .catch(() => {});
-    }
-
     function initSSE() {
         const es = new EventSource('/state_stream');
         es.onmessage = evt => {

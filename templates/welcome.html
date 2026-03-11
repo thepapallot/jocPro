@@ -52,8 +52,15 @@
         const overlayImg = document.getElementById('overlay');
         const overlayAudio = document.getElementById('overlay-audio');
 
-        // If coming from a puzzle redirect, restore original behavior: POST to /videoPuzzles/<idx> on first click
-        if (redirectFlag && redirectFlag.startsWith('puzzle') && puzzleIdx !== null) {
+        if (redirectFlag === 'indexFinal') {
+            document.body.addEventListener('click', () => {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/videoJocFinal`;
+                document.body.appendChild(form);
+                form.submit();
+            });
+        } else if (redirectFlag && redirectFlag.startsWith('puzzle') && puzzleIdx !== null) {    
             document.body.addEventListener('click', () => {
                 const form = document.createElement('form');
                 form.method = 'POST';

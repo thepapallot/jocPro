@@ -7,6 +7,7 @@ from .puzzles.puzzle6 import Puzzle6
 from .puzzles.puzzle7 import Puzzle7
 from .puzzles.puzzle8 import Puzzle8
 from .puzzles.puzzle9 import Puzzle9
+from .puzzles.puzzleFinal import PuzzleFinal
 
 
 PUZZLE_CLASSES = {
@@ -29,4 +30,6 @@ def create_puzzles(mqtt_client, puzzle_order):
             puzzle = PUZZLE_CLASSES[puzzle_id](mqtt_client)
             mqtt_client.register_puzzle(puzzle)
             puzzles.append(puzzle)
+    mqtt_client.register_puzzle(PuzzleFinal(mqtt_client))  # Register final puzzle with ID -1
+    puzzles.append(PuzzleFinal)
     return puzzles
