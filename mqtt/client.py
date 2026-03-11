@@ -47,7 +47,7 @@ class MQTTClient:
                 self.stop_current_puzzle()
                 self.current_puzzle_id = -1    
                 self.puzzles[-1].reset()
-                self.send_message("FROM_FLASK", f"PFinalStart")
+                self.send_message("FROM_FLASK", f"P-1Start")
             else:
                 if puzzle_id not in self.puzzles:
                     return
