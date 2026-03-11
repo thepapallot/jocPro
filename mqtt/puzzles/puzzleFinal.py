@@ -115,6 +115,7 @@ class PuzzleFinal(BasePuzzle):
             print(f"Streak {self.current_streak} solved!")
 
             if self.current_streak >= self.streaks:
+                self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
                 time.sleep(3)  # Brief pause before declaring puzzle solved
                 self.solved = True
                 self._push({
