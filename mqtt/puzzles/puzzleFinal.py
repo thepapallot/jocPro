@@ -167,6 +167,8 @@ class PuzzleFinal(BasePuzzle):
                 time.sleep(5)
                 with self.lock:
                     self.current_giff = self.get_giff()
+                    if self.current_streak == 4:
+                        self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}Color{self.current_giff}")
                     self.solved = False
                     self.processing_wrong_result = False
                     self.box_states = {}
