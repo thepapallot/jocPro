@@ -126,6 +126,8 @@ class PuzzleFinal(BasePuzzle):
                 time.sleep(4)  # Brief pause before next round
                 self.current_streak += 1
                 self.current_giff = self.get_giff()
+                if self.current_streak == 4:
+                    self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}Color{self.current_giff}")
                 self.box_states = {}
                 self._push({
                     "puzzle_id": self.id,
