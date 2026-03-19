@@ -82,7 +82,7 @@ class Puzzle2(BasePuzzle):
             })
             
             # Schedule alarm with random delay 2-4 minutes
-            alarm_delay = random.randint(120, 240)
+            alarm_delay = random.randint(20, 40)
             print(f"[Puzzle2] Scheduling alarm mode in {alarm_delay} seconds")
             self.alarm_timer = threading.Timer(alarm_delay, self._enter_alarm_mode)
             self.alarm_timer.start()
@@ -137,8 +137,8 @@ class Puzzle2(BasePuzzle):
                 
                 self._push({"alarm_mode": True})
                 
-                # Schedule exit after 60-150s
-                alarm_duration = random.randint(60, 150)
+                # Schedule exit after 20-40s
+                alarm_duration = random.randint(20, 40)
                 print(f"[Puzzle2] Scheduling alarm exit in {alarm_duration} seconds")
                 self.alarm_timer = threading.Timer(alarm_duration, self._exit_alarm_mode)
                 self.alarm_timer.start()
@@ -172,8 +172,8 @@ class Puzzle2(BasePuzzle):
                 
                 self._push({"alarm_mode": False})
                 
-                # Schedule next alarm entry after 120-240s
-                alarm_delay = random.randint(120, 240)
+                # Schedule next alarm entry after 20-40s
+                alarm_delay = random.randint(20, 40)
                 print(f"[Puzzle2] Scheduling next alarm mode in {alarm_delay} seconds")
                 self.alarm_timer = threading.Timer(alarm_delay, self._enter_alarm_mode)
                 self.alarm_timer.start()

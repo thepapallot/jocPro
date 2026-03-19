@@ -261,7 +261,7 @@ class Puzzle4(BasePuzzle):
             if button == 3:
                 self.storing = True
                 self.current_progress = 0
-                self.played_sequence = []
+                #self.played_sequence = []
                 self._push({
                     "storing": True,
                     "streak": self.streak,
@@ -361,6 +361,8 @@ class Puzzle4(BasePuzzle):
                     "played_sequence": self.played_sequence.copy()
                 })
                 
+
+    ''' 
     def handle_message(self, parts):
         if len(parts) < 2: return
         try:
@@ -407,6 +409,7 @@ class Puzzle4(BasePuzzle):
                 return
             
             if button == 0:
+
                 track_map = self._get_current_track_map()
                 required_order = self._get_current_required_order()
                 if song not in track_map: return
@@ -447,3 +450,4 @@ class Puzzle4(BasePuzzle):
                         "total_required": self.total_required,
                         "played_sequence": self.played_sequence.copy()
                     })
+    '''
