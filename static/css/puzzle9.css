@@ -56,21 +56,10 @@ body {
     margin-top: -50px; /* was -30px */
 }
 
-/* Style the top-right start image */
+/* Keep right top area aligned even without status image */
 #top-right {
     justify-content: flex-end;
     padding-right: 50px; /* NEW */
-}
-
-#p9-start {
-    max-width: 520px; /* was 420px */
-    max-height: 320px; /* was 260px */
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    user-select: none;
-    -webkit-user-drag: none;
-    margin-bottom: 30px; /* NEW: padding-like space under the image */
 }
 
 /* optional helper for cells */
@@ -98,4 +87,39 @@ body {
     color: #7fd0ff; /* light blue */
     text-shadow: 0 4px 10px rgba(0,0,0,0.6);
     letter-spacing: 2px;
+}
+
+#status-message {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    align-self: center;
+    margin: 20vh auto 0;
+    padding: 34px 64px;
+    box-sizing: border-box;
+    font-family: 'Computer', sans-serif;
+    font-size: clamp(3.2rem, 6.4vw, 7.2rem);
+    font-weight: 700;
+    color: #f9f4d1;
+    background: #061626;
+    border: 5px solid #7fd0ff;
+    border-radius: 22px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), inset 0 0 0 2px rgba(255, 255, 255, 0.12);
+    text-shadow: 0 6px 14px rgba(0, 0, 0, 0.7);
+    letter-spacing: 1px;
+    max-width: min(92vw, 1280px);
+    z-index: 20;
+}
+
+#status-message.visible {
+    display: flex;
+}
+
+#status-message.status-good {
+    color: #49e16b;
+}
+
+#status-message.status-wrong {
+    color: #ff4d4d;
 }

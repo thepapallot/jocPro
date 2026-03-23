@@ -45,11 +45,16 @@ class Puzzle9(BasePuzzle):
             if self.solved:
                 return
 
-            self.box_tokens[box] = None if token == -1 else token
+            previous_token = self.box_tokens[box]
+            new_token = None if token == -1 else token
+            self.box_tokens[box] = new_token
             status = self._compute_status_locked()
+
+            play_sound = not (new_token is None and previous_token is not None)
 
             self._push({
                 "box_update": {"box": box, "token": self.box_tokens[box]},
+                "playsound": play_sound,
                 "boxes": self.box_tokens.copy(),
                 "status": status
             })
@@ -81,7 +86,7 @@ class Puzzle9(BasePuzzle):
         return "good" if correct else "wrong"
 
     def _finish_after_delay(self):
-        time.sleep(5)
+        time.sleep(3)
         with self.lock:
             # Re-check (players could have changed tokens during the 5s)
             if self.solved:

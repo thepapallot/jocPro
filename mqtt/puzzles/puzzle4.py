@@ -261,7 +261,7 @@ class Puzzle4(BasePuzzle):
             if button == 3:
                 self.storing = True
                 self.current_progress = 0
-                #self.played_sequence = []
+                self.played_sequence = []
                 self._push({
                     "storing": True,
                     "streak": self.streak,
@@ -274,10 +274,14 @@ class Puzzle4(BasePuzzle):
             # Button 1: Stop storing
             if button == 1:
                 self.storing = False
+                self.current_progress = 0
+                self.played_sequence = []
                 self._push({
                     "storing": False,
                     "streak": self.streak,
-                    "total_required": self.total_required
+                    "total_required": self.total_required,
+                    "current_progress": 0,
+                    "played_sequence": []
                 })
                 return
                 

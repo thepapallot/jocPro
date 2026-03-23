@@ -1,8 +1,8 @@
 (function() {
-    const statusImg = document.getElementById('p9-start');
+    const statusMessage = document.getElementById('status-message');
 
     let solved = false;
-    let snapshotLoaded = false;
+    let stickyStatus = null;
 
     // Short effect player
     function playSound(url) {
@@ -11,22 +11,46 @@
     }
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+    const PUZZLE_CORRECTE_SOUND_URL = "/static/audios/effects/correcte.wav";
+    const PUZZLE_INCORRECTE_SOUND_URL = "/static/audios/effects/incorrecte.wav";
 
-    function applyStatus(status) {
-        if (!statusImg || !status) return;
-        // status is one of: start | half | wrong | good
-        statusImg.src = `/static/images/puzzle9/${status}.png`;
+    function renderStatus(status, hasBoxUpdate) {
+        if (!statusMessage || typeof status !== 'string') return;
+
+        if (status === 'good' || status === 'wrong') {
+            stickyStatus = status;
+            statusMessage.classList.add('visible');
+            statusMessage.classList.toggle('status-good', status === 'good');
+            statusMessage.classList.toggle('status-wrong', status === 'wrong');
+            statusMessage.textContent = status === 'good'
+                ? 'Token correctamente colocados'
+                : 'Token mal colocados';
+            if (status === 'good') {
+                playSound(PUZZLE_CORRECTE_SOUND_URL);
+            } else if (status === 'wrong') {
+                playSound(PUZZLE_INCORRECTE_SOUND_URL);
+            }
+            return;
+        }
+
+        if (stickyStatus && !hasBoxUpdate) {
+            return;
+        }
+
+        stickyStatus = null;
+        statusMessage.classList.remove('visible');
+        statusMessage.classList.remove('status-good', 'status-wrong');
+        statusMessage.textContent = '';
     }
 
     function handleUpdate(d) {
         if (!d || d.puzzle_id !== 9) return;
 
         if (typeof d.status === 'string') {
-            applyStatus(d.status);
+            renderStatus(d.status, Boolean(d.box_update));
         }
 
-        // Play boto.wav for each box update
-        if (d.box_update) {
+        if (d.box_update && d.playsound) {
             playSound(BTN_SOUND_URL);
         }
 
@@ -44,7 +68,7 @@
             try { handleUpdate(JSON.parse(evt.data)); } catch {}
         };
         es.onopen = () => {
-            // Start Puzzle 2 when SSE is connected
+            // Start Puzzle 9 when SSE is connected
             fetch("/start_puzzle/9", { method: "POST" })
                 .catch(err => console.warn("Failed to start puzzle 9:", err));
         };
