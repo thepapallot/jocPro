@@ -112,7 +112,7 @@ def puzzle(puzzle_id):
     
     puzzle_index = PUZZLE_ORDER.index(puzzle_id) + 1  # 1-based sequence position
     mqtt_client.set_current_sequence_index(puzzle_index)
-    mqtt_client.send_message("FROM_FLASK", f"P{puzzle_id}Start")
+    #mqtt_client.send_message("FROM_FLASK", f"P{puzzle_id}Start")
 
     return render_template(f'puzzle{puzzle_id}.html', current_level=mqtt_client.current_puzzle_index)
 
