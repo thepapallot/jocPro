@@ -1,9 +1,10 @@
 (function () {
     const COLOR_PREFIX = 'p8-color-';
-    const TOTAL_ROUNDS = 3; // NEW
+    const TOTAL_ROUNDS = 3;
     let snapshotLoaded = false;
     let symbolsOrder = [];
-    let solved = false; // NEW: prevent multiple redirects
+    let solved = false;
+    const roundCards = Array.from(document.querySelectorAll('.round-card'));
 
     function clearColorClasses(el) {
         if (!el) return;
@@ -117,6 +118,15 @@
         if (Number.isInteger(round) && round >= 1) {
             el.textContent = `${round}/${TOTAL_ROUNDS}`;
         }
+        roundCards.forEach(card => {
+            const cardRound = Number(card.dataset.roundCard);
+            card.classList.remove('is-active', 'is-complete');
+            if (round > cardRound) {
+                card.classList.add('is-complete');
+            } else if (round === cardRound) {
+                card.classList.add('is-active');
+            }
+        });
     }
 
     // Short effect player
@@ -163,7 +173,6 @@
         if (Array.isArray(d.symbols) && d.phase === 'tokens') {
             symbolsOrder = d.symbols.slice();
             renderSymbols(symbolsOrder);
-            // Play start-of-phase sound for tokens
             playSound(LLETRES_SOUND_URL);
         }
         if (d.phase === 'tokens' && d.colors) {
@@ -242,12 +251,75 @@
         const es = new EventSource('/state_stream');
         es.onmessage = evt => { try { handleUpdate(JSON.parse(evt.data)); } catch {} };
         es.onopen = () => {
-            // Start Puzzle 2 when SSE is connected
+            loadSnapshotOnce();
             fetch("/start_puzzle/8", { method: "POST" })
                 .catch(err => console.warn("Failed to start puzzle 8:", err));
         };
         es.onerror = () => {};
     }
 
-    document.addEventListener('DOMContentLoaded',initSSE);
+    function installDebugHelpers() {
+        const sampleNumbers = [18, 14, 17, 5, 20, 10, 13, 31, 35, 22];
+        const sampleSymbols = ['alpha', 'beta', 'delta', 'epsilon', 'gamma', 'lambda', 'mu', 'omega', 'pi', 'sigma'];
+        const sampleColors = {
+            alpha: 'red',
+            beta: 'yellow',
+            delta: 'green',
+            epsilon: 'blue',
+            gamma: 'white',
+            lambda: 'black',
+            mu: 'red',
+            omega: 'blue',
+            pi: 'yellow',
+            sigma: 'green'
+        };
+
+        window.puzzle8Debug = {
+            clear() {
+                handleUpdate({ puzzle_id: 8, clear: true, round: 1 });
+            },
+            numbers(round = 1) {
+                handleUpdate({ puzzle_id: 8, round, phase: 'numbers', token_numbers: sampleNumbers });
+            },
+            tokens(round = 1) {
+                handleUpdate({ puzzle_id: 8, round, phase: 'tokens', symbols: sampleSymbols, colors: sampleColors });
+            },
+            input(round = 1) {
+                handleUpdate({ puzzle_id: 8, round, phase: 'input', symbols: sampleSymbols, clear: true });
+            },
+            inputUpdate(box = 0, symbol = 'alpha', color = 'red', round = 1) {
+                handleUpdate({
+                    puzzle_id: 8,
+                    round,
+                    phase: 'input',
+                    input_update: { box, symbol, color }
+                });
+            },
+            result(success = true) {
+                handleUpdate({
+                    puzzle_id: 8,
+                    phase: 'input',
+                    input_result: {
+                        success,
+                        box_results: {
+                            0: success, 1: success, 2: success, 3: success, 4: success,
+                            5: success, 6: success, 7: success, 8: success, 9: success
+                        }
+                    }
+                });
+            },
+            demoRound1() {
+                this.clear();
+                setTimeout(() => this.numbers(1), 500);
+                setTimeout(() => this.tokens(1), 1800);
+                setTimeout(() => this.input(1), 3600);
+            }
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateStreak(1);
+        installDebugHelpers();
+        initSSE();
+    });
 })();

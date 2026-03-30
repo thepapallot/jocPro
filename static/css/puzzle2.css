@@ -1,170 +1,408 @@
-/* Add Computer font (OTF) */
-@font-face {
-    font-family: 'Computer';
-    src: url('/static/fonts/Computer.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Computer';
-    src: url('/static/fonts/Computer.otf') format('opentype');
-    font-weight: 700; /* use same file if no bold variant */
-    font-style: normal;
-    font-display: swap;
+:root {
+    --p2-panel: rgba(7, 16, 31, 0.84);
+    --p2-panel-soft: rgba(7, 16, 31, 0.62);
+    --p2-line: rgba(69, 230, 255, 0.22);
+    --p2-line-strong: rgba(69, 230, 255, 0.44);
+    --p2-label: rgba(186, 235, 255, 0.78);
+    --p2-purple: rgba(255, 89, 214, 0.7);
+    --p2-pink-soft: rgba(255, 89, 214, 0.16);
+    --p2-blue: #67d9ff;
+    --p2-cyan-soft: rgba(69, 230, 255, 0.18);
+    --p2-complete: #7ff7ff;
+    --p2-complete-soft: rgba(255, 89, 214, 0.28);
+    --p2-complete-deep: rgba(189, 94, 255, 0.92);
+    --p2-complete-glow: rgba(210, 112, 255, 0.34);
+    --p2-red: #d32f2f;
 }
 
-html, body { height:100vh; }
-body {
-    margin: 0;
-    font-family: 'Computer',sans-serif;
-    background: none; /* moved to #puzzle2-container */
-    overflow: hidden;
+.hud-label {
+    color: rgba(234, 252, 255, 0.72);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.panel-kicker {
+    color: rgba(244, 221, 255, 0.78);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.panel-title {
+    margin: 6px 0 0;
+    color: #f3e1ff;
+    font-size: clamp(1.3rem, 2vw, 2rem);
+    line-height: 1.02;
+    text-transform: uppercase;
+    text-shadow:
+        0 0 12px rgba(220, 132, 255, 0.24),
+        0 0 24px rgba(206, 118, 255, 0.08);
+}
+
+#p2-status-hud {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 180px;
+    padding: 12px 16px 14px;
+    border: 1px solid rgba(69, 230, 255, 0.18);
+    border-radius: 18px;
+    background:
+        linear-gradient(180deg, rgba(7, 16, 31, 0.84) 0%, rgba(6, 13, 24, 0.72) 100%);
+    box-shadow:
+        0 0 24px rgba(0, 240, 255, 0.06),
+        inset 0 0 18px rgba(0, 240, 255, 0.04);
+}
+
+#p2-progress-readout {
+    font-size: clamp(1.8rem, 3vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1;
+    color: #f1fdff;
+    text-shadow:
+        0 0 10px rgba(69, 230, 255, 0.25),
+        0 0 18px rgba(69, 230, 255, 0.1);
+}
+
+#p2-status-copy {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(186, 235, 255, 0.76);
+}
+
+body.p2-alarm-active #p2-status-hud {
+    border-color: rgba(255, 123, 123, 0.38);
+    box-shadow:
+        0 0 28px rgba(255, 79, 109, 0.12),
+        inset 0 0 20px rgba(255, 79, 109, 0.07);
+}
+
+body.p2-alarm-active #p2-progress-readout,
+body.p2-alarm-active #p2-status-copy {
+    color: #ffd0d7;
+    text-shadow:
+        0 0 10px rgba(255, 79, 109, 0.22),
+        0 0 18px rgba(255, 79, 109, 0.08);
+}
+
+body.p2-solved #p2-status-hud {
+    border-color: rgba(206, 118, 255, 0.52);
+    background:
+        linear-gradient(180deg, rgba(22, 15, 44, 0.9) 0%, rgba(13, 10, 29, 0.8) 100%);
+    box-shadow:
+        0 0 32px rgba(206, 118, 255, 0.12),
+        inset 0 0 24px rgba(206, 118, 255, 0.08);
+}
+
+body.p2-solved #p2-progress-readout {
+    color: #f8e6ff;
+    text-shadow:
+        0 0 12px rgba(220, 132, 255, 0.34),
+        0 0 26px rgba(206, 118, 255, 0.14);
+}
+
+body.p2-solved #p2-status-copy {
+    color: rgba(247, 222, 255, 0.86);
 }
 
 #puzzle2-container {
-    width: 100%;
+    position: relative;
+    z-index: 2;
     height: 100%;
-    padding: 0; /* remove padding so content aligns with background divisions */
-    box-sizing: border-box;
-    background: url('/static/images/puzzle2/P2fons.png') no-repeat center center;
-    background-size: cover;
+    padding: 22px 28px 28px;
 }
 
 #puzzle2-layout {
     display: grid;
+    grid-template-columns: minmax(250px, 26vw) minmax(0, 1fr);
+    gap: 18px;
     height: 100%;
-    gap: 0; /* no gaps so areas align with background */
-    grid-template-columns: 33% 67%;
-    grid-template-rows: 20% 80%; 
-    grid-template-areas:
-        "title image"
-        "progress image";
 }
 
-/* place sections into the grid areas */
-#title-area {
-    grid-area: title;
-    display: flex;
-    align-items: center;           /* vertical alignment */
-    justify-content: space-between;/* left title, right gif */
-    padding: 8px 12px;
-}
-
-/* left title cell */
-#top-left .level-title {
-    font-family: 'Computer', sans-serif;
-    font-size: 120px;     /* adjust to fit */
-    font-weight: 700;
-    color: #7fd0ff;      /* light blue */
-    text-shadow: 0 3px 8px rgba(0,0,0,0.5);
-    letter-spacing: 1px;
-    line-height: 1;
-    white-space: nowrap;
-    padding-left: 16px; /* add some left padding */
-}
-
-/* right gif cell */
-#top-right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-#top-gif {
-    height: 225px;        /* constrained size */
-    width: auto;
-    max-height: calc(100% - 16px);
-    object-fit: contain;
-    display: block;
-    pointer-events: none;
-}
-
-#progress-area { 
-    grid-area: progress; 
-    padding: 20px 0px 8px 0px;
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between; /* distribute rows evenly */
-    overflow-y: auto; /* safety fallback */
-}
-
-#image-area { grid-area: image; height: 100%; display: flex; justify-content: center; align-items: center; }
-
-#level-title {
-    font-family: 'Computer', sans-serif; /* was 'Chau Philomene' */
-    font-size: 20em; /* tweak as needed */
-    font-weight: 700;
-    color: #7fd0ff; /* light blue */
-    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
-    letter-spacing: 2px;
-}
-
-h2 {
-    margin: 0 0 8px;
-    font-size: 32px;
-    line-height: 34px;
-}
-
-#players {
-    display: flex;
-    flex-direction: column;
-    gap: 0; /* remove gap, spacing handled by justify-content */
-    flex: 1; /* fill available space */
-    justify-content: space-between; /* evenly space rows */
-}
-
-.player-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: auto; /* let it grow to fill space */
-    flex: 1; /* equal height distribution */
-    padding: 2px 5px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 6px;
-    backdrop-filter: saturate(110%) blur(2px);
-}
-
-.player-label {
-    width: 85px; /* reduced from 90px */
-    padding-left: 0px;
-    font-weight: 600;
-    font-size: 33px; /* reduced from 15px */
-    text-align: left;
-    color: #9b59b6; /* purple */
-    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-}
-
-.bar-outer {
-    flex: 1;
-    height: 100%;
-    background: rgba(0,0,0,0.55);
-    border: 1px solid transparent; /* reduced from 2px */
-    border-radius: 8px;
-    border-image: linear-gradient(135deg, #9b59b6, #7fd0ff) 1; /* purple → light blue */
-    border-image-slice: 1;
+#progress-area,
+#maze-stage {
     position: relative;
+    border: 1px solid var(--p2-line);
+    border-radius: 26px;
+    background:
+        linear-gradient(180deg, rgba(8, 18, 33, 0.88) 0%, rgba(5, 12, 24, 0.8) 100%);
+    box-shadow:
+        0 0 28px rgba(0, 240, 255, 0.07),
+        inset 0 0 24px rgba(0, 240, 255, 0.03);
     overflow: hidden;
 }
 
-.bar-inner {
-    background: #2f8dff;
-    height: 100%;
-    width: 0%;
-    transition: width .45s ease;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+#progress-area::before,
+#maze-stage::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255, 89, 214, 0.08);
+    border-radius: 18px;
+    pointer-events: none;
 }
 
-/* NEW: flash red effect when a token is mistaken */
+#progress-area {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 18px 18px;
+    min-height: 0;
+    background:
+        linear-gradient(180deg, rgba(7, 15, 29, 0.76) 0%, rgba(4, 10, 20, 0.7) 100%);
+}
+
+#maze-stage {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 16px 10px;
+}
+
+.section-label {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 8px;
+    color: var(--p2-label);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.92;
+}
+
+#players {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+    justify-content: space-between;
+}
+
+.player-row {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    min-height: 0;
+    flex: 1;
+    padding: 6px 4px 6px 0;
+    border-radius: 16px;
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.014), rgba(255,255,255,0)),
+        radial-gradient(circle at left center, var(--p2-pink-soft), transparent 42%);
+}
+
+.player-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    border: 1px solid rgba(69, 230, 255, 0.2);
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.12), rgba(69, 230, 255, 0.03));
+    color: #d9f8ff;
+    font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-shadow:
+        0 0 8px rgba(69, 230, 255, 0.28),
+        0 0 16px rgba(69, 230, 255, 0.08);
+    box-shadow:
+        inset 0 0 12px rgba(69, 230, 255, 0.06),
+        0 0 10px rgba(69, 230, 255, 0.05);
+}
+
+.bar-outer {
+    position: relative;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, rgba(2, 8, 16, 0.76), rgba(8, 18, 33, 0.64));
+    border: 1px solid rgba(69, 230, 255, 0.16);
+    box-shadow:
+        inset 0 0 16px rgba(69, 230, 255, 0.035),
+        0 0 8px rgba(69, 230, 255, 0.035);
+}
+
+.bar-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 6px;
+    border-radius: 13px;
+}
+
+.progress-cell {
+    position: relative;
+    height: 100%;
+    min-height: 32px;
+    border: 1px solid rgba(69, 230, 255, 0.1);
+    border-radius: 9px;
+    background:
+        linear-gradient(180deg, rgba(10, 20, 35, 0.34), rgba(6, 14, 24, 0.08));
+    box-shadow: inset 0 0 10px rgba(69, 230, 255, 0.02);
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.progress-cell.active {
+    border-color: rgba(69, 230, 255, 0.28);
+    background:
+        linear-gradient(180deg, rgba(69, 230, 255, 0.36), rgba(69, 230, 255, 0.72));
+    box-shadow:
+        inset 0 0 8px rgba(255,255,255,0.08),
+        0 0 10px rgba(69, 230, 255, 0.08);
+}
+
+.bar-inner.complete .progress-cell.active,
+.progress-cell.active.complete {
+    border-color: rgba(214, 122, 255, 0.72);
+    background:
+        linear-gradient(180deg, rgba(113, 228, 255, 0.72), var(--p2-complete-deep));
+    box-shadow:
+        inset 0 0 10px rgba(255,255,255,0.14),
+        0 0 16px var(--p2-complete-glow);
+}
+
+.bar-inner.complete {
+    background:
+        linear-gradient(90deg, rgba(120, 230, 255, 0.16), rgba(195, 98, 255, 0.32)),
+        radial-gradient(circle at center, rgba(192, 112, 255, 0.22), transparent 70%);
+    box-shadow:
+        inset 0 0 16px rgba(195, 98, 255, 0.12),
+        0 0 18px rgba(195, 98, 255, 0.14);
+}
+
+.bar-outer:has(.bar-inner.complete) {
+    border-color: rgba(206, 118, 255, 0.5);
+    box-shadow:
+        inset 0 0 20px rgba(195, 98, 255, 0.12),
+        0 0 16px rgba(195, 98, 255, 0.12);
+}
+
+.player-row:has(.bar-inner.complete) {
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+        radial-gradient(circle at left center, rgba(206, 118, 255, 0.28), transparent 50%);
+}
+
+.player-row:has(.bar-inner.complete) .player-label {
+    border-color: rgba(206, 118, 255, 0.52);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(206, 118, 255, 0.28), rgba(69, 230, 255, 0.05));
+    color: #f4ddff;
+    text-shadow:
+        0 0 10px rgba(218, 140, 255, 0.45),
+        0 0 20px rgba(206, 118, 255, 0.18);
+    box-shadow:
+        inset 0 0 14px rgba(206, 118, 255, 0.12),
+        0 0 14px rgba(206, 118, 255, 0.10);
+}
+
+#image-area {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding: 4px 8px 16px;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(255, 89, 214, 0.04), transparent 72%);
+    overflow: visible;
+}
+
+#image-area img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: calc(100% - 8px);
+    object-fit: contain;
+    object-position: center center;
+    filter:
+        drop-shadow(0 0 18px rgba(69, 230, 255, 0.14))
+        drop-shadow(0 0 34px rgba(255, 89, 214, 0.06));
+}
+
+#p2-complete-overlay {
+    position: absolute;
+    inset: auto 50% 32px auto;
+    transform: translateX(50%) translateY(14px);
+    width: min(440px, calc(100% - 48px));
+    padding: 20px 24px 22px;
+    border: 1px solid rgba(206, 118, 255, 0.38);
+    border-radius: 22px;
+    background:
+        linear-gradient(180deg, rgba(24, 12, 46, 0.9) 0%, rgba(12, 10, 28, 0.84) 100%);
+    box-shadow:
+        0 0 36px rgba(206, 118, 255, 0.14),
+        inset 0 0 22px rgba(206, 118, 255, 0.08);
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+#p2-complete-copy {
+    margin-top: 10px;
+    color: rgba(243, 231, 255, 0.82);
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+body.p2-solved #p2-complete-overlay {
+    opacity: 1;
+    transform: translateX(50%) translateY(0);
+}
+
+body.p2-solved #image-area img {
+    filter:
+        saturate(1.06)
+        drop-shadow(0 0 26px rgba(69, 230, 255, 0.18))
+        drop-shadow(0 0 42px rgba(206, 118, 255, 0.16));
+}
+
+body.alarm-mode #image-area img {
+    filter:
+        brightness(0.82)
+        sepia(0.34)
+        hue-rotate(-10deg)
+        saturate(1.45)
+        drop-shadow(0 0 24px rgba(255, 79, 109, 0.24));
+}
+
 @keyframes barErrorFlash {
-    0% { background-color: #d32f2f; }
+    0% { background-color: var(--p2-red); }
     50% { background-color: #8b0000; }
-    100% { background-color: #d32f2f; }
+    100% { background-color: var(--p2-red); }
 }
 
 .bar-inner.error-flash {
-    background-color: #d32f2f !important;
     animation-name: barErrorFlash !important;
     animation-duration: 0.8s !important;
     animation-timing-function: ease-in-out !important;
@@ -173,59 +411,105 @@ h2 {
     will-change: background-color;
 }
 
-/* Bar border turns red and glows during error flash */
-.bar-outer.error-flash {
-    border-color: #d32f2f !important;
-    box-shadow: 0 0 10px rgba(211, 47, 47, 0.8) inset, 0 0 8px rgba(211, 47, 47, 0.6);
-    border-image: none !important; /* override gradient */
+.bar-inner.error-flash .progress-cell {
+    background-color: var(--p2-red) !important;
+    border-color: rgba(211, 47, 47, 0.65) !important;
+    box-shadow: 0 0 8px rgba(211, 47, 47, 0.28);
 }
 
-/* Token label turns red during error flash */
+.bar-outer.error-flash {
+    border-color: var(--p2-red) !important;
+    border-image: none !important;
+    box-shadow:
+        0 0 10px rgba(211, 47, 47, 0.8) inset,
+        0 0 8px rgba(211, 47, 47, 0.6);
+}
+
 .player-label.error-flash {
-    color: #d32f2f !important;
+    color: var(--p2-red) !important;
     text-shadow: 0 1px 6px rgba(211, 47, 47, 0.7) !important;
 }
 
-/* Optional: row glow while flashing (subtle) */
 .player-row.error-flash {
-    box-shadow: 0 0 8px rgba(211, 47, 47, 0.5) inset;
+    box-shadow: 0 0 10px rgba(211, 47, 47, 0.28) inset;
 }
 
-/* Keep complete state, but error-flash will override via !important */
-.bar-inner.complete {
-    background: #27c56d;
+@media (max-width: 1100px) {
+    #puzzle2-container {
+        padding: 18px 20px 20px;
+    }
+
+    #puzzle2-layout {
+        grid-template-columns: minmax(220px, 32vw) minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .player-row {
+        grid-template-columns: 64px minmax(0, 1fr);
+        flex: 0 0 auto;
+    }
+
+    #p2-status-hud {
+        min-width: 164px;
+        padding: 10px 14px 12px;
+    }
 }
 
-.bar-text {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    transform: translateY(-50%);
-    text-align: center;
-    color: #fff;
-    font-size: 60px; /* reduced from 12px */
-    letter-spacing: .5px;
-    pointer-events: none;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+@media (max-width: 820px) {
+    #puzzle2-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(220px, 1fr) auto;
+    }
+
+    #maze-stage {
+        min-height: 0;
+    }
+
+    #progress-area {
+        order: 2;
+    }
+
+    #maze-stage {
+        order: 1;
+    }
+
+    #players {
+        justify-content: flex-start;
+    }
+
+    .player-row {
+        flex: 0 0 auto;
+    }
+
+    #p2-complete-overlay {
+        inset: auto 24px 24px 24px;
+        width: auto;
+        transform: translateY(14px);
+    }
+
+    body.p2-solved #p2-complete-overlay {
+        transform: translateY(0);
+    }
 }
 
-#image-area img {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border: 0;
-    border-radius: 0;
-    display: block;
-    margin: 0 auto;
-    margin-inline: auto;
-    object-position: center center;
-}
+@media (max-width: 640px) {
+    #p2-status-hud {
+        min-width: 134px;
+        padding: 8px 10px 10px;
+        border-radius: 14px;
+    }
 
-body.alarm-mode #image-area img {
-    filter: brightness(0.8) sepia(0.3) hue-rotate(-10deg) saturate(1.5);
-}
+    #p2-status-copy {
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+    }
 
+    #p2-complete-overlay {
+        padding: 16px 18px 18px;
+        border-radius: 18px;
+    }
+
+    #p2-complete-copy {
+        font-size: 0.84rem;
+    }
+}

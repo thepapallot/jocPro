@@ -17,6 +17,14 @@ class Puzzle3(BasePuzzle):
         self.total_required = 10         # need 10 correct in a row
         self.total_players = 10
         self.answered_players = {}       # {player: answer_idx}
+
+    def _checkpoint_for_streak(self, streak):
+        """Return the last unlocked checkpoint based on solved questions."""
+        if streak >= 6:
+            return 6
+        if streak >= 3:
+            return 3
+        return 0
         
     def _choose_new_set(self):
         """Pick 10 random questions from the bank"""
@@ -164,8 +172,11 @@ class Puzzle3(BasePuzzle):
                 if all_correct:
                     self.streak += 1
                 else:
-                    # Failure: reset to new set of 10 questions
-                    self._choose_new_set()
+                    # Failure: return to last unlocked checkpoint within current set
+                    checkpoint = self._checkpoint_for_streak(self.streak)
+                    self.streak = checkpoint
+                    self.current_question_idx = checkpoint
+                    self.answered_players = {}
                     
                 # Send result with captured snapshot
                 self._push({

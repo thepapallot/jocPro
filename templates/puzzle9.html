@@ -1,22 +1,123 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Puzzle 9</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle9.css') }}">
-</head>
-<body>
-    <div id="top-area">
-        <div id="top-left" class="top-cell">
-            <span class="level-title">NIVEL {{ current_level }}</span>
+{% extends "base.html" %}
+
+{% block title %}Puzzle 9{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle9.css') }}">
+{% endblock %}
+
+{% block top_right %}
+<div id="p9-status-hud">
+    <div class="hud-label">Estado</div>
+    <div id="p9-status-badge" class="status-start">Sin validar</div>
+</div>
+{% endblock %}
+
+{% block puzzle_content %}
+<div id="p9-shell">
+    <section id="p9-board" class="p9-panel">
+        <div id="p9-orbit">
+        <article class="p9-clue-card tone-cyan clue-pos-1">
+                El token 22 se debe colocar en una caja situada en un extremo, que este al lado de dos cajas a las que siempre se encienden las luces rojas.
+        </article>
+        <article class="p9-clue-card tone-violet clue-pos-2">
+                El token 5 se debe colocar en una cajas de los extremos.
+        </article>
+        <article class="p9-clue-card tone-violet clue-pos-3">
+                El token 14 se debe colocar en una caja con un simbolo que solo tiene dos ondas.
+        </article>
+        <article class="p9-clue-card tone-cyan clue-pos-4">
+                El token 18 se debe colocar en una caja con un simbolo que tiene una sola onda.
+        </article>
+        <article class="p9-clue-card tone-violet clue-pos-5">
+                En la caja con el numero mas grande, va el token con el numero mas grande.
+        </article>
+        <article class="p9-clue-card tone-cyan clue-pos-6">
+                El token 20 se debe colocar en una caja en la que la luz se enciende del mismo color que el token.
+        </article>
+        <article class="p9-clue-card tone-cyan clue-pos-7">
+                El token 10 se debe colocar en una caja rodeada de cajas donde, si se pone el token 31, todas se encienden de color rojo.
+        </article>
+        <article class="p9-clue-card tone-violet clue-pos-8">
+                El token 13 se debe colocar en una caja que tiene un simbolo con la misma cantidad de puntos que el simbolo de la caja donde se coloca el token 35.
+        </article>
         </div>
-        <div id="top-center" class="top-cell">
-            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 5 animation" />
+
+        <div id="p9-center-stage">
+            <div id="p9-pyramid-meta">
+                <div class="meta-chip">
+                    <span class="meta-label">Colocados</span>
+                    <span id="p9-filled-count" class="meta-value">0/10</span>
+                </div>
+            </div>
+
+            <div id="p9-pyramid-stage">
+                <div class="p9-row p9-row-1">
+                    <div class="p9-box" data-box="0">
+                        <span class="p9-box-id">3</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                </div>
+                <div class="p9-row p9-row-2">
+                    <div class="p9-box" data-box="1">
+                        <span class="p9-box-id">9</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                    <div class="p9-box" data-box="2">
+                        <span class="p9-box-id">0</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                </div>
+                <div class="p9-row p9-row-3">
+                    <div class="p9-box" data-box="3">
+                        <span class="p9-box-id">5</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                    <div class="p9-box" data-box="4">
+                        <span class="p9-box-id">8</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                    <div class="p9-box" data-box="5">
+                        <span class="p9-box-id">1</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                </div>
+                <div class="p9-row p9-row-4">
+                    <div class="p9-box" data-box="6">
+                        <span class="p9-box-id">4</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                    <div class="p9-box" data-box="7">
+                        <span class="p9-box-id">6</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                    <div class="p9-box" data-box="8">
+                        <span class="p9-box-id">2</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                    <div class="p9-box" data-box="9">
+                        <span class="p9-box-id">7</span>
+                        <img class="p9-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="Token">
+                        <span class="p9-token-value"></span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="top-right" class="top-cell"></div>
-    </div>
+    </section>
+
     <div id="status-message" aria-live="polite"></div>
-    <div id="bottom-area">
-    </div>
-    <script src="{{ url_for('static', filename='js/puzzle9.js') }}"></script>
-</body>
-</html>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle9.js') }}"></script>
+{% endblock %}

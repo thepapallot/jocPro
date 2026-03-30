@@ -1,22 +1,78 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Puzzle Final</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzleFinal.css') }}">
-</head>
-<body>
-    <div id="bottom-area">
-        <div id="puzzle-container">
-            <img id="fase-gif" src="" alt="" style="display:none;">
-            <img id="wrong-img" src="{{ url_for('static', filename='images/puzzleFinal/wrong.png') }}" alt="wrong" style="display:none;">
-            <img id="good-img" src="{{ url_for('static', filename='images/puzzleFinal/good.png') }}" alt="good" style="display:none;">
-            <div id="wait-screen" style="display:none;">
-                <img id="wait-img" src="{{ url_for('static', filename='images/puzzleFinal/wait.png') }}" alt="wait">
-                <div id="countdown-number"></div>
+{% extends "base.html" %}
+
+{% block title %}Puzzle Final{% endblock %}
+
+{% block level_title %}FASE FINAL{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzleFinal.css') }}">
+{% endblock %}
+
+{% block top_right %}
+<div id="final-top-hud">
+    <div class="hud-label">Temps</div>
+    <div id="timer-overlay">00:00</div>
+    <div id="final-status-chip" class="is-idle">En espera</div>
+</div>
+{% endblock %}
+
+{% block puzzle_content %}
+<div id="final-shell">
+    <section id="final-stage" class="final-panel">
+        <div id="final-levels">
+            <div class="final-level" data-round-card="1">
+                <span class="final-level-kicker">Nivell</span>
+                <span class="final-level-value">1</span>
+            </div>
+            <div class="final-level" data-round-card="2">
+                <span class="final-level-kicker">Nivell</span>
+                <span class="final-level-value">2</span>
+            </div>
+            <div class="final-level" data-round-card="3">
+                <span class="final-level-kicker">Nivell</span>
+                <span class="final-level-value">3</span>
+            </div>
+            <div class="final-level" data-round-card="4">
+                <span class="final-level-kicker">Nivell</span>
+                <span class="final-level-value">4</span>
             </div>
         </div>
-        <div id="timer-overlay"></div>
-    </div>
-    <script src="{{ url_for('static', filename='js/puzzleFinal.js') }}"></script>
-</body>
-</html>
+
+        <div id="final-main">
+            <header id="final-brief">
+                <div>
+                    <div class="final-panel-kicker">Protocol final</div>
+                    <h2 id="final-phase-title">Sincronitza la piramide</h2>
+                    <p id="final-phase-copy">Cada nivell activa una nova seqüencia. Observa el patró, mantén l’estat correcte i completa les quatre fases.</p>
+                </div>
+                <div id="final-round-indicator">Ronda 0/4</div>
+            </header>
+
+            <div id="final-viewport-wrap">
+                <div id="final-viewport">
+                    <img id="fase-gif" src="" alt="Secuencia final" style="display:none;">
+                    <img id="wrong-img" src="{{ url_for('static', filename='images/puzzleFinal/wrong.png') }}" alt="wrong" style="display:none;">
+                    <img id="good-img" src="{{ url_for('static', filename='images/puzzleFinal/good.png') }}" alt="good" style="display:none;">
+
+                    <div id="wait-screen" style="display:none;">
+                        <img id="wait-img" src="{{ url_for('static', filename='images/puzzleFinal/wait.png') }}" alt="wait">
+                        <div id="countdown-number"></div>
+                    </div>
+                </div>
+            </div>
+
+            <footer id="final-status-bar">
+                <div class="final-status-block">
+                    <span class="final-status-label">Estat</span>
+                    <strong id="final-status-title">Sistema en espera</strong>
+                </div>
+                <p id="final-status-copy">Preparant la seqüencia final abans de començar la simulació.</p>
+            </footer>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzleFinal.js') }}"></script>
+{% endblock %}

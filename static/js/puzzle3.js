@@ -3,9 +3,11 @@
     const questionTextEl = document.getElementById('question-text');
     const answerAreaEl = document.getElementById('answer-area'); // was answersEl inside question-area
     const playerStatusEl = document.getElementById('player-status');
-    //const feedbackEl = document.getElementById('feedback'); // ADD THIS LINE
-    // Preload boto.wav
-    const btnSoundEl = document.getElementById('btn-sound');
+    const feedbackEl = document.getElementById('feedback');
+    const playerSummaryEl = document.getElementById('player-summary');
+    const securityTotalEl = document.getElementById('security-total');
+    const checkpointCopyEl = document.getElementById('checkpoint-copy');
+    const securityLevels = Array.from(document.querySelectorAll('.security-level'));
 
     // Consistent sound helper (same as puzzles 1 and 2)
     function playSound(url) {
@@ -25,18 +27,28 @@
         soundBlockUntil = Date.now() + ms;
     }
 
-    const TOTAL_PLAYERS = 10;
+    let totalPlayers = 10;
     let currentQuestionId = null;
+    let activeQuestionNumber = 1;
 
-    function initPlayers() {
+    function initPlayers(count = totalPlayers) {
+        totalPlayers = count;
         playerStatusEl.innerHTML = "";
-        for (let i = 0; i < TOTAL_PLAYERS; i++) {
+        for (let i = 0; i < totalPlayers; i++) {
             const chip = document.createElement('div');
             chip.className = 'player-chip';
             chip.id = 'pchip-' + i;
-            chip.textContent = `Caja ${i}`; // was just i
+            chip.dataset.box = i;
+
+            const number = document.createElement('div');
+            number.className = 'player-chip-number';
+            number.textContent = i;
+
+            chip.appendChild(number);
+
             playerStatusEl.appendChild(chip);
         }
+        updatePlayerSummary(0);
     }
 
     function updatePlayerDone(player) {
@@ -45,12 +57,13 @@
     }
 
     function resetPlayerChips(answeredPlayers = []) {
-        for (let i = 0; i < TOTAL_PLAYERS; i++) {
+        for (let i = 0; i < totalPlayers; i++) {
             const chip = document.getElementById('pchip-' + i);
             if (!chip) continue;
             // Always remove all state classes
             chip.classList.remove('done','answered','correct','wrong');
         }
+        updatePlayerSummary(answeredPlayers.length || 0);
     }
 
     function updatePlayerAnswered(player) {
@@ -59,6 +72,7 @@
             chip.classList.remove('correct','wrong');
             chip.classList.add('answered');
         }
+        updatePlayerSummary(document.querySelectorAll('.player-chip.answered, .player-chip.correct, .player-chip.wrong').length);
         // Play boto.wav on each player submission (delay if blocked)
         const now = Date.now();
         const delay = soundBlockUntil > now ? (soundBlockUntil - now) : 0;
@@ -75,6 +89,7 @@
         playSound(APAREIX_SOUND_URL);
 
         currentQuestionId = qObj.id;
+        activeQuestionNumber = streak + 1;
         questionTextEl.textContent = qObj.q;
         answerAreaEl.innerHTML = ""; // clear answer area
         (qObj.answers || []).forEach((ans, idx) => {
@@ -92,30 +107,102 @@
             answerAreaEl.appendChild(row); // append to answer-area
         });
         streakEl.textContent = `${streak + 1}/${target}`; // show current question number
-        //feedbackEl.textContent = "";
-        //feedbackEl.className = "";
+        feedbackEl.textContent = `Esperando respuestas de las ${totalPlayers} cajas.`;
+        feedbackEl.className = "";
         resetPlayerChips(answeredPlayers); // Reset all chip styling first
+        applyAnsweredMap(answeredMap);
     }
 
     function setStreak(streak, target) {
         streakEl.textContent = `${streak + 1}/${target}`; // show current question number
+        updateSecurityLevels(streak, target);
+        updateCheckpointCopy(streak);
     }
 
-    function showWrong(player, answer, expected) {
-        //feedbackEl.className = 'err';
-        //feedbackEl.textContent = `Se ha encontrado al menos una respuesta incorrecta. Reseteando preguntas.`;
+    function updatePlayerSummary(answeredCount) {
+        if (!playerSummaryEl) return;
+        playerSummaryEl.textContent = `${answeredCount}/${totalPlayers}`;
+    }
+
+    function getCheckpointState(streak) {
+        if (streak >= 6) {
+            return {
+                fallback: 6,
+                label: 'Seguridad 2',
+                detail: 'Un fallo ahora devuelve al grupo a la pregunta 7.'
+            };
+        }
+        if (streak >= 3) {
+            return {
+                fallback: 3,
+                label: 'Seguridad 1',
+                detail: 'Un fallo ahora devuelve al grupo a la pregunta 4.'
+            };
+        }
+        return {
+            fallback: 0,
+            label: 'Sin checkpoint',
+            detail: 'Un fallo reinicia desde la pregunta 1.'
+        };
+    }
+
+    function updateCheckpointCopy(streak) {
+        if (!checkpointCopyEl) return;
+        const checkpoint = getCheckpointState(streak);
+        checkpointCopyEl.textContent = `${checkpoint.label}. ${checkpoint.detail}`;
+    }
+
+    function updateSecurityLevels(streak, target) {
+        if (securityTotalEl) {
+            securityTotalEl.textContent = `${streak}/${target}`;
+        }
+
+        const ranges = [
+            { level: 1, start: 0, end: 3, size: 3 },
+            { level: 2, start: 3, end: 6, size: 3 },
+            { level: 3, start: 6, end: 10, size: 4 }
+        ];
+
+        securityLevels.forEach((el, index) => {
+            const range = ranges[index];
+            if (!range) return;
+
+            const fill = el.querySelector('.security-fill');
+            const localProgress = Math.max(0, Math.min(range.size, streak - range.start));
+            const percentage = (localProgress / range.size) * 100;
+            const isComplete = streak >= range.end;
+            const isActive = streak >= range.start && streak < range.end;
+
+            el.classList.toggle('is-complete', isComplete);
+            el.classList.toggle('is-active', isActive);
+
+            if (fill) {
+                fill.style.width = `${isComplete ? 100 : percentage}%`;
+            }
+        });
+    }
+
+    function showWrong() {
+        const solvedBeforeFailure = Math.max(0, activeQuestionNumber - 1);
+        const checkpoint = getCheckpointState(solvedBeforeFailure);
+        const resumeQuestion = checkpoint.fallback + 1;
+
+        feedbackEl.className = 'err';
+        feedbackEl.textContent = checkpoint.fallback > 0
+            ? `Hay respuestas incorrectas. Retroceso al checkpoint ${checkpoint.label}. Reanudando en la pregunta ${resumeQuestion}.`
+            : 'Hay respuestas incorrectas. No hay checkpoint activo, asi que la serie vuelve a la pregunta 1.';
     }
 
     function showQuestionComplete(streak, target) {
-        //feedbackEl.className = 'ok';
-        //feedbackEl.textContent = `Pregunta completada correctamente!`;
+        feedbackEl.className = 'ok';
+        feedbackEl.textContent = `Pregunta completada. Avanzando ${streak}/${target}.`;
     }
 
     function showSolved() {
         // Play puzzle completion sound
         playSound(PUZZLE_COMPLETE_SOUND_URL);
-        //feedbackEl.className = 'ok';
-        //feedbackEl.textContent = 'Nivel superado!';
+        feedbackEl.className = 'ok';
+        feedbackEl.textContent = 'Nivel superado.';
         setTimeout(() => {
             window.location.href = '/puzzleSuperat/3';
         }, 1200);
@@ -128,12 +215,13 @@
         const rows = answerAreaEl.querySelectorAll('.answer-row');
         rows.forEach(r => {
             const idx = parseInt(r.dataset.answerIndex,10);
-            console.log('Checking answer row', idx, correct_answer, player_answers);
-            if ((idx+1) === correct_answer) {
-                //r.classList.add('correct');
+            if (success && (idx + 1) === correct_answer) {
+                r.classList.add('correct');
             } else if (Object.values(player_answers).includes(idx+1)) {
                 // some player chose this wrong one
-                r.classList.add('wrong');
+                if ((idx + 1) !== correct_answer) {
+                    r.classList.add('wrong');
+                }
             }
         });
         // Color player chips
@@ -150,18 +238,19 @@
         if (success) {
             // Play correct sound and block 500ms to hear it well
             playSoundAndBlock(CORRECT_SOUND_URL, 500);
-            //feedbackEl.className = 'ok';
-            //feedbackEl.textContent = `Respuestas correctas! ${streak}/${target}`;
+            showQuestionComplete(streak, target);
         } else {
             // Play incorrect sound and block 500ms to hear it well
             playSoundAndBlock(INCORRECT_SOUND_URL, 500);
-            //feedbackEl.className = 'err';
-            //feedbackEl.textContent = `Algunas respuestas incorrectas. Reseteando Preguntas.`;
+            showWrong();
         }
     }
 
     function handleUpdate(data) {
         if (data.puzzle_id !== 3) return;
+        if (typeof data.total_players === 'number' && data.total_players > 0 && data.total_players !== totalPlayers) {
+            initPlayers(data.total_players);
+        }
         if (data.question) {
             renderQuestion(
                 data.question,
@@ -170,13 +259,14 @@
                 data.answered_players || [],
                 data.answered_map || {}
             );
-            setStreak(streak, target);
+            setStreak(data.streak || 0, data.target || 10);
         }
         if (data.player_answer) {
             updatePlayerAnswered(data.player_answer.player);
         }
         if (data.question_result) {
             showResult(data.question_result, data.streak || 0, data.target || 10);
+            setStreak(data.streak || 0, data.target || 10);
         }
         if (data.puzzle_solved) {
             showSolved();
@@ -188,6 +278,9 @@
             .then(r => r.json())
             .then(d => {
                 if (d && d.puzzle_id === 3 && d.question) {
+                    if (typeof d.total_players === 'number' && d.total_players > 0 && d.total_players !== totalPlayers) {
+                        initPlayers(d.total_players);
+                    }
                     renderQuestion(
                         d.question,
                         d.streak || 0,
@@ -195,6 +288,7 @@
                         d.answered_players || [],
                         d.answered_map || {}
                     );
+                    setStreak(d.streak || 0, d.target || 10);
                 }
             })
             .catch(() => {});
@@ -215,8 +309,79 @@
         //es.onopen = () => loadSnapshot();
     }
 
+    function installDebugHelpers() {
+        const sampleQuestion = {
+            id: 999,
+            q: 'Que planeta es conocido como el planeta rojo?',
+            answers: ['Venus', 'Mercurio', 'Marte', 'Jupiter', 'Saturno', 'Neptuno']
+        };
+
+        window.puzzle3Debug = {
+            question() {
+                handleUpdate({
+                    puzzle_id: 3,
+                    question: sampleQuestion,
+                    streak: 2,
+                    target: 10,
+                    answered_players: [],
+                    answered_map: {}
+                });
+            },
+            answers(players = [0, 2, 4, 7]) {
+                players.forEach((player, index) => {
+                    setTimeout(() => {
+                        handleUpdate({
+                            puzzle_id: 3,
+                            player_answer: { player, answer: 3 }
+                        });
+                    }, index * 250);
+                });
+            },
+            correctResult() {
+                handleUpdate({
+                    puzzle_id: 3,
+                    question_result: {
+                        success: true,
+                        correct_answer: 3,
+                        player_answers: {
+                            0: 3, 1: 3, 2: 3, 3: 3, 4: 3,
+                            5: 3, 6: 3, 7: 3, 8: 3, 9: 3
+                        }
+                    },
+                    streak: 3,
+                    target: 10
+                });
+            },
+            wrongResult() {
+                handleUpdate({
+                    puzzle_id: 3,
+                    question_result: {
+                        success: false,
+                        correct_answer: 3,
+                        player_answers: {
+                            0: 3, 1: 2, 2: 3, 3: 4, 4: 3,
+                            5: 1, 6: 3, 7: 6, 8: 3, 9: 2
+                        }
+                    },
+                    streak: 0,
+                    target: 10
+                });
+            },
+            solved() {
+                showSolved();
+            },
+            demo() {
+                this.question();
+                setTimeout(() => this.answers([0,1,2,3,4,5,6,7,8,9]), 600);
+                setTimeout(() => this.correctResult(), 3600);
+            }
+        };
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         initPlayers();
+        updateSecurityLevels(0, 10);
+        installDebugHelpers();
         initSSE();
     });
 })();

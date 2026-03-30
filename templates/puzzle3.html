@@ -1,32 +1,89 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Puzzle 3</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle3.css') }}">
-</head>
-<body>
-    <div id="top-area">
-        <div id="top-left" class="top-cell">
-            <span class="level-title">NIVEL {{ current_level }}</span>
-        </div>
-        <div id="top-center" class="top-cell">
-            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 1 animation" />
-        </div>
-        <div id="top-right" class="top-cell">
-            <div id="streak">1/10</div>
-        </div>
-    </div>
-    <div id="bottom-area">
-        <div id="puzzle-container">
-            <div id="player-status"></div>
-            <div id="question-area">
-                <div id="question-text"></div>
-            </div>
-            <div id="answer-area"></div>
-            <!--div id="feedback"></div!-->
-        </div>
-    </div>
+{% extends "base.html" %}
 
-    <script src="{{ url_for('static', filename='js/puzzle3.js') }}"></script>
-</body>
-</html>
+{% block title %}Puzzle 3{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle3.css') }}">
+{% endblock %}
+
+{% block top_right %}
+<div id="streak-panel">
+    <div class="hud-label">Progreso</div>
+    <div id="streak">1/10</div>
+</div>
+{% endblock %}
+
+{% block puzzle_content %}
+<div id="puzzle3-shell">
+    <section id="quiz-dashboard" class="quiz-panel">
+        <div class="panel-head">
+            <div id="box-headmark">
+                <img
+                    id="box-headmark-icon"
+                    src="{{ url_for('static', filename='images/puzzle1/caixa.png') }}"
+                    alt="Caja"
+                >
+                <div class="panel-kicker">Estado del quiz</div>
+            </div>
+            <div id="player-summary">0/10</div>
+        </div>
+
+        <div id="player-status"></div>
+
+        <div id="feedback" aria-live="polite"></div>
+    </section>
+
+    <section id="quiz-stage" class="quiz-panel">
+        <div id="security-panel">
+            <div class="security-head">
+                <div class="panel-kicker">Protocolos</div>
+                <div id="security-total">0/10</div>
+            </div>
+
+            <div id="checkpoint-copy" aria-live="polite">
+                Sin checkpoint activo. Un fallo reinicia desde la pregunta 1.
+            </div>
+
+            <div id="security-levels">
+                <div class="security-level" data-level="1">
+                    <div class="security-level-top">
+                        <span class="security-name">Seguridad 1</span>
+                        <span class="security-target">3</span>
+                    </div>
+                    <div class="security-track"><div class="security-fill"></div></div>
+                    <div class="security-copy">Acceso inicial</div>
+                </div>
+
+                <div class="security-level" data-level="2">
+                    <div class="security-level-top">
+                        <span class="security-name">Seguridad 2</span>
+                        <span class="security-target">6</span>
+                    </div>
+                    <div class="security-track"><div class="security-fill"></div></div>
+                    <div class="security-copy">Seguridad media</div>
+                </div>
+
+                <div class="security-level" data-level="3">
+                    <div class="security-level-top">
+                        <span class="security-name">Seguridad 3</span>
+                        <span class="security-target">10</span>
+                    </div>
+                    <div class="security-track"><div class="security-fill"></div></div>
+                    <div class="security-copy">Seguridad total</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="question-area">
+            <div class="question-kicker">Pregunta actual</div>
+            <div id="question-text"></div>
+        </div>
+
+        <div id="answer-area"></div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle3.js') }}"></script>
+{% endblock %}

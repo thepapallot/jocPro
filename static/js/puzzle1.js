@@ -1,114 +1,250 @@
 (function() {
-
     const puzzleContainer = document.getElementById('puzzle-container');
-
-    //Create solved container
-    const solvedContainer = document.createElement('div');
-    solvedContainer.id = 'solved-container';
     const bottomArea = document.getElementById('bottom-area');
-    bottomArea.appendChild(solvedContainer);
 
-    // NEW: round indicator
-    const roundIndicator = document.createElement('div');
-    roundIndicator.id = 'round-indicator';
-    bottomArea.appendChild(roundIndicator);
+    let solvedContainer = document.getElementById('solved-container');
+    if (!solvedContainer) {
+        solvedContainer = document.createElement('div');
+        solvedContainer.id = 'solved-container';
+        bottomArea.appendChild(solvedContainer);
+    }
+
+    let roundIndicator = document.getElementById('round-indicator');
+    if (!roundIndicator) {
+        roundIndicator = document.createElement('div');
+        roundIndicator.id = 'round-indicator';
+        roundIndicator.setAttribute('aria-label', 'Fase actual');
+        roundIndicator.innerHTML = `
+            <span class="phase-step is-active"></span>
+            <span class="phase-link"></span>
+            <span class="phase-step"></span>
+            <span class="phase-link"></span>
+            <span class="phase-step"></span>
+        `;
+
+        const objectivePanel = document.getElementById('objective-panel');
+        if (objectivePanel) {
+            objectivePanel.prepend(roundIndicator);
+        } else {
+            bottomArea.appendChild(roundIndicator);
+        }
+    }
 
     const timerElement = document.getElementById('timer');
-    let timer = 120; // 2 minutes in seconds
+    const objectiveFormula = document.getElementById('objective-formula');
+    const formulaLeftImage = document.getElementById('formula-left-image');
+    const formulaRightImage = document.getElementById('formula-right-image');
+    const formulaLeftValue = document.getElementById('formula-left-value');
+    const formulaRightValue = document.getElementById('formula-right-value');
+    const formulaResultValue = document.getElementById('formula-result-value');
+    let formulaResetTimeout = null;
+
+    let timer = 120;
     let timerInterval;
     let timerRunning = false;
-    let currentRound = null; // NEW: track current round
+    let currentRound = null;
+    let currentRoundSize = null;
 
-    // NEW: simple sound effect helper
     function playEffect(file) {
         try {
             const audio = new Audio(`/static/audios/effects/${file}`);
-            audio.play().catch(() => {}); // ignore autoplay restrictions
+            audio.play().catch(() => {});
         } catch (e) {
             console.warn("Failed to play effect:", file, e);
         }
     }
 
-    // NEW: helper to clear solved container before adding new content
     function clearSolvedContainer() {
         solvedContainer.innerHTML = '';
     }
 
-    function cellMappingForRound(round) {
-        if (round === 1) return {1:3,2:6,3:10,4:13};
-        if (round === 2) return {1:3,2:6,3:7,4:8,5:9,6:10,7:13};
-        // round 3 (15 ops) fill sequentially
-        const map = {};
-        for (let i=1;i<=15;i++) map[i]=i;
-        return map;
+    function renderStatus(kind, value = null) {
+        if (!solvedContainer) return;
+
+        const badge = document.createElement('div');
+        badge.className = 'status-badge';
+
+        if (kind === 'success') {
+            badge.classList.add('is-success');
+        } else if (kind === 'error') {
+            badge.classList.add('is-error');
+        } else if (kind === 'reset') {
+            badge.classList.add('is-reset');
+        } else if (kind === 'timeout') {
+            badge.classList.add('is-timeout');
+        } else if (kind === 'countdown') {
+            badge.classList.add('is-countdown');
+        }
+
+        if (value !== null && value !== undefined) {
+            const valueNode = document.createElement('span');
+            valueNode.className = 'status-badge-value';
+            valueNode.textContent = String(value);
+            badge.appendChild(valueNode);
+        }
+
+        clearSolvedContainer();
+        solvedContainer.appendChild(badge);
     }
 
-    function inferRoundByCount(count) {
-        if (count === 4) return 1;
-        if (count === 7) return 2;
-        return 3;
+    function parseExpression(expression) {
+        const match = /^(\d+)\s*\+\s*(\d+)\s*=\s*(\d+)$/.exec(expression || '');
+        if (!match) return null;
+        return {
+            left: match[1],
+            right: match[2],
+            result: match[3]
+        };
     }
 
-    // NEW: helper to set round text
-    function setRoundIndicator(round) {
+    function resetObjectiveFormula() {
+        if (!objectiveFormula) return;
+
+        if (formulaResetTimeout) {
+            clearTimeout(formulaResetTimeout);
+            formulaResetTimeout = null;
+        }
+
+        objectiveFormula.classList.remove('show-values', 'success', 'error', 'result-only');
+        if (formulaLeftValue) formulaLeftValue.textContent = '--';
+        if (formulaRightValue) formulaRightValue.textContent = '--';
+        if (formulaResultValue) formulaResultValue.textContent = '--';
+        if (formulaLeftImage) formulaLeftImage.hidden = false;
+        if (formulaRightImage) formulaRightImage.hidden = false;
+    }
+
+    function isFormulaPreviewActive() {
+        return formulaResetTimeout !== null;
+    }
+
+    function setObjectiveFormula(expression, state = 'idle', resultOnly = false) {
+        const parsed = parseExpression(expression);
+        if (!parsed || !objectiveFormula) {
+            resetObjectiveFormula();
+            return;
+        }
+
+        if (formulaResetTimeout) {
+            clearTimeout(formulaResetTimeout);
+            formulaResetTimeout = null;
+        }
+
+        objectiveFormula.classList.remove('success', 'error', 'result-only');
+        objectiveFormula.classList.add('show-values');
+        if (state === 'success' || state === 'error') {
+            objectiveFormula.classList.add(state);
+        }
+        if (resultOnly) {
+            objectiveFormula.classList.add('result-only');
+        }
+
+        if (formulaLeftImage) formulaLeftImage.hidden = true;
+        if (formulaRightImage) formulaRightImage.hidden = true;
+        if (formulaLeftValue) formulaLeftValue.textContent = parsed.left;
+        if (formulaRightValue) formulaRightValue.textContent = parsed.right;
+        if (formulaResultValue) formulaResultValue.textContent = parsed.result;
+
+        formulaResetTimeout = setTimeout(() => {
+            resetObjectiveFormula();
+        }, resultOnly ? 2000 : 3000);
+    }
+
+    function setRoundIndicator(round, count = null) {
         if (!round) return;
-        roundIndicator.textContent = `${round}/3`;
+
+        const phaseSteps = Array.from(roundIndicator.querySelectorAll('.phase-step'));
+        const phaseLinks = Array.from(roundIndicator.querySelectorAll('.phase-link'));
+
+        phaseSteps.forEach((step, index) => {
+            const phaseNumber = index + 1;
+            step.classList.toggle('is-complete', phaseNumber < round);
+            step.classList.toggle('is-active', phaseNumber === round);
+        });
+
+        phaseLinks.forEach((link, index) => {
+            link.classList.toggle('is-complete', index < round - 1);
+        });
+
+        document.body.classList.remove(
+            'round-1-active',
+            'round-2-active',
+            'round-3-active'
+        );
+        document.body.classList.add(`round-${round}-active`);
     }
 
-    // Helper: target size per round (4, 7, 15)
-    function getRoundTargetSize(round) {
-        if (round === 1) return 4;
-        if (round === 2) return 7;
-        return 15;
+    function setPuzzleGridClass(round) {
+        puzzleContainer.classList.remove('round-1', 'round-2', 'round-3');
+        puzzleContainer.classList.add(`round-${round}`);
+    }
+
+    function animateGridIn() {
+        puzzleContainer.style.transition = 'none';
+        puzzleContainer.style.opacity = '0.3';
+        puzzleContainer.style.transform = 'translateY(10px)';
+
+        requestAnimationFrame(() => {
+            puzzleContainer.style.transition = 'all 0.35s ease';
+            puzzleContainer.style.opacity = '1';
+            puzzleContainer.style.transform = 'translateY(0)';
+        });
+    }
+
+    function animateCorrect(opElement) {
+        if (!opElement || !opElement.animate) return;
+        opElement.animate(
+            [
+                { transform: 'scale(1)' },
+                { transform: 'scale(1.2)' },
+                { transform: 'scale(1)' }
+            ],
+            { duration: 250, easing: 'ease-out' }
+        );
+    }
+
+    function animateIncorrect(opElement) {
+        if (!opElement || !opElement.animate) return;
+        opElement.animate(
+            [
+                { transform: 'translateX(0)' },
+                { transform: 'translateX(-8px)' },
+                { transform: 'translateX(8px)' },
+                { transform: 'translateX(0)' }
+            ],
+            { duration: 220, easing: 'ease-out' }
+        );
     }
 
     function renderOperations(operations) {
         const list = Array.isArray(operations) ? operations : [];
-        // Determine round: prefer currentRound, else infer by operations count
-        const round = currentRound || inferRoundByCount(list.length);
-        setRoundIndicator(round);
-        const mapping = cellMappingForRound(round); // position -> cellIndex(1..15)
-        // Build quick lookup by position
-        const byPos = {};
-        list.forEach(op => { byPos[op[1]] = op; });
+        const round = currentRound;
 
-        // Rebuild full 5x3 grid
+        setRoundIndicator(round, list.length);
+        setPuzzleGridClass(round);
+
         puzzleContainer.innerHTML = '';
-        for (let cell = 1; cell <= 15; cell++) {
+
+        list.forEach(([result, position, status]) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'grid-cell';
-            // Find if any position maps to this cell
-            let matchedPos = null;
-            for (const pos in mapping) {
-                if (mapping[pos] === cell) {
-                    matchedPos = parseInt(pos,10);
-                    break;
-                }
-            }
-            if (matchedPos && byPos[matchedPos]) {
-                const [result, position, status] = byPos[matchedPos];
-                const opDiv = document.createElement('div');
-                opDiv.className = 'op';
-                opDiv.dataset.position = position;
-                opDiv.dataset.result = result;
-                if (status === "Y") {
-                    // Show completed state persistently
-                    opDiv.textContent = 'Completada';
-                    opDiv.classList.add('correct');
-                } else {
-                    opDiv.innerHTML = `
-                        <img src="/static/images/puzzle1/tarjeta.png" class="operand">
-                        <span>+</span>
-                        <img src="/static/images/puzzle1/caixa.png" class="operand">
-                        <span>= ${result}</span>
-                    `;
-                }
-                wrapper.appendChild(opDiv);
+
+            const opDiv = document.createElement('div');
+            opDiv.className = 'op';
+            opDiv.dataset.position = String(position);
+            opDiv.dataset.result = String(result);
+
+            if (status === 'Y') {
+                opDiv.innerHTML = '<span class="tick">✓</span>';
+                opDiv.classList.add('correct');
             } else {
-                wrapper.classList.add('empty-cell');
+                opDiv.innerHTML = `<span>${result}</span>`;
             }
+
+            wrapper.appendChild(opDiv);
             puzzleContainer.appendChild(wrapper);
-        }
+        });
+
+        animateGridIn();
     }
 
     function loadCurrentState() {
@@ -116,17 +252,25 @@
             .then(r => r.json())
             .then(data => {
                 if (!data) return;
-                if (data.puzzle_id && data.puzzle_id !== 1) return; // guard if another puzzle active
-                // Ensure round is known before first render
+                if (data.puzzle_id && data.puzzle_id !== 1) return;
+
                 if (data.round !== undefined) {
                     currentRound = data.round;
-                    setRoundIndicator(currentRound); // NEW
+                    setRoundIndicator(currentRound);
+                    setPuzzleGridClass(currentRound);
                 }
+
+                if (data.round_size !== undefined) {
+                    currentRoundSize = data.round_size;
+                }
+
                 if (data.operations) {
                     renderOperations(data.operations);
+                    resetObjectiveFormula();
                 }
+
                 if (!timerRunning) {
-                    startTimer(); // best effort start if missed initial start_timer event
+                    startTimer();
                 }
             })
             .catch(err => console.warn("Failed to load current state", err));
@@ -134,220 +278,301 @@
 
     function handleUpdate(data) {
         try {
-            // data is already a parsed object - remove the JSON.parse(event.data) line
             if (!data || typeof data !== 'object') return;
-            if (data.keep_alive) return; // ignore keep-alive messages
-
-            console.log("Received data from state_queue:", data); // Debugging log
-
-            // Ensure only puzzle 1 data processed
+            if (data.keep_alive) return;
             if (data.puzzle_id && data.puzzle_id !== 1) return;
 
-            // Stop the timer and display "Puzzle 1 completed" message
-            if (data.puzzle_solved) {
-                // NEW: play final level completed effect
-                playEffect('nivel_completado.wav');
+            console.log('Received data from state_queue:', data);
 
-                console.log("Puzzle 1 completed."); // Debugging log
-                clearInterval(timerInterval); // Stop the timer
-                timerRunning = false; // NEW: set timerRunning to false
-                // Redirect directly to Puzzle 2 after 20 seconds
+            if (data.puzzle_solved) {
+                playEffect('nivel_completado.wav');
+                clearInterval(timerInterval);
+                timerRunning = false;
+
                 setTimeout(() => {
-                    console.log("Redirecting to Puzzle 2.");
-                    window.location.href = "/puzzleSuperat/1";
-                    //window.location.href = "/puzzle/2"; // Directly redirect to Puzzle 2
-                }, 5000); // 20 seconds
+                    window.location.href = '/puzzleSuperat/1';
+                }, 5000);
                 return;
             }
 
-            // Start the timer when the puzzle starts
             if (data.start_timer) {
                 playEffect('apareix_contingut.wav');
-                console.log("Starting the timer."); // Debugging log
-                // Clear expired (red) visual state
                 timerElement.classList.remove('expired');
+                resetObjectiveFormula();
                 startTimer();
             }
 
-            // NEW: streak completed (round finished) – we will wait and then countdown handled by ticks
             if (data.streak_completed) {
-                // Ensure we show only this info
-                clearSolvedContainer();
-                const msg = document.createElement('div');
-                msg.className = 'message';
-                msg.textContent = 'Ronda completada';
-                solvedContainer.appendChild(msg);
-                // Play streak completed sound here (when all ops are correctly completed)
+                renderStatus('success');
+
                 playEffect('fase_completada.wav');
 
-                // NEW: stop the timer
                 clearInterval(timerInterval);
                 timerRunning = false;
             }
 
-            // NEW: display 5-second countdown to next round
             if (data.countdown_next_round && typeof data.countdown_next_round.seconds === 'number') {
-                clearSolvedContainer();
                 const seconds = data.countdown_next_round.seconds;
-                const cd = document.createElement('div');
-                cd.className = 'message';
-                cd.textContent = `Seguiente ronda en ${seconds}`;
-                solvedContainer.appendChild(cd);
-                // NEW: play per-second countdown beep
+                renderStatus('countdown', seconds);
+
                 playEffect('beep_countdown.wav');
             }
 
-        
-            // NEW: round change handling
+            if (data.round_size !== undefined) {
+                currentRoundSize = data.round_size;
+            }
+
             if (data.round !== undefined) {
-                if (currentRound === null) currentRound = data.round;
-                if (data.round !== currentRound) {
+                if (currentRound === null) {
                     currentRound = data.round;
-                    setRoundIndicator(currentRound); // NEW
-                    // Clear previous round UI
-                    puzzleContainer.innerHTML = '';
+                    setRoundIndicator(currentRound);
+                    setPuzzleGridClass(currentRound);
+                } else if (data.round !== currentRound) {
+                    currentRound = data.round;
+                    setRoundIndicator(currentRound);
+                    setPuzzleGridClass(currentRound);
+
                     solvedContainer.innerHTML = '';
+                    resetObjectiveFormula();
+
+                    puzzleContainer.style.transition = 'none';
+                    puzzleContainer.style.opacity = '0.3';
+                    puzzleContainer.style.transform = 'translateY(10px)';
+
+                    requestAnimationFrame(() => {
+                        puzzleContainer.style.transition = 'all 0.35s ease';
+                        puzzleContainer.style.opacity = '1';
+                        puzzleContainer.style.transform = 'translateY(0)';
+                    });
                 }
             }
 
-            // Display solved operations at the top
             if (data.solved) {
-                // NEW: clear before showing solved item
                 clearSolvedContainer();
+                setObjectiveFormula(data.solved.text, 'success', false);
 
-                const solvedElement = document.createElement('div');
-                solvedElement.className = 'correct';
-                solvedElement.textContent = data.solved.text; // Example: "7 + 7 = 14"
-                solvedContainer.appendChild(solvedElement);
-
-                // Update the solved operation in the grid (by result)
                 const solvedOperation = document.querySelector(`.op[data-result="${data.solved.result}"]`);
                 if (solvedOperation) {
-                    solvedOperation.textContent = 'Completada';
+                    solvedOperation.innerHTML = '<span class="tick">✓</span>';
+                    solvedOperation.classList.remove('incorrect');
                     solvedOperation.classList.add('correct');
+                    animateCorrect(solvedOperation);
                 }
 
-                // Determine if this is the last op in the round; if so, skip correcte.wav
-                const roundTarget = getRoundTargetSize(currentRound || inferRoundByCount(document.querySelectorAll('.op').length));
+                const roundTarget = currentRoundSize;
                 const completedCount = document.querySelectorAll('.op.correct').length;
+                console.log('Round target:', roundTarget);
+                console.log('Completed count:', completedCount);
                 const isLastOpOfRound = completedCount >= roundTarget;
 
                 if (!isLastOpOfRound) {
                     playEffect('correcte.wav');
                 }
-
-                // Remove solved operation from the top after 3 seconds
-                setTimeout(() => {
-                    solvedElement.remove();
-                }, 3000);
             }
 
-            // Display incorrect operation in red
             if (data.incorrect) {
-                // NEW: clear before showing incorrect message
-                clearSolvedContainer();
-
-                // NEW: play incorrect effect
                 playEffect('incorrecte.wav');
+                renderStatus('error');
+                setObjectiveFormula(data.incorrect.text, 'error', false);
 
-                // Stop timer until reset arrives
                 clearInterval(timerInterval);
                 timerRunning = false;
 
-                // 1) Show: "ERROR: operacion  '5 + 5 = 10'  incorrecta"
-                const errText = `ERROR: operacion  '${data.incorrect.text}'  incorrecta`;
-                const errEl = document.createElement('div');
-                errEl.className = 'message error';
-                errEl.textContent = errText;
-                solvedContainer.appendChild(errEl);
-
-                // Highlight the incorrect operation in the grid
                 const incorrectOperation = document.querySelector(`.op[data-result="${data.incorrect.result}"]`);
                 if (incorrectOperation) {
                     incorrectOperation.classList.add('incorrect');
+                    animateIncorrect(incorrectOperation);
                 }
 
-                // 2) After 2s: clear error message and show "Reseteando operaciones"
                 setTimeout(() => {
-                    if (errEl.parentNode) errEl.remove();
+                    resetObjectiveFormula();
+                    renderStatus('reset');
 
-                    // NEW: clear before showing reset message
-                    clearSolvedContainer();
-
-                    const resetEl = document.createElement('div');
-                    resetEl.className = 'message error';
-                    resetEl.textContent = 'Reseteando operaciones';
-                    solvedContainer.appendChild(resetEl);
-
-                    // 3) After 1s more (3s total): clear "Reseteando operaciones"
                     setTimeout(() => {
-                        if (resetEl.parentNode) resetEl.remove();
+                        clearSolvedContainer();
                     }, 3000);
                 }, 3000);
             }
 
-            // Update the grid with operations
             if (data.operations) {
                 renderOperations(data.operations);
+                if (!isFormulaPreviewActive()) {
+                    resetObjectiveFormula();
+                }
 
-                // Fallback: if we timed out (00:00 red) and timer isn't running, restart on fresh ops
                 if (!timerRunning && timer === 0 && timerElement.classList.contains('expired')) {
                     timerElement.classList.remove('expired');
                     startTimer();
                 }
             }
-        } catch (error) {
-            console.error("Error processing SSE data:", error);
-        }
 
+        } catch (error) {
+            console.error('Error processing SSE data:', error);
+        }
+    }
+
+    function installDebugHelpers() {
+        window.puzzle1Debug = {
+            push(payload) {
+                handleUpdate({ puzzle_id: 1, ...payload });
+            },
+            round(round = 1, operations = null) {
+                const defaultOperations = {
+                    1: [[5, 1, 'N'], [8, 2, 'N'], [12, 3, 'N'], [17, 4, 'N']],
+                    2: [[6, 1, 'N'], [9, 2, 'N'], [14, 3, 'N'], [18, 4, 'N'], [21, 5, 'N'], [24, 6, 'N'], [29, 7, 'N']],
+                    3: [[5, 1, 'N'], [6, 2, 'N'], [7, 3, 'N'], [8, 4, 'N'], [9, 5, 'N'], [10, 6, 'N'], [11, 7, 'N'], [12, 8, 'N'], [13, 9, 'N'], [14, 10, 'N'], [15, 11, 'N'], [16, 12, 'N'], [17, 13, 'N'], [18, 14, 'N'], [20, 15, 'N']]
+                };
+                handleUpdate({
+                    puzzle_id: 1,
+                    round,
+                    operations: operations || defaultOperations[round] || defaultOperations[1],
+                    start_timer: true
+                });
+            },
+            solved(expression = '2 + 3 = 5', result = 5) {
+                handleUpdate({
+                    puzzle_id: 1,
+                    solved: {
+                        text: expression,
+                        result
+                    }
+                });
+            },
+            incorrect(expression = '2 + 8 = 10', result = 10) {
+                handleUpdate({
+                    puzzle_id: 1,
+                    incorrect: {
+                        text: expression,
+                        result
+                    }
+                });
+            },
+            streak(round = 1, nextRound = round + 1) {
+                handleUpdate({
+                    puzzle_id: 1,
+                    streak_completed: true,
+                    round,
+                    next_round: nextRound
+                });
+            },
+            countdown(seconds = 5, round = 1, nextRound = round + 1) {
+                handleUpdate({
+                    puzzle_id: 1,
+                    round,
+                    next_round: nextRound,
+                    countdown_next_round: { seconds }
+                });
+            },
+            solvedPuzzle() {
+                handleUpdate({
+                    puzzle_id: 1,
+                    puzzle_solved: true
+                });
+            },
+            demoRound1() {
+                this.round(1, [
+                    [5, 1, 'N'],
+                    [8, 2, 'N'],
+                    [12, 3, 'N'],
+                    [17, 4, 'N']
+                ]);
+            },
+            demoSuccess() {
+                this.round(1, [
+                    [5, 1, 'N'],
+                    [8, 2, 'N'],
+                    [12, 3, 'N'],
+                    [17, 4, 'N']
+                ]);
+                setTimeout(() => this.solved('2 + 3 = 5', 5), 900);
+                setTimeout(() => this.push({
+                    round: 1,
+                    operations: [
+                        [5, 1, 'Y'],
+                        [8, 2, 'N'],
+                        [12, 3, 'N'],
+                        [17, 4, 'N']
+                    ]
+                }), 1300);
+                setTimeout(() => this.solved('4 + 4 = 8', 8), 2100);
+                setTimeout(() => this.push({
+                    round: 1,
+                    operations: [
+                        [5, 1, 'Y'],
+                        [8, 2, 'Y'],
+                        [12, 3, 'N'],
+                        [17, 4, 'N']
+                    ]
+                }), 2500);
+            },
+            demoError() {
+                this.round(1, [
+                    [5, 1, 'N'],
+                    [8, 2, 'N'],
+                    [12, 3, 'N'],
+                    [17, 4, 'N']
+                ]);
+                setTimeout(() => this.incorrect('6 + 4 = 10', 10), 900);
+            },
+            demoNextRound() {
+                this.round(1, [
+                    [5, 1, 'Y'],
+                    [8, 2, 'Y'],
+                    [12, 3, 'Y'],
+                    [17, 4, 'Y']
+                ]);
+                setTimeout(() => this.streak(1, 2), 700);
+                setTimeout(() => this.countdown(5, 1, 2), 1700);
+                setTimeout(() => this.round(2), 7200);
+            }
+        };
     }
 
     function startTimer() {
-        console.log("Timer started."); // Debugging log
-        clearInterval(timerInterval); // Clear any existing timer
-        timer = 120; // Reset timer to 2 minutes
-        // Clear expired (red) visual state
-        timerElement.classList.remove('expired');
+        clearInterval(timerInterval);
+        timer = 120;
+        timerElement.classList.remove('expired', 'warning');
         updateTimerDisplay();
 
         timerInterval = setInterval(() => {
             timer--;
-            console.log(`Timer updated: ${timer}`); // Debugging log
+
+            if (timer <= 15 && timer > 0) {
+                timerElement.classList.add('warning');
+            }
+
             updateTimerDisplay();
 
             if (timer <= 0) {
                 clearInterval(timerInterval);
                 timerRunning = false;
-                // Keep 00:00 and show red
                 timer = 0;
                 updateTimerDisplay();
+                timerElement.classList.remove('warning');
                 timerElement.classList.add('expired');
 
-                // NEW: play phase not completed effect
                 playEffect('fase_nocompletada.wav');
 
-                // NEW: clear before showing timeout message
-                clearSolvedContainer();
+                renderStatus('timeout');
+                resetObjectiveFormula();
 
-                // Show timeout message in red for 5s
-                const timeoutMsg = document.createElement('div');
-                timeoutMsg.className = 'message error';
-                timeoutMsg.textContent = 'Tiempo agotado, reseteando operaciones';
-                solvedContainer.appendChild(timeoutMsg);
-                setTimeout(() => timeoutMsg.remove(), 5000);
+                setTimeout(() => {
+                    clearSolvedContainer();
+                }, 5000);
 
-                console.log("Timer expired. Resetting puzzle.");
-                // Notify the backend that the timer expired
-                fetch('/timer_expired', { method: 'POST' });
+                fetch('/timer_expired', { method: 'POST' })
+                    .catch(err => console.warn('timer_expired failed:', err));
             }
         }, 1000);
+
         timerRunning = true;
     }
 
     function updateTimerDisplay() {
         const minutes = Math.floor(timer / 60);
         const seconds = timer % 60;
-        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        timerElement.textContent =
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
     function initSSE() {
@@ -361,9 +586,9 @@
 
         es.onmessage = (evt) => {
             try {
-                console.log("Received SSE message:", evt.data); // Debugging log
+                console.log("Received SSE message:", evt.data);
                 const data = JSON.parse(evt.data);
-                handleUpdate(data);  // Process the received data
+                handleUpdate(data);
             } catch (e) {
                 console.warn("Bad SSE data", e);
             }
@@ -371,11 +596,15 @@
 
         es.onerror = () => {
             console.error("SSE connection lost. Attempting to reconnect...");
-            es.close();  // Close the current connection
-            setTimeout(initSSE, 5000);  // Retry after 5 seconds
+            es.close();
+            setTimeout(initSSE, 5000);
         };
     }
 
-    document.addEventListener('DOMContentLoaded', initSSE);
+    document.addEventListener('DOMContentLoaded', () => {
+        //installDebugHelpers();
+        //loadCurrentState();
+        initSSE();
+    });
 
 })();

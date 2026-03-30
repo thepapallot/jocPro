@@ -1,103 +1,335 @@
-/* Add Computer font */
-@font-face {
-    font-family: 'Computer';
-    src: url('/static/fonts/Computer.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Computer';
-    src: url('/static/fonts/Computer.otf') format('opentype');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
+:root {
+    --p7-line: rgba(69, 230, 255, 0.18);
+    --p7-cyan: #7fd0ff;
+    --p7-soft: rgba(234, 252, 255, 0.72);
+    --p7-ok: #2dff9b;
+    --p7-panel: linear-gradient(180deg, rgba(8, 18, 33, 0.92) 0%, rgba(5, 12, 24, 0.82) 100%);
+    --p7-body: #2b2f36;
+    --p7-body-edge: #415469;
+    --p7-window: #0c121a;
+    --p7-glow: rgba(69, 230, 255, 0.08);
+    --p7-color-0: #f4f7fb;
+    --p7-color-1: #18f38b;
+    --p7-color-2: #ffd84f;
+    --p7-color-3: #56a4ff;
+    --p7-color-4: #ff5b6f;
 }
 
 body {
-    margin: 0;
-    font-family: 'Computer', sans-serif; /* was sans-serif */
-    background: url('/static/images/puzzle7/P7fons.png') no-repeat center center fixed;
-    background-size: cover; /* cover the entire viewport */
-    transition: background 0.5s;
+    position: relative;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::before {
+    inset: 14% 8% auto 8%;
+    height: 28vh;
+    background:
+        radial-gradient(circle at 20% 40%, rgba(69, 230, 255, 0.12), transparent 26%),
+        radial-gradient(circle at 80% 40%, rgba(255, 89, 214, 0.08), transparent 22%);
+    filter: blur(42px);
+}
+
+body::after {
+    inset: auto 12% 4% 12%;
+    height: 28vh;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), transparent 36%);
+    filter: blur(44px);
+}
+
+#puzzle7-shell {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: 22px 28px 28px;
+}
+
+.p7-panel {
+    position: relative;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    padding: 0; /* Remove global padding to avoid layout shift */
+    gap: 18px;
+    height: 100%;
+    padding: 20px;
+    border: 1px solid var(--p7-line);
+    border-radius: 28px;
+    background: var(--p7-panel);
+    box-shadow:
+        0 0 28px rgba(0, 240, 255, 0.06),
+        inset 0 0 24px rgba(0, 240, 255, 0.03);
+    overflow: hidden;
 }
 
-#top-area {
-    /* replace flex with 3-col grid */
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items: center;
-    padding: 6px 30px; /* was 10px 30px */
-    gap: 20px;
+.p7-panel::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255, 89, 214, 0.08);
+    border-radius: 20px;
+    pointer-events: none;
+}
+
+.panel-head {
     position: relative;
-    box-sizing: border-box;
-    height: 30vh;           /* constrain header height */
-    min-height: 200px;      /* optional floor */
-    overflow: hidden;       /* prevent video from pushing layout */
-}
-
-/* Ensure the middle cell video scales within its grid cell */
-#top-center video,
-#top-center img {
-    /* Make video smaller so it doesn't push layout */
-    width: auto;          /* was 100% */
-    height: auto;         /* was 100% */
-    max-width: 85%;   /* was 70% */
-    max-height: 85%;  /* was 70% */
-    object-fit: contain;
-    display: block;
-    border: 0;
-    outline: none;
-    margin-top: -50px; /* was -30px */
-}
-
-/* optional helper for cells */
-.top-cell {
+    z-index: 1;
     display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 18px;
+}
+
+.panel-kicker {
+    color: rgba(234, 252, 255, 0.76);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.panel-title {
+    margin: 6px 0 0;
+    color: var(--p7-cyan);
+    font-size: clamp(1.5rem, 2.2vw, 2.4rem);
+    line-height: 1.02;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(69, 230, 255, 0.2);
+}
+
+#p7-status {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-}
-
-/* Nudge all items in top cells slightly upward */
-.top-cell > * {
-    margin-top: -16px; /* was -10px */
-}
-
-/* Raise left title more than the generic nudge */
-#top-left .level-title {
-    margin-top: -36px; /* was inherited -16px; move it further up */
-}
-
-/* Left title styling */
-.level-title {
-    font-family: 'Computer', sans-serif; /* was 'Chau Philomene' */
-    font-size: 16em; /* tweak as needed */
+    min-height: 34px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(69, 230, 255, 0.22);
+    background: linear-gradient(180deg, rgba(69, 230, 255, 0.14), rgba(69, 230, 255, 0.04));
+    color: #dff9ff;
+    font-size: 0.76rem;
     font-weight: 700;
-    color: #7fd0ff; /* light blue */
-    text-shadow: 0 4px 10px rgba(0,0,0,0.6);
-    letter-spacing: 2px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition:
+        border-color 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease,
+        color 180ms ease;
 }
 
-#cards-grid {
+#p7-status.is-complete {
+    border-color: rgba(45, 255, 155, 0.4);
+    background: linear-gradient(180deg, rgba(45, 255, 155, 0.22), rgba(45, 255, 155, 0.08));
+    color: #effff7;
+    box-shadow: 0 0 18px rgba(45, 255, 155, 0.12);
+}
+
+#led-grid {
+    position: relative;
+    z-index: 1;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(2, auto);
-    gap: 18px; /* was 24px */
-    width: min(1650px, 96vw); /* was 1400px / 95vw */
-    margin: 0 auto;
-    align-items: center;
-    justify-items: center;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
 }
 
-.p7-card {
+.led-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    min-height: 0;
+    padding: 10px 8px 14px;
+    border-radius: 22px;
+    border: 1px solid rgba(69, 230, 255, 0.06);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.008)),
+        radial-gradient(circle at 50% 12%, rgba(69, 230, 255, 0.08), transparent 28%);
+    transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease;
+}
+
+.led-card-number {
+    color: #effbff;
+    font-size: clamp(1.8rem, 2.4vw, 3rem);
+    font-weight: 800;
+    line-height: 1;
+    text-shadow:
+        0 0 10px rgba(69, 230, 255, 0.18),
+        0 0 18px rgba(69, 230, 255, 0.08);
+}
+
+.led-rig {
+    position: relative;
+    flex: 1;
+    width: min(100%, 150px);
+    min-height: 0;
+    border-radius: 26px;
+    border: 1px solid rgba(86, 126, 173, 0.42);
+    background:
+        linear-gradient(180deg, #383d44 0%, #2a3037 100%);
+    box-shadow:
+        inset 0 0 20px rgba(255,255,255,0.04),
+        0 0 18px rgba(69, 230, 255, 0.04);
+}
+
+.led-rig-inner {
+    position: absolute;
+    inset: 16px 22px;
+    border: 2px solid rgba(74, 120, 176, 0.6);
+    clip-path: polygon(12% 0, 88% 0, 100% 4%, 100% 96%, 88% 100%, 12% 100%, 0 96%, 0 4%);
+}
+
+.led-strip-window {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 42px;
+    height: calc(100% - 40px);
+    border-radius: 4px;
+    background: var(--p7-window);
+    overflow: hidden;
+    box-shadow:
+        inset 0 0 10px rgba(255,255,255,0.08),
+        0 0 14px rgba(69, 230, 255, 0.05);
+}
+
+.led-segment {
     width: 100%;
-    max-width: 300px; /* was 240px */
-    height: auto;
-    object-fit: contain;
-    user-select: none;
-    -webkit-user-drag: none;
+    height: 25%;
+    box-shadow:
+        inset 0 0 6px rgba(255,255,255,0.12),
+        0 0 10px rgba(255,255,255,0.02);
+}
+
+.led-segment + .led-segment {
+    border-top: 1px solid rgba(7, 14, 22, 0.32);
+}
+
+.color-0 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-0) 94%, white), var(--p7-color-0)); }
+.color-1 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-1) 90%, white), var(--p7-color-1)); }
+.color-2 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-2) 92%, white), var(--p7-color-2)); }
+.color-3 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-3) 88%, white), var(--p7-color-3)); }
+.color-4 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-4) 88%, white), var(--p7-color-4)); }
+
+.led-screw {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at 35% 35%, #79828e, #1d232b 70%);
+    box-shadow: 0 0 0 2px rgba(44, 78, 124, 0.55);
+}
+
+.led-screw-top-left { top: 10px; left: 10px; }
+.led-screw-top-right { top: 10px; right: 10px; }
+.led-screw-bottom-left { bottom: 10px; left: 10px; }
+.led-screw-bottom-right { bottom: 10px; right: 10px; }
+
+.led-card.is-solved .led-rig {
+    border-color: rgba(45, 255, 155, 0.56);
+    box-shadow:
+        inset 0 0 20px rgba(255,255,255,0.04),
+        0 0 24px rgba(45, 255, 155, 0.14);
+}
+
+.led-card.is-solved {
+    border-color: rgba(45, 255, 155, 0.18);
+    background:
+        linear-gradient(180deg, rgba(45, 255, 155, 0.08), rgba(255,255,255,0.008)),
+        radial-gradient(circle at 50% 12%, rgba(45, 255, 155, 0.14), transparent 34%);
+    box-shadow:
+        inset 0 0 18px rgba(45, 255, 155, 0.04),
+        0 0 22px rgba(45, 255, 155, 0.06);
+}
+
+.led-card.is-newly-solved {
+    animation: p7-card-pulse 760ms ease;
+}
+
+.led-card.is-solved .led-rig::after {
+    content: "OK";
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 2;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(45, 255, 155, 0.2), rgba(45, 255, 155, 0.08));
+    border: 1px solid rgba(45, 255, 155, 0.34);
+    color: #e7fff5;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.led-card.is-solved .led-card-number {
+    color: var(--p7-ok);
+    text-shadow:
+        0 0 10px rgba(45, 255, 155, 0.18),
+        0 0 18px rgba(45, 255, 155, 0.08);
+}
+
+@keyframes p7-card-pulse {
+    0% {
+        transform: translateY(0) scale(1);
+        box-shadow: 0 0 0 rgba(45, 255, 155, 0);
+    }
+    30% {
+        transform: translateY(-3px) scale(1.015);
+        box-shadow: 0 0 28px rgba(45, 255, 155, 0.18);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        box-shadow: 0 0 22px rgba(45, 255, 155, 0.06);
+    }
+}
+
+@media (max-width: 1180px) {
+    #led-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    #led-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .panel-head {
+        flex-direction: column;
+        align-items: start;
+    }
+}
+
+@media (max-width: 640px) {
+    #puzzle7-shell {
+        padding: 16px;
+    }
+
+    .p7-panel {
+        padding: 16px;
+    }
+
+    #led-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .led-rig {
+        width: min(100%, 138px);
+        min-height: 220px;
+    }
 }

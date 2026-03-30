@@ -1,22 +1,85 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Puzzle 6</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle6.css') }}">
-</head>
-<body>
-    <div id="top-area">
-        <div id="top-left">
-            <span class="level-title">NIVEL {{ current_level }}</span>
-            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 6 animation" />
+{% extends "base.html" %}
+
+{% block title %}Puzzle 6{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle6.css') }}">
+{% endblock %}
+
+{% block top_right %}
+<div id="countdown-panel">
+    <div class="hud-label">Cuenta atras</div>
+    <div id="countdown">01:00</div>
+</div>
+{% endblock %}
+
+{% block puzzle_content %}
+<div id="puzzle6-shell">
+    <aside id="token-panel" class="p6-panel">
+        <div class="panel-kicker">Asignacion</div>
+        <h2 class="panel-title">Token y color</h2>
+
+        <div id="token-grid">
+            {% set token_colors = [
+                ('5', 'Rojo', '#ff2b2b'),
+                ('31', 'Amarillo', '#ffd84f'),
+                ('13', 'Cian', '#55e7f7'),
+                ('14', 'Morado', '#a24cff'),
+                ('20', 'Cian', '#55e7f7'),
+                ('22', 'Morado', '#a24cff'),
+                ('17', 'Verde', '#19dd7d'),
+                ('10', 'Rojo', '#ff2b2b'),
+                ('18', 'Verde', '#19dd7d'),
+                ('35', 'Amarillo', '#ffd84f')
+            ] %}
+            {% for code, name, color in token_colors %}
+            <div class="token-card" style="--token-color: {{ color }}">
+                <div class="token-id">{{ code }}</div>
+                <div class="token-color-inline">{{ name }}</div>
+                <div class="token-core">
+                    <div class="token-halo"></div>
+                    <img
+                        class="token-icon"
+                        src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}"
+                        alt="Token {{ code }}"
+                    >
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        <div id="top-right">
-            <div id="message"></div>
-            <div id="countdown">05:00</div>
+    </aside>
+
+    <section id="tracker-panel" class="p6-panel">
+        <div id="status-card">
+            <div class="status-head">
+                <div>
+                    <div class="panel-kicker">Sincronizacion</div>
+                    <h2 class="panel-title">Carga por color</h2>
+                </div>
+                <div id="status-badge">Activa</div>
+            </div>
+
+            <div id="message-wrap">
+                <div id="message-label">Estado</div>
+                <div id="message">Alinea cada token con su color antes de que desaparezca.</div>
+            </div>
         </div>
-    </div>
-    <div id="bottom-area">
-    </div>
-    <script src="{{ url_for('static', filename='js/puzzle6.js') }}"></script>
-</body>
-</html>
+
+        <div id="energy-stage">
+            <div class="stage-topline">
+            </div>
+
+            <div id="beam-frame">
+                <div class="beam-core"></div>
+                <div class="beam-wave beam-wave-a"></div>
+                <div class="beam-wave beam-wave-b"></div>
+                <div class="beam-wave beam-wave-c"></div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle6.js') }}"></script>
+{% endblock %}

@@ -1,10 +1,13 @@
 (function() {
     const objectiveEl = document.getElementById('objective-text');
+    const objectiveSubtextEl = document.getElementById('objective-subtext');
     const errorEl = document.getElementById('error-text');
     const streakEl = document.getElementById('streak');
+    const limitBadgeEl = document.getElementById('limit-badge');
     const playerBoxes = document.querySelectorAll('.player-box');
     const playersSection = document.getElementById('players-section');
     const errorSection = document.getElementById('error-section');
+    const roundSteps = document.querySelectorAll('.round-step');
     
     let solved = false;
     let currentRound = 0;
@@ -73,11 +76,14 @@
         console .log('[P5] Round limits:', roundLimits);
 
         // Show boxes and error counter
-        playersSection.style.display = 'flex';
+        playersSection.style.display = 'grid';
         errorSection.style.display = 'block';
         // Update objective text
         if (round && roundObjectives) {
             objectiveEl.textContent = `OBJETIVO: ${roundObjectives} sec`;
+        }
+        if (objectiveSubtextEl) {
+            objectiveSubtextEl.textContent = 'Cuenta desde la activacion y detente cuando sientas que has llegado al objetivo.';
         }
     }
 
@@ -86,12 +92,38 @@
             roundObjectives = objective; // update local state
         }
         objectiveEl.textContent = `OBJETIVO: ${roundObjectives} sec`;
+        if (objectiveSubtextEl) {
+            objectiveSubtextEl.textContent = 'Sincroniza las cajas con el paso del tiempo.';
+        }
+    }
+
+    function showWaitingState({
+        objective = roundObjectives || 10,
+        message = 'Preparando cronometro',
+        subtext = 'Conectando con el estado actual del puzzle.'
+    } = {}) {
+        showObjectiveText(objective);
+        objectiveEl.textContent = message;
+        playersSection.style.display = 'none';
+        errorSection.style.display = 'none';
+        if (objectiveSubtextEl) {
+            objectiveSubtextEl.textContent = subtext;
+        }
     }
 
     function updateStreak(round) {
         if (streakEl && round) {
             streakEl.textContent = `${round}/3`;
         }
+        roundSteps.forEach(step => {
+            const stepRound = Number(step.dataset.roundStep);
+            step.classList.remove('is-current', 'is-complete');
+            if (round > stepRound) {
+                step.classList.add('is-complete');
+            } else if (round === stepRound) {
+                step.classList.add('is-current');
+            }
+        });
     }
 
     function updateErrorCounter(total, limit, result) {
@@ -108,6 +140,9 @@
                 errorEl.classList.add('failure-result');
             }
         }
+        if (limitBadgeEl && limit !== undefined) {
+            limitBadgeEl.textContent = `Margen max ${limit} sec`;
+        }
     }
 
     function updatePlayerBoxes(times) {
@@ -115,7 +150,7 @@
         
         // Reset all boxes
         playerBoxes.forEach(box => {
-            box.classList.remove('filled');
+            box.classList.remove('filled', 'error-positive', 'error-negative');
             const timeEl = box.querySelector('.box-time');
             if (timeEl) {
                 timeEl.textContent = '';
@@ -129,6 +164,11 @@
                 if (playerIndex >= 0 && playerIndex < playerBoxes.length) {
                     const box = playerBoxes[playerIndex];
                     box.classList.add('filled');
+                    if (item.time > 0) {
+                        box.classList.add('error-positive');
+                    } else if (item.time < 0) {
+                        box.classList.add('error-negative');
+                    }
                     
                     const timeEl = box.querySelector('.box-time');
                     if (timeEl) {
@@ -148,8 +188,42 @@
         console.log('[P5] handleUpdate received:', d);
 
         // If backend snapshot says we're waiting but didn't include countdown_message,
-        // show a generic waiting message (avoid being stuck silently).
+        // rebuild the best possible UI instead of staying blank.
         if (d.waiting && !d.active_round && !d.countdown_message && (d.round === 0 || d.round === undefined)) {
+            currentRound = 0;
+            roundObjectives = d.objective || roundObjectives || 10;
+            roundLimits = d.limit || roundLimits;
+            updateStreak(1);
+            showWaitingState({
+                objective: roundObjectives,
+                message: `OBJETIVO: ${roundObjectives} sec`,
+                subtext: 'Esperando el inicio de la primera ronda.'
+            });
+            return;
+        }
+
+        if (d.waiting && !d.active_round && !d.countdown_message && d.round) {
+            currentRound = d.round;
+            roundLimits = d.limit || roundLimits;
+            roundObjectives = d.objective || roundObjectives;
+            updateStreak(d.round);
+
+            if (Array.isArray(d.times) && d.times.length) {
+                showGameUI(d.round);
+                updatePlayerBoxes(d.times);
+                if (d.total !== undefined && d.limit !== undefined) {
+                    updateErrorCounter(d.total, d.limit);
+                }
+                if (objectiveSubtextEl) {
+                    objectiveSubtextEl.textContent = 'Esperando la siguiente activacion del cronometro.';
+                }
+            } else {
+                showWaitingState({
+                    objective: roundObjectives,
+                    message: `OBJETIVO: ${roundObjectives} sec`,
+                    subtext: `Ronda ${d.round} en pausa. Esperando la siguiente activacion.`
+                });
+            }
             return;
         }
 
@@ -158,7 +232,7 @@
             // Clear boxes and colors first if we had a result
             if (lastRoundResult) {
                 playerBoxes.forEach(box => {
-                    box.classList.remove('filled');
+                    box.classList.remove('filled', 'error-positive', 'error-negative');
                     const timeEl = box.querySelector('.box-time');
                     if (timeEl) {
                         timeEl.textContent = '';
@@ -189,6 +263,9 @@
             if (d.waiting_seconds && d.waiting_seconds > 0) {
                 let remaining = d.waiting_seconds;
                 objectiveEl.textContent = `${objectiveText}\n\n${baseMessage} ${remaining} segundo${remaining !== 1 ? 's' : ''}`;
+                if (objectiveSubtextEl) {
+                    objectiveSubtextEl.textContent = 'El sistema esta preparando la siguiente fase del cronometro.';
+                }
                 countdownInterval = setInterval(() => {
                     remaining = Math.max(0, remaining - 1);
                     if (remaining > 0) {
@@ -201,6 +278,9 @@
                 }, 1000);
             } else {
                 objectiveEl.textContent = `${objectiveText}\n\n${d.countdown_message}`;
+                if (objectiveSubtextEl) {
+                    objectiveSubtextEl.textContent = 'Preparando la siguiente activacion.';
+                }
             }
 
             return;
@@ -261,6 +341,108 @@
         }
     }
 
+    function installDebugHelpers() {
+        window.puzzle5Debug = {
+            push(payload) {
+                handleUpdate({ puzzle_id: 5, ...payload }, 'debug');
+            },
+            countdown(seconds = 5, objective = 10, round = 1) {
+                handleUpdate({
+                    puzzle_id: 5,
+                    countdown_message: `Ronda ${round} empieza en ${seconds} segundos`,
+                    waiting_seconds: seconds,
+                    objective
+                }, 'debug-countdown');
+            },
+            round(round = 1, objective = 10, limit = 20) {
+                handleUpdate({
+                    puzzle_id: 5,
+                    round,
+                    round_start: true,
+                    objective,
+                    limit
+                }, 'debug-round');
+            },
+            partial(times, round = 1, objective = 10, limit = 20) {
+                const total = (times || []).reduce((acc, item) => acc + Math.abs(item.time), 0);
+                handleUpdate({
+                    puzzle_id: 5,
+                    round,
+                    objective,
+                    limit,
+                    times,
+                    total
+                }, 'debug-partial');
+            },
+            success(round = 1, total = 7.5, limit = 20) {
+                handleUpdate({
+                    puzzle_id: 5,
+                    round_result: {
+                        success: true,
+                        total,
+                        limit
+                    }
+                }, 'debug-success');
+            },
+            failure(round = 1, total = 38.1, limit = 30) {
+                handleUpdate({
+                    puzzle_id: 5,
+                    round_result: {
+                        success: false,
+                        total,
+                        limit
+                    }
+                }, 'debug-failure');
+            },
+            solved() {
+                const previousSolved = solved;
+                solved = false;
+                handleUpdate({
+                    puzzle_id: 5,
+                    puzzle_solved: true
+                }, 'debug-solved');
+                solved = previousSolved;
+            },
+            demoSuccess() {
+                const times = [
+                    { player: 0, time: -0.7 },
+                    { player: 1, time: 1.2 },
+                    { player: 2, time: 0.4 },
+                    { player: 3, time: -1.1 },
+                    { player: 4, time: 0.6 },
+                    { player: 5, time: 0.8 },
+                    { player: 6, time: -0.5 },
+                    { player: 7, time: 1.0 },
+                    { player: 8, time: -0.9 },
+                    { player: 9, time: 0.3 }
+                ];
+                this.countdown(3, 10, 1);
+                setTimeout(() => this.round(1, 10, 20), 3200);
+                setTimeout(() => this.partial(times.slice(0, 5), 1, 10, 20), 4800);
+                setTimeout(() => this.partial(times, 1, 10, 20), 6800);
+                setTimeout(() => this.success(1, 7.5, 20), 8600);
+            },
+            demoFailure() {
+                const times = [
+                    { player: 0, time: 5.4 },
+                    { player: 1, time: -4.2 },
+                    { player: 2, time: 3.7 },
+                    { player: 3, time: -2.9 },
+                    { player: 4, time: 4.6 },
+                    { player: 5, time: -3.8 },
+                    { player: 6, time: 2.7 },
+                    { player: 7, time: -4.9 },
+                    { player: 8, time: 3.1 },
+                    { player: 9, time: -2.8 }
+                ];
+                this.countdown(3, 30, 2);
+                setTimeout(() => this.round(2, 30, 30), 3200);
+                setTimeout(() => this.partial(times, 2, 30, 30), 5400);
+                setTimeout(() => this.failure(2, 38.1, 30), 7600);
+            }
+        };
+    }
+
     function loadSnapshot(func) {
         console.log('[P5] Loading snapshot from server:', func);
 
@@ -286,15 +468,21 @@
             } 
         };
         es.onopen = () => {
-            // Start Puzzle 2 when SSE is connected
+            loadSnapshot('SSE-open');
+            // Start puzzle 5 when SSE is connected
             fetch("/start_puzzle/5", { method: "POST" })
+                .then(() => loadSnapshot('start_puzzle/5'))
                 .catch(err => console.warn("Failed to start puzzle 5:", err));
         };
         es.onerror = () => console.error('[P5] SSE error');
         
     }
 
-    document.addEventListener('DOMContentLoaded', initSSE);
+    document.addEventListener('DOMContentLoaded', () => {
+        installDebugHelpers();
+        loadSnapshot('DOMContentLoaded');
+        initSSE();
+    });
 
     // Clean up interval on page unload
     window.addEventListener('beforeunload', () => {

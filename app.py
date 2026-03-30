@@ -191,3 +191,66 @@ def timer_expired():
     mqtt_client.timer_expired()
     return '', 204
 
+
+##### Entorn de desenvolupament per fer Tests#####
+@app.route('/test', methods=['GET'])
+def test_lab():
+    return render_template('test.html', current_level=0)
+
+@app.route('/test/send', methods=['POST'])
+def test_send_message():
+    data = request.get_json(silent=True) or {}
+    topic = (data.get('topic') or 'TO_FLASK').strip()
+    payloads = data.get('payloads')
+    payload = data.get('payload')
+
+    if payloads is None:
+        payloads = [payload]
+
+    clean_payloads = [
+        str(item).strip()
+        for item in payloads
+        if item is not None and str(item).strip()
+    ]
+
+    if not clean_payloads:
+        return jsonify({"error": "empty_payload"}), 400
+
+    for item in clean_payloads:
+        mqtt_client.send_message(topic, item)
+
+    return jsonify({
+        "status": "sent",
+        "topic": topic,
+        "count": len(clean_payloads),
+        "payloads": clean_payloads
+    }), 200
+
+
+@app.route('/test/puzzle3_solution', methods=['GET'])
+def test_puzzle3_solution():
+    state = mqtt_client.get_current_state() or {}
+    question = state.get("question") or {}
+    question_id = question.get("id")
+
+    if state.get("puzzle_id") != 3 or question_id is None:
+        return jsonify({"error": "puzzle3_not_active"}), 404
+
+    from data.puzzle3_questions import QUESTIONS as P3_QUESTIONS
+
+    question_map = {item["id"]: item for item in P3_QUESTIONS}
+    current = question_map.get(question_id)
+    if not current:
+        return jsonify({"error": "question_not_found"}), 404
+
+    correct_index = current.get("correct")
+    answers = current.get("answers", [])
+    correct_text = None
+    if isinstance(correct_index, int) and 1 <= correct_index <= len(answers):
+        correct_text = answers[correct_index - 1]
+
+    return jsonify({
+        "question_id": question_id,
+        "correct_answer": correct_index,
+        "correct_text": correct_text
+    }), 200

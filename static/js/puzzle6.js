@@ -1,6 +1,9 @@
 (function() {
     const countdownEl = document.getElementById('countdown');
     const messageEl = document.getElementById('message');
+    const statusBadgeEl = document.getElementById('status-badge');
+    const DEFAULT_MESSAGE = 'Alinea cada token con su color antes de que desaparezca.';
+    const WAITING_MESSAGE = 'Esperando sincronizacion del sistema.';
 
     let solved = false;
     let active = false;
@@ -17,6 +20,29 @@
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
     const BTN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
 
+    function clearTimers() {
+        clearInterval(countdownTimer);
+        clearInterval(resetTimer);
+        countdownTimer = null;
+        resetTimer = null;
+    }
+
+    function setMessage(text = DEFAULT_MESSAGE, isFailure = false) {
+        if (!messageEl) return;
+        messageEl.textContent = text;
+        messageEl.classList.toggle('failure', Boolean(isFailure));
+    }
+
+    function setStatusBadge(state = 'active', text = null) {
+        if (!statusBadgeEl) return;
+        statusBadgeEl.classList.remove('failure', 'solved');
+        if (state === 'failure') {
+            statusBadgeEl.classList.add('failure');
+        } else if (state === 'solved') {
+            statusBadgeEl.classList.add('solved');
+        }
+        statusBadgeEl.textContent = text || (state === 'failure' ? 'Recargando' : state === 'solved' ? 'Completado' : 'Activa');
+    }
 
     function format(sec) {
         if (sec < 0) sec = 0;
@@ -26,12 +52,14 @@
     }
 
     function startLocalCountdown(remainingSeconds) {
-        clearInterval(countdownTimer);
-        clearInterval(resetTimer);
+        clearTimers();
         active = true;
-        messageEl.textContent = '';  // Clear any error message
+        solved = false;
+        setMessage(DEFAULT_MESSAGE, false);
         countdownEl.classList.remove('failure');  // Remove failure class when starting normal countdown
-        endTime = Date.now() + remainingSeconds * 1000;
+        countdownEl.classList.remove('expired');
+        setStatusBadge('active', 'Activa');
+        endTime = Date.now() + Math.max(0, remainingSeconds) * 1000;
         updateCountdown(); // immediate
         countdownTimer = setInterval(updateCountdown, 1000);
     }
@@ -56,39 +84,50 @@
 
     function handleReset(waitSeconds, msg) {
         active = false;
-        clearInterval(countdownTimer);
-        clearInterval(resetTimer);
+        clearTimers();
         // Play KO sound on reset
         playSound(PHASE_KO_SOUND_URL);
 
         // Show error message
-        messageEl.textContent = msg;
-        
+        setMessage(msg, true);
+
         // Add failure class to make countdown red
         countdownEl.classList.add('failure');
         countdownEl.classList.remove('expired');
+        setStatusBadge('failure', 'Recargando');
         
         // Show countdown in the main timer display
         let end = Date.now() + waitSeconds * 1000;
         function tick() {
             const left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
-            countdownEl.textContent = `${left}s`;
+            countdownEl.textContent = format(left);
             if (left <= 0) {
                 clearInterval(resetTimer);
+                resetTimer = null;
                 // Remove failure class when countdown ends
                 countdownEl.classList.remove('failure');
+                setMessage(WAITING_MESSAGE, false);
             }
         }
         tick();
         resetTimer = setInterval(tick, 500);
     }
 
+    function applySolvedState() {
+        solved = true;
+        active = false;
+        endTime = null;
+        clearTimers();
+        countdownEl.textContent = '00:00';
+        countdownEl.classList.add('expired');
+        countdownEl.classList.remove('failure');
+        setMessage('Secuencia completada.', false);
+        setStatusBadge('solved', 'Completado');
+    }
+
     function applySnapshot(d) {
         if (d.puzzle_solved) {
-            solved = true;
-            countdownEl.textContent = '00:00';
-            countdownEl.classList.add('expired');
-            messageEl.textContent = '';
+            applySolvedState();
             return;
         }
         if (d.restart_pending) {
@@ -98,8 +137,18 @@
         }
         if (d.active) {
             countdownEl.classList.remove('expired');
+            setStatusBadge('active', 'Activa');
             startLocalCountdown(d.remaining);
+            return;
         }
+
+        active = false;
+        endTime = null;
+        clearTimers();
+        countdownEl.classList.remove('failure', 'expired');
+        countdownEl.textContent = format(d.remaining ?? 60);
+        setMessage(WAITING_MESSAGE, false);
+        setStatusBadge('active', 'En espera');
     }
 
     function handleUpdate(d) {
@@ -112,11 +161,11 @@
             const serverNow = Date.now();
             const elapsed = Math.max(0, Math.floor(serverNow/1000 - info.start_ts));
             const remaining = info.duration - elapsed;
-            countdownEl.classList.remove('expired');
             startLocalCountdown(remaining);
         }
 
         if (d.countdown_tick && active && !solved) {
+            endTime = Date.now() + Math.max(0, d.countdown_tick.remaining) * 1000;
             countdownEl.textContent = format(d.countdown_tick.remaining);
             // Optional: also play on server ticks (every 10s). Comment out to keep per-second only.
             // playSound(BTN_SOUND_URL);
@@ -129,17 +178,67 @@
         }
 
         if (d.puzzle_solved && !solved) {
-            solved = true;
-            active = false;
-            clearInterval(countdownTimer);
-            clearInterval(resetTimer);
-            countdownEl.textContent = '00:00';
-            countdownEl.classList.add('expired');
-            messageEl.textContent = '';
+            applySolvedState();
             // Play final puzzle completion sound
             playSound(PUZZLE_COMPLETE_SOUND_URL);
             setTimeout(() => window.location.href = '/puzzleSuperat/6', 3000);
         }
+    }
+
+    function installDebugHelpers() {
+        window.puzzle6Debug = {
+            push(payload) {
+                handleUpdate({ puzzle_id: 6, ...payload });
+            },
+            start(remaining = 60) {
+                handleUpdate({
+                    puzzle_id: 6,
+                    countdown_start: {
+                        duration: remaining,
+                        start_ts: Math.floor(Date.now() / 1000)
+                    }
+                });
+            },
+            tick(remaining = 40) {
+                handleUpdate({
+                    puzzle_id: 6,
+                    countdown_tick: { remaining }
+                });
+            },
+            reset(box = 4, waitingSeconds = 10) {
+                handleUpdate({
+                    puzzle_id: 6,
+                    countdown_reset: {
+                        box,
+                        message: `Caja Numero ${box} sin energia, cargando sistema...`,
+                        waiting_seconds: waitingSeconds
+                    }
+                });
+            },
+            solved() {
+                const previousSolved = solved;
+                solved = false;
+                handleUpdate({
+                    puzzle_id: 6,
+                    puzzle_solved: true
+                });
+                solved = previousSolved;
+            },
+            demoActive() {
+                this.start(60);
+                setTimeout(() => this.tick(45), 1200);
+                setTimeout(() => this.tick(30), 2200);
+            },
+            demoReset() {
+                this.start(60);
+                setTimeout(() => this.reset(7, 10), 1400);
+            },
+            demoSolved() {
+                this.start(8);
+                setTimeout(() => this.tick(4), 1200);
+                setTimeout(() => this.solved(), 2400);
+            }
+        };
     }
 
     function loadSnapshot() {
@@ -161,10 +260,15 @@
         es.onopen = () => {
             // Start Puzzle 6 when SSE is connected
             fetch("/start_puzzle/6", { method: "POST" })
-                .catch(err => console.warn("Failed to start puzzle 2:", err));
+                .catch(err => console.warn("Failed to start puzzle 6:", err));
         };
         es.onerror = () => console.error('[P6] SSE connection error');
     }
 
-    document.addEventListener('DOMContentLoaded', initSSE);
+    document.addEventListener('DOMContentLoaded', () => {
+        setStatusBadge('active', 'Activa');
+        loadSnapshot();
+        installDebugHelpers();
+        initSSE();
+    });
 })();

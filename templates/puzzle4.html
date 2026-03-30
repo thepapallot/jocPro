@@ -1,53 +1,85 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Puzzle 4</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle4.css') }}">
-</head>
-<body>
-    <div id="top-area">
-        <div id="top-left" class="top-cell">
-            <span class="level-title">NIVEL {{ current_level }}</span>
+{% extends "base.html" %}
+
+{% block title %}Puzzle 4{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle4.css') }}">
+{% endblock %}
+
+{% block top_right %}
+<div id="streak-panel">
+    <div class="hud-label">Ronda</div>
+    <div id="streak">1/2</div>
+</div>
+{% endblock %}
+
+{% block puzzle_content %}
+<div id="puzzle4-shell">
+    <aside id="brief-panel" class="music-panel">
+        <div class="panel-kicker">Ayuda</div>
+        <h2 class="panel-title">Botones</h2>
+
+        <div class="button-legend">
+            <div class="legend-row">
+                <span class="legend-pill button-blue" aria-hidden="true"></span>
+                <span class="legend-copy">Escuchar la muestra completa</span>
+            </div>
+            <div class="legend-row">
+                <span class="legend-pill button-green" aria-hidden="true"></span>
+                <span class="legend-copy">Registrar</span>
+            </div>
+            <div class="legend-row">
+                <span class="legend-pill button-red" aria-hidden="true"></span>
+                <span class="legend-copy">Dejar de registrar</span>
+            </div>
+            <div class="legend-row">
+                <span class="legend-pill button-white" aria-hidden="true"></span>
+                <span class="legend-copy">Resetear</span>
+            </div>
         </div>
-        <div id="top-center" class="top-cell">
-            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 4 animation" />
-        </div>
-        <div id="top-right" class="top-cell">
-            <div id="streak">1/2</div>
-        </div>
-    </div>
-    <div id="bottom-area">
+    </aside>
+
+    <section id="console-panel" class="music-panel">
         <div id="status-section">
+            <div class="panel-kicker">Estado del sistema</div>
             <span id="status-text"></span>
         </div>
+
         <div id="progress-section">
-            <div id="streak1-container" class="streak-container"> 
-                <div class="progress-boxes">
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
+            <div id="streak1-container" class="streak-container">
+                <div class="sequence-header">
+                    <span class="sequence-title">Secuencia A</span>
+                    <span class="sequence-size">4 cajas</span>
+                </div>
+                <div class="progress-boxes progress-boxes-4">
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
                 </div>
             </div>
+
             <div id="streak2-container" class="streak-container">
-                <div class="progress-boxes">
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
-                    <div class="progress-box"></div>
+                <div class="sequence-header">
+                    <span class="sequence-title">Secuencia B</span>
+                    <span class="sequence-size">8 cajas</span>
+                </div>
+                <div class="progress-boxes progress-boxes-8">
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
+                    <div class="progress-box note-slot"></div>
                 </div>
             </div>
         </div>
-    </div>
-    <!--video id="p4-unlock-video" muted autoplay playsinline loop style="position:fixed;left:-10000px;top:0;width:1px;height:1px;">
-        <source src="{{ url_for('static', filename='videos/Video_inicial.mp4') }}" type="video/mp4">
-    </video-->
-    <!-- NEW: muted autoplay audio (no source set initially) -->
-    <!--audio id="p4-audio" autoplay muted playsinline style="display:none"></audio-->
-    <script src="{{ url_for('static', filename='js/puzzle4.js') }}"></script>
-</body>
-</html>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle4.js') }}"></script>
+{% endblock %}

@@ -1,56 +1,51 @@
 (function() {
-    const statusEl = document.getElementById('status-text');
-    let solved = false;
-    let showingCompletion = false;
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
-    const FASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";         
-    const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";       
-    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; 
-    
-    // Singleton audio for SFX to avoid overlap
+    const FASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
+    const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+
     const sfxAudio = (() => {
-        const a = new Audio();
-        a.autoplay = true;
-        a.preload = 'auto';
-        a.muted = false;
-        a.volume = 1.0;
-        a.setAttribute('playsinline', '');
-        return a;
+        const audio = new Audio();
+        audio.autoplay = true;
+        audio.preload = 'auto';
+        audio.muted = false;
+        audio.volume = 1.0;
+        audio.setAttribute('playsinline', '');
+        return audio;
     })();
 
-    // Track flashing state
+    let statusEl = null;
+    let streakEl = null;
+    let solved = false;
+    let showingCompletion = false;
     let flashingActive = false;
     let flashingCorrect = false;
-
-    // NEW: control for frontend-only countdown flow
-    let sampleCountdownTimer = null;
-    let sampleCountdownRunning = false;
+    let currentSampleUrl = null;
+    let samplePlaybackToken = 0;
+    let feedbackTimer = null;
 
     function playSound(url, onComplete) {
         if (!url) return;
+
         try {
-            // If already playing something, stop it first
             try { sfxAudio.pause(); } catch {}
             try { sfxAudio.currentTime = 0; } catch {}
 
-            // If same URL, just restart; else set new src
-            const abs = new URL(url, window.location.origin).href;
-            if (sfxAudio.src !== abs) {
+            const absUrl = new URL(url, window.location.origin).href;
+            if (sfxAudio.src !== absUrl) {
                 sfxAudio.src = url;
                 try { sfxAudio.load(); } catch {}
             }
 
-            // Hook end for callbacks
             sfxAudio.onended = typeof onComplete === 'function' ? onComplete : null;
 
-            const p = sfxAudio.play();
-            if (p && typeof p.catch === 'function') {
-                p.catch(err => {
-                    // Retry once shortly (some devices balk on first try)
+            const playPromise = sfxAudio.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {
                     setTimeout(() => {
-                        const p2 = sfxAudio.play();
-                        if (p2 && typeof p2.catch === 'function') {
-                            p2.catch(e => console.warn("Audio play failed:", e));
+                        const retryPromise = sfxAudio.play();
+                        if (retryPromise && typeof retryPromise.catch === 'function') {
+                            retryPromise.catch(err => console.warn("Audio play failed:", err));
                         }
                     }, 100);
                 });
@@ -59,321 +54,391 @@
             console.warn("Audio play failed:", err);
         }
     }
-    
-    function setListening() {
-        if (solved || !statusEl) return;
-        statusEl.textContent = 'Escuchando Muesta';
-        statusEl.className = 'status listening';
-    }
 
-    function updateStatus(storing, playingSample,blank) {
-        const statusEl = document.getElementById('status-text');
+    function setStatus(text, tone) {
         if (!statusEl) return;
-        if (playingSample) {
-            statusEl.textContent = 'Reproduciendo muestra';
-            statusEl.classList.remove('storing');
-            statusEl.classList.add('playing-sample');
-        } else if (storing) {
-            playSound(BTN_SOUND_URL);
-            statusEl.textContent = 'Estado: Registrando';
-            statusEl.classList.add('storing');
-            statusEl.classList.remove('playing-sample');
-        } else if (blank){
-            statusEl.textContent = '';
-        } else {
-            playSound(BTN_SOUND_URL);
-            statusEl.textContent = 'Estado: No se está registrando';
-            statusEl.classList.remove('storing', 'playing-sample');
+        statusEl.textContent = text || '';
+        statusEl.className = '';
+        if (tone) {
+            statusEl.classList.add(tone);
         }
     }
 
-    function updateProgressBoxes(streak, currentProgress, playedSequence) {
-        // streak: 0, 1, or 2 (number of completed songs)
-        // currentProgress: 0-8 (progress in current song)
-        // playedSequence: array of song codes that have been played
-        
+    function updateRoundHud(streak, totalRequired) {
+        if (!streakEl || totalRequired === undefined) return;
+        if (streak === -1) {
+            streakEl.textContent = 'Muestra';
+            return;
+        }
+
+        const currentRound = Math.min((streak || 0) + 1, totalRequired);
+        streakEl.textContent = `${currentRound}/${totalRequired}`;
+    }
+
+    function updateStageClasses(streak) {
+        const streak1Container = document.getElementById('streak1-container');
+        const streak2Container = document.getElementById('streak2-container');
+
+        [streak1Container, streak2Container].forEach(container => {
+            if (!container) return;
+            container.classList.remove('is-active', 'is-complete', 'outcome-correct', 'outcome-wrong');
+        });
+
+        if (streak <= 0 && streak1Container) {
+            streak1Container.classList.add('is-active');
+        }
+        if (streak >= 1 && streak1Container) {
+            streak1Container.classList.add('is-complete');
+        }
+        if (streak === 1 && streak2Container) {
+            streak2Container.classList.add('is-active');
+        }
+        if (streak >= 2 && streak2Container) {
+            streak2Container.classList.add('is-complete');
+        }
+    }
+
+    function updateProgressBoxes(streak, playedSequence) {
         const streak1Container = document.getElementById('streak1-container');
         const streak2Container = document.getElementById('streak2-container');
         const streak1Boxes = document.querySelectorAll('#streak1-container .progress-box');
         const streak2Boxes = document.querySelectorAll('#streak2-container .progress-box');
-        
-        // Clear all boxes first (but preserve flashing class if active)
-        const clearClasses = box => {
+
+        const clearBox = box => {
             box.classList.remove('filled');
             box.textContent = '';
+            delete box.dataset.label;
             if (!flashingActive) {
                 box.classList.remove('flash-correct', 'flash-wrong');
-            } else {
-                // Ensure correct flash class is present while active
-                const want = flashingCorrect ? 'flash-correct' : 'flash-wrong';
-                const other = flashingCorrect ? 'flash-wrong' : 'flash-correct';
-                box.classList.add(want);
-                box.classList.remove(other);
             }
         };
-        streak1Boxes.forEach(clearClasses);
-        streak2Boxes.forEach(clearClasses);
-        
-        if (streak === -1){
-            // No song started yet - show empty first song
+
+        streak1Boxes.forEach(clearBox);
+        streak2Boxes.forEach(clearBox);
+        updateStageClasses(streak);
+
+        if (streak === -1) {
             streak1Container.style.display = 'none';
             streak2Container.style.display = 'none';
-        } else if (streak === 0) {
-            // Working on first song
+            return;
+        }
+
+        if (streak === 0) {
             streak1Container.style.display = 'flex';
             streak2Container.style.display = 'none';
-            
-            // Display played codes in boxes
-            if (playedSequence && playedSequence.length > 0) {
-                for (let i = 0; i < Math.min(playedSequence.length, streak1Boxes.length); i++) {
-                    streak1Boxes[i].textContent = playedSequence[i];
-                    streak1Boxes[i].classList.add('filled');
-                }
-            }
-        } else if (streak === 1) {
-            // Working on second song
-            streak1Container.style.display = 'none';
-            streak2Container.style.display = 'flex';
-            
-            // Display played codes in boxes
-            if (playedSequence && playedSequence.length > 0) {
-                for (let i = 0; i < Math.min(playedSequence.length, streak2Boxes.length); i++) {
-                    streak2Boxes[i].textContent = playedSequence[i];
-                    streak2Boxes[i].classList.add('filled');
-                }
-            }
-        } else if (streak >= 2) {
-            // Both songs complete - show completed second song
-            streak1Container.style.display = 'none';
-            streak2Container.style.display = 'flex';
-            streak2Boxes.forEach(box => box.classList.add('filled'));
+            playedSequence.forEach((code, index) => {
+                if (!streak1Boxes[index]) return;
+                streak1Boxes[index].textContent = code;
+                streak1Boxes[index].dataset.label = code;
+                streak1Boxes[index].classList.add('filled');
+            });
+            return;
         }
+
+        if (streak === 1) {
+            streak1Container.style.display = 'none';
+            streak2Container.style.display = 'flex';
+            playedSequence.forEach((code, index) => {
+                if (!streak2Boxes[index]) return;
+                streak2Boxes[index].textContent = code;
+                streak2Boxes[index].dataset.label = code;
+                streak2Boxes[index].classList.add('filled');
+            });
+            return;
+        }
+
+        streak1Container.style.display = 'none';
+        streak2Container.style.display = 'flex';
+        streak2Boxes.forEach(box => box.classList.add('filled'));
     }
 
-    // Start flashing and keep it until reset arrives
     function startFlashing(isCorrect) {
         flashingActive = true;
         flashingCorrect = !!isCorrect;
+
         const streak1Container = document.getElementById('streak1-container');
         const streak2Container = document.getElementById('streak2-container');
         const activeContainer = streak1Container.style.display !== 'none' ? streak1Container : streak2Container;
         const boxes = activeContainer.querySelectorAll('.progress-box');
         const flashClass = flashingCorrect ? 'flash-correct' : 'flash-wrong';
         const otherClass = flashingCorrect ? 'flash-wrong' : 'flash-correct';
+        const outcomeClass = flashingCorrect ? 'outcome-correct' : 'outcome-wrong';
+        const otherOutcomeClass = flashingCorrect ? 'outcome-wrong' : 'outcome-correct';
+
+        activeContainer.classList.add(outcomeClass);
+        activeContainer.classList.remove(otherOutcomeClass);
+
         boxes.forEach(box => {
             box.classList.add(flashClass);
             box.classList.remove(otherClass);
         });
     }
 
-    // Stop flashing explicitly (called when reset update arrives)
     function stopFlashing() {
         flashingActive = false;
-        const boxes = document.querySelectorAll('.progress-box');
-        boxes.forEach(box => box.classList.remove('flash-correct', 'flash-wrong'));
+        document.querySelectorAll('.streak-container').forEach(container => {
+            container.classList.remove('outcome-correct', 'outcome-wrong');
+        });
+        document.querySelectorAll('.progress-box').forEach(box => {
+            box.classList.remove('flash-correct', 'flash-wrong');
+        });
+    }
+
+    function clearFeedbackTimer() {
+        if (feedbackTimer) {
+            clearTimeout(feedbackTimer);
+            feedbackTimer = null;
+        }
+    }
+
+    function scheduleValidationFeedback(isCorrect, trackPayload) {
+        clearFeedbackTimer();
+
+        const durationSeconds = Number(trackPayload && trackPayload.duration) || 0;
+        const delayMs = Math.max(0, Math.round(durationSeconds * 1000));
+        const soundUrl = isCorrect ? FASE_OK_SOUND_URL : FASE_KO_SOUND_URL;
+        const statusText = isCorrect ? 'Secuencia correcta' : 'Secuencia incorrecta';
+        const statusTone = isCorrect ? 'completed' : 'failure';
+
+        feedbackTimer = setTimeout(() => {
+            feedbackTimer = null;
+            if (!solved) {
+                startFlashing(isCorrect);
+                setStatus(statusText, statusTone);
+                playSound(soundUrl);
+            }
+        }, delayMs);
+    }
+
+    function maybePlaySample(sampleSong, playingSample) {
+        if (!sampleSong || !sampleSong.url || !playingSample) return;
+        if (currentSampleUrl === sampleSong.url) return;
+
+        currentSampleUrl = sampleSong.url;
+        samplePlaybackToken += 1;
+        const token = samplePlaybackToken;
+
+        playSound(sampleSong.url, () => {
+            if (token !== samplePlaybackToken || solved) return;
+            currentSampleUrl = null;
+            if (!showingCompletion) {
+                setStatus('Esperando registro', 'idle');
+            }
+        });
+    }
+
+    function maybePlayTrack(trackPayload, streak, playedSequence) {
+        if (!trackPayload || !trackPayload.url || solved) return;
+
+        const isClosingTrack =
+            (Array.isArray(playedSequence) && playedSequence.length === 4 && streak === 0) ||
+            (Array.isArray(playedSequence) && playedSequence.length === 8 && streak === 1);
+
+        if (isClosingTrack) {
+            playSound(trackPayload.url);
+            return;
+        }
+
+        playSound(trackPayload.url);
     }
 
     function handleUpdate(d) {
         console.log('[P4] handleUpdate called with:', d);
-        
         if (!d || d.puzzle_id !== 4) return;
-        
-        // If we receive the reset state (current_progress: 0 and played_sequence: []), stop flashing
+
         if (Array.isArray(d.played_sequence) && d.played_sequence.length === 0 && (d.current_progress === 0 || d.current_progress === undefined)) {
             stopFlashing();
         }
 
-        if (d.listening) setListening();
-        
-        // Hide streak during sample or countdown
-        {
-            const streakEl = document.getElementById('streak');
-            if (streakEl) {
-                const hideStreak = d.streak === -1 || d.playing_sample === true || sampleCountdownRunning;
-                if (hideStreak) {
-                    streakEl.style.display = 'none';
-                    streakEl.textContent = '';
-                } else if (d.streak !== undefined && d.total_required !== undefined) {
-                    const currentSong = d.streak >= d.total_required ? d.total_required : d.streak + 1;
-                    streakEl.textContent = `${currentSong}/${d.total_required}`;
-                    streakEl.style.display = '';
-                }
-            }
+        if (d.streak !== undefined && d.total_required !== undefined) {
+            updateRoundHud(d.streak, d.total_required);
         }
 
-        // Show countdown messages before sample
-        if (typeof d.sample_countdown_seconds !== 'undefined') {
-            const secs = d.sample_countdown_seconds;
-            if (secs > 0) {
-                updateStatus(false, false, true);
-                const statusEl = document.getElementById('status-text');
-                if (statusEl) {
-                    statusEl.textContent = `Reproduciendo muestra en ${secs} segundos`;
-                    statusEl.classList.remove('storing');
-                    statusEl.classList.remove('playing-sample');
-                }
-            }
+        if (typeof d.sample_countdown_seconds !== 'undefined' && d.sample_countdown_seconds > 0) {
+            showingCompletion = false;
+            setStatus(`Reproduciendo muestra en ${d.sample_countdown_seconds} segundos`, 'countdown');
         }
 
-        // Handle sample song playback
-        if (d.sample_song && d.playing_sample) {
-            const url = d.sample_song.url;
-            playSound(url, () => {
-                console.log("Sample finished!");
-                updateStatus(false, false, true);
-            });
+        if (d.show_completion && !solved) {
+            showingCompletion = true;
+            setStatus('Fase completada', 'completed');
+            playSound(FASE_OK_SOUND_URL);
         }
 
-        // Optional: play pre-sample SFX
         if (d.play_mostra) {
             playSound(d.url);
         }
 
-        // Update storing/playing status - check playing_sample first, then storing
-        if (d.playing_sample !== undefined && !showingCompletion) {
-            updateStatus(d.storing || false, d.playing_sample);
-        } else if (d.storing !== undefined && !showingCompletion) {
-            updateStatus(d.storing, false);
-        }
-
-        // Update progress boxes ONLY if not showing completion
         if (d.streak !== undefined && !showingCompletion) {
-            const playedSeq = d.played_sequence || [];
-            console.log('[P4] Updating boxes - streak:', d.streak, 'played_sequence:', playedSeq);
-            if (d.reset_attempt) { 
+            const playedSequence = Array.isArray(d.played_sequence) ? d.played_sequence : [];
+            if (d.reset_attempt) {
                 playSound(BTN_SOUND_URL);
             }
-            updateProgressBoxes(d.streak, d.current_progress || 0, playedSeq);
+            updateProgressBoxes(d.streak, playedSequence);
         }
 
-        //Reprodueix trossos
-        if (d.play && !solved) {
-            if ((d.played_sequence.length == 4 && d.streak == 0) || (d.played_sequence.length == 8 && d.streak == 1)){
-                playSound(d.play.url, () => {
-                    console.log("Button sound finished!");
-                    fetch('/current_state')
-                    .catch(() => {});
-                });
-            } else {
-                playSound(d.play.url);
-            }
-            
+        if (d.play) {
+            maybePlayTrack(d.play, d.streak, d.played_sequence);
         }
 
-        // Handle sequence validation feedback: start persistent flashing
         if (d.sequence_correct !== undefined) {
-            startFlashing(d.sequence_correct);
-            /*// NEW: frontend-only pre-sample flow when correct and transitioning to streak 2
-            if (d.sequence_correct === true && d.streak === 0 && !sampleCountdownRunning) {
-                startPreSampleCountdown();
-            }*/
-        }
-
-        // To handle start next streaks
-        if (d.start_streak  !== undefined){
-
-            startPreSampleCountdown();
+            scheduleValidationFeedback(d.sequence_correct, d.play);
         }
 
         if (d.puzzle_solved && !solved) {
             solved = true;
-            showingCompletion = false;  // Reset flag
-            if (statusEl) {
-                statusEl.textContent = 'Cancion Completada';
-                statusEl.className = 'status solved';
+            showingCompletion = false;
+            samplePlaybackToken += 1;
+            currentSampleUrl = null;
+            clearFeedbackTimer();
+            setStatus('Cancion completada', 'solved');
+            playSound((d.play_final && d.play_final.url) || PUZZLE_COMPLETE_SOUND_URL);
+            setTimeout(() => {
+                window.location.href = '/puzzleSuperat/4';
+            }, 4000);
+            return;
+        }
+
+        maybePlaySample(d.sample_song, d.playing_sample);
+
+        if (!showingCompletion && !solved) {
+            if (d.playing_sample) {
+                setStatus('Reproduciendo muestra', 'playing-sample');
+            } else if (d.sample_countdown_seconds > 0) {
+                setStatus(`Reproduciendo muestra en ${d.sample_countdown_seconds} segundos`, 'countdown');
+            } else if (d.listening) {
+                setStatus('Escuchando muestra', 'listening');
+            } else if (d.storing === true) {
+                playSound(BTN_SOUND_URL);
+                setStatus('Registrando secuencia', 'storing');
+            } else if (d.storing === false) {
+                setStatus('Esperando registro', 'idle');
             }
-            setTimeout(() => window.location.href = '/puzzleSuperat/4', 4000);
         }
     }
 
-    // NEW: frontend-only pre-sample flow
-    function startPreSampleCountdown() {
-        sampleCountdownRunning = true;
-        // Play pre-sample SFX once
-        playSound("/static/audios/effects/apareix_contingut.wav");
-
-        // Show countdown 5..1 (no sound effects), then start sample
-        const statusEl = document.getElementById('status-text');
-        let secs = 5;
-
-        // Immediately hide streak
-        const streakEl = document.getElementById('streak');
-        if (streakEl) {
-            streakEl.style.display = 'none';
-            streakEl.textContent = '';
-        }
-
-        // Set initial message
-        setCountdownStatusText(secs);
-
-        sampleCountdownTimer = setInterval(() => {
-            secs -= 1;
-            if (secs > 0) {
-                setCountdownStatusText(secs);
-            } else {
-                // Final line and start sample locally
-                clearInterval(sampleCountdownTimer);
-                sampleCountdownTimer = null;
-                sampleCountdownRunning = false;
-                if (statusEl) {
-                    statusEl.textContent = 'Reproduciendo muestra';
-                    statusEl.classList.remove('storing');
-                    statusEl.classList.add('playing-sample');
-                }
-                // Locally start streak 2 sample (backend won't emit SSE)
-                const sampleUrl = "/static/audios/P4_F2/song.wav";
-                playSound(sampleUrl, () => {
-                    // Notify backend when sample finishes
-                    fetch('/puzzle4_sample_finished', { method: 'POST' }).catch(() => {});
-                    updateStatus(false, false, true);
+    function installDebugHelpers() {
+        window.puzzle4Debug = {
+            push(payload) {
+                handleUpdate({ puzzle_id: 4, ...payload });
+            },
+            listening() {
+                handleUpdate({
+                    puzzle_id: 4,
+                    streak: -1,
+                    total_required: 2,
+                    playing_sample: true,
+                    sample_song: { url: '/static/audios/P4_F1/song.wav' },
+                    played_sequence: []
                 });
+            },
+            idle(streak = 0, totalRequired = 2) {
+                handleUpdate({
+                    puzzle_id: 4,
+                    streak,
+                    total_required: totalRequired,
+                    storing: false,
+                    playing_sample: false,
+                    current_progress: 0,
+                    played_sequence: []
+                });
+            },
+            storing(streak = 0, playedSequence = []) {
+                handleUpdate({
+                    puzzle_id: 4,
+                    streak,
+                    total_required: 2,
+                    storing: true,
+                    playing_sample: false,
+                    current_progress: playedSequence.length,
+                    played_sequence: playedSequence
+                });
+            },
+            countdown(seconds = 5) {
+                handleUpdate({
+                    puzzle_id: 4,
+                    streak: -1,
+                    total_required: 2,
+                    sample_countdown_seconds: seconds
+                });
+            },
+            correct(streak = 0, playedSequence = ['5', '1', '8', '3']) {
+                handleUpdate({
+                    puzzle_id: 4,
+                    streak,
+                    total_required: 2,
+                    current_progress: playedSequence.length,
+                    played_sequence: playedSequence,
+                    sequence_correct: true
+                });
+            },
+            wrong(streak = 0, playedSequence = ['5', '2', '8', '3']) {
+                handleUpdate({
+                    puzzle_id: 4,
+                    streak,
+                    total_required: 2,
+                    current_progress: playedSequence.length,
+                    played_sequence: playedSequence,
+                    sequence_correct: false
+                });
+            },
+            solved() {
+                const previousSolved = solved;
+                solved = false;
+                handleUpdate({
+                    puzzle_id: 4,
+                    puzzle_solved: true
+                });
+                solved = previousSolved;
+            },
+            demoA() {
+                this.listening();
+                setTimeout(() => this.idle(0, 2), 1800);
+                setTimeout(() => this.storing(0, ['5']), 2800);
+                setTimeout(() => this.storing(0, ['5', '1']), 3400);
+                setTimeout(() => this.storing(0, ['5', '1', '8']), 4000);
+                setTimeout(() => this.correct(0, ['5', '1', '8', '3']), 4600);
+            },
+            demoB() {
+                this.idle(1, 2);
+                setTimeout(() => this.storing(1, ['6', '1', '0']), 900);
+                setTimeout(() => this.storing(1, ['6', '1', '0', '9', '8']), 1800);
+                setTimeout(() => this.wrong(1, ['6', '1', '0', '9', '8', '4']), 2600);
+            },
+            demoSolved() {
+                this.idle(1, 2);
+                setTimeout(() => this.storing(1, ['6', '1', '0', '9', '8', '5', '2', '7']), 700);
+                setTimeout(() => this.correct(1, ['6', '1', '0', '9', '8', '5', '2', '7']), 1600);
+                setTimeout(() => this.solved(), 3000);
             }
-        }, 1000);
-    }
-
-    function setCountdownStatusText(secs) {
-        const statusEl = document.getElementById('status-text');
-        if (!statusEl) return;
-        statusEl.textContent = `Reproduciendo muestra en ${secs} segundos`;
-        statusEl.classList.remove('storing');
-        statusEl.classList.remove('playing-sample');
-    }
-
-    function loadSnapshot() {
-        if (snapshotLoaded) return; // NEW: avoid double fetch
-        snapshotLoaded = true;      // NEW
-        fetch('/current_state')
-            .then(r => r.json())
-            .then(d => handleUpdate(d))
-            .catch(() => {});
+        };
     }
 
     function initSSE() {
         const es = new EventSource('/state_stream');
-        
-        es.onmessage = evt => { try { handleUpdate(JSON.parse(evt.data)); } catch(e) {} };
+
+        es.onmessage = evt => {
+            try {
+                handleUpdate(JSON.parse(evt.data));
+            } catch (err) {}
+        };
+
         es.onopen = () => {
-            // Start Puzzle 2 when SSE is connected
             fetch("/start_puzzle/4", { method: "POST" })
                 .catch(err => console.warn("Failed to start puzzle 4:", err));
         };
+
         es.onerror = () => {};
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        setListening();
+        statusEl = document.getElementById('status-text');
+        streakEl = document.getElementById('streak');
 
-        // Initialize display - start with 1/2
-        updateStatus(false, false, true);
-        updateProgressBoxes(-1, 0, []);
-        
-        // Initialize streak display to 1/2
-        const streakEl = document.getElementById('streak');
-        if (streakEl) {
-            streakEl.textContent = '1/2';
-            streakEl.style.display = ''; // ensure shown by default
-        }
-
+        //installDebugHelpers();
+        setStatus('Preparando muestra', 'listening');
+        updateProgressBoxes(-1, []);
+        updateRoundHud(0, 2);
         initSSE();
     });
 })();

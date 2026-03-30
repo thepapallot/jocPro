@@ -1,35 +1,51 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Puzzle 8</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle8.css') }}">
-</head>
-<body>
-    <div id="top-area">
-        <div id="top-left" class="top-cell">
-            <span class="level-title">NIVEL {{ current_level }}</span>
+{% extends "base.html" %}
+
+{% block title %}Puzzle 8{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle8.css') }}">
+{% endblock %}
+
+{% block top_right %}
+<div id="streak-panel">
+    <div class="hud-label">Ronda</div>
+    <div id="streak">1/3</div>
+</div>
+{% endblock %}
+
+{% block puzzle_content %}
+<div id="p8-shell">
+    <section id="p8-stage" class="p8-panel">
+        <div id="p8-rounds">
+            <div class="round-card" data-round-card="1">
+                <div class="round-name">Ronda 1</div>
+            </div>
+            <div class="round-card" data-round-card="2">
+                <div class="round-name">Ronda 2</div>
+            </div>
+            <div class="round-card" data-round-card="3">
+                <div class="round-name">Ronda 3</div>
+            </div>
         </div>
-        <div id="top-center" class="top-cell">
-            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 5 animation" />
+
+        <div id="p8-grid-wrap">
+            <div id="p8-grid">
+                <div class="p8-frame"><div class="p8-slot" data-index="0"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="1"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="2"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="3"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="4"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="5"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="6"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="7"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="8"></div></div>
+                <div class="p8-frame"><div class="p8-slot" data-index="9"></div></div>
+            </div>
         </div>
-        <div id="top-right" class="top-cell">
-            <div id="streak">1/3</div>
-        </div>
-    </div>
-    <div id="bottom-area">
-        <div id="p8-grid">
-            <div class="p8-frame"><div class="p8-slot" data-index="0"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="1"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="2"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="3"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="4"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="5"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="6"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="7"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="8"></div></div>
-            <div class="p8-frame"><div class="p8-slot" data-index="9"></div></div>
-        </div>
-    </div>
-    <script src="{{ url_for('static', filename='js/puzzle8.js') }}"></script>
-</body>
-</html>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle8.js') }}"></script>
+{% endblock %}

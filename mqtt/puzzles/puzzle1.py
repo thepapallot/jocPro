@@ -13,8 +13,9 @@ class Puzzle1(BasePuzzle):
         ]
         self.operations_with_metadata = []
         self.processing_wrong_result = False
+        self.countdown_next_round_active = False
         self.round = 1
-        self.round_sizes = {1: 4, 2: 7, 3: 15}
+        self.round_sizes = {1: 4, 2: 8, 3: 15}
         
     def _reset_operations(self, size=None):
         """Generate random operations for current round"""
@@ -31,10 +32,12 @@ class Puzzle1(BasePuzzle):
             self.round = 1
             self._reset_operations()
             self.processing_wrong_result = False
+            self.countdown_next_round_active = False
             self._push({
                 "operations": self.operations_with_metadata.copy(),
                 "start_timer": True,
-                "round": self.round
+                "round": self.round,
+                "round_size": self.round_sizes[self.round]
             })
             
     def on_start(self):
@@ -43,16 +46,19 @@ class Puzzle1(BasePuzzle):
             self.round = 1
             self._reset_operations()
             self.processing_wrong_result = False
+            self.countdown_next_round_active = False
             self._push({
                 "operations": self.operations_with_metadata.copy(),
                 "round": self.round,
-                "start_timer": True
+                "start_timer": True,
+                "round_size": self.round_sizes[self.round]
             })
             
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:
             self.processing_wrong_result = False
+            self.countdown_next_round_active = False
             
     def get_state(self):
         """Return current puzzle state"""
@@ -60,7 +66,8 @@ class Puzzle1(BasePuzzle):
             return {
                 "puzzle_id": self.id,
                 "operations": self.operations_with_metadata.copy(),
-                "round": self.round
+                "round": self.round,
+                "round_size": self.round_sizes[self.round]
             }
             
     def handle_message(self, parts):
@@ -76,7 +83,7 @@ class Puzzle1(BasePuzzle):
     def _check_sum_or_reset(self, a, b):
         """Validate sum and update state"""
         with self.lock:
-            if self.processing_wrong_result:
+            if self.processing_wrong_result or self.countdown_next_round_active:
                 return
                 
             result = a + b
@@ -90,7 +97,8 @@ class Puzzle1(BasePuzzle):
                     self._push({
                         "operations": self.operations_with_metadata.copy(),
                         "solved": {"result": result, "text": solved_text},
-                        "round": self.round
+                        "round": self.round,
+                        "round_size": self.round_sizes[self.round]
                     })
                     
                     # Check if round is complete
@@ -100,6 +108,7 @@ class Puzzle1(BasePuzzle):
                             next_round = self.round + 1
                             
                             # Notify streak completion
+                            self.countdown_next_round_active = True
                             self._push({
                                 "streak_completed": True,
                                 "round": self.round,
@@ -122,18 +131,21 @@ class Puzzle1(BasePuzzle):
                                 with self.lock:
                                     self.round = next_round
                                     self.processing_wrong_result = False
+                                    self.countdown_next_round_active = False
                                     self._reset_operations()
                                     self._push({
                                         "operations": self.operations_with_metadata.copy(),
                                         "round": self.round,
                                         "round_start": True,
-                                        "start_timer": True
+                                        "start_timer": True,
+                                        "round_size": self.round_sizes[self.round]
                                     })
                                     
                             threading.Thread(target=_countdown_and_advance, daemon=True).start()
                         else:
                             # Puzzle complete
                             self.solved = True
+                            self.countdown_next_round_active = False
                             self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
                             self._push({
                                 "puzzle_solved": True,
@@ -146,7 +158,8 @@ class Puzzle1(BasePuzzle):
             self._push({
                 "operations": self.operations_with_metadata.copy(),
                 "incorrect": {"result": result, "text": f"{a} + {b} = {result}"},
-                "round": self.round
+                "round": self.round,
+                "round_size": self.round_sizes[self.round]
             })
             threading.Thread(target=self._delayed_reset, daemon=True).start()
             
@@ -159,7 +172,8 @@ class Puzzle1(BasePuzzle):
             self._push({
                 "operations": self.operations_with_metadata.copy(),
                 "round": self.round,
-                "start_timer": True
+                "start_timer": True,
+                "round_size": self.round_sizes[self.round]
             })
             
     def timer_expired(self):
@@ -177,7 +191,8 @@ class Puzzle1(BasePuzzle):
                 self._push({
                     "operations": self.operations_with_metadata.copy(),
                     "round": self.round,
-                    "start_timer": True
+                    "start_timer": True,
+                    "round_size": self.round_sizes[self.round]
                 })
                 
         threading.Thread(target=_later, daemon=True).start()

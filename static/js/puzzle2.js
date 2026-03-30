@@ -1,17 +1,24 @@
 (function () {
     const TOTAL = 5;
+    const PLAYER_COUNT = 10;
     let redirected = false;
     const imgEl = document.querySelector("#image-area img");
+    const progressReadoutEl = document.getElementById("p2-progress-readout");
+    const statusCopyEl = document.getElementById("p2-status-copy");
+    const completeOverlayEl = document.getElementById("p2-complete-overlay");
+    const completeCopyEl = document.getElementById("p2-complete-copy");
     const normalImg = imgEl.src;
     const alarmImg = normalImg.replace("Laberint.png", "LaberintVermell.png");
     const CORRECT_SOUND_URL = "/static/audios/effects/correcte.wav";
     const INCORRECT_SOUND_URL = "/static/audios/effects/incorrecte.wav";
     const PHASE_COMPLETE_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
+    const progressByPlayer = {};
     const prevProgress = {}; // keep only for snapshot rendering after error flash
     let errorBlockUntil = 0;
     const activeErrorPlayers = new Set();
     let queuedSnapshot = null;
+    let alarmFlashTimeout = null;
 
     // NEW: alarm flash toggler during transition
     let alarmFlashInterval = null;
@@ -25,28 +32,73 @@
             setAlarmMode(on);
         }, 1000);
         // stop after duration
-        setTimeout(() => stopAlarmFlash(), durationMs);
+        alarmFlashTimeout = setTimeout(() => stopAlarmFlash(), durationMs);
     }
     function stopAlarmFlash() {
         if (alarmFlashInterval) {
             clearInterval(alarmFlashInterval);
             alarmFlashInterval = null;
         }
+        if (alarmFlashTimeout) {
+            clearTimeout(alarmFlashTimeout);
+            alarmFlashTimeout = null;
+        }
+    }
+
+    function getCompletedPlayers() {
+        return Object.values(progressByPlayer).filter(progress => progress >= TOTAL).length;
+    }
+
+    function updateHudState() {
+        const completed = getCompletedPlayers();
+        const solved = completed >= PLAYER_COUNT;
+
+        if (progressReadoutEl) {
+            progressReadoutEl.textContent = `${completed}/${PLAYER_COUNT}`;
+        }
+
+        if (statusCopyEl) {
+            if (solved) {
+                statusCopyEl.textContent = "Sincronizacion completa";
+            } else if (document.body.classList.contains("alarm-mode")) {
+                statusCopyEl.textContent = "Alarma activa";
+            } else if (completed > 0) {
+                statusCopyEl.textContent = "Rutas aseguradas";
+            } else {
+                statusCopyEl.textContent = "Laberinto estable";
+            }
+        }
+
+        document.body.classList.toggle("p2-solved", solved);
+
+        if (completeOverlayEl) {
+            completeOverlayEl.setAttribute("aria-hidden", solved ? "false" : "true");
+        }
+
+        if (completeCopyEl) {
+            completeCopyEl.textContent = solved
+                ? "Todos los equipos han completado su secuencia."
+                : `${PLAYER_COUNT - completed} rutas pendientes de sincronizar.`;
+        }
     }
 
     function setProgress(player, progress) {
         const el = document.getElementById(`bar-player-${player}`);
         if (!el) return;
+        progressByPlayer[player] = progress;
         prevProgress[player] = progress; // update cache for later snapshots
-        const pct = (progress / TOTAL) * 100;
-        el.style.width = pct + "%";
-        const textEl = el.querySelector(".bar-text");
-        if (textEl) textEl.textContent = `${progress} / ${TOTAL}`;
+        el.classList.toggle("has-progress", progress > 0);
+        el.dataset.progress = String(progress);
+        el.querySelectorAll(".progress-cell").forEach((cell, index) => {
+            cell.classList.toggle("active", index < progress);
+            cell.classList.toggle("complete", progress >= TOTAL);
+        });
         if (progress >= TOTAL) {
             el.classList.add("complete");
         } else {
             el.classList.remove("complete");
         }
+        updateHudState();
     }
 
     function applySnapshot(players) {
@@ -60,10 +112,13 @@
         if (active) {
             imgEl.src = alarmImg;
             document.body.classList.add("alarm-mode");
+            document.body.classList.add("p2-alarm-active");
         } else {
             imgEl.src = normalImg;
             document.body.classList.remove("alarm-mode");
+            document.body.classList.remove("p2-alarm-active");
         }
+        updateHudState();
     }
 
     function playSound(url) {
@@ -164,6 +219,7 @@
         }
 
         if (data.puzzle_solved && !redirected) {
+            updateHudState();
             redirected = true;
             playSound(PUZZLE_COMPLETE_SOUND_URL); // NEW
             console.log("Puzzle 2 solved! Redirecting...");
@@ -171,7 +227,104 @@
         }
     }
 
+    function installDebugHelpers() {
+        window.puzzle2Debug = {
+            push(payload) {
+                handleUpdate({ puzzle_id: 2, ...payload });
+            },
+            reset() {
+                const players = Array.from({ length: 10 }, (_, index) => ({
+                    player: index + 1,
+                    progress: 0
+                }));
+                handleUpdate({ puzzle_id: 2, players });
+            },
+            progress(player = 1, progress = 1) {
+                handleUpdate({
+                    puzzle_id: 2,
+                    player_update: { player, progress }
+                });
+            },
+            snapshot(progressList = []) {
+                handleUpdate({
+                    puzzle_id: 2,
+                    players: progressList.map((progress, index) => ({
+                        player: index + 1,
+                        progress
+                    }))
+                });
+            },
+            error(player = 1, progressList = null) {
+                handleUpdate({
+                    puzzle_id: 2,
+                    error_reset: { player },
+                    players: progressList
+                        ? progressList.map((progress, index) => ({
+                            player: index + 1,
+                            progress
+                        }))
+                        : undefined
+                });
+            },
+            alarm(on = true) {
+                handleUpdate({
+                    puzzle_id: 2,
+                    alarm_mode: on
+                });
+            },
+            solved() {
+                const previousRedirected = redirected;
+                redirected = false;
+                handleUpdate({
+                    puzzle_id: 2,
+                    puzzle_solved: true
+                });
+                redirected = previousRedirected;
+            },
+            demoProgress() {
+                this.reset();
+                const steps = [
+                    [1, 1], [2, 2], [3, 1], [4, 3], [5, 2],
+                    [6, 4], [7, 3], [8, 5], [9, 4], [10, 5]
+                ];
+                steps.forEach(([player, progress], index) => {
+                    setTimeout(() => this.progress(player, progress), index * 450);
+                });
+            },
+            demoError() {
+                this.snapshot([2, 3, 1, 4, 2, 0, 3, 1, 2, 4]);
+                setTimeout(() => this.error(4, [2, 3, 1, 0, 2, 0, 3, 1, 2, 4]), 300);
+            },
+            demoSolved() {
+                this.snapshot([5, 5, 5, 5, 5, 5, 5, 5, 5, 5]);
+                setTimeout(() => this.solved(), 800);
+            }
+        };
+    }
+
+    function loadCurrentState() {
+        fetch("/current_state")
+            .then(response => response.json())
+            .then(data => {
+                if (!data || data.puzzle_id !== 2) return;
+                if (data.players) applySnapshot(data.players);
+                if (data.alarm_mode !== undefined) {
+                    stopAlarmFlash();
+                    setAlarmMode(!!data.alarm_mode);
+                }
+            })
+            .catch(err => console.warn("Failed to load current state for puzzle 2:", err));
+    }
+
     function initSSE() {
+        
+        for (let player = 1; player <= PLAYER_COUNT; player++) {
+            setProgress(player, 0);
+        }
+        updateHudState();
+
+        //loadCurrentState();
+
         const es = new EventSource("/state_stream");
         es.onopen = () => {
             fetch("/start_puzzle/2", { method: "POST" })
@@ -187,5 +340,8 @@
         };
     }
 
-    document.addEventListener("DOMContentLoaded", initSSE);
+    document.addEventListener("DOMContentLoaded", () => {
+        installDebugHelpers();
+        initSSE();
+    });
 })();

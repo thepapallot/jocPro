@@ -1,39 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Puzzle 2</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle2.css') }}">
-</head>
-<body>
-    <div id="puzzle2-container" data-seq-index="{{ puzzle_index }}">
-        <div id="puzzle2-layout">
-            <div id="title-area">
-                <div id="top-left" class="top-cell">
-                    <span class="level-title">NIVEL {{ current_level }}</span>
-                </div>
-                <div id="top-right" class="top-cell">
-                    <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 2 animation" />
-                </div>
-            </div>
+{% extends "base.html" %}
 
-            <div id="progress-area">
-                <div id="players">
-                    {% set token_map = [5, 13, 17, 22, 10, 20, 35, 31, 14, 18] %}
-                    {% for p in range(1, 10 + 1) %}
-                    <div class="player-row" data-player="{{ p }}">
-                        <div class="player-label">Token {{ token_map[p-1] }}</div>
-                        <div class="bar-outer">
-                            <div class="bar-inner" id="bar-player-{{ p }}"><span class="bar-text">0 / 5</span></div>
+{% block title %}Puzzle 2{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle2.css') }}">
+{% endblock %}
+
+{% block top_right %}
+<div id="p2-status-hud" aria-live="polite">
+    <div class="hud-label">Estado</div>
+    <div id="p2-progress-readout">0/10</div>
+    <div id="p2-status-copy">Laberinto estable</div>
+</div>
+{% endblock %}
+
+{% block puzzle_content %}
+<div id="puzzle2-container">
+    <div id="puzzle2-layout">
+        <aside id="progress-area">
+            <div class="section-label">Tokens</div>
+            <div id="players">
+                {% set token_map = [5, 13, 17, 22, 10, 20, 35, 31, 14, 18] %}
+                {% for p in range(1, 10 + 1) %}
+                <div class="player-row" data-player="{{ p }}">
+                    <div class="player-label">{{ token_map[p-1] }}</div>
+                    <div class="bar-outer">
+                        <div class="bar-inner" id="bar-player-{{ p }}">
+                            {% for step in range(1, 5 + 1) %}
+                            <div class="progress-cell" data-step="{{ step }}"></div>
+                            {% endfor %}
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
+                {% endfor %}
             </div>
+        </aside>
+
+        <section id="maze-stage">
             <div id="image-area">
                 <img src="{{ url_for('static', filename='images/puzzle2/Laberint.png') }}" alt="Laberint">
+                <div id="p2-complete-overlay" aria-live="polite" aria-hidden="true">
+                    <div class="panel-kicker">Restablecimiento completo</div>
+                    <h2 class="panel-title">10 rutas sincronizadas</h2>
+                    <p id="p2-complete-copy">Todos los equipos han completado su secuencia.</p>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
-    <script src="{{ url_for('static', filename='js/puzzle2.js') }}"></script>
-</body>
-</html>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle2.js') }}"></script>
+{% endblock %}

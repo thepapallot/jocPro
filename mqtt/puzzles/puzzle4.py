@@ -55,6 +55,7 @@ class Puzzle4(BasePuzzle):
         self.history = []
         self.playing_sample = False
         self.validating = False
+        self.VALIDATION_FEEDBACK_SECONDS = 3
         
     def _get_current_track_map(self):
         """Get track map for current streak"""
@@ -222,6 +223,89 @@ class Puzzle4(BasePuzzle):
             # Song has finished, so do next step
             return state
 
+    
+    def _handle_validation(self, is_correct, final_track_duration=0):
+        if final_track_duration and final_track_duration > 0:
+            time.sleep(final_track_duration)
+
+        if is_correct:
+            with self.lock:
+                temp_sequence = self.played_sequence.copy()
+                self.streak += 1
+                self.played_sequence = []
+                self.storing = False
+                self.current_progress = 0
+                self.playing_sample = True
+                self.validating = False
+                streak = self.streak
+                total_required = self.total_required
+
+            if streak >= total_required:
+                time.sleep(self.VALIDATION_FEEDBACK_SECONDS)
+                self._push({
+                    "show_completion": True,
+                    "streak": streak,
+                    "total_required": total_required
+                })
+
+                time.sleep(5)
+
+                with self.lock:
+                    if self.solved:
+                        return
+                    self.solved = True
+
+                self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+                self._push({
+                    "puzzle_solved": True,
+                    "streak": streak,
+                    "total_required": total_required,
+                    "played_sequence": temp_sequence,
+                    "play_final": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_folder}/correcta.mp3"}
+                })
+                return
+
+            time.sleep(self.VALIDATION_FEEDBACK_SECONDS)
+            for seconds in [5, 4, 3, 2, 1]:
+                self._push({
+                    "sample_countdown_seconds": seconds,
+                    "streak": -1,
+                    "total_required": total_required
+                })
+                time.sleep(2)
+
+            with self.lock:
+                if self.solved:
+                    return
+                self._push({
+                    "streak": -1,
+                    "total_required": total_required,
+                    "storing": False,
+                    "current_progress": 0,
+                    "played_sequence": [],
+                    "playing_sample": True,
+                    "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"},
+                    "listening": True
+                })
+                self._play_sample_with_delay(self.streak2_sample, self.streak2_sample_duration)
+            return
+
+        time.sleep(self.VALIDATION_FEEDBACK_SECONDS)
+
+        with self.lock:
+            self.current_progress = 0
+            self.played_sequence = []
+            self.storing = False
+            self.validating = False
+            self._push({
+                "streak": self.streak,
+                "total_required": self.total_required,
+                "storing": False,
+                "current_progress": 0,
+                "played_sequence": []
+            })
+
+    
     def handle_message(self, parts):
         """Handle MQTT message: P4,button,song"""
         if len(parts) < 2:
@@ -327,10 +411,11 @@ class Puzzle4(BasePuzzle):
                     if len(self.played_sequence) >= len(required_order):
                         self.validating = True
                         is_correct = self.played_sequence == required_order
+                        
                         print(f"[Puzzle4] Validating: Expected={required_order}, "
                               f"Got={self.played_sequence}, Correct={is_correct}")
                         
-                        # Push with validation result
+                        # Push with validation result. Frontend can play last track with special feedback
                         self._push({
                             "sequence_correct": is_correct,
                             "play": {
@@ -343,13 +428,15 @@ class Puzzle4(BasePuzzle):
                             "total_required": self.total_required,
                             "played_sequence": self.played_sequence.copy()
                         })
+                                                
                         
-                        # Handle validation result in separate thread
+                        # Handle validation result in separate thread. What happens after validation (like playing sample, showing messages, etc) can take time, so we don't want to block MQTT message handling thread
                         threading.Thread(
                             target=self._handle_validation,
                             args=(is_correct,),
                             daemon=True
                         ).start()
+                        
                         return
                         
                 # Normal play without validation

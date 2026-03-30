@@ -1,24 +1,57 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Puzzle 1</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle1.css') }}">
-</head>
-<body>
-    <div id="top-area">
-        <div id="top-left" class="top-cell">
-            <span class="level-title">NIVEL {{ current_level }}</span>
-        </div>
-        <div id="top-center" class="top-cell">
-            <img id="top-gif" src="{{ url_for('static', filename='videos/videotestcaixa.gif') }}" alt="Nivel 1 animation" />
-        </div>
-        <div id="top-right" class="top-cell">
-            <div id="timer">02:00</div>
-        </div>
+{% extends "base.html" %}
+
+{% block title %}Puzzle 1{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle1.css') }}">
+{% endblock %}
+
+{% block top_right %}
+<div id="timer">02:00</div>
+{% endblock %}
+
+{% block puzzle_content %}
+<div id="objective-panel">
+    <div id="round-indicator" aria-label="Fase actual">
+        <span class="phase-step is-active"></span>
+        <span class="phase-link"></span>
+        <span class="phase-step"></span>
+        <span class="phase-link"></span>
+        <span class="phase-step"></span>
     </div>
-    <div id="bottom-area">
-        <div id="puzzle-container"></div>
+
+    <div id="objective-formula">
+        <div class="formula-item" id="formula-left">
+            <img
+                id="formula-left-image"
+                src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}"
+                alt="Elemento 1"
+            >
+            <span id="formula-left-value" class="formula-value">--</span>
+        </div>
+
+        <span>+</span>
+
+        <div class="formula-item" id="formula-right">
+            <img
+                id="formula-right-image"
+                src="{{ url_for('static', filename='images/puzzle1/caixa.png') }}"
+                alt="Elemento 2"
+            >
+            <span id="formula-right-value" class="formula-value">--</span>
+        </div>
+
+        <span>=</span>
+
+        <span id="formula-result-value" class="formula-result-value">--</span>
     </div>
-    <script src="{{ url_for('static', filename='js/puzzle1.js') }}"></script>
-</body>
-</html>
+</div>
+
+<div id="solved-container"></div>
+
+<div id="puzzle-container" class="round-1"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle1.js') }}"></script>
+{% endblock %}
