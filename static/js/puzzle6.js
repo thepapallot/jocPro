@@ -2,6 +2,7 @@
     const countdownEl = document.getElementById('countdown');
     const messageEl = document.getElementById('message');
     const statusBadgeEl = document.getElementById('status-badge');
+    const trackerPanelEl = document.getElementById('tracker-panel');
     const DEFAULT_MESSAGE = 'Alinea cada token con su color antes de que desaparezca.';
     const WAITING_MESSAGE = 'Esperando sincronizacion del sistema.';
 
@@ -44,6 +45,12 @@
         statusBadgeEl.textContent = text || (state === 'failure' ? 'Recargando' : state === 'solved' ? 'Completado' : 'Activa');
     }
 
+    function setTrackerState(state = 'active') {
+        if (!trackerPanelEl) return;
+        trackerPanelEl.classList.remove('is-active', 'is-failure', 'is-solved', 'is-waiting');
+        trackerPanelEl.classList.add(`is-${state}`);
+    }
+
     function format(sec) {
         if (sec < 0) sec = 0;
         const m = Math.floor(sec / 60);
@@ -59,6 +66,7 @@
         countdownEl.classList.remove('failure');  // Remove failure class when starting normal countdown
         countdownEl.classList.remove('expired');
         setStatusBadge('active', 'Activa');
+        setTrackerState('active');
         endTime = Date.now() + Math.max(0, remainingSeconds) * 1000;
         updateCountdown(); // immediate
         countdownTimer = setInterval(updateCountdown, 1000);
@@ -95,6 +103,7 @@
         countdownEl.classList.add('failure');
         countdownEl.classList.remove('expired');
         setStatusBadge('failure', 'Recargando');
+        setTrackerState('failure');
         
         // Show countdown in the main timer display
         let end = Date.now() + waitSeconds * 1000;
@@ -107,6 +116,7 @@
                 // Remove failure class when countdown ends
                 countdownEl.classList.remove('failure');
                 setMessage(WAITING_MESSAGE, false);
+                setTrackerState('waiting');
             }
         }
         tick();
@@ -123,6 +133,7 @@
         countdownEl.classList.remove('failure');
         setMessage('Secuencia completada.', false);
         setStatusBadge('solved', 'Completado');
+        setTrackerState('solved');
     }
 
     function applySnapshot(d) {
@@ -149,6 +160,7 @@
         countdownEl.textContent = format(d.remaining ?? 60);
         setMessage(WAITING_MESSAGE, false);
         setStatusBadge('active', 'En espera');
+        setTrackerState('waiting');
     }
 
     function handleUpdate(d) {
@@ -267,6 +279,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         setStatusBadge('active', 'Activa');
+        setTrackerState('waiting');
         loadSnapshot();
         installDebugHelpers();
         initSSE();

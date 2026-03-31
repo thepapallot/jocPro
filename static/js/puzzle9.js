@@ -1,7 +1,6 @@
 (function () {
     const statusMessage = document.getElementById('status-message');
     const statusBadge = document.getElementById('p9-status-badge');
-    const filledCountEl = document.getElementById('p9-filled-count');
     const boxEls = Array.from(document.querySelectorAll('.p9-box'));
     const boardEl = document.getElementById('p9-board');
     const centerStageEl = document.getElementById('p9-center-stage');
@@ -68,14 +67,15 @@
         if (!metrics) return;
 
         const anchors = [
-            { x: 0.08, y: 0.08 },
-            { x: 0.28, y: 0.08 },
-            { x: 0.72, y: 0.08 },
-            { x: 0.92, y: 0.08 },
-            { x: 0.08, y: 0.92 },
-            { x: 0.28, y: 0.92 },
-            { x: 0.72, y: 0.92 },
-            { x: 0.92, y: 0.92 }
+            { x: 0.13, y: 0.18 },
+            { x: 0.39, y: 0.13 },
+            { x: 0.61, y: 0.20 },
+            { x: 0.88, y: 0.14 },
+            { x: 0.12, y: 0.57 },
+            { x: 0.38, y: 0.48 },
+            { x: 0.86, y: 0.57 },
+            { x: 0.30, y: 0.86 },
+            { x: 0.61, y: 0.84 }
         ];
 
         clueState = clueEls.map((el, index) => {
@@ -222,7 +222,6 @@
 
     function renderBoxes(boxes, status) {
         const current = boxes || {};
-        let filled = 0;
 
         boxEls.forEach(boxEl => {
             const boxIndex = Number(boxEl.dataset.box);
@@ -238,7 +237,6 @@
                 return;
             }
 
-            filled += 1;
             tokenValueEl.textContent = '';
             if (tokenIconEl) tokenIconEl.setAttribute('aria-hidden', 'false');
             boxEl.classList.add('is-filled');
@@ -250,9 +248,6 @@
             }
         });
 
-        if (filledCountEl) {
-            filledCountEl.textContent = `${filled}/10`;
-        }
     }
 
     function updateBadge(status) {

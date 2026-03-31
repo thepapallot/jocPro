@@ -6,51 +6,74 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle9.css') }}">
 {% endblock %}
 
-{% block top_right %}
-<div id="p9-status-hud">
-    <div class="hud-label">Estado</div>
-    <div id="p9-status-badge" class="status-start">Sin validar</div>
-</div>
-{% endblock %}
+{% block top_right %}{% endblock %}
 
 {% block puzzle_content %}
 <div id="p9-shell">
     <section id="p9-board" class="p9-panel">
         <div id="p9-orbit">
         <article class="p9-clue-card tone-cyan clue-pos-1">
-                El token 22 se debe colocar en una caja situada en un extremo, que este al lado de dos cajas a las que siempre se encienden las luces rojas.
+            <span class="p9-clue-token" aria-label="Token 22">
+                <img class="p9-clue-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="">
+                <span class="p9-clue-token-number">22</span>
+            </span>
+            <span class="p9-clue-copy">Terminal de un extremo, junto a dos terminales que siempre se encienden en rojo.</span>
         </article>
         <article class="p9-clue-card tone-violet clue-pos-2">
-                El token 5 se debe colocar en una cajas de los extremos.
+            <span class="p9-clue-token" aria-label="Token 5">
+                <img class="p9-clue-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="">
+                <span class="p9-clue-token-number">5</span>
+            </span>
+            <span class="p9-clue-copy">Va en una de las terminales de los extremos.</span>
         </article>
         <article class="p9-clue-card tone-violet clue-pos-3">
-                El token 14 se debe colocar en una caja con un simbolo que solo tiene dos ondas.
+            <span class="p9-clue-token" aria-label="Token 14">
+                <img class="p9-clue-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="">
+                <span class="p9-clue-token-number">14</span>
+            </span>
+            <span class="p9-clue-copy">Va en una terminal con un simbolo de dos ondas.</span>
         </article>
         <article class="p9-clue-card tone-cyan clue-pos-4">
-                El token 18 se debe colocar en una caja con un simbolo que tiene una sola onda.
+            <span class="p9-clue-token" aria-label="Token 18">
+                <img class="p9-clue-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="">
+                <span class="p9-clue-token-number">18</span>
+            </span>
+            <span class="p9-clue-copy">Va en una terminal con un simbolo de una sola onda.</span>
         </article>
         <article class="p9-clue-card tone-violet clue-pos-5">
-                En la caja con el numero mas grande, va el token con el numero mas grande.
+            <span class="p9-clue-copy">La terminal con el numero mas grande va con el token con el numero mas grande.</span>
         </article>
         <article class="p9-clue-card tone-cyan clue-pos-6">
-                El token 20 se debe colocar en una caja en la que la luz se enciende del mismo color que el token.
+            <span class="p9-clue-token" aria-label="Token 20">
+                <img class="p9-clue-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="">
+                <span class="p9-clue-token-number">20</span>
+            </span>
+            <span class="p9-clue-copy">Va en la terminal donde la luz se enciende del mismo color que el token.</span>
         </article>
         <article class="p9-clue-card tone-cyan clue-pos-7">
-                El token 10 se debe colocar en una caja rodeada de cajas donde, si se pone el token 31, todas se encienden de color rojo.
+            <span class="p9-clue-token" aria-label="Token 10">
+                <img class="p9-clue-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="">
+                <span class="p9-clue-token-number">10</span>
+            </span>
+            <span class="p9-clue-copy">Va en una terminal rodeada de terminales que con el token 31 se encienden todas en rojo.</span>
         </article>
         <article class="p9-clue-card tone-violet clue-pos-8">
-                El token 13 se debe colocar en una caja que tiene un simbolo con la misma cantidad de puntos que el simbolo de la caja donde se coloca el token 35.
+            <span class="p9-clue-token" aria-label="Token 13">
+                <img class="p9-clue-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="">
+                <span class="p9-clue-token-number">13</span>
+            </span>
+            <span class="p9-clue-copy">Va en una terminal con un simbolo que tiene los mismos puntos que la terminal del token 35.</span>
+        </article>
+        <article class="p9-clue-card tone-cyan clue-pos-9">
+            <span class="p9-clue-token" aria-label="Token 31">
+                <img class="p9-clue-token-icon" src="{{ url_for('static', filename='images/puzzle1/tarjeta.png') }}" alt="">
+                <span class="p9-clue-token-number">31</span>
+            </span>
+            <span class="p9-clue-copy">Va en una terminal con un numero impar.</span>
         </article>
         </div>
 
         <div id="p9-center-stage">
-            <div id="p9-pyramid-meta">
-                <div class="meta-chip">
-                    <span class="meta-label">Colocados</span>
-                    <span id="p9-filled-count" class="meta-value">0/10</span>
-                </div>
-            </div>
-
             <div id="p9-pyramid-stage">
                 <div class="p9-row p9-row-1">
                     <div class="p9-box" data-box="0">
