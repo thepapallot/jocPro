@@ -172,7 +172,7 @@ class Puzzle3(BasePuzzle):
                 if all_correct:
                     self.streak += 1
                 else:
-                    # Failure: return to last unlocked checkpoint within current set
+                    # Failure: return to last unlocked checkpoint within current set.
                     checkpoint = self._checkpoint_for_streak(self.streak)
                     self.streak = checkpoint
                     self.current_question_idx = checkpoint
@@ -205,10 +205,19 @@ class Puzzle3(BasePuzzle):
                     # Correct: move to next question after 5s
                     self._schedule_next_question(delay=5)
                 else:
-                    # Wrong: show result for 5s, then restart with new set
-                    def _later():
+                    # Wrong: show result for 5s, then load a new set and resume from checkpoint
+                    checkpoint = self.streak
+
+                    def _later(saved_checkpoint=checkpoint):
                         time.sleep(5)
                         with self.lock:
+                            self._choose_new_set()
+                            if self.chosen_questions:
+                                self.current_question_idx = min(
+                                    saved_checkpoint,
+                                    len(self.chosen_questions) - 1
+                                )
+                                self.streak = self.current_question_idx
                             self._push_question()
                             
                     threading.Thread(target=_later, daemon=True).start()
