@@ -126,6 +126,9 @@ class Puzzle3(BasePuzzle):
             return
         
         with self.lock:
+            #Test Pep
+            print("Branques")
+
             # Ignore if already solved
             if self.streak >= self.total_required:
                 return
