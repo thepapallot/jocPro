@@ -124,7 +124,7 @@ class Puzzle3(BasePuzzle):
             answer_idx = int(parts[2])
         except ValueError:
             return
-            
+        
         with self.lock:
             # Ignore if already solved
             if self.streak >= self.total_required:
