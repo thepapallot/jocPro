@@ -31,6 +31,7 @@
     }
 
     const timerElement = document.getElementById('timer');
+    const objectivePanel = document.getElementById('objective-panel');
     const objectiveFormula = document.getElementById('objective-formula');
     const formulaLeftImage = document.getElementById('formula-left-image');
     const formulaRightImage = document.getElementById('formula-right-image');
@@ -44,6 +45,9 @@
     let timerRunning = false;
     let currentRound = null;
     let currentRoundSize = null;
+    let pendingSolvedResult = null;
+    let awaitingRecoveryOperations = false;
+    let operationsDelayTimeout = null;
 
     function playEffect(file) {
         try {
@@ -106,6 +110,9 @@
         }
 
         objectiveFormula.classList.remove('show-values', 'success', 'error', 'result-only');
+        if (objectivePanel) {
+            objectivePanel.classList.remove('p1-formula-error');
+        }
         if (formulaLeftValue) formulaLeftValue.textContent = '--';
         if (formulaRightValue) formulaRightValue.textContent = '--';
         if (formulaResultValue) formulaResultValue.textContent = '--';
@@ -131,8 +138,14 @@
 
         objectiveFormula.classList.remove('success', 'error', 'result-only');
         objectiveFormula.classList.add('show-values');
+        if (objectivePanel) {
+            objectivePanel.classList.remove('p1-formula-error');
+        }
         if (state === 'success' || state === 'error') {
             objectiveFormula.classList.add(state);
+        }
+        if (state === 'error' && objectivePanel) {
+            objectivePanel.classList.add('p1-formula-error');
         }
         if (resultOnly) {
             objectiveFormula.classList.add('result-only');
@@ -218,6 +231,7 @@
     function renderOperations(operations) {
         const list = Array.isArray(operations) ? operations : [];
         const round = currentRound;
+        const recentSolvedResult = pendingSolvedResult;
 
         setRoundIndicator(round, list.length);
         setPuzzleGridClass(round);
@@ -234,7 +248,8 @@
             opDiv.dataset.result = String(result);
 
             if (status === 'Y') {
-                opDiv.innerHTML = '<span class="tick">✓</span>';
+                const tickClass = String(result) === recentSolvedResult ? 'tick is-new' : 'tick';
+                opDiv.innerHTML = `<span class="${tickClass}">✓</span>`;
                 opDiv.classList.add('correct');
             } else {
                 opDiv.innerHTML = `<span>${result}</span>`;
@@ -245,6 +260,7 @@
         });
 
         animateGridIn();
+        pendingSolvedResult = null;
     }
 
     function loadCurrentState() {
@@ -350,10 +366,11 @@
             if (data.solved) {
                 clearSolvedContainer();
                 setObjectiveFormula(data.solved.text, 'success', false);
+                pendingSolvedResult = String(data.solved.result);
 
                 const solvedOperation = document.querySelector(`.op[data-result="${data.solved.result}"]`);
                 if (solvedOperation) {
-                    solvedOperation.innerHTML = '<span class="tick">✓</span>';
+                    solvedOperation.innerHTML = '<span class="tick is-new">✓</span>';
                     solvedOperation.classList.remove('incorrect');
                     solvedOperation.classList.add('correct');
                     animateCorrect(solvedOperation);
@@ -371,6 +388,12 @@
             }
 
             if (data.incorrect) {
+                if (operationsDelayTimeout) {
+                    clearTimeout(operationsDelayTimeout);
+                    operationsDelayTimeout = null;
+                }
+                awaitingRecoveryOperations = false;
+
                 playEffect('incorrecte.wav');
                 renderStatus('error');
                 setObjectiveFormula(data.incorrect.text, 'error', false);
@@ -387,22 +410,34 @@
                 setTimeout(() => {
                     resetObjectiveFormula();
                     renderStatus('reset');
-
-                    setTimeout(() => {
-                        clearSolvedContainer();
-                    }, 3000);
+                    awaitingRecoveryOperations = true;
                 }, 3000);
             }
 
             if (data.operations) {
-                renderOperations(data.operations);
-                if (!isFormulaPreviewActive()) {
-                    resetObjectiveFormula();
-                }
+                const applyOperationsUpdate = () => {
+                    renderOperations(data.operations);
+                    if (!isFormulaPreviewActive()) {
+                        resetObjectiveFormula();
+                    }
 
-                if (!timerRunning && timer === 0 && timerElement.classList.contains('expired')) {
-                    timerElement.classList.remove('expired');
-                    startTimer();
+                    if (!timerRunning && timer === 0 && timerElement.classList.contains('expired')) {
+                        timerElement.classList.remove('expired');
+                        startTimer();
+                    }
+                };
+
+                if (awaitingRecoveryOperations) {
+                    awaitingRecoveryOperations = false;
+                    renderStatus('reset');
+
+                    operationsDelayTimeout = setTimeout(() => {
+                        clearSolvedContainer();
+                        applyOperationsUpdate();
+                        operationsDelayTimeout = null;
+                    }, 850);
+                } else {
+                    applyOperationsUpdate();
                 }
             }
 
