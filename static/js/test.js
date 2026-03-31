@@ -1144,7 +1144,7 @@
       } catch (error) {
         appendLog({ error: "bad_sse_payload", raw: event.data });
       }
-      refreshCurrentState();
+      //refreshCurrentState();
     };
   }
 
@@ -1192,6 +1192,6 @@
   renderForm();
   bindEvents();
   setupSSE();
-  refreshCurrentState();
-  window.setInterval(refreshCurrentState, 1500);
+  //refreshCurrentState();
+  //window.setInterval(refreshCurrentState, 1500);
 })();
