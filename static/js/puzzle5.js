@@ -1,9 +1,12 @@
 (function() {
+    const objectiveCardEl = document.getElementById('objective-card');
+    const briefObjectiveEl = document.getElementById('brief-objective');
+    const briefObjectiveValueEl = document.getElementById('brief-objective-value');
+    const briefObjectiveUnitEl = document.getElementById('brief-objective-unit');
     const objectiveEl = document.getElementById('objective-text');
     const objectiveSubtextEl = document.getElementById('objective-subtext');
     const errorEl = document.getElementById('error-text');
     const streakEl = document.getElementById('streak');
-    const limitBadgeEl = document.getElementById('limit-badge');
     const playerBoxes = document.querySelectorAll('.player-box');
     const playersSection = document.getElementById('players-section');
     const errorSection = document.getElementById('error-section');
@@ -27,11 +30,52 @@
     const ROUND_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
     const BEEP_COUNTDOWN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
+    let objectivePulseTimeout = null;
+
+    function setDisplayMode(mode = 'play') {
+        if (!objectiveCardEl) return;
+        objectiveCardEl.classList.toggle('is-countdown', mode === 'countdown');
+        if (briefObjectiveEl) {
+            briefObjectiveEl.classList.toggle('is-hidden', mode === 'countdown');
+        }
+    }
+
+    function setObjectiveValue(value, unit = 'sec') {
+        if (objectiveEl) {
+            objectiveEl.textContent = String(value);
+        }
+        if (objectiveSubtextEl) {
+            objectiveSubtextEl.textContent = unit;
+        }
+        if (briefObjectiveValueEl && value !== '') {
+            briefObjectiveValueEl.textContent = `${value}`;
+        }
+        if (briefObjectiveUnitEl) {
+            briefObjectiveUnitEl.textContent = unit ? unit.toUpperCase() : '';
+        }
+    }
+
+    function pulseObjective() {
+        if (!briefObjectiveEl) return;
+        briefObjectiveEl.classList.remove('is-updating');
+        void briefObjectiveEl.offsetWidth;
+        briefObjectiveEl.classList.add('is-updating');
+
+        if (objectivePulseTimeout) {
+            clearTimeout(objectivePulseTimeout);
+        }
+
+        objectivePulseTimeout = setTimeout(() => {
+            briefObjectiveEl.classList.remove('is-updating');
+            objectivePulseTimeout = null;
+        }, 560);
+    }
 
     function showCountdownMessage(message, waitingSeconds) {
         console.log('[P5] Showing countdown message:', message, waitingSeconds);
         playersSection.style.display = 'none';
         errorSection.style.display = 'none';
+        setDisplayMode('countdown');
 
         if (countdownInterval) {
             clearInterval(countdownInterval);
@@ -45,12 +89,12 @@
         // Legacy: relative countdown (fallback)
         if (waitingSeconds && waitingSeconds > 0) {
             let remaining = waitingSeconds;
-            objectiveEl.textContent = `${baseMessage} ${remaining} segundo${remaining !== 1 ? 's' : ''}`;
+            setObjectiveValue(remaining, '');
             console.log('[P5] Starting countdown from:', remaining);
             countdownInterval = setInterval(() => {
                 remaining = Math.max(0, remaining - 1);
                 if (remaining > 0) {
-                    objectiveEl.textContent = `${baseMessage} ${remaining} segundo${remaining !== 1 ? 's' : ''}`;
+                    setObjectiveValue(remaining, '');
                     // Play beep each second during countdown
                     playSound(BEEP_COUNTDOWN_SOUND_URL);
                 } else {
@@ -59,7 +103,7 @@
                 }
             }, 1000);
         } else {
-            objectiveEl.textContent = message;
+            setObjectiveValue('', '');
         }
         console.log('[P5] Countdown message set:', objectiveEl.textContent);
     }
@@ -74,41 +118,40 @@
         console.log('[P5] Showing game UI for round:', round);
         console.log('[P5] Round objectives:', roundObjectives);
         console .log('[P5] Round limits:', roundLimits);
+        setDisplayMode('play');
 
         // Show boxes and error counter
         playersSection.style.display = 'grid';
         errorSection.style.display = 'block';
         // Update objective text
         if (round && roundObjectives) {
-            objectiveEl.textContent = `OBJETIVO: ${roundObjectives} sec`;
-        }
-        if (objectiveSubtextEl) {
-            objectiveSubtextEl.textContent = 'Cuenta desde la activacion y detente cuando sientas que has llegado al objetivo.';
+            setObjectiveValue(roundObjectives, 'sec');
         }
     }
 
     function showObjectiveText(objective) {
         if (objective !== undefined && objective !== null) {
+            const hasChanged = roundObjectives !== objective;
             roundObjectives = objective; // update local state
+            if (hasChanged) {
+                pulseObjective();
+            }
         }
-        objectiveEl.textContent = `OBJETIVO: ${roundObjectives} sec`;
-        if (objectiveSubtextEl) {
-            objectiveSubtextEl.textContent = 'Sincroniza las cajas con el paso del tiempo.';
-        }
+        setObjectiveValue(roundObjectives, 'sec');
     }
 
     function showWaitingState({
         objective = roundObjectives || 10,
-        message = 'Preparando cronometro',
-        subtext = 'Conectando con el estado actual del puzzle.'
+        message = null,
+        subtext = 'sec'
     } = {}) {
+        setDisplayMode('play');
         showObjectiveText(objective);
-        objectiveEl.textContent = message;
+        if (message !== null) {
+            setObjectiveValue(message, subtext);
+        }
         playersSection.style.display = 'none';
         errorSection.style.display = 'none';
-        if (objectiveSubtextEl) {
-            objectiveSubtextEl.textContent = subtext;
-        }
     }
 
     function updateStreak(round) {
@@ -128,7 +171,7 @@
 
     function updateErrorCounter(total, limit, result) {
         if (errorEl) {
-            errorEl.textContent = `Total Error Acumulado: ${total.toFixed(1)} sec / ${limit} sec`;
+            errorEl.textContent = `${total.toFixed(1)} / ${limit}`;
             
             // Remove any previous result classes
             errorEl.classList.remove('success-result', 'failure-result');
@@ -139,9 +182,6 @@
             } else if (result === 'failure') {
                 errorEl.classList.add('failure-result');
             }
-        }
-        if (limitBadgeEl && limit !== undefined) {
-            limitBadgeEl.textContent = `Margen max ${limit} sec`;
         }
     }
 
@@ -174,7 +214,7 @@
                     if (timeEl) {
                         // Display objective + error time
                         const totalTime = objective + item.time;
-                        timeEl.textContent = `${totalTime.toFixed(1)} sec`;
+                        timeEl.textContent = `${totalTime.toFixed(1)}`;
                     }
                 }
             });
@@ -195,9 +235,7 @@
             roundLimits = d.limit || roundLimits;
             updateStreak(1);
             showWaitingState({
-                objective: roundObjectives,
-                message: `OBJETIVO: ${roundObjectives} sec`,
-                subtext: 'Esperando el inicio de la primera ronda.'
+                objective: roundObjectives
             });
             return;
         }
@@ -214,14 +252,9 @@
                 if (d.total !== undefined && d.limit !== undefined) {
                     updateErrorCounter(d.total, d.limit);
                 }
-                if (objectiveSubtextEl) {
-                    objectiveSubtextEl.textContent = 'Esperando la siguiente activacion del cronometro.';
-                }
             } else {
                 showWaitingState({
-                    objective: roundObjectives,
-                    message: `OBJETIVO: ${roundObjectives} sec`,
-                    subtext: `Ronda ${d.round} en pausa. Esperando la siguiente activacion.`
+                    objective: roundObjectives
                 });
             }
             return;
@@ -248,28 +281,21 @@
             
             showObjectiveText(d.objective);  // show objective before countdown
 
-            // Show objective + countdown together
-            const objectiveText = `OBJETIVO: ${roundObjectives} sec`;
+            setDisplayMode('countdown');
             playersSection.style.display = 'none';
             errorSection.style.display = 'none';
-
             if (countdownInterval) {
                 clearInterval(countdownInterval);
                 countdownInterval = null;
             }
 
-            const baseMessage = (d.countdown_message || '').replace(/\d+\s*segundos?/, '').trim() || d.countdown_message || '';
-
             if (d.waiting_seconds && d.waiting_seconds > 0) {
                 let remaining = d.waiting_seconds;
-                objectiveEl.textContent = `${objectiveText}\n\n${baseMessage} ${remaining} segundo${remaining !== 1 ? 's' : ''}`;
-                if (objectiveSubtextEl) {
-                    objectiveSubtextEl.textContent = 'El sistema esta preparando la siguiente fase del cronometro.';
-                }
+                setObjectiveValue(remaining, '');
                 countdownInterval = setInterval(() => {
                     remaining = Math.max(0, remaining - 1);
                     if (remaining > 0) {
-                        objectiveEl.textContent = `${objectiveText}\n\n${baseMessage} ${remaining} segundo${remaining !== 1 ? 's' : ''}`;
+                        setObjectiveValue(remaining, '');
                         playSound(BEEP_COUNTDOWN_SOUND_URL);
                     } else {
                         clearInterval(countdownInterval);
@@ -277,10 +303,7 @@
                     }
                 }, 1000);
             } else {
-                objectiveEl.textContent = `${objectiveText}\n\n${d.countdown_message}`;
-                if (objectiveSubtextEl) {
-                    objectiveSubtextEl.textContent = 'Preparando la siguiente activacion.';
-                }
+                setObjectiveValue('', '');
             }
 
             return;
@@ -479,6 +502,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        setDisplayMode('play');
         installDebugHelpers();
         loadSnapshot('DOMContentLoaded');
         initSSE();
@@ -489,6 +513,9 @@
         console.log('[P5] Cleaning up before unload');
         if (countdownInterval) {
             clearInterval(countdownInterval);
+        }
+        if (objectivePulseTimeout) {
+            clearTimeout(objectivePulseTimeout);
         }
         console.log('[P5] Cleanup complete');
     });
