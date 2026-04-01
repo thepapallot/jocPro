@@ -1,6 +1,7 @@
 (function () {
     const COLOR_PREFIX = 'p8-color-';
     const TOTAL_ROUNDS = 3;
+    const ROMAN_ROUNDS = { 1: 'I', 2: 'II', 3: 'III' };
     let snapshotLoaded = false;
     let symbolsOrder = [];
     let solved = false;
@@ -116,7 +117,8 @@
         const el = document.getElementById('streak');
         if (!el) return;
         if (Number.isInteger(round) && round >= 1) {
-            el.textContent = `${round}/${TOTAL_ROUNDS}`;
+            const currentRound = ROMAN_ROUNDS[round] || String(round);
+            el.textContent = `${currentRound}/III`;
         }
         roundCards.forEach(card => {
             const cardRound = Number(card.dataset.roundCard);
@@ -273,6 +275,19 @@
             pi: 'yellow',
             sigma: 'green'
         };
+        const sampleSymbolsRound2B = ['gamma', 'alpha', 'sigma', 'mu', 'pi', 'beta', 'omega', 'delta', 'epsilon', 'lambda'];
+        const sampleColorsRound2B = {
+            gamma: 'black',
+            alpha: 'blue',
+            sigma: 'white',
+            mu: 'yellow',
+            pi: 'red',
+            beta: 'green',
+            omega: 'black',
+            delta: 'blue',
+            epsilon: 'white',
+            lambda: 'red'
+        };
 
         window.puzzle8Debug = {
             clear() {
@@ -286,6 +301,21 @@
             },
             input(round = 1) {
                 handleUpdate({ puzzle_id: 8, round, phase: 'input', symbols: sampleSymbols, clear: true });
+            },
+            blackOnly(round = 1) {
+                const blackColors = {
+                    alpha: 'black',
+                    beta: 'black',
+                    delta: 'black',
+                    epsilon: 'black',
+                    gamma: 'black',
+                    lambda: 'black',
+                    mu: 'black',
+                    omega: 'black',
+                    pi: 'black',
+                    sigma: 'black'
+                };
+                handleUpdate({ puzzle_id: 8, round, phase: 'tokens', symbols: sampleSymbols, colors: blackColors });
             },
             inputUpdate(box = 0, symbol = 'alpha', color = 'red', round = 1) {
                 handleUpdate({
@@ -307,6 +337,33 @@
                         }
                     }
                 });
+            },
+            round2Preview() {
+                this.clear();
+                setTimeout(() => this.numbers(1), 300);
+                setTimeout(() => this.tokens(1), 1200);
+                setTimeout(() => this.input(1), 2400);
+                setTimeout(() => this.result(true), 3200);
+                setTimeout(() => this.clear(), 4300);
+                setTimeout(() => this.numbers(2), 5200);
+                setTimeout(() => {
+                    handleUpdate({
+                        puzzle_id: 8,
+                        round: 2,
+                        phase: 'tokens',
+                        symbols: sampleSymbols,
+                        colors: sampleColors
+                    });
+                }, 7000);
+                setTimeout(() => {
+                    handleUpdate({
+                        puzzle_id: 8,
+                        round: 2,
+                        phase: 'tokens',
+                        symbols: sampleSymbolsRound2B,
+                        colors: sampleColorsRound2B
+                    });
+                }, 9800);
             },
             demoRound1() {
                 this.clear();

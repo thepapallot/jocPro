@@ -56,6 +56,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: min(88vw, 980px);
+    box-sizing: border-box;
     gap: 10px;
     padding: 24px 40px;
     border-radius: 24px;
@@ -165,6 +167,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
     gap: 28px;
     margin-top: 0;
 }
@@ -174,16 +177,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 130px;
-    height: 130px;
-    flex: 0 0 130px;
+    width: 146px;
+    height: 146px;
+    flex: 0 0 146px;
 }
 
 #objective-formula img {
     position: absolute;
     inset: 0;
-    width: 130px;
-    height: 130px;
+    width: 146px;
+    height: 146px;
     object-fit: contain;
     filter:
         drop-shadow(0 0 14px rgba(0,240,255,0.24))
@@ -268,6 +271,17 @@
         0 0 18px rgba(255,79,109,0.1);
 }
 
+#objective-panel.p1-formula-error {
+    border-color: rgba(255,79,109,0.72);
+    background:
+        radial-gradient(circle at 50% 26%, rgba(255, 84, 115, 0.34) 0%, rgba(255, 84, 115, 0.16) 32%, rgba(7,16,31,0.88) 70%),
+        linear-gradient(180deg, rgba(255, 44, 86, 0.2) 0%, rgba(255, 44, 86, 0.07) 46%, rgba(7,16,31,0.9) 100%);
+    box-shadow:
+        0 0 28px rgba(255,79,109,0.38),
+        0 0 44px rgba(255,79,109,0.18),
+        inset 0 0 18px rgba(255,79,109,0.18);
+}
+
 /* =========================
    FEEDBACK
 ========================= */
@@ -275,8 +289,8 @@
 #solved-container {
     position: relative;
     z-index: 2;
-    min-height: 52px;
-    margin-top: -14px;
+    min-height: 56px;
+    margin-top: 6px;
 }
 
 .status-badge {
@@ -355,16 +369,6 @@
     animation: statusSpin 1s linear infinite;
 }
 
-.status-badge.is-reset::after {
-    top: 11px;
-    right: 12px;
-    width: 8px;
-    height: 8px;
-    border-top: 3px solid var(--warning);
-    border-right: 3px solid var(--warning);
-    transform: rotate(14deg);
-}
-
 .status-badge.is-timeout {
     border-color: rgba(255,79,109,0.38);
     box-shadow:
@@ -405,10 +409,16 @@
 .status-badge-value {
     position: relative;
     z-index: 1;
-    min-width: 1ch;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25ch;
+    text-align: center;
     font-size: 1.2rem;
     font-weight: 800;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     color: var(--warning);
     text-shadow:
         0 0 10px rgba(255,179,71,0.3),
@@ -429,22 +439,47 @@
     z-index: 2;
     display: grid;
     justify-content: center;
+    width: calc(100vw - 40px);
+    max-width: 1600px;
+    padding: 0 20px;
+    box-sizing: border-box;
     margin-top: 6px;
 }
 
 #puzzle-container.round-1 {
-    grid-template-columns: repeat(2, 260px);
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
     gap: 24px;
 }
 
 #puzzle-container.round-2 {
-    grid-template-columns: repeat(4, 160px);
-    gap: 18px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(16px, 2.4vw, 36px);
 }
 
 #puzzle-container.round-3 {
-    grid-template-columns: repeat(5, 140px);
-    gap: 14px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 30px);
+}
+
+#puzzle-container.round-3 .op {
+    min-height: 140px;
+    height: clamp(140px, 18vh, 184px);
+}
+
+@media (max-width: 1200px) {
+    #puzzle-container.round-3 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: clamp(14px, 2.2vw, 24px);
+    }
+
+    #puzzle-container.round-3 .op {
+        min-height: 132px;
+        height: clamp(132px, 17vh, 174px);
+    }
+}
+
+.grid-cell {
+    width: 100%;
 }
 
 /* =========================
@@ -456,11 +491,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 132px;
+    width: 100%;
+    min-height: 132px;
+    height: clamp(132px, 17vh, 176px);
     border-radius: 20px;
     background: rgba(7,16,31,0.94);
     border: 1px solid rgba(69,230,255,0.30);
-    font-size: 3rem;
+    font-size: clamp(2.4rem, 3.8vw, 3.4rem);
     font-weight: 800;
     color: var(--cyan-strong);
     box-shadow:
@@ -481,10 +518,13 @@
 .op.incorrect {
     border-color: var(--bad);
     color: var(--bad);
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 86, 118, 0.34) 0%, rgba(255, 86, 118, 0.14) 36%, rgba(7,16,31,0.96) 72%),
+        linear-gradient(180deg, rgba(255, 67, 103, 0.24) 0%, rgba(255, 67, 103, 0.08) 45%, rgba(7,16,31,0.96) 100%);
     box-shadow:
-        0 0 18px rgba(255,79,109,0.16),
-        0 0 28px rgba(255,79,109,0.08),
-        inset 0 0 14px rgba(255,79,109,0.04);
+        0 0 22px rgba(255,79,109,0.34),
+        0 0 36px rgba(255,79,109,0.18),
+        inset 0 0 18px rgba(255,79,109,0.2);
 }
 
 /* =========================
@@ -505,6 +545,10 @@
         0 0 10px rgba(45,255,155,0.9),
         0 0 22px rgba(45,255,155,0.6),
         0 0 40px rgba(45,255,155,0.25);
+    animation: none;
+}
+
+.tick.is-new {
     animation: tickPop 0.25s ease-out;
 }
 
@@ -546,8 +590,8 @@
     }
 
     #objective-formula img {
-        width: 78px;
-        height: 78px;
+        width: 88px;
+        height: 88px;
     }
 
     #objective-formula span {
@@ -555,22 +599,29 @@
     }
 
     #puzzle-container.round-1 {
-        grid-template-columns: repeat(2, 200px);
+        grid-template-columns: repeat(2, minmax(185px, 1fr));
         gap: 18px;
     }
 
     #puzzle-container.round-2 {
-        grid-template-columns: repeat(3, 150px);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
     }
 
     #puzzle-container.round-3 {
-        grid-template-columns: repeat(5, 104px);
-        gap: 10px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    #puzzle-container.round-3 .op {
+        min-height: 116px;
+        height: clamp(116px, 16vh, 154px);
     }
 
     .op {
-        height: 110px;
-        font-size: 2.35rem;
+        min-height: 110px;
+        height: clamp(110px, 15.5vh, 150px);
+        font-size: clamp(2rem, 4.2vw, 2.9rem);
     }
 
     .tick {
@@ -603,8 +654,8 @@
     }
 
     #objective-formula img {
-        width: 56px;
-        height: 56px;
+        width: 62px;
+        height: 62px;
     }
 
     #objective-formula span {
@@ -636,16 +687,24 @@
 
     #puzzle-container.round-1,
     #puzzle-container.round-2 {
-        grid-template-columns: repeat(2, 140px);
+        grid-template-columns: repeat(2, minmax(136px, 1fr));
+        gap: 14px;
     }
 
     #puzzle-container.round-3 {
-        grid-template-columns: repeat(3, 100px);
+        grid-template-columns: repeat(3, minmax(112px, 1fr));
+        gap: 16px;
+    }
+
+    #puzzle-container.round-3 .op {
+        min-height: 102px;
+        height: clamp(102px, 14.5vh, 132px);
     }
 
     .op {
-        height: 96px;
-        font-size: 1.95rem;
+        min-height: 96px;
+        height: clamp(96px, 14vh, 126px);
+        font-size: clamp(1.85rem, 6.2vw, 2.35rem);
     }
 
     .tick {

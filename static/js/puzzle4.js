@@ -4,6 +4,16 @@
     const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
 
+    const trackAudio = (() => {
+        const audio = new Audio();
+        audio.autoplay = true;
+        audio.preload = 'auto';
+        audio.muted = false;
+        audio.volume = 1.0;
+        audio.setAttribute('playsinline', '');
+        return audio;
+    })();
+
     const sfxAudio = (() => {
         const audio = new Audio();
         audio.autoplay = true;
@@ -24,26 +34,26 @@
     let samplePlaybackToken = 0;
     let feedbackTimer = null;
 
-    function playSound(url, onComplete) {
+    function playAudio(audioEl, url, onComplete) {
         if (!url) return;
 
         try {
-            try { sfxAudio.pause(); } catch {}
-            try { sfxAudio.currentTime = 0; } catch {}
+            try { audioEl.pause(); } catch {}
+            try { audioEl.currentTime = 0; } catch {}
 
             const absUrl = new URL(url, window.location.origin).href;
-            if (sfxAudio.src !== absUrl) {
-                sfxAudio.src = url;
-                try { sfxAudio.load(); } catch {}
+            if (audioEl.src !== absUrl) {
+                audioEl.src = url;
+                try { audioEl.load(); } catch {}
             }
 
-            sfxAudio.onended = typeof onComplete === 'function' ? onComplete : null;
+            audioEl.onended = typeof onComplete === 'function' ? onComplete : null;
 
-            const playPromise = sfxAudio.play();
+            const playPromise = audioEl.play();
             if (playPromise && typeof playPromise.catch === 'function') {
                 playPromise.catch(() => {
                     setTimeout(() => {
-                        const retryPromise = sfxAudio.play();
+                        const retryPromise = audioEl.play();
                         if (retryPromise && typeof retryPromise.catch === 'function') {
                             retryPromise.catch(err => console.warn("Audio play failed:", err));
                         }
@@ -53,6 +63,14 @@
         } catch (err) {
             console.warn("Audio play failed:", err);
         }
+    }
+
+    function playTrack(url, onComplete) {
+        playAudio(trackAudio, url, onComplete);
+    }
+
+    function playSound(url, onComplete) {
+        playAudio(sfxAudio, url, onComplete);
     }
 
     function setStatus(text, tone) {
@@ -66,12 +84,8 @@
 
     function updateRoundHud(streak, totalRequired) {
         if (!streakEl || totalRequired === undefined) return;
-        if (streak === -1) {
-            streakEl.textContent = 'Muestra';
-            return;
-        }
-
-        const currentRound = Math.min((streak || 0) + 1, totalRequired);
+        const normalizedStreak = streak === -1 ? 0 : (streak || 0);
+        const currentRound = Math.min(normalizedStreak + 1, totalRequired);
         streakEl.textContent = `${currentRound}/${totalRequired}`;
     }
 
@@ -191,22 +205,27 @@
         }
     }
 
+    function runValidationFeedback(isCorrect) {
+        const soundUrl = isCorrect ? FASE_OK_SOUND_URL : FASE_KO_SOUND_URL;
+        const statusText = isCorrect ? 'Secuencia correcta' : 'Secuencia incorrecta';
+        const statusTone = isCorrect ? 'completed' : 'failure';
+
+        if (!solved) {
+            startFlashing(isCorrect);
+            setStatus(statusText, statusTone);
+            playSound(soundUrl);
+        }
+    }
+
     function scheduleValidationFeedback(isCorrect, trackPayload) {
         clearFeedbackTimer();
 
         const durationSeconds = Number(trackPayload && trackPayload.duration) || 0;
         const delayMs = Math.max(0, Math.round(durationSeconds * 1000));
-        const soundUrl = isCorrect ? FASE_OK_SOUND_URL : FASE_KO_SOUND_URL;
-        const statusText = isCorrect ? 'Secuencia correcta' : 'Secuencia incorrecta';
-        const statusTone = isCorrect ? 'completed' : 'failure';
 
         feedbackTimer = setTimeout(() => {
             feedbackTimer = null;
-            if (!solved) {
-                startFlashing(isCorrect);
-                setStatus(statusText, statusTone);
-                playSound(soundUrl);
-            }
+            runValidationFeedback(isCorrect);
         }, delayMs);
     }
 
@@ -218,7 +237,7 @@
         samplePlaybackToken += 1;
         const token = samplePlaybackToken;
 
-        playSound(sampleSong.url, () => {
+        playTrack(sampleSong.url, () => {
             if (token !== samplePlaybackToken || solved) return;
             currentSampleUrl = null;
             if (!showingCompletion) {
@@ -229,17 +248,7 @@
 
     function maybePlayTrack(trackPayload, streak, playedSequence) {
         if (!trackPayload || !trackPayload.url || solved) return;
-
-        const isClosingTrack =
-            (Array.isArray(playedSequence) && playedSequence.length === 4 && streak === 0) ||
-            (Array.isArray(playedSequence) && playedSequence.length === 8 && streak === 1);
-
-        if (isClosingTrack) {
-            playSound(trackPayload.url);
-            return;
-        }
-
-        playSound(trackPayload.url);
+        playTrack(trackPayload.url);
     }
 
     function handleUpdate(d) {
@@ -266,7 +275,7 @@
         }
 
         if (d.play_mostra) {
-            playSound(d.url);
+            playTrack(d.url);
         }
 
         if (d.streak !== undefined && !showingCompletion) {
@@ -281,7 +290,10 @@
             maybePlayTrack(d.play, d.streak, d.played_sequence);
         }
 
-        if (d.sequence_correct !== undefined) {
+        if (d.validation_feedback !== undefined) {
+            clearFeedbackTimer();
+            runValidationFeedback(d.validation_feedback);
+        } else if (d.sequence_correct !== undefined && !d.play) {
             scheduleValidationFeedback(d.sequence_correct, d.play);
         }
 
@@ -312,7 +324,7 @@
                 playSound(BTN_SOUND_URL);
                 setStatus('Registrando secuencia', 'storing');
             } else if (d.storing === false) {
-                setStatus('Esperando registro', 'idle');
+                setStatus('Esperando muestras', 'idle');
             }
         }
     }
