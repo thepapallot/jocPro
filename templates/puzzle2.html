@@ -7,23 +7,24 @@
 {% endblock %}
 
 {% block top_right %}
-<div id="p2-status-hud" aria-live="polite">
-    <div class="hud-label">Estado</div>
-    <div id="p2-progress-readout">0/10</div>
-    <div id="p2-status-copy">Laberinto estable</div>
-</div>
 {% endblock %}
 
 {% block puzzle_content %}
 <div id="puzzle2-container">
+    {% set token_map = [5, 13, 17, 22, 10, 20, 35, 31, 14, 18] %}
     <div id="puzzle2-layout">
         <aside id="progress-area">
+            <div id="p2-side-head" aria-live="polite">
+                <img id="p2-side-pyramid" src="{{ url_for('static', filename='images/piramidetrans.png') }}" alt="Piramide">
+                <div id="p2-side-level">NIVEL 2</div>
+            </div>
             <div class="section-label">Tokens</div>
             <div id="players">
-                {% set token_map = [5, 13, 17, 22, 10, 20, 35, 31, 14, 18] %}
                 {% for p in range(1, 10 + 1) %}
                 <div class="player-row" data-player="{{ p }}">
-                    <div class="player-label">{{ token_map[p-1] }}</div>
+                    <div class="player-label">
+                        <span class="token-id">{{ token_map[p-1] }}</span>
+                    </div>
                     <div class="bar-outer">
                         <div class="bar-inner" id="bar-player-{{ p }}">
                             {% for step in range(1, 5 + 1) %}
@@ -34,6 +35,13 @@
                 </div>
                 {% endfor %}
             </div>
+        </aside>
+
+        <aside id="p2-divider" aria-hidden="true">
+            <div class="p2-divider-rail"></div>
+            <div class="p2-divider-pulse p2-divider-pulse-top"></div>
+            <div class="p2-divider-pulse p2-divider-pulse-mid"></div>
+            <div class="p2-divider-pulse p2-divider-pulse-bottom"></div>
         </aside>
 
         <section id="maze-stage">

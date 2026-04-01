@@ -49,9 +49,18 @@
         return Object.values(progressByPlayer).filter(progress => progress >= TOTAL).length;
     }
 
+    function updateSecuredRoutes() {
+        document.querySelectorAll("#p2-secured-list .secured-route").forEach((routeEl) => {
+            const player = Number(routeEl.dataset.player);
+            const secured = (progressByPlayer[player] || 0) >= TOTAL;
+            routeEl.classList.toggle("active", secured);
+        });
+    }
+
     function updateHudState() {
         const completed = getCompletedPlayers();
         const solved = completed >= PLAYER_COUNT;
+        updateSecuredRoutes();
 
         if (progressReadoutEl) {
             progressReadoutEl.textContent = `${completed}/${PLAYER_COUNT}`;
@@ -340,8 +349,93 @@
         };
     }
 
+    function resetSecuredListStyles(securedList, securedRoutes) {
+        securedList.style.position = '';
+        securedList.style.top = '';
+        securedList.style.height = '';
+        securedList.style.left = '';
+        securedList.style.right = '';
+        securedList.style.zIndex = '';
+        securedList.style.display = '';
+        securedList.style.margin = '';
+
+        securedRoutes.forEach(route => {
+            route.style.position = '';
+            route.style.top = '';
+            route.style.height = '';
+            route.style.left = '';
+            route.style.right = '';
+            route.style.transform = '';
+            route.style.display = '';
+            route.style.alignItems = '';
+            route.style.justifyContent = '';
+            route.style.zIndex = '';
+        });
+    }
+
+    function syncSecuredList() {
+        const securedArea = document.getElementById('p2-secured-area');
+        const securedList = document.getElementById('p2-secured-list');
+        const playersList = document.getElementById('players');
+        const playerRows = document.querySelectorAll('#players .player-row');
+        const securedRoutes = document.querySelectorAll('#p2-secured-list .secured-route');
+        if (!securedArea || !securedList || !playersList || !playerRows.length || !securedRoutes.length) return;
+
+        // Keep mobile using CSS layout to avoid overly tall side panels.
+        if (window.matchMedia('(max-width: 640px)').matches) {
+            resetSecuredListStyles(securedList, securedRoutes);
+            return;
+        }
+
+        resetSecuredListStyles(securedList, securedRoutes);
+
+        const areaRect = securedArea.getBoundingClientRect();
+        const playersRect = playersList.getBoundingClientRect();
+
+        if (!areaRect.height || !playersRect.height) return;
+
+        securedList.style.position = 'absolute';
+        securedList.style.left = '0';
+        securedList.style.right = '0';
+        securedList.style.top = `${Math.max(0, playersRect.top - areaRect.top)}px`;
+        securedList.style.height = `${playersRect.height}px`;
+        securedList.style.display = 'block';
+        securedList.style.margin = '0';
+        securedList.style.zIndex = '1';
+
+        const listRect = securedList.getBoundingClientRect();
+        if (!listRect.height) return;
+
+        securedRoutes.forEach((route) => {
+            const player = Number(route.dataset.player);
+            const row = document.querySelector(`#players .player-row[data-player="${player}"]`);
+            if (!row) return;
+
+            const rowRect = row.getBoundingClientRect();
+            const centerY = rowRect.top + (rowRect.height / 2);
+            const yPercent = ((centerY - listRect.top) / listRect.height) * 100;
+
+            route.style.position = 'absolute';
+            route.style.left = '50%';
+            route.style.top = `${Math.max(0, Math.min(100, yPercent))}%`;
+            route.style.transform = 'translate(-50%, -50%)';
+            route.style.display = 'flex';
+            route.style.alignItems = 'center';
+            route.style.justifyContent = 'center';
+            route.style.zIndex = '1';
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         installDebugHelpers();
         initSSE();
+        requestAnimationFrame(() => requestAnimationFrame(syncSecuredList));
+        window.addEventListener('load', () => requestAnimationFrame(syncSecuredList));
+        window.addEventListener('resize', syncSecuredList);
+        if (window.ResizeObserver) {
+            const ro = new ResizeObserver(() => requestAnimationFrame(syncSecuredList));
+            const pa = document.getElementById('progress-area');
+            if (pa) ro.observe(pa);
+        }
     });
 })();
