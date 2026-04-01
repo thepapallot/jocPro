@@ -178,6 +178,53 @@ Revision backend:
 
 - alta
 
+### puzzle4.py
+
+Archivo:
+
+- [puzzle4.py](./mqtt/puzzles/puzzle4.py)
+
+Estado del cambio:
+
+- `modificado`
+
+Partes tocadas:
+
+- `get_state()`
+- nueva funcion `_get_audio_duration()`
+- flujo de `_handle_validation()`
+- bloque final de validacion en `handle_message()`
+
+Tipo:
+
+- `pendiente de revisar`
+
+Detalle:
+
+- `get_state()` se ha dejado como lectura pura, sin mutar estado ni empujar SSE al consultar `/current_state`
+- se calcula la duracion real del ultimo `.wav` de la secuencia para no adelantar la validacion
+- el orden backend de cierre de ronda queda fijado a:
+- primero termina el ultimo tramo reproducido
+- despues se emite `validation_feedback`
+- luego se mantiene el efecto durante `3` segundos
+- y solo entonces empieza el countdown o la siguiente muestra
+- esto evita que la segunda muestra arranque antes de tiempo cuando la secuencia es correcta
+
+Impacto:
+
+- cambia comportamiento real del puzzle 4
+- elimina el avance prematuro entre la primera y la segunda muestra
+- evita inconsistencias entre audio final, feedback visual y arranque de la siguiente fase
+
+Motivo:
+
+- alinear el orden real del juego con la experiencia esperada por frontend y por la persona jugadora
+- evitar que la sincronizacion dependa de tiempos aproximados en frontend
+
+Revision backend:
+
+- alta
+
 ### mqtt/client.py
 
 Archivo:
@@ -310,6 +357,8 @@ Impacto:
 - no cambia la logica de los puzzles
 - mejora la resiliencia del arranque
 - permite que el flujo de simulacion por `/test/send` siga actualizando estado local si el topic es `TO_FLASK`
+- en el estado actual de `Test Lab`, la pantalla `/test` ya no abre SSE ni hace polling automatico
+- `/test` se usa como simulador/manual sender de MQTT y consulta `current_state` solo cuando el usuario pulsa `Actualizar estado`
 
 Revision backend:
 

@@ -1,4 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&display=swap');
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/static/fonts/Orbitron-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/static/fonts/Orbitron-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/static/fonts/Orbitron-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/static/fonts/Orbitron-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/static/fonts/Orbitron-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/static/fonts/Orbitron-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
 
 * {
     margin: 0;
@@ -60,7 +100,7 @@ body {
     z-index: 2;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
-    align-items: start;
+    align-items: center;
     gap: 24px;
     padding: 24px 44px 0;
 }
@@ -86,6 +126,7 @@ body {
 .top-cell {
     position: relative;
     z-index: 2;
+    align-self: center;
 }
 
 #top-center {
@@ -118,7 +159,7 @@ body {
 #top-right {
     display: flex;
     justify-content: flex-end;
-    align-items: flex-start;
+    align-items: center;
 }
 
 #timer {

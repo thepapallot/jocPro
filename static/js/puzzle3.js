@@ -5,8 +5,6 @@
     const playerStatusEl = document.getElementById('player-status');
     const feedbackEl = document.getElementById('feedback');
     const playerSummaryEl = document.getElementById('player-summary');
-    const securityTotalEl = document.getElementById('security-total');
-    const checkpointCopyEl = document.getElementById('checkpoint-copy');
     const securityLevels = Array.from(document.querySelectorAll('.security-level'));
 
     // Consistent sound helper (same as puzzles 1 and 2)
@@ -107,7 +105,7 @@
             answerAreaEl.appendChild(row); // append to answer-area
         });
         streakEl.textContent = `${streak + 1}/${target}`; // show current question number
-        feedbackEl.textContent = `Esperando respuestas de las ${totalPlayers} cajas.`;
+        feedbackEl.textContent = '';
         feedbackEl.className = "";
         resetPlayerChips(answeredPlayers); // Reset all chip styling first
         applyAnsweredMap(answeredMap);
@@ -116,7 +114,6 @@
     function setStreak(streak, target) {
         streakEl.textContent = `${streak + 1}/${target}`; // show current question number
         updateSecurityLevels(streak, target);
-        updateCheckpointCopy(streak);
     }
 
     function updatePlayerSummary(answeredCount) {
@@ -124,39 +121,7 @@
         playerSummaryEl.textContent = `${answeredCount}/${totalPlayers}`;
     }
 
-    function getCheckpointState(streak) {
-        if (streak >= 6) {
-            return {
-                fallback: 6,
-                label: 'Seguridad 2',
-                detail: 'Un fallo ahora devuelve al grupo a la pregunta 7.'
-            };
-        }
-        if (streak >= 3) {
-            return {
-                fallback: 3,
-                label: 'Seguridad 1',
-                detail: 'Un fallo ahora devuelve al grupo a la pregunta 4.'
-            };
-        }
-        return {
-            fallback: 0,
-            label: 'Sin checkpoint',
-            detail: 'Un fallo reinicia desde la pregunta 1.'
-        };
-    }
-
-    function updateCheckpointCopy(streak) {
-        if (!checkpointCopyEl) return;
-        const checkpoint = getCheckpointState(streak);
-        checkpointCopyEl.textContent = `${checkpoint.label}. ${checkpoint.detail}`;
-    }
-
     function updateSecurityLevels(streak, target) {
-        if (securityTotalEl) {
-            securityTotalEl.textContent = `${streak}/${target}`;
-        }
-
         const ranges = [
             { level: 1, start: 0, end: 3, size: 3 },
             { level: 2, start: 3, end: 6, size: 3 },
@@ -183,14 +148,8 @@
     }
 
     function showWrong() {
-        const solvedBeforeFailure = Math.max(0, activeQuestionNumber - 1);
-        const checkpoint = getCheckpointState(solvedBeforeFailure);
-        const resumeQuestion = checkpoint.fallback + 1;
-
         feedbackEl.className = 'err';
-        feedbackEl.textContent = checkpoint.fallback > 0
-            ? `Hay respuestas incorrectas. Retroceso al checkpoint ${checkpoint.label}. Reanudando en la pregunta ${resumeQuestion}.`
-            : 'Hay respuestas incorrectas. No hay checkpoint activo, asi que la serie vuelve a la pregunta 1.';
+        feedbackEl.textContent = 'Hay respuestas incorrectas.';
     }
 
     function showQuestionComplete(streak, target) {

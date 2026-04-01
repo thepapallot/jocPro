@@ -5,7 +5,7 @@
       route: "/puzzle/1",
       startRoute: "/start_puzzle/1",
       restartRoute: "/restart_puzzle/1",
-      help: "Formato MQTT: P1,a,b. Simula la suma detectada por la caja.",
+      help: "Formato MQTT: P1,a,b. Simula la suma detectada por el terminal.",
       fields: [
         { id: "a", label: "Valor A", type: "number", value: 4 },
         { id: "b", label: "Valor B", type: "number", value: 4 }
@@ -66,15 +66,15 @@
       restartRoute: "/restart_puzzle/3",
       help: "Formato MQTT: P3,player,answerIndex. El indice de respuesta es entero.",
       fields: [
-        { id: "player", label: "Caja", type: "number", min: 0, max: 9, value: 0 },
+        { id: "player", label: "Terminal", type: "number", min: 0, max: 9, value: 0 },
         { id: "answer", label: "Indice respuesta", type: "number", min: 0, max: 5, value: 1 }
       ],
       build(values) {
         return `P3,${values.player},${values.answer}`;
       },
       examples: [
-        { label: "Caja 0 responde 1", payload: "P3,0,1" },
-        { label: "Caja 9 responde 4", payload: "P3,9,4" }
+        { label: "Terminal 0 responde 1", payload: "P3,0,1" },
+        { label: "Terminal 9 responde 4", payload: "P3,9,4" }
       ],
       reference: [
         "No hay solucion fija unica.",
@@ -115,15 +115,15 @@
       restartRoute: "/restart_puzzle/5",
       help: "Formato MQTT: P5,player,error_time. Negativo = antes, positivo = tarde.",
       fields: [
-        { id: "player", label: "Caja", type: "number", min: 0, max: 9, value: 9 },
+        { id: "player", label: "Terminal", type: "number", min: 0, max: 9, value: 9 },
         { id: "error", label: "Error tiempo", type: "number", step: "0.1", value: "-0.5" }
       ],
       build(values) {
         return `P5,${values.player},${values.error}`;
       },
       examples: [
-        { label: "Caja 9 -0.5s", payload: "P5,9,-0.5" },
-        { label: "Caja 3 +1.8s", payload: "P5,3,1.8" }
+        { label: "Terminal 9 -0.5s", payload: "P5,9,-0.5" },
+        { label: "Terminal 3 +1.8s", payload: "P5,3,1.8" }
       ],
       reference: [
         "Rondas fijas:",
@@ -132,8 +132,8 @@
         "3 -> objetivo 60 s",
         "",
         "El mensaje envia el error respecto al objetivo:",
-        "P5,9,-0.5 -> caja 9 se adelanta 0.5 s",
-        "P5,3,1.8 -> caja 3 llega 1.8 s tarde"
+        "P5,9,-0.5 -> terminal 9 se adelanta 0.5 s",
+        "P5,3,1.8 -> terminal 3 llega 1.8 s tarde"
       ].join("\n")
     },
     "6": {
@@ -141,21 +141,21 @@
       route: "/puzzle/6",
       startRoute: "/start_puzzle/6",
       restartRoute: "/restart_puzzle/6",
-      help: "Formato MQTT: P6,boxNumber. Simula una caja que deja escapar la ventana de energia.",
+      help: "Formato MQTT: P6,boxNumber. Simula un terminal que deja escapar la ventana de energia.",
       fields: [
-        { id: "box", label: "Caja", type: "number", min: 0, max: 9, value: 4 }
+        { id: "box", label: "Terminal", type: "number", min: 0, max: 9, value: 4 }
       ],
       build(values) {
         return `P6,${values.box}`;
       },
       examples: [
-        { label: "Falla caja 4", payload: "P6,4" },
-        { label: "Falla caja 8", payload: "P6,8" }
+        { label: "Falla terminal 4", payload: "P6,4" },
+        { label: "Falla terminal 8", payload: "P6,8" }
       ],
       reference: [
         "No tiene solucion fija visible desde backend.",
         "El puzzle se resuelve si termina la cuenta atras sin fallos.",
-        "El mensaje P6,box simula una caja que ha fallado y reinicia la ventana."
+        "El mensaje P6,box simula un terminal que ha fallado y reinicia la ventana."
       ].join("\n")
     },
     "7": {
@@ -163,20 +163,20 @@
       route: "/puzzle/7",
       startRoute: "/start_puzzle/7",
       restartRoute: "/restart_puzzle/7",
-      help: "Formato MQTT: P7,boxIndex,code. code es la secuencia de colores de la caja.",
+      help: "Formato MQTT: P7,boxIndex,code. code es la secuencia de colores del terminal.",
       fields: [
-        { id: "box", label: "Caja", type: "number", min: 0, max: 9, value: 0 },
+        { id: "box", label: "Terminal", type: "number", min: 0, max: 9, value: 0 },
         { id: "code", label: "Codigo", type: "text", value: "0424", fullWidth: true }
       ],
       build(values) {
         return `P7,${values.box},${values.code}`;
       },
       examples: [
-        { label: "Caja 0 codigo 0424", payload: "P7,0,0424" },
-        { label: "Caja 5 codigo 4310", payload: "P7,5,4310" }
+        { label: "Terminal 0 codigo 0424", payload: "P7,0,0424" },
+        { label: "Terminal 5 codigo 4310", payload: "P7,5,4310" }
       ],
       reference: [
-        "Codigos correctos por caja:",
+        "Codigos correctos por terminal:",
         "0 -> 0424",
         "1 -> 4143",
         "2 -> 1234",
@@ -239,7 +239,7 @@
       ],
       reference: [
         "Parte fija del puzzle:",
-        "Tokens por caja -> 18, 14, 17, 5, 20, 10, 13, 31, 35, 22",
+        "Tokens por terminal -> 18, 14, 17, 5, 20, 10, 13, 31, 35, 22",
         "",
         "Symbol codes:",
         "0 alpha, 1 beta, 2 delta, 3 epsilon, 4 gamma, 5 lambda, 6 mu, 7 omega, 8 pi, 9 sigma",
@@ -258,9 +258,9 @@
       route: "/puzzle/9",
       startRoute: "/start_puzzle/9",
       restartRoute: "/restart_puzzle/9",
-      help: "Formato MQTT: P9,box,token. Usa -1 para vaciar la caja.",
+      help: "Formato MQTT: P9,box,token. Usa -1 para vaciar el terminal.",
       fields: [
-        { id: "box", label: "Caja", type: "number", min: 0, max: 9, value: 4 },
+        { id: "box", label: "Terminal", type: "number", min: 0, max: 9, value: 4 },
         {
           id: "token",
           label: "Token",
@@ -285,11 +285,11 @@
         return `P9,${values.box},${values.token}`;
       },
       examples: [
-        { label: "Caja 4 <- token 31", payload: "P9,4,8" },
-        { label: "Vaciar caja 4", payload: "P9,4,-1" }
+        { label: "Terminal 4 <- token 31", payload: "P9,4,8" },
+        { label: "Vaciar terminal 4", payload: "P9,4,-1" }
       ],
       reference: [
-        "Solucion por caja -> token index:",
+        "Solucion por terminal -> token index:",
         "0 -> 5",
         "1 -> 6",
         "2 -> 3",
@@ -310,17 +310,17 @@
       route: "/puzzle/final",
       startRoute: "/start_puzzle_final",
       restartRoute: "/start_puzzle_final",
-      help: "Formato MQTT: P-1,box_id,buttons_string. buttons_string es la secuencia detectada por la caja.",
+      help: "Formato MQTT: P-1,box_id,buttons_string. buttons_string es la secuencia detectada por el terminal.",
       fields: [
-        { id: "box", label: "Caja", type: "number", min: 0, max: 9, value: 0 },
+        { id: "box", label: "Terminal", type: "number", min: 0, max: 9, value: 0 },
         { id: "buttons", label: "Botones", type: "text", value: "2413", fullWidth: true }
       ],
       build(values) {
         return `P-1,${values.box},${values.buttons}`;
       },
       examples: [
-        { label: "Caja 0 / 2413", payload: "P-1,0,2413" },
-        { label: "Caja 7 / 1234", payload: "P-1,7,1234" }
+        { label: "Terminal 0 / 2413", payload: "P-1,0,2413" },
+        { label: "Terminal 7 / 1234", payload: "P-1,7,1234" }
       ],
       reference: [
         "Puzzle final:",
@@ -339,33 +339,28 @@
 
   const els = {
     puzzleSelect: document.getElementById("test-puzzle-select"),
-    openLink: document.getElementById("test-open-link"),
     formBuilder: document.getElementById("test-form-builder"),
-    buildBtn: document.getElementById("test-build-btn"),
     sendBtn: document.getElementById("test-send-btn"),
-    generatedPayload: document.getElementById("test-generated-payload"),
-    rawPayloads: document.getElementById("test-raw-payloads"),
-    intervalMs: document.getElementById("test-interval-ms"),
-    topic: document.getElementById("test-topic"),
-    sendRawBtn: document.getElementById("test-send-raw-btn"),
-    clearRawBtn: document.getElementById("test-clear-raw-btn"),
+    topicSelect: document.getElementById("test-topic-select"),
+    topicHelp: document.getElementById("test-topic-help"),
+    messageField: document.getElementById("test-message-field"),
+    messageSelect: document.getElementById("test-message-select"),
+    messageEditor: document.getElementById("test-message-editor"),
     startBtn: document.getElementById("test-start-btn"),
     restartBtn: document.getElementById("test-restart-btn"),
     viewBtn: document.getElementById("test-view-btn"),
-    exampleButtons: document.getElementById("test-example-buttons"),
-    helpText: document.getElementById("test-help-text"),
     currentState: document.getElementById("test-current-state"),
+    refreshStateBtn: document.getElementById("test-refresh-state-btn"),
     eventLog: document.getElementById("test-event-log"),
     clearLogBtn: document.getElementById("test-clear-log-btn"),
-    statusBadge: document.getElementById("test-status-badge"),
     referenceOutput: document.getElementById("test-reference-output"),
     copyReferenceBtn: document.getElementById("test-copy-reference-btn"),
     simContent: document.getElementById("test-sim-content")
   };
 
   const simState = {
-    puzzle1A: "30",
-    puzzle1B: "9",
+    puzzle1A: "4",
+    puzzle1B: "4",
     puzzle2Symbol: "3",
     puzzle4Button: "3",
     puzzle4Song: "5",
@@ -393,13 +388,58 @@
     return puzzleConfigs[els.puzzleSelect.value];
   }
 
+  function setStatus(message) {
+    document.title = message ? `Test Lab · ${message}` : "Test Lab";
+  }
+
+  function updateTopicHelp() {
+    if (!els.topicHelp) {
+      return;
+    }
+
+    els.topicHelp.textContent = els.topicSelect.value === "FROM_FLASK"
+      ? "Raspi -> ESP32"
+      : "ESP32 -> Raspi";
+  }
+
+  function updateSendModeUI() {
+    const isToFlask = els.topicSelect.value === "TO_FLASK";
+
+    if (els.messageField) {
+      els.messageField.hidden = isToFlask;
+      els.messageField.style.display = isToFlask ? "none" : "";
+    }
+
+    if (els.messageSelect) {
+      els.messageSelect.disabled = isToFlask;
+    }
+
+    if (els.messageEditor) {
+      els.messageEditor.readOnly = isToFlask;
+    }
+
+    els.formBuilder.querySelectorAll("input, select, textarea, button").forEach((element) => {
+      element.disabled = !isToFlask;
+    });
+  }
+
+  function syncEditorForTopic() {
+    const isToFlask = els.topicSelect.value === "TO_FLASK";
+    updateSendModeUI();
+
+    if (isToFlask) {
+      els.messageEditor.value = buildPayload();
+      return;
+    }
+
+    renderMessageOptions();
+  }
+
   function renderForm() {
     const config = getSelectedConfig();
     els.formBuilder.innerHTML = "";
-    els.exampleButtons.innerHTML = "";
-    els.helpText.textContent = config.help;
     els.referenceOutput.textContent = config.reference || "Sin referencia disponible.";
-    els.openLink.href = config.route;
+    updateTopicHelp();
 
     config.fields.forEach((field) => {
       const wrapper = document.createElement("label");
@@ -443,26 +483,20 @@
         }
       });
 
+      const syncHandler = () => {
+        if (els.topicSelect.value === "TO_FLASK") {
+          els.messageEditor.value = buildPayload();
+        }
+      };
+
+      input.addEventListener("input", syncHandler);
+      input.addEventListener("change", syncHandler);
+
       wrapper.appendChild(input);
       els.formBuilder.appendChild(wrapper);
     });
 
-    config.examples.forEach((example, index) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "example-btn";
-      if (index === 0) {
-        btn.classList.add("primary-action");
-      }
-      btn.textContent = example.label;
-      btn.addEventListener("click", () => {
-        els.generatedPayload.value = example.payload;
-        els.rawPayloads.value = example.payload;
-      });
-      els.exampleButtons.appendChild(btn);
-    });
-
-    buildPayload();
+    syncEditorForTopic();
     renderSimulator();
   }
 
@@ -517,31 +551,138 @@
     `;
   }
 
+  function setFormValue(fieldId, value) {
+    const input = document.getElementById(`field-${fieldId}`);
+    if (!input) {
+      return;
+    }
+    input.value = value;
+  }
+
+  function syncPuzzle1FormAndEditor() {
+    setFormValue("a", simState.puzzle1A);
+    setFormValue("b", simState.puzzle1B);
+    if (els.topicSelect.value === "TO_FLASK") {
+      els.messageEditor.value = buildPayload();
+    }
+  }
+
+  function updatePuzzle1Preview() {
+    const inputA = els.simContent.querySelector("#sim-p1-a");
+    const inputB = els.simContent.querySelector("#sim-p1-b");
+    const resultNode = els.simContent.querySelector(".sim-p1-card-result strong");
+    if (!inputA || !inputB || !resultNode) {
+      return;
+    }
+
+    simState.puzzle1A = inputA.value || "0";
+    simState.puzzle1B = inputB.value || "0";
+    resultNode.textContent = String(Number(simState.puzzle1A || 0) + Number(simState.puzzle1B || 0));
+    syncPuzzle1FormAndEditor();
+  }
+
   function renderPuzzle1Simulator() {
+    const fieldA = document.getElementById("field-a");
+    const fieldB = document.getElementById("field-b");
+    if (fieldA && fieldB) {
+      simState.puzzle1A = fieldA.value || simState.puzzle1A;
+      simState.puzzle1B = fieldB.value || simState.puzzle1B;
+    }
+
+    const result = Number(simState.puzzle1A || 0) + Number(simState.puzzle1B || 0);
+
     els.simContent.innerHTML = `
-      <div class="sim-note">Introduce los dos valores fisicos y envialos como suma detectada.</div>
-      <div class="sim-grid answer-grid">
-        <label><span class="field-label">Token</span><input id="sim-p1-a" type="number" value="${simState.puzzle1A}"></label>
-        <label><span class="field-label">Caja</span><input id="sim-p1-b" type="number" value="${simState.puzzle1B}"></label>
+      <div class="sim-p1-layout">
+        <div class="sim-p1-piece">
+          <div class="field-label">Tarjeta</div>
+          <div class="sim-p1-card">
+            <img src="/static/images/puzzle1/tarjeta.png" alt="" aria-hidden="true">
+            <input id="sim-p1-a" class="sim-p1-input sim-p1-card-input" type="number" value="${simState.puzzle1A}" aria-label="Valor tarjeta">
+          </div>
+        </div>
+
+        <div class="sim-p1-operator">+</div>
+
+        <div class="sim-p1-piece">
+          <div class="field-label">Terminal</div>
+          <div class="sim-p1-card">
+            <img src="/static/images/puzzle1/caixa.png" alt="" aria-hidden="true">
+            <input id="sim-p1-b" class="sim-p1-input sim-p1-card-input" type="number" value="${simState.puzzle1B}" aria-label="Valor terminal">
+          </div>
+        </div>
+
+        <div class="sim-p1-operator">=</div>
+
+        <div class="sim-p1-result">
+          <div class="field-label">Resultado</div>
+          <div class="sim-p1-card sim-p1-card-result">
+            <strong>${result}</strong>
+          </div>
+        </div>
       </div>
-      <div class="sim-selected-readout">Resultado: <strong>${Number(simState.puzzle1A || 0) + Number(simState.puzzle1B || 0)}</strong></div>
       <div class="sim-actions">
-        <button type="button" class="sim-button" data-sim-p1-send>Enviar suma</button>
+        <button type="button" class="sim-button primary-action" data-sim-p1-send>Enviar lectura</button>
+        <button type="button" class="sim-button primary-action" data-sim-p1-solve>Resolver ronda</button>
       </div>
     `;
 
     ["a", "b"].forEach((key) => {
       const input = els.simContent.querySelector(`#sim-p1-${key}`);
-      input.addEventListener("change", () => {
-        simState[`puzzle1${key.toUpperCase()}`] = input.value || "0";
-        renderPuzzle1Simulator();
-      });
+      input.addEventListener("input", updatePuzzle1Preview);
+      input.addEventListener("change", updatePuzzle1Preview);
     });
 
     els.simContent.querySelector("[data-sim-p1-send]").addEventListener("click", async () => {
       const payload = `P1,${simState.puzzle1A},${simState.puzzle1B}`;
-      await sendPayloads([payload]);
-      appendLog({ local: true, payload, simulated: "puzzle1" });
+      try {
+        const previousTopic = els.topicSelect.value;
+        els.topicSelect.value = "TO_FLASK";
+        updateTopicHelp();
+        updateSendModeUI();
+        syncPuzzle1FormAndEditor();
+
+        await sendPayloads([payload]);
+        appendLog({ local: true, payload, simulated: "puzzle1" });
+
+        if (previousTopic !== "TO_FLASK") {
+          els.topicSelect.value = previousTopic;
+          syncEditorForTopic();
+        }
+      } catch (error) {
+        setStatus(`Puzzle 1 · ${error.message || "error"}`);
+      }
+    });
+
+    els.simContent.querySelector("[data-sim-p1-solve]").addEventListener("click", async () => {
+      try {
+        const response = await fetch("/current_state");
+        const data = await response.json();
+        const operations = Array.isArray(data.operations) ? data.operations : [];
+        const payloads = operations
+          .filter((item) => Array.isArray(item) && item[2] === "N")
+          .map((item) => `P1,0,${item[0]}`);
+
+        if (!payloads.length) {
+          setStatus("Puzzle 1 · nada por resolver");
+          return;
+        }
+
+        const previousTopic = els.topicSelect.value;
+        els.topicSelect.value = "TO_FLASK";
+        updateTopicHelp();
+        updateSendModeUI();
+        syncPuzzle1FormAndEditor();
+
+        await sendPayloads(payloads);
+        appendLog({ local: true, simulated: "puzzle1_solve_round", payloads });
+
+        if (previousTopic !== "TO_FLASK") {
+          els.topicSelect.value = previousTopic;
+          syncEditorForTopic();
+        }
+      } catch (error) {
+        setStatus(`Puzzle 1 · ${error.message || "error"}`);
+      }
     });
   }
 
@@ -649,11 +790,11 @@
   function renderPuzzle6Simulator() {
     const boxes = Array.from({ length: 10 }, (_, index) => {
       const selected = simState.puzzle6Box === String(index) ? " is-selected" : "";
-      return `<button type="button" class="sim-box${selected}" data-sim-p6-box="${index}">Caja ${index}</button>`;
+      return `<button type="button" class="sim-box${selected}" data-sim-p6-box="${index}">Terminal ${index}</button>`;
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Pulsa una caja para simular que ha perdido energia y forzar el reinicio del sistema.</div>
+      <div class="sim-note">Pulsa un terminal para simular que ha perdido energia y forzar el reinicio del sistema.</div>
       <div class="sim-grid box-grid">${boxes}</div>
     `;
 
@@ -677,11 +818,11 @@
     }).join("");
 
     const boxes = Array.from({ length: 10 }, (_, index) => {
-      return `<button type="button" class="sim-box" data-sim-p5-box="${index}">Caja ${index}</button>`;
+      return `<button type="button" class="sim-box" data-sim-p5-box="${index}">Terminal ${index}</button>`;
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona una desviacion y pulsa la caja que quieres enviar. Negativo = antes, positivo = tarde.</div>
+      <div class="sim-note">Selecciona una desviacion y pulsa el terminal que quieres enviar. Negativo = antes, positivo = tarde.</div>
       <div class="sim-selected-readout">Error activo: <strong>${simState.puzzle5Error}s</strong></div>
       <div class="sim-grid answer-grid">${presetButtons}</div>
       <label>
@@ -690,7 +831,7 @@
       </label>
       <div class="sim-grid box-grid">${boxes}</div>
       <div class="sim-actions">
-        <button type="button" class="sim-button" data-sim-p5-all>Enviar a todas las cajas</button>
+        <button type="button" class="sim-button" data-sim-p5-all>Enviar a todos los terminales</button>
       </div>
     `;
 
@@ -734,13 +875,13 @@
     }).join("");
 
     const rows = Array.from({ length: 10 }, (_, index) => {
-      return `<button type="button" class="sim-box" data-sim-p7-box="${index}">Caja ${index}</button>`;
+      return `<button type="button" class="sim-box" data-sim-p7-box="${index}">Terminal ${index}</button>`;
     }).join("");
 
     const code = simState.puzzle7Digits.join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Construye el codigo de 4 digitos y luego pulsa la caja. Cada digito representa un color de la tira.</div>
+      <div class="sim-note">Construye el codigo de 4 digitos y luego pulsa el terminal. Cada digito representa un color de la tira.</div>
       <div class="sim-selected-readout">Codigo activo: <strong>${code}</strong></div>
       <div class="sim-grid answer-grid">
         <label><span class="field-label">D1</span><input data-sim-p7-slot="0" type="number" min="0" max="4" value="${simState.puzzle7Digits[0]}"></label>
@@ -792,7 +933,7 @@
     }).join("");
 
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
-      return `<button type="button" class="sim-box" data-sim-p3-box="${index}">Caja ${index}</button>`;
+      return `<button type="button" class="sim-box" data-sim-p3-box="${index}">Terminal ${index}</button>`;
     }).join("");
 
     const correctBlock = simState.puzzle3Correct
@@ -800,14 +941,14 @@
       : `<div class="sim-selected-readout">Correcta actual: <strong>--</strong></div>`;
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona una respuesta y luego toca una o varias cajas, como harian los jugadores.</div>
+      <div class="sim-note">Selecciona una respuesta y luego toca uno o varios terminales, como harian los jugadores.</div>
       <div class="sim-selected-readout">Respuesta activa: <strong>${simState.puzzle3Answer}</strong></div>
       ${correctBlock}
       <div class="sim-grid answer-grid">${answerButtons}</div>
       <div class="sim-grid box-grid">${boxButtons}</div>
       <div class="sim-actions">
         <button type="button" class="sim-button" data-sim-p3-solution>Ver correcta</button>
-        <button type="button" class="sim-button" data-sim-p3-all>Enviar a todas las cajas</button>
+        <button type="button" class="sim-button" data-sim-p3-all>Enviar a todos los terminales</button>
       </div>
     `;
 
@@ -895,18 +1036,18 @@
     ];
 
     const board = rows.map((row) => {
-      const cells = row.map((box) => `<button type="button" class="sim-box" data-sim-p9-box="${box}">Caja ${box}</button>`).join("");
+      const cells = row.map((box) => `<button type="button" class="sim-box" data-sim-p9-box="${box}">Terminal ${box}</button>`).join("");
       return `<div class="sim-p9-row">${cells}</div>`;
     }).join("");
 
     const solutionList = solutionMap
-      .map((item) => `<div class="sim-solution-item"><span>Caja ${item.box}</span><strong>${item.token}</strong></div>`)
+      .map((item) => `<div class="sim-solution-item"><span>Terminal ${item.box}</span><strong>${item.token}</strong></div>`)
       .join("");
 
     const currentLabel = tokens.find((token) => token.value === simState.puzzle9Token)?.label || simState.puzzle9Token;
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona un token y despues pulsa una caja de la piramide para colocarlo.</div>
+      <div class="sim-note">Selecciona un token y despues pulsa un terminal de la piramide para colocarlo.</div>
       <div class="sim-selected-readout">Token activo: <strong>${currentLabel}</strong></div>
       <div class="sim-palette">${tokenButtons}</div>
       <div class="sim-p9-layout">
@@ -973,7 +1114,7 @@
 
     const activeToken = tokenMap.find((token) => token.value === simState.puzzle8Token);
     const activeTokenLabel = activeToken?.label || simState.puzzle8Token;
-    const activeBoxLabel = activeToken ? `caja ${activeToken.box}` : "--";
+    const activeBoxLabel = activeToken ? `terminal ${activeToken.box}` : "--";
 
     els.simContent.innerHTML = `
       <div class="sim-note">Selecciona simbolo, token y color. El simulador muestra el numero real del token, pero enviara el indice MQTT que espera backend.</div>
@@ -1007,11 +1148,11 @@
 
   function renderPuzzleFinalSimulator() {
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
-      return `<button type="button" class="sim-box" data-sim-pf-box="${index + 1}">Caja ${index + 1}</button>`;
+      return `<button type="button" class="sim-box" data-sim-pf-box="${index + 1}">Terminal ${index + 1}</button>`;
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona una caja y escribe el string de 6 botones detectados para la fase final.</div>
+      <div class="sim-note">Selecciona un terminal y escribe el string de 6 botones detectados para la fase final.</div>
       <div class="sim-grid answer-grid">
         <label class="full-width"><span class="field-label">Botones</span><input id="sim-pf-buttons" type="text" value="2413"></label>
       </div>
@@ -1039,7 +1180,94 @@
 
   function buildPayload() {
     const config = getSelectedConfig();
-    els.generatedPayload.value = config.build(collectValues());
+    return config.build(collectValues());
+  }
+
+  function getMessagePresets() {
+    const puzzleId = els.puzzleSelect.value;
+    const startPayload = puzzleId === "-1" ? "P-1Start" : `P${puzzleId}Start`;
+
+    const presetsByPuzzle = {
+      "1": [
+        { label: "Start", payload: startPayload },
+        { label: "End", payload: "P1End" }
+      ],
+      "2": [
+        { label: "Start", payload: startPayload },
+        { label: "End", payload: "P2End" }
+      ],
+      "3": [
+        { label: "Start", payload: startPayload },
+        { label: "End", payload: "P3End" }
+      ],
+      "4": [
+        { label: "Start", payload: startPayload },
+        { label: "End", payload: "P4End" }
+      ],
+      "5": [
+        { label: "Start", payload: startPayload },
+        { label: "Round 1", payload: "P5_Round1" },
+        { label: "Round 2", payload: "P5_Round2" },
+        { label: "Round 3", payload: "P5_Round3" },
+        { label: "End", payload: "P5_End" }
+      ],
+      "6": [
+        { label: "Start", payload: "P6Start" },
+        { label: "End", payload: "P6End" }
+      ],
+      "7": [
+        { label: "Start", payload: startPayload },
+        { label: "End", payload: "P7End" }
+      ],
+      "8": [
+        { label: "Start", payload: startPayload },
+        { label: "End", payload: "P8End" }
+      ],
+      "9": [
+        { label: "Start", payload: startPayload },
+        { label: "End", payload: "P9End" }
+      ],
+      "-1": [
+        { label: "Start", payload: "P-1Start" },
+        { label: "Color 1", payload: "P-1Color1" },
+        { label: "Color 2", payload: "P-1Color2" },
+        { label: "Color 3", payload: "P-1Color3" },
+        { label: "Color 4", payload: "P-1Color4" },
+        { label: "Color 5", payload: "P-1Color5" },
+        { label: "End", payload: "P-1End" }
+      ]
+    };
+
+    return presetsByPuzzle[puzzleId] || [{ label: "Start", payload: startPayload }];
+  }
+
+  function renderMessageOptions() {
+    if (els.topicSelect.value !== "FROM_FLASK") {
+      return;
+    }
+
+    const presets = getMessagePresets();
+    els.messageSelect.innerHTML = "";
+
+    presets.forEach((preset, index) => {
+      const option = document.createElement("option");
+      option.value = String(index);
+      option.textContent = preset.label;
+      els.messageSelect.appendChild(option);
+    });
+
+    if (presets.length) {
+      els.messageSelect.value = "0";
+      els.messageEditor.value = presets[0].payload;
+    } else {
+      els.messageEditor.value = "";
+    }
+  }
+
+  function loadSelectedMessage() {
+    const presets = getMessagePresets();
+    const selected = presets[Number(els.messageSelect.value)] || presets[0];
+    els.messageEditor.value = selected ? selected.payload : "";
   }
 
   async function sendPayloads(payloads) {
@@ -1047,7 +1275,7 @@
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        topic: els.topic.value || "TO_FLASK",
+        topic: els.topicSelect.value || "TO_FLASK",
         payloads
       })
     });
@@ -1056,38 +1284,17 @@
     if (!response.ok) {
       throw new Error(data.error || "send_failed");
     }
-    els.statusBadge.textContent = `${data.topic} · ${data.count} enviado(s)`;
+    setStatus(`${data.topic} · ${data.count} enviado(s)`);
     return data;
   }
 
   async function sendGeneratedPayload() {
-    buildPayload();
-    const payload = els.generatedPayload.value.trim();
+    const payload = els.messageEditor.value.trim();
     if (!payload) {
       return;
     }
     await sendPayloads([payload]);
     appendLog({ local: true, payload });
-  }
-
-  async function sendRawPayloads() {
-    const lines = els.rawPayloads.value
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-
-    if (!lines.length) {
-      return;
-    }
-
-    const interval = Math.max(0, Number(els.intervalMs.value) || 0);
-    for (let index = 0; index < lines.length; index += 1) {
-      await sendPayloads([lines[index]]);
-      appendLog({ local: true, payload: lines[index] });
-      if (interval && index < lines.length - 1) {
-        await new Promise((resolve) => window.setTimeout(resolve, interval));
-      }
-    }
   }
 
   async function startPuzzle(restart = false) {
@@ -1098,9 +1305,9 @@
     if (!response.ok) {
       throw new Error(data.error || "start_failed");
     }
-    els.statusBadge.textContent = restart
+    setStatus(restart
       ? `${config.label} reiniciado`
-      : `${config.label} arrancado`;
+      : `${config.label} arrancado`);
   }
 
   function openPuzzleView() {
@@ -1109,6 +1316,10 @@
   }
 
   function appendLog(entry) {
+    if (!els.eventLog) {
+      return;
+    }
+
     const row = document.createElement("div");
     row.className = "log-entry";
 
@@ -1125,44 +1336,304 @@
     els.eventLog.prepend(row);
   }
 
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\"", "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function formatStateValue(value) {
+    if (value === true) return "Si";
+    if (value === false) return "No";
+    if (value === null || value === undefined || value === "") return "--";
+    if (Array.isArray(value)) return value.length ? value.join(", ") : "--";
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  }
+
+  function stateMetric(label, value) {
+    return `
+      <div class="state-metric">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(formatStateValue(value))}</strong>
+      </div>
+    `;
+  }
+
+  function stateList(title, items) {
+    const content = items.length
+      ? items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")
+      : "<li>--</li>";
+
+    return `
+      <section class="state-card">
+        <h3>${escapeHtml(title)}</h3>
+        <ul class="state-list">${content}</ul>
+      </section>
+    `;
+  }
+
+  function renderFallbackState(data) {
+    const entries = Object.entries(data || {}).filter(([key]) => key !== "puzzle_id");
+    return `
+      <div class="state-summary">
+        <div class="state-grid">
+          <section class="state-card">
+            <h3>Estado</h3>
+            <div class="state-metrics">
+              ${entries.map(([key, value]) => stateMetric(key, value)).join("")}
+            </div>
+          </section>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderStateSummary(data) {
+    if (!data || typeof data !== "object") {
+      return `<div class="state-empty">Sin datos</div>`;
+    }
+
+    const puzzleId = String(data.puzzle_id ?? els.puzzleSelect.value);
+
+    if (puzzleId === "1") {
+      const operations = Array.isArray(data.operations) ? data.operations : [];
+      const pending = operations.filter((item) => Array.isArray(item) && item[2] === "N").map((item) => String(item[0]));
+      const solved = operations.filter((item) => Array.isArray(item) && item[2] === "Y").map((item) => String(item[0]));
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Ronda</h3>
+              <div class="state-metrics">
+                ${stateMetric("Fase", data.round)}
+                ${stateMetric("Objetivos", data.round_size)}
+                ${stateMetric("Resueltos", solved.length)}
+              </div>
+            </section>
+            ${stateList("Pendientes", pending)}
+            ${stateList("Resueltos", solved)}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "2") {
+      const players = Array.isArray(data.players) ? data.players : [];
+      const completed = players.filter((player) => Number(player.progress) >= Number(player.total || 5)).length;
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Laberinto</h3>
+              <div class="state-metrics">
+                ${stateMetric("Modo alarma", data.alarm_mode)}
+                ${stateMetric("Terminales completos", `${completed}/${players.length || 10}`)}
+              </div>
+            </section>
+            ${stateList("Progreso", players.map((player) => `T${player.player}: ${player.progress}/${player.total}`))}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "3") {
+      const question = data.question?.q || "Sin pregunta activa";
+      const answers = Array.isArray(data.question?.answers) ? data.question.answers : [];
+      const answered = Array.isArray(data.answered_players) ? data.answered_players.length : 0;
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Pregunta actual</h3>
+              <p class="state-copy">${escapeHtml(question)}</p>
+              <div class="state-metrics">
+                ${stateMetric("Aciertos", `${data.streak || 0}/${data.target || 10}`)}
+                ${stateMetric("Respondidos", `${answered}/${data.total_players || 10}`)}
+              </div>
+            </section>
+            ${stateList("Opciones", answers.map((answer, index) => `${index}. ${answer}`))}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "4") {
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Secuencia</h3>
+              <div class="state-metrics">
+                ${stateMetric("Aciertos", `${data.streak || 0}/${data.total_required || 0}`)}
+                ${stateMetric("Grabando", data.storing)}
+                ${stateMetric("Reproduciendo muestra", data.playing_sample)}
+              </div>
+            </section>
+            ${stateList("Entradas actuales", Array.isArray(data.current_progress) ? data.current_progress.map(String) : [])}
+            ${stateList("Historial reciente", Array.isArray(data.history) ? data.history.map((item) => Array.isArray(item) ? item.join(" · ") : String(item)) : [])}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "5") {
+      const times = Array.isArray(data.times) ? data.times : [];
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Temporizacion</h3>
+              <div class="state-metrics">
+                ${stateMetric("Ronda", data.round)}
+                ${stateMetric("Objetivo", data.objective)}
+                ${stateMetric("Limite", data.limit)}
+                ${stateMetric("Total actual", data.total)}
+                ${stateMetric("Activa", data.active_round)}
+                ${stateMetric("Esperando", data.waiting)}
+              </div>
+            </section>
+            ${stateList("Tiempos", times.map((item) => `T${item.player}: ${item.time}`))}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "6") {
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Energia</h3>
+              <div class="state-metrics">
+                ${stateMetric("Activo", data.active)}
+                ${stateMetric("Tiempo restante", data.remaining)}
+                ${stateMetric("Duracion", data.duration)}
+                ${stateMetric("Reinicio pendiente", data.restart_pending)}
+                ${stateMetric("Espera", data.waiting_seconds)}
+                ${stateMetric("Ultimo terminal", data.last_reset_box)}
+              </div>
+            </section>
+            ${stateList("Ultimo evento", [data.last_reset_message || "--"])}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "7") {
+      const solvedBoxes = Array.isArray(data.solved_boxes) ? data.solved_boxes : [];
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Codigos</h3>
+              <div class="state-metrics">
+                ${stateMetric("Resueltos", `${solvedBoxes.length}/10`)}
+                ${stateMetric("Puzzle resuelto", data.puzzle_solved)}
+              </div>
+            </section>
+            ${stateList("Terminales resueltos", solvedBoxes.map((item) => `Terminal ${item}`))}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "8") {
+      const symbols = Array.isArray(data.symbols) ? data.symbols : [];
+      const colors = data.colors && typeof data.colors === "object"
+        ? Object.entries(data.colors).map(([symbol, color]) => `${symbol}: ${color}`)
+        : [];
+      const inputSymbols = data.input_symbols && typeof data.input_symbols === "object"
+        ? Object.entries(data.input_symbols).map(([terminal, symbol]) => `T${terminal}: ${symbol}`)
+        : [];
+      const inputColors = data.input_colors && typeof data.input_colors === "object"
+        ? Object.entries(data.input_colors).map(([terminal, color]) => `T${terminal}: ${color}`)
+        : [];
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Tokens</h3>
+              <div class="state-metrics">
+                ${stateMetric("Ronda", data.round)}
+                ${stateMetric("Fase", data.phase)}
+                ${stateMetric("Puzzle resuelto", data.puzzle_solved)}
+              </div>
+            </section>
+            ${stateList("Simbolos en pantalla", symbols.map(String))}
+            ${stateList("Colores objetivo", colors)}
+            ${stateList("Entradas simbolo", inputSymbols)}
+            ${stateList("Entradas color", inputColors)}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "9") {
+      const boxes = data.boxes && typeof data.boxes === "object"
+        ? Object.entries(data.boxes).map(([terminal, token]) => `T${terminal}: ${token}`)
+        : [];
+      const status = data.status && typeof data.status === "object"
+        ? Object.entries(data.status).map(([key, value]) => `${key}: ${formatStateValue(value)}`)
+        : [];
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Piramide</h3>
+              <div class="state-metrics">
+                ${stateMetric("Puzzle resuelto", data.puzzle_solved)}
+              </div>
+            </section>
+            ${stateList("Terminales", boxes)}
+            ${stateList("Estado interno", status)}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "-1") {
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Final</h3>
+              <div class="state-metrics">
+                ${stateMetric("Puzzle resuelto", data.puzzle_solved)}
+              </div>
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    return renderFallbackState(data);
+  }
+
   async function refreshCurrentState() {
     try {
       const response = await fetch("/current_state");
       const data = await response.json();
-      els.currentState.textContent = JSON.stringify(data, null, 2);
+      els.currentState.innerHTML = renderStateSummary(data);
     } catch (error) {
-      els.currentState.textContent = JSON.stringify({ error: String(error) }, null, 2);
+      els.currentState.innerHTML = `<div class="state-empty">Error: ${escapeHtml(String(error))}</div>`;
     }
-  }
-
-  function setupSSE() {
-    const source = new EventSource("/state_stream");
-    source.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        appendLog(data);
-      } catch (error) {
-        appendLog({ error: "bad_sse_payload", raw: event.data });
-      }
-      //refreshCurrentState();
-    };
   }
 
   function bindEvents() {
     els.puzzleSelect.addEventListener("change", renderForm);
-    els.buildBtn.addEventListener("click", buildPayload);
+    els.topicSelect.addEventListener("change", () => {
+      updateTopicHelp();
+      syncEditorForTopic();
+    });
+    els.messageSelect.addEventListener("change", loadSelectedMessage);
     els.sendBtn.addEventListener("click", () => {
       sendGeneratedPayload().catch((error) => {
         appendLog({ error: String(error) });
       });
-    });
-    els.sendRawBtn.addEventListener("click", () => {
-      sendRawPayloads().catch((error) => {
-        appendLog({ error: String(error) });
-      });
-    });
-    els.clearRawBtn.addEventListener("click", () => {
-      els.rawPayloads.value = "";
     });
     els.startBtn.addEventListener("click", () => {
       startPuzzle(false).catch((error) => appendLog({ error: String(error) }));
@@ -1171,9 +1642,18 @@
       startPuzzle(true).catch((error) => appendLog({ error: String(error) }));
     });
     els.viewBtn.addEventListener("click", openPuzzleView);
-    els.clearLogBtn.addEventListener("click", () => {
-      els.eventLog.innerHTML = "";
-    });
+    if (els.refreshStateBtn) {
+      els.refreshStateBtn.addEventListener("click", () => {
+        refreshCurrentState();
+      });
+    }
+    if (els.clearLogBtn) {
+      els.clearLogBtn.addEventListener("click", () => {
+        if (els.eventLog) {
+          els.eventLog.innerHTML = "";
+        }
+      });
+    }
     els.copyReferenceBtn.addEventListener("click", async () => {
       const text = els.referenceOutput.textContent.trim();
       if (!text) {
@@ -1181,7 +1661,7 @@
       }
       try {
         await navigator.clipboard.writeText(text);
-        els.statusBadge.textContent = "Referencia copiada";
+        setStatus("Referencia copiada");
       } catch (error) {
         appendLog({ error: "copy_reference_failed", detail: String(error) });
       }
@@ -1191,7 +1671,4 @@
   initPuzzleSelect();
   renderForm();
   bindEvents();
-  setupSSE();
-  //refreshCurrentState();
-  //window.setInterval(refreshCurrentState, 1500);
 })();
