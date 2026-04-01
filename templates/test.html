@@ -1,120 +1,95 @@
-{% extends "base.html" %}
-
-{% block title %}Test Lab{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/test.css') }}">
-{% endblock %}
-
-{% block level_title %}TEST LAB{% endblock %}
-
-{% block top_right %}
-<div id="test-top-status">
-    <div class="hud-label">MQTT</div>
-    <div id="test-status-badge">TO_FLASK</div>
-</div>
-{% endblock %}
-
-{% block puzzle_content %}
-<div id="test-shell">
-    <section class="test-panel control-panel">
-        <div class="panel-header">
-            <div>
-                <div class="panel-kicker">Simulador</div>
-                <h2 class="panel-title">Control de Pruebas</h2>
-            </div>
-            <a id="test-open-link" class="panel-link" href="/puzzle/1" target="_blank" rel="noopener">Abrir puzzle</a>
-        </div>
-
-        <div class="test-block">
-            <label class="field-label" for="test-puzzle-select">Puzzle</label>
-            <select id="test-puzzle-select"></select>
-
-            <div class="action-row">
-                <button type="button" id="test-start-btn" class="primary-action">Arrancar</button>
-                <button type="button" id="test-restart-btn">Reiniciar</button>
-                <button type="button" id="test-view-btn">Ver puzzle</button>
-            </div>
-        </div>
-
-        <div id="test-workbench">
-            <div class="test-block">
-                <div class="subsection-title">Formulario Rápido</div>
-                <form id="test-form-builder"></form>
-                <div class="action-row">
-                    <button type="button" id="test-build-btn">Generar</button>
-                    <button type="button" id="test-send-btn" class="primary-action">Enviar</button>
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/test.css') }}">
+</head>
+<body class="test-lab-body">
+    <div id="test-app">
+        <header id="test-header">
+            <div class="test-header-main">
+                <div class="test-hero">
+                    <h1 class="test-title">Test Lab</h1>
                 </div>
-                <label class="field-label" for="test-generated-payload">Payload generado</label>
-                <input id="test-generated-payload" type="text" spellcheck="false" autocomplete="off">
-            </div>
 
-            <div class="test-block">
-                <div class="subsection-title">Simulacion real</div>
-                <div id="test-sim-content"></div>
-            </div>
-        </div>
+                <div class="test-header-controls">
+                    <select id="test-puzzle-select" aria-label="Puzzle"></select>
 
-        <div id="test-support-grid">
-            <div class="test-block">
-                <div class="subsection-title">Referencia / Solucion</div>
-                <div class="action-row">
-                    <button type="button" id="test-copy-reference-btn">Copiar referencia</button>
-                </div>
-                <pre id="test-reference-output"></pre>
-            </div>
-
-            <div class="test-block">
-                <div class="subsection-title">Payload Libre</div>
-                <label class="field-label" for="test-raw-payloads">Una linea por mensaje</label>
-                <textarea id="test-raw-payloads" spellcheck="false">P5,9,-0.5</textarea>
-                <div class="inline-fields">
-                    <label>
-                        <span class="field-label">Intervalo ms</span>
-                        <input id="test-interval-ms" type="number" min="0" step="50" value="250">
-                    </label>
-                    <label>
-                        <span class="field-label">Topic</span>
-                        <input id="test-topic" type="text" value="TO_FLASK" spellcheck="false" autocomplete="off">
-                    </label>
-                </div>
-                <div class="action-row">
-                    <button type="button" id="test-send-raw-btn" class="primary-action">Enviar lineas</button>
-                    <button type="button" id="test-clear-raw-btn">Limpiar</button>
+                    <div class="action-row test-header-actions">
+                        <button type="button" id="test-start-btn" class="primary-action">Arrancar</button>
+                        <button type="button" id="test-restart-btn">Reiniciar</button>
+                        <button type="button" id="test-view-btn">Ver puzzle</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="test-block">
-                <div class="subsection-title">Ejemplos</div>
-                <div id="test-example-buttons" class="example-grid"></div>
-                <div id="test-help-text" class="help-text"></div>
+            <div id="test-top-status" aria-hidden="true">
+                <img
+                    id="test-logo"
+                    src="{{ url_for('static', filename='images/piramidetrans.png') }}"
+                    alt=""
+                >
             </div>
-        </div>
-    </section>
+        </header>
 
-    <section class="test-panel monitor-panel">
-        <div class="panel-header">
-            <div>
-                <div class="panel-kicker">Monitor</div>
-                <h2 class="panel-title">Estado y Eventos</h2>
-            </div>
-            <button type="button" id="test-clear-log-btn">Limpiar log</button>
-        </div>
+        <main id="test-shell">
+            <section class="test-panel control-panel">
+                <div class="test-block test-sim-block section-sim">
+                    <div class="section-tag">Simulacion</div>
+                    <div id="test-sim-content"></div>
+                </div>
 
-        <div class="monitor-grid">
-            <div class="monitor-card">
-                <div class="subsection-title">Estado actual</div>
-                <pre id="test-current-state">{} </pre>
-            </div>
-            <div class="monitor-card">
-                <div class="subsection-title">Eventos SSE</div>
-                <div id="test-event-log"></div>
-            </div>
-        </div>
-    </section>
-</div>
-{% endblock %}
+                <div id="test-support-grid">
+                    <div class="test-block section-reference">
+                        <div class="section-tag">Solucion</div>
+                        <div class="action-row">
+                            <button type="button" id="test-copy-reference-btn">Copiar referencia</button>
+                        </div>
+                        <pre id="test-reference-output"></pre>
+                    </div>
 
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/test.js') }}"></script>
-{% endblock %}
+                    <div class="test-block section-send">
+                        <div class="section-tag">Enviar</div>
+                        <div class="inline-fields">
+                            <label>
+                                <span class="field-label">Direccion</span>
+                                <select id="test-topic-select">
+                                    <option value="TO_FLASK">TO_FLASK</option>
+                                    <option value="FROM_FLASK">FROM_FLASK</option>
+                                </select>
+                                <div id="test-topic-help" class="help-text"></div>
+                            </label>
+                            <label id="test-message-field">
+                                <span class="field-label">Mensaje</span>
+                                <select id="test-message-select"></select>
+                            </label>
+                        </div>
+                        <form id="test-form-builder"></form>
+                        <div class="action-row">
+                            <button type="button" id="test-send-btn" class="primary-action">Enviar</button>
+                        </div>
+                        <textarea id="test-message-editor" spellcheck="false" placeholder="Mensaje MQTT"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <section class="test-panel monitor-panel">
+                <div class="section-tag monitor-tag">Estado</div>
+                <div class="monitor-grid">
+                    <div class="monitor-card section-state">
+                        <div class="action-row">
+                            <button type="button" id="test-refresh-state-btn" class="primary-action">Actualizar estado</button>
+                        </div>
+                        <div id="test-current-state">Pulsa "Actualizar estado"</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/test.js') }}"></script>
+</body>
+</html>
