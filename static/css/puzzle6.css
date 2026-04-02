@@ -54,6 +54,7 @@ body::after {
     flex-direction: column;
     align-items: flex-end;
     gap: 0;
+    position: relative;
 }
 
 #countdown {
@@ -61,9 +62,26 @@ body::after {
     font-size: clamp(2rem, 4vw, 4.1rem);
     font-weight: 800;
     line-height: 1;
+    transition:
+        transform 180ms ease,
+        color 180ms ease,
+        text-shadow 180ms ease,
+        filter 180ms ease;
     text-shadow:
         0 0 12px rgba(69, 230, 255, 0.26),
         0 0 24px rgba(69, 230, 255, 0.1);
+}
+
+#countdown-panel::before {
+    content: "";
+    position: absolute;
+    inset: -16px -18px -12px -28px;
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at 88% 50%, rgba(69, 230, 255, 0.16), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+    opacity: 0.6;
+    filter: blur(2px);
 }
 
 #countdown.expired {
@@ -89,6 +107,95 @@ body::after {
     height: 100%;
     padding: 22px 28px 28px;
     align-items: stretch;
+}
+
+#p6-fx-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.fx-flash,
+.fx-ring,
+.fx-scanline {
+    position: absolute;
+    opacity: 0;
+}
+
+.fx-flash {
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18), transparent 32%),
+        linear-gradient(180deg, rgba(69, 230, 255, 0.06), transparent 36%, transparent 64%, rgba(255, 89, 214, 0.06));
+}
+
+.fx-ring {
+    left: 50%;
+    top: 50%;
+    width: 22%;
+    height: 34%;
+    border-radius: 999px;
+    border: 2px solid rgba(69, 230, 255, 0.3);
+    transform: translate(-50%, -50%) scale(0.6);
+}
+
+.fx-ring-b {
+    width: 36%;
+    height: 52%;
+    border-color: rgba(255, 89, 214, 0.24);
+}
+
+.fx-scanline {
+    left: 0;
+    right: 0;
+    height: 28%;
+    top: -30%;
+    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.14), rgba(255,255,255,0));
+    filter: blur(14px);
+}
+
+#puzzle6-shell.is-error-burst .fx-flash {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255, 79, 109, 0.3), transparent 36%),
+        linear-gradient(180deg, rgba(255, 79, 109, 0.22), transparent 44%, transparent 56%, rgba(255, 79, 109, 0.18));
+    animation: p6ErrorFlash 720ms ease-out;
+}
+
+#puzzle6-shell.is-error-burst .fx-ring-a {
+    border-color: rgba(255, 79, 109, 0.54);
+    animation: p6ImpactRing 920ms ease-out;
+}
+
+#puzzle6-shell.is-error-burst .fx-ring-b {
+    border-color: rgba(255, 138, 156, 0.32);
+    animation: p6ImpactRing 920ms ease-out 120ms;
+}
+
+#puzzle6-shell.is-error-burst .fx-scanline {
+    animation: p6ErrorScan 640ms ease-out;
+}
+
+#puzzle6-shell.is-solved-burst .fx-flash {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(45, 255, 155, 0.22), transparent 34%),
+        linear-gradient(180deg, rgba(45, 255, 155, 0.16), transparent 42%, transparent 58%, rgba(127, 208, 255, 0.12));
+    animation: p6SolvedFlash 1500ms ease-out;
+}
+
+#puzzle6-shell.is-solved-burst .fx-ring-a {
+    border-color: rgba(45, 255, 155, 0.5);
+    animation: p6ImpactRing 1300ms ease-out;
+}
+
+#puzzle6-shell.is-solved-burst .fx-ring-b {
+    border-color: rgba(127, 208, 255, 0.28);
+    animation: p6ImpactRing 1300ms ease-out 160ms;
+}
+
+#puzzle6-shell.is-solved-burst .fx-scanline {
+    animation: p6SolvedScan 1400ms ease-out;
 }
 
 .p6-panel {
@@ -277,6 +384,101 @@ body::after {
         0 0 20px rgba(127, 208, 255, 0.04);
 }
 
+#puzzle6-shell.time-low #countdown {
+    color: #ffd84f;
+    transform: scale(1.08);
+    text-shadow:
+        0 0 18px rgba(255, 216, 79, 0.58),
+        0 0 46px rgba(255, 216, 79, 0.28);
+}
+
+#puzzle6-shell.time-critical #countdown {
+    color: #ff8d66;
+    transform: scale(1.16);
+    text-shadow:
+        0 0 18px rgba(255, 121, 87, 0.72),
+        0 0 54px rgba(255, 79, 109, 0.34);
+    filter: saturate(1.28);
+    animation: p6CriticalCountdown 540ms ease-in-out infinite;
+}
+
+#puzzle6-shell.time-low #token-grid {
+    animation: p6GridHum 2.4s ease-in-out infinite;
+}
+
+#puzzle6-shell.time-critical #token-grid {
+    animation: p6GridHum 1.15s ease-in-out infinite;
+}
+
+#puzzle6-shell.time-low .token-card {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 38px color-mix(in srgb, var(--token-color) 22%, transparent),
+        0 0 26px color-mix(in srgb, var(--token-color) 18%, transparent);
+}
+
+#puzzle6-shell.time-critical .token-card {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 44px color-mix(in srgb, var(--token-color) 26%, transparent),
+        0 0 34px color-mix(in srgb, var(--token-color) 24%, transparent);
+}
+
+#puzzle6-shell.time-low #energy-stage {
+    background:
+        radial-gradient(circle at 50% 16%, rgba(255, 216, 79, 0.26), transparent 34%),
+        radial-gradient(circle at 50% 84%, rgba(255, 89, 214, 0.12), transparent 40%),
+        linear-gradient(180deg, rgba(10, 20, 36, 0.95), rgba(6, 12, 24, 0.82));
+}
+
+#puzzle6-shell.time-critical #energy-stage {
+    background:
+        radial-gradient(circle at 50% 16%, rgba(255, 121, 87, 0.34), transparent 34%),
+        radial-gradient(circle at 50% 84%, rgba(255, 79, 109, 0.24), transparent 40%),
+        linear-gradient(180deg, rgba(12, 18, 34, 0.98), rgba(8, 10, 20, 0.88));
+}
+
+#puzzle6-shell.tick-pulse #countdown {
+    animation: p6TickHit 300ms ease-out;
+}
+
+#puzzle6-shell.tick-pulse #energy-stage {
+    animation: p6StageHit 320ms ease-out;
+}
+
+#puzzle6-shell.tick-pulse #led-rig {
+    animation: p6RigHit 320ms ease-out;
+}
+
+#puzzle6-shell.tick-pulse #token-grid {
+    animation: p6TickGrid 320ms ease-out;
+}
+
+#puzzle6-shell.tick-pulse .mini-led::before {
+    opacity: 0.54;
+}
+
+#puzzle6-shell.tick-pulse-low .mini-led::before {
+    opacity: 0.7;
+}
+
+#puzzle6-shell.tick-pulse-critical .mini-led::before {
+    opacity: 0.9;
+}
+
+#puzzle6-shell.tick-pulse-critical #energy-stage {
+    box-shadow:
+        inset 0 0 86px rgba(255, 121, 87, 0.18),
+        0 0 52px rgba(255, 79, 109, 0.18);
+}
+
+#puzzle6-shell.tick-pulse-critical #countdown-panel::before {
+    opacity: 0.95;
+    background:
+        radial-gradient(circle at 88% 50%, rgba(255, 121, 87, 0.28), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+}
+
 #led-rig {
     position: relative;
     width: min(100%, 220px);
@@ -289,6 +491,10 @@ body::after {
     box-shadow:
         inset 0 0 20px rgba(255,255,255,0.04),
         0 0 18px rgba(69, 230, 255, 0.04);
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        filter 180ms ease;
 }
 
 #led-rig-inner {
@@ -355,6 +561,17 @@ body::after {
     pointer-events: none;
 }
 
+#puzzle6-shell.time-low .led-lane::after {
+    animation-duration: 3.1s;
+    opacity: 0.62;
+}
+
+#puzzle6-shell.time-critical .led-lane::after {
+    animation-duration: 1.6s;
+    opacity: 0.84;
+    width: 36px;
+}
+
 .mini-led {
     position: relative;
     z-index: 1;
@@ -403,25 +620,56 @@ body::after {
     animation-duration: 2.1s;
 }
 
+#puzzle6-shell.time-low .mini-led {
+    animation-duration: 1.2s;
+}
+
+#puzzle6-shell.time-critical .mini-led {
+    animation-duration: 0.58s;
+}
+
 #tracker-panel.is-waiting .mini-led {
     animation-duration: 3.2s;
 }
 
 #tracker-panel.is-failure .mini-led::before {
-    opacity: 0.18;
+    opacity: 0.3;
+    box-shadow:
+        0 0 16px color-mix(in srgb, var(--led-color) 92%, transparent),
+        0 0 34px color-mix(in srgb, var(--led-color) 72%, transparent),
+        0 0 54px color-mix(in srgb, var(--led-color) 36%, transparent);
 }
 
 #tracker-panel.is-failure .led-lane::after {
-    opacity: 0.22;
+    opacity: 0.82;
+    width: 42px;
+    animation-duration: 0.72s;
 }
 
 #tracker-panel.is-solved .mini-led::before {
     opacity: 0.56;
+    box-shadow:
+        0 0 18px color-mix(in srgb, var(--led-color) 94%, transparent),
+        0 0 38px color-mix(in srgb, var(--led-color) 70%, transparent),
+        0 0 64px color-mix(in srgb, var(--led-color) 34%, transparent);
 }
 
 #tracker-panel.is-solved .led-lane::after {
     opacity: 0.72;
     animation-duration: 2.8s;
+}
+
+#tracker-panel.is-failure #energy-stage {
+    box-shadow:
+        inset 0 0 80px rgba(255, 79, 109, 0.16),
+        0 0 44px rgba(255, 79, 109, 0.16);
+    animation: p6ErrorShake 340ms ease-in-out 2;
+}
+
+#tracker-panel.is-solved #energy-stage {
+    box-shadow:
+        inset 0 0 80px rgba(45, 255, 155, 0.14),
+        0 0 48px rgba(45, 255, 155, 0.18);
 }
 
 .led-screw {
@@ -531,6 +779,162 @@ body::after {
     }
     100% {
         top: 78%;
+        opacity: 0;
+    }
+}
+
+@keyframes p6CriticalCountdown {
+    0%, 100% {
+        transform: scale(1.12);
+    }
+    50% {
+        transform: scale(1.22);
+    }
+}
+
+@keyframes p6GridHum {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes p6TickHit {
+    0% {
+        transform: scale(1);
+    }
+    35% {
+        transform: scale(1.16);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes p6StageHit {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    35% {
+        transform: scale(1.025);
+        filter: brightness(1.12);
+    }
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+@keyframes p6RigHit {
+    0% {
+        transform: scale(1);
+    }
+    35% {
+        transform: scale(1.035);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes p6TickGrid {
+    0% {
+        transform: translateY(0);
+        filter: brightness(1);
+    }
+    35% {
+        transform: translateY(-3px);
+        filter: brightness(1.08);
+    }
+    100% {
+        transform: translateY(0);
+        filter: brightness(1);
+    }
+}
+
+@keyframes p6ErrorShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    20% {
+        transform: translateX(-6px);
+    }
+    40% {
+        transform: translateX(6px);
+    }
+    60% {
+        transform: translateX(-4px);
+    }
+    80% {
+        transform: translateX(4px);
+    }
+}
+
+@keyframes p6ErrorFlash {
+    0% {
+        opacity: 0;
+    }
+    18% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes p6SolvedFlash {
+    0% {
+        opacity: 0;
+    }
+    22% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes p6ImpactRing {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.46);
+    }
+    18% {
+        opacity: 0.85;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2.8);
+    }
+}
+
+@keyframes p6ErrorScan {
+    0% {
+        top: -24%;
+        opacity: 0;
+    }
+    18% {
+        opacity: 0.8;
+    }
+    100% {
+        top: 104%;
+        opacity: 0;
+    }
+}
+
+@keyframes p6SolvedScan {
+    0% {
+        top: -24%;
+        opacity: 0;
+    }
+    18% {
+        opacity: 0.72;
+    }
+    100% {
+        top: 100%;
         opacity: 0;
     }
 }
