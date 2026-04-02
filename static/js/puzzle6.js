@@ -3,6 +3,7 @@
     const messageEl = document.getElementById('message');
     const statusBadgeEl = document.getElementById('status-badge');
     const trackerPanelEl = document.getElementById('tracker-panel');
+    const shellEl = document.getElementById('puzzle6-shell');
     const DEFAULT_MESSAGE = 'Alinea cada token con su color antes de que desaparezca.';
     const WAITING_MESSAGE = 'Esperando sincronizacion del sistema.';
 
@@ -13,8 +14,14 @@
     let resetTimer = null;
 
     // Sound helper and URLs
-    function playSound(url) {
+    function playSound(url, options = {}) {
         const audio = new Audio(url);
+        if (typeof options.playbackRate === 'number') {
+            audio.playbackRate = options.playbackRate;
+        }
+        if (typeof options.volume === 'number') {
+            audio.volume = options.volume;
+        }
         audio.play().catch(err => console.warn("Audio play failed:", err));
     }
     const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
@@ -51,6 +58,60 @@
         trackerPanelEl.classList.add(`is-${state}`);
     }
 
+    function setUrgency(remainingSeconds = null) {
+        if (!shellEl) return;
+        shellEl.classList.remove('time-low', 'time-critical');
+        if (remainingSeconds == null || remainingSeconds > 20) return;
+        if (remainingSeconds <= 10) {
+            shellEl.classList.add('time-critical');
+            return;
+        }
+        shellEl.classList.add('time-low');
+    }
+
+    function triggerBurst(type) {
+        if (!shellEl) return;
+        const className = type === 'error' ? 'is-error-burst' : 'is-solved-burst';
+        shellEl.classList.remove(className);
+        void shellEl.offsetWidth;
+        shellEl.classList.add(className);
+        setTimeout(() => {
+            shellEl.classList.remove(className);
+        }, type === 'error' ? 1100 : 1700);
+    }
+
+    function triggerTickPulse(remainingSeconds) {
+        if (!shellEl) return;
+        shellEl.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
+        void shellEl.offsetWidth;
+        shellEl.classList.add('tick-pulse');
+        if (remainingSeconds <= 10) {
+            shellEl.classList.add('tick-pulse-critical');
+        } else if (remainingSeconds <= 20) {
+            shellEl.classList.add('tick-pulse-low');
+        }
+    }
+
+    function playCountdownBeep(remainingSeconds) {
+        let playbackRate = 1;
+        let volume = 0.28;
+
+        if (remainingSeconds <= 20) {
+            playbackRate = 1.08;
+            volume = 0.34;
+        }
+        if (remainingSeconds <= 10) {
+            playbackRate = 1.16;
+            volume = 0.42;
+        }
+        if (remainingSeconds <= 5) {
+            playbackRate = 1.24;
+            volume = 0.5;
+        }
+
+        playSound(BTN_SOUND_URL, { playbackRate, volume });
+    }
+
     function format(sec) {
         if (sec < 0) sec = 0;
         const m = Math.floor(sec / 60);
@@ -67,6 +128,7 @@
         countdownEl.classList.remove('expired');
         setStatusBadge('active', 'Activa');
         setTrackerState('active');
+        setUrgency(remainingSeconds);
         endTime = Date.now() + Math.max(0, remainingSeconds) * 1000;
         updateCountdown(); // immediate
         countdownTimer = setInterval(updateCountdown, 1000);
@@ -76,10 +138,12 @@
         if (!active || solved || endTime == null) return;
         const remaining = Math.round((endTime - Date.now()) / 1000);
         countdownEl.textContent = format(remaining);
+        setUrgency(remaining);
+        triggerTickPulse(remaining);
 
         // Play boto.wav on each second tick while main countdown is active
         if (remaining > 0) {
-            playSound(BTN_SOUND_URL);
+            playCountdownBeep(remaining);
         }
         
         // Add expired class when time runs out
@@ -104,6 +168,8 @@
         countdownEl.classList.remove('expired');
         setStatusBadge('failure', 'Recargando');
         setTrackerState('failure');
+        setUrgency(null);
+        triggerBurst('error');
         
         // Show countdown in the main timer display
         let end = Date.now() + waitSeconds * 1000;
@@ -117,6 +183,8 @@
                 countdownEl.classList.remove('failure');
                 setMessage(WAITING_MESSAGE, false);
                 setTrackerState('waiting');
+                setUrgency(null);
+                shellEl?.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
             }
         }
         tick();
@@ -134,6 +202,9 @@
         setMessage('Secuencia completada.', false);
         setStatusBadge('solved', 'Completado');
         setTrackerState('solved');
+        setUrgency(null);
+        triggerBurst('solved');
+        shellEl?.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
     }
 
     function applySnapshot(d) {
@@ -161,6 +232,8 @@
         setMessage(WAITING_MESSAGE, false);
         setStatusBadge('active', 'En espera');
         setTrackerState('waiting');
+        setUrgency(null);
+        shellEl?.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
     }
 
     function handleUpdate(d) {
@@ -179,6 +252,7 @@
         if (d.countdown_tick && active && !solved) {
             endTime = Date.now() + Math.max(0, d.countdown_tick.remaining) * 1000;
             countdownEl.textContent = format(d.countdown_tick.remaining);
+            setUrgency(d.countdown_tick.remaining);
             // Optional: also play on server ticks (every 10s). Comment out to keep per-second only.
             // playSound(BTN_SOUND_URL);
         }

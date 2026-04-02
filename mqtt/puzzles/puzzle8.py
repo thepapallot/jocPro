@@ -40,10 +40,13 @@ class Puzzle8(BasePuzzle):
             0: "alpha", 1: "beta", 2: "delta", 3: "epsilon", 4: "gamma",
             5: "lambda", 6: "mu", 7: "omega", 8: "pi", 9: "sigma"
         }
+        self.symbol_name_to_code = {name: code for code, name in self.symbol_code_map.items()}
         self.numbers_code_map = {
             0: 5, 1: 10, 2: 13, 3: 14, 4: 17,
             5: 18, 6: 20, 7: 22, 8: 31, 9: 35
         }
+        self.number_to_code_map = {number: code for code, number in self.numbers_code_map.items()}
+        self.color_name_to_code = {name: code for code, name in self.color_code_map.items()}
         
     def _schedule(self, fn, delay):
         """Schedule a function to run after delay seconds"""
@@ -94,6 +97,70 @@ class Puzzle8(BasePuzzle):
             self.phase = "idle"
             self.player_colors.clear()
             self.player_symbols.clear()
+
+    def _build_solution_rows_locked(self):
+        """Build a per-terminal solution snapshot for the simulator."""
+        rows = []
+        for box, token_number in enumerate(self.token_numbers):
+            entries = []
+            for part_index, target_set in enumerate(self.target_sets):
+                if box >= len(target_set.get("symbols", [])):
+                    continue
+                symbol_name = target_set["symbols"][box]
+                color_name = target_set["colors"].get(symbol_name)
+                entries.append({
+                    "part": part_index + 1,
+                    "symbol": symbol_name,
+                    "symbol_code": self.symbol_name_to_code.get(symbol_name),
+                    "color": color_name,
+                    "color_code": self.color_name_to_code.get(color_name)
+                })
+
+            rows.append({
+                "box": box,
+                "token": token_number,
+                "token_code": self.number_to_code_map.get(token_number),
+                "entries": entries
+            })
+        return rows
+
+    def _build_input_status_locked(self, required):
+        """Return per-box input status compared against the expected prefix."""
+        status = {}
+        for box in range(10):
+            expected_symbols = []
+            expected_colors = []
+            for pos in range(min(required, len(self.target_sets))):
+                target_set = self.target_sets[pos]
+                if box >= len(target_set.get("symbols", [])):
+                    continue
+                symbol_name = target_set["symbols"][box]
+                expected_symbols.append(symbol_name)
+                expected_colors.append(target_set["colors"].get(symbol_name))
+
+            actual_symbols = self.player_symbols.get(box, [])
+            actual_colors = self.player_colors.get(box, [])
+            count = min(len(actual_symbols), len(actual_colors))
+
+            wrong = False
+            for pos in range(count):
+                if (
+                    pos >= len(expected_symbols) or
+                    actual_symbols[pos] != expected_symbols[pos] or
+                    actual_colors[pos] != expected_colors[pos]
+                ):
+                    wrong = True
+                    break
+
+            if wrong:
+                status[box] = "wrong"
+            elif count >= required and required > 0:
+                status[box] = "complete"
+            elif count > 0:
+                status[box] = "partial"
+            else:
+                status[box] = "pending"
+        return status
             
     def get_state(self):
         """Return current puzzle state"""
@@ -104,6 +171,9 @@ class Puzzle8(BasePuzzle):
                 "phase": self.phase,
                 "puzzle_solved": self.solved
             }
+
+            if self.target_sets:
+                state["solution_rows"] = self._build_solution_rows_locked()
             
             if self.phase == "numbers":
                 state["token_numbers"] = self.token_numbers
@@ -132,6 +202,12 @@ class Puzzle8(BasePuzzle):
                 flat_symbols = {box: syms[-1] for box, syms in self.player_symbols.items() if syms}
                 state["input_colors"] = flat_colors
                 state["input_symbols"] = flat_symbols
+                state["input_required"] = max(1, min(self.round, len(self.target_sets)))
+                state["input_counts"] = {
+                    box: min(len(self.player_symbols.get(box, [])), len(self.player_colors.get(box, [])))
+                    for box in range(10)
+                }
+                state["input_status"] = self._build_input_status_locked(state["input_required"])
             else:
                 state["clear"] = True
                 

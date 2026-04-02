@@ -361,7 +361,20 @@
   const simState = {
     puzzle1A: "4",
     puzzle1B: "4",
-    puzzle2Symbol: "3",
+    puzzle2Token: "1",
+    puzzle2Alarm: false,
+    puzzle2Progress: {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+      6: 0,
+      7: 0,
+      8: 0,
+      9: 0,
+      10: 0
+    },
     puzzle4Button: "3",
     puzzle4Song: "5",
     puzzle3Answer: 1,
@@ -370,8 +383,11 @@
     puzzle6Box: "4",
     puzzle7Digits: ["0", "4", "2", "4"],
     puzzle8Token: "5",
-    puzzle8Symbol: "0",
-    puzzle8Color: "1",
+    puzzle8Entries: [
+      { symbol: "0", color: "1" },
+      { symbol: "0", color: "1" },
+      { symbol: "0", color: "1" }
+    ],
     puzzle9Token: "8"
   };
 
@@ -687,35 +703,208 @@
   }
 
   function renderPuzzle2Simulator() {
-    const players = Array.from({ length: 10 }, (_, index) => {
+    const tokenMap = [5, 13, 17, 22, 10, 20, 35, 31, 14, 18];
+    const symbolToTerminal = {
+      5: 3,
+      2: 0,
+      8: 7,
+      1: 2,
+      9: 1,
+      0: 9,
+      6: 8,
+      4: 5,
+      7: 6,
+      3: 4
+    };
+    const terminalToSymbol = Object.fromEntries(
+      Object.entries(symbolToTerminal).map(([symbol, terminal]) => [terminal, Number(symbol)])
+    );
+    const sequences = {
+      1: [5, 0, 9, 6, 2],
+      2: [4, 3, 9, 0, 7],
+      3: [8, 1, 7, 2, 4],
+      4: [0, 4, 8, 1, 3],
+      5: [6, 7, 8, 4, 9],
+      6: [3, 5, 1, 9, 0],
+      7: [2, 6, 3, 7, 8],
+      8: [9, 2, 5, 7, 1],
+      9: [0, 8, 2, 5, 6],
+      10: [1, 4, 6, 3, 5]
+    };
+    const alarmChanges = {
+      0: 2, 1: 3, 2: 0, 3: 1, 4: 5,
+      5: 4, 6: 8, 7: 9, 8: 6, 9: 7
+    };
+
+    const selectedPlayer = Number(simState.puzzle2Token || 1);
+    const selectedProgress = Number(simState.puzzle2Progress[selectedPlayer] || 0);
+    const rawExpected = sequences[selectedPlayer]?.[selectedProgress];
+    const actualExpected = rawExpected === undefined
+      ? null
+      : (simState.puzzle2Alarm ? alarmChanges[rawExpected] : rawExpected);
+    const expectedTerminal = actualExpected === null ? null : symbolToTerminal[actualExpected];
+    const buildPayloadsForPlayer = (player) => {
+      const progress = Number(simState.puzzle2Progress[player] || 0);
+      const remaining = sequences[player]?.slice(progress) || [];
+      return remaining.map((symbol) => `P2,${player},${simState.puzzle2Alarm ? alarmChanges[symbol] : symbol}`);
+    };
+    const buildPayloadsForAll = () => Array.from({ length: 10 }, (_, index) => index + 1)
+      .flatMap((player) => buildPayloadsForPlayer(player));
+
+    const renderP2Symbol = (index) => {
+      return `
+        <div class="sim-p2-shape-chip">
+          <img src="/static/images/puzzle2/symbols/symbol_${index}.png" alt="Simbolo ${index}">
+        </div>
+      `;
+    };
+
+    const tokens = tokenMap.map((token, index) => {
       const player = index + 1;
-      return `<button type="button" class="sim-box" data-sim-p2-player="${player}">Player ${player}</button>`;
+      const selected = String(player) === String(simState.puzzle2Token) ? " is-selected" : "";
+      const progress = Number(simState.puzzle2Progress[player] || 0);
+      return `
+        <button type="button" class="sim-box sim-p2-token${selected}" data-sim-p2-token="${player}">
+          <strong>${token}</strong>
+          <span>T${player} · ${progress}/5</span>
+        </button>
+      `;
     }).join("");
-    const symbols = Array.from({ length: 10 }, (_, index) => {
-      const selected = simState.puzzle2Symbol === String(index) ? " is-selected" : "";
-      return `<button type="button" class="sim-token${selected}" data-sim-p2-symbol="${index}">${index}</button>`;
+
+    const terminals = Array.from({ length: 10 }, (_, index) => {
+      const symbol = terminalToSymbol[index];
+      const targetClass = expectedTerminal === index ? " is-target" : "";
+      return `
+        <button type="button" class="sim-p2-terminal${targetClass}" data-sim-p2-terminal="${index}" data-sim-p2-symbol="${symbol}">
+          <strong>Terminal ${index}</strong>
+          ${renderP2Symbol(symbol)}
+        </button>
+      `;
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona simbolo y luego pulsa el player. Reproduce la secuencia del laberinto.</div>
-      <div class="sim-selected-readout">Simbolo activo: <strong>${simState.puzzle2Symbol}</strong></div>
-      <div class="sim-palette">${symbols}</div>
-      <div class="sim-grid box-grid">${players}</div>
+      <div class="sim-selected-readout sim-p2-status${simState.puzzle2Alarm ? " is-alarm" : ""}">
+        <strong>${simState.puzzle2Alarm ? "ALARMA" : "NORMAL"}</strong>
+        <span>${simState.puzzle2Alarm ? "Usa el simbolo opuesto" : "Usa el simbolo real"}</span>
+      </div>
+      <div class="sim-p2-head">
+        <div class="sim-grid box-grid">${tokens}</div>
+        <div class="sim-p2-next">
+          <div class="state-metric"><span>Progreso</span><strong>${selectedProgress}/5</strong></div>
+          <div class="state-metric"><span>Simbolo real</span><strong>${rawExpected ?? "--"}</strong></div>
+          <div class="state-metric"><span>Simbolo a pulsar</span><strong>${actualExpected ?? "--"}</strong></div>
+          <div class="state-metric"><span>Terminal a pulsar</span><strong>${expectedTerminal ?? "--"}</strong></div>
+          <div class="sim-actions">
+            <button type="button" class="sim-button" data-sim-p2-refresh>Actualizar</button>
+            <button type="button" class="sim-button" data-sim-p2-solve-row>Resolver token</button>
+            <button type="button" class="sim-button" data-sim-p2-solve-all>Resolver todo</button>
+          </div>
+        </div>
+      </div>
+      <div class="sim-p2-board">
+        ${terminals}
+      </div>
     `;
 
-    els.simContent.querySelectorAll("[data-sim-p2-symbol]").forEach((button) => {
-      button.addEventListener("click", () => {
-        simState.puzzle2Symbol = button.dataset.simP2Symbol;
+    els.simContent.querySelectorAll("[data-sim-p2-token]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        simState.puzzle2Token = button.dataset.simP2Token;
+        await syncPuzzle2State(true);
         renderPuzzle2Simulator();
       });
     });
 
-    els.simContent.querySelectorAll("[data-sim-p2-player]").forEach((button) => {
+    els.simContent.querySelector("[data-sim-p2-refresh]").addEventListener("click", async () => {
+      try {
+        await syncPuzzle2State();
+        renderPuzzle2Simulator();
+      } catch (error) {
+        setStatus(`Puzzle 2 · ${error.message || "error"}`);
+      }
+    });
+
+    els.simContent.querySelector("[data-sim-p2-solve-row]").addEventListener("click", async () => {
+      try {
+        await syncPuzzle2State(true);
+        const payloads = buildPayloadsForPlayer(selectedPlayer);
+        if (!payloads.length) {
+          setStatus("Puzzle 2 · token completo");
+          renderPuzzle2Simulator();
+          return;
+        }
+        const previousTopic = els.topicSelect.value;
+        els.topicSelect.value = "TO_FLASK";
+        updateTopicHelp();
+        updateSendModeUI();
+        await sendPayloads(payloads);
+        appendLog({ local: true, simulated: "puzzle2_solve_row", token: tokenMap[selectedPlayer - 1], payloads });
+        await syncPuzzle2State();
+        renderPuzzle2Simulator();
+        if (previousTopic !== "TO_FLASK") {
+          els.topicSelect.value = previousTopic;
+          syncEditorForTopic();
+        }
+      } catch (error) {
+        setStatus(`Puzzle 2 · ${error.message || "error"}`);
+      }
+    });
+
+    els.simContent.querySelector("[data-sim-p2-solve-all]").addEventListener("click", async () => {
+      try {
+        await syncPuzzle2State(true);
+        const payloads = buildPayloadsForAll();
+        if (!payloads.length) {
+          setStatus("Puzzle 2 · ya completo");
+          renderPuzzle2Simulator();
+          return;
+        }
+        const previousTopic = els.topicSelect.value;
+        els.topicSelect.value = "TO_FLASK";
+        updateTopicHelp();
+        updateSendModeUI();
+        await sendPayloads(payloads);
+        appendLog({ local: true, simulated: "puzzle2_solve_all", payloads });
+        await syncPuzzle2State();
+        renderPuzzle2Simulator();
+        if (previousTopic !== "TO_FLASK") {
+          els.topicSelect.value = previousTopic;
+          syncEditorForTopic();
+        }
+      } catch (error) {
+        setStatus(`Puzzle 2 · ${error.message || "error"}`);
+      }
+    });
+
+    els.simContent.querySelectorAll("[data-sim-p2-terminal]").forEach((button) => {
       button.addEventListener("click", async () => {
-        const player = button.dataset.simP2Player;
-        const payload = `P2,${player},${simState.puzzle2Symbol}`;
-        await sendPayloads([payload]);
-        appendLog({ local: true, payload, simulated: "puzzle2" });
+        const symbol = button.dataset.simP2Symbol;
+        const payload = `P2,${selectedPlayer},${symbol}`;
+        const progressBeforeSend = Number(simState.puzzle2Progress[selectedPlayer] || 0);
+        try {
+          const previousTopic = els.topicSelect.value;
+          els.topicSelect.value = "TO_FLASK";
+          updateTopicHelp();
+          updateSendModeUI();
+          await sendPayloads([payload]);
+          appendLog({
+            local: true,
+            payload,
+            simulated: "puzzle2",
+            token: tokenMap[selectedPlayer - 1],
+            alarm_mode: simState.puzzle2Alarm
+          });
+          await syncPuzzle2State(false, {
+            player: selectedPlayer,
+            previousProgress: progressBeforeSend
+          });
+          renderPuzzle2Simulator();
+          if (previousTopic !== "TO_FLASK") {
+            els.topicSelect.value = previousTopic;
+            syncEditorForTopic();
+          }
+        } catch (error) {
+          setStatus(`Puzzle 2 · ${error.message || "error"}`);
+        }
       });
     });
   }
@@ -811,6 +1000,25 @@
   }
 
   function renderPuzzle5Simulator() {
+    const syncPuzzle5State = async (silent = true) => {
+      const response = await fetch("/current_state");
+      const data = await response.json();
+      if (String(data.puzzle_id) !== "5") {
+        throw new Error("no activo");
+      }
+      simState.puzzle5Round = Number(data.round || 0);
+      simState.puzzle5Objective = data.objective ?? null;
+      simState.puzzle5Limit = data.limit ?? null;
+      simState.puzzle5Total = data.total ?? 0;
+      simState.puzzle5Waiting = !!data.waiting;
+      simState.puzzle5ActiveRound = !!data.active_round;
+      simState.puzzle5Submitted = Array.isArray(data.times) ? data.times.map((item) => Number(item.player)) : [];
+      if (!silent) {
+        setStatus("Puzzle 5 sincronizado");
+      }
+      return data;
+    };
+
     const presets = ["-1.5", "-0.5", "0.0", "0.5", "1.5", "3.0"];
     const presetButtons = presets.map((value) => {
       const selected = simState.puzzle5Error === value ? " is-selected" : "";
@@ -818,11 +1026,29 @@
     }).join("");
 
     const boxes = Array.from({ length: 10 }, (_, index) => {
-      return `<button type="button" class="sim-box" data-sim-p5-box="${index}">Terminal ${index}</button>`;
+      const sent = (simState.puzzle5Submitted || []).includes(index);
+      const sentClass = sent ? " is-selected" : "";
+      return `<button type="button" class="sim-box${sentClass}" data-sim-p5-box="${index}">Terminal ${index}</button>`;
     }).join("");
 
+    const roundLabel = simState.puzzle5Round || 1;
+    const objectiveLabel = simState.puzzle5Objective ?? (roundLabel === 1 ? 10 : roundLabel === 2 ? 30 : 60);
+    const statusLabel = simState.puzzle5Waiting
+      ? "Esperando"
+      : simState.puzzle5ActiveRound
+        ? "Activa"
+        : "Parada";
+
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona una desviacion y pulsa el terminal que quieres enviar. Negativo = antes, positivo = tarde.</div>
+      <div class="sim-p5-hero">
+        <div class="sim-p5-target">${objectiveLabel}<span>s</span></div>
+        <div class="sim-p5-meta">
+          <div class="state-metric"><span>Ronda</span><strong>${roundLabel}</strong></div>
+          <div class="state-metric"><span>Estado</span><strong>${statusLabel}</strong></div>
+          <div class="state-metric"><span>Limite</span><strong>${simState.puzzle5Limit ?? "--"}</strong></div>
+          <div class="state-metric"><span>Total</span><strong>${simState.puzzle5Total ?? 0}</strong></div>
+        </div>
+      </div>
       <div class="sim-selected-readout">Error activo: <strong>${simState.puzzle5Error}s</strong></div>
       <div class="sim-grid answer-grid">${presetButtons}</div>
       <label>
@@ -831,6 +1057,8 @@
       </label>
       <div class="sim-grid box-grid">${boxes}</div>
       <div class="sim-actions">
+        <button type="button" class="sim-button" data-sim-p5-refresh>Actualizar</button>
+        <button type="button" class="sim-button" data-sim-p5-solve>Resolver ronda</button>
         <button type="button" class="sim-button" data-sim-p5-all>Enviar a todos los terminales</button>
       </div>
     `;
@@ -850,21 +1078,69 @@
       });
     }
 
+    const refreshBtn = els.simContent.querySelector("[data-sim-p5-refresh]");
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", async () => {
+        try {
+          await syncPuzzle5State(false);
+          renderPuzzle5Simulator();
+        } catch (error) {
+          setStatus(`Puzzle 5 · ${error.message || "error"}`);
+        }
+      });
+    }
+
     els.simContent.querySelectorAll("[data-sim-p5-box]").forEach((button) => {
       button.addEventListener("click", async () => {
         const box = Number(button.dataset.simP5Box);
         const payload = `P5,${box},${simState.puzzle5Error}`;
-        await sendPayloads([payload]);
-        appendLog({ local: true, payload, simulated: "puzzle5" });
+        try {
+          await sendPayloads([payload]);
+          appendLog({ local: true, payload, simulated: "puzzle5" });
+          await syncPuzzle5State();
+          renderPuzzle5Simulator();
+        } catch (error) {
+          setStatus(`Puzzle 5 · ${error.message || "error"}`);
+        }
       });
     });
+
+    const solveBtn = els.simContent.querySelector("[data-sim-p5-solve]");
+    if (solveBtn) {
+      solveBtn.addEventListener("click", async () => {
+        try {
+          await syncPuzzle5State(true);
+          const sent = new Set(simState.puzzle5Submitted || []);
+          const payloads = Array.from({ length: 10 }, (_, index) => index)
+            .filter((index) => !sent.has(index))
+            .map((index) => `P5,${index},0.0`);
+          if (!payloads.length) {
+            setStatus("Puzzle 5 · ronda completa");
+            renderPuzzle5Simulator();
+            return;
+          }
+          await sendPayloads(payloads);
+          payloads.forEach((payload) => appendLog({ local: true, payload, simulated: "puzzle5_solve" }));
+          await syncPuzzle5State();
+          renderPuzzle5Simulator();
+        } catch (error) {
+          setStatus(`Puzzle 5 · ${error.message || "error"}`);
+        }
+      });
+    }
 
     const sendAll = els.simContent.querySelector("[data-sim-p5-all]");
     if (sendAll) {
       sendAll.addEventListener("click", async () => {
-        const payloads = Array.from({ length: 10 }, (_, index) => `P5,${index},${simState.puzzle5Error}`);
-        await sendPayloads(payloads);
-        payloads.forEach((payload) => appendLog({ local: true, payload, simulated: "puzzle5" }));
+        try {
+          const payloads = Array.from({ length: 10 }, (_, index) => `P5,${index},${simState.puzzle5Error}`);
+          await sendPayloads(payloads);
+          payloads.forEach((payload) => appendLog({ local: true, payload, simulated: "puzzle5" }));
+          await syncPuzzle5State();
+          renderPuzzle5Simulator();
+        } catch (error) {
+          setStatus(`Puzzle 5 · ${error.message || "error"}`);
+        }
       });
     }
   }
@@ -926,14 +1202,28 @@
   }
 
   function renderPuzzle3Simulator() {
+    const refreshPuzzle3Solution = async () => {
+      const response = await fetch("/test/puzzle3_solution");
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "puzzle3_solution_failed");
+      }
+      simState.puzzle3Correct = data;
+    };
+
     const answerButtons = Array.from({ length: 6 }, (_, index) => {
       const answer = index + 1;
       const selected = simState.puzzle3Answer === answer ? " is-selected" : "";
-      return `<button type="button" class="sim-button${selected}" data-sim-answer="${answer}">Respuesta ${answer}</button>`;
+      return `<button type="button" class="sim-button${selected}" data-sim-answer="${answer}">${answer}</button>`;
     }).join("");
 
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
-      return `<button type="button" class="sim-box" data-sim-p3-box="${index}">Terminal ${index}</button>`;
+      return `
+        <button type="button" class="sim-box sim-p3-terminal" data-sim-p3-box="${index}">
+          <img src="/static/images/puzzle1/caixa.png" alt="" aria-hidden="true">
+          <span>${index}</span>
+        </button>
+      `;
     }).join("");
 
     const correctBlock = simState.puzzle3Correct
@@ -942,9 +1232,11 @@
 
     els.simContent.innerHTML = `
       <div class="sim-note">Selecciona una respuesta y luego toca uno o varios terminales, como harian los jugadores.</div>
-      <div class="sim-selected-readout">Respuesta activa: <strong>${simState.puzzle3Answer}</strong></div>
+      <div class="sim-selected-readout">Activa: <strong>${simState.puzzle3Answer}</strong></div>
       ${correctBlock}
+      <div class="field-label">Respuesta</div>
       <div class="sim-grid answer-grid">${answerButtons}</div>
+      <div class="field-label">Terminal</div>
       <div class="sim-grid box-grid">${boxButtons}</div>
       <div class="sim-actions">
         <button type="button" class="sim-button" data-sim-p3-solution>Ver correcta</button>
@@ -963,17 +1255,29 @@
       button.addEventListener("click", async () => {
         const box = Number(button.dataset.simP3Box);
         const payload = `P3,${box},${simState.puzzle3Answer}`;
-        await sendPayloads([payload]);
-        appendLog({ local: true, payload, simulated: "puzzle3" });
+        try {
+          await sendPayloads([payload]);
+          appendLog({ local: true, payload, simulated: "puzzle3" });
+          await refreshPuzzle3Solution();
+          renderPuzzle3Simulator();
+        } catch (error) {
+          appendLog({ error: String(error), simulated: "puzzle3" });
+        }
       });
     });
 
     const sendAll = els.simContent.querySelector("[data-sim-p3-all]");
     if (sendAll) {
       sendAll.addEventListener("click", async () => {
-        const payloads = Array.from({ length: 10 }, (_, index) => `P3,${index},${simState.puzzle3Answer}`);
-        await sendPayloads(payloads);
-        payloads.forEach((payload) => appendLog({ local: true, payload, simulated: "puzzle3" }));
+        try {
+          const payloads = Array.from({ length: 10 }, (_, index) => `P3,${index},${simState.puzzle3Answer}`);
+          await sendPayloads(payloads);
+          payloads.forEach((payload) => appendLog({ local: true, payload, simulated: "puzzle3" }));
+          await refreshPuzzle3Solution();
+          renderPuzzle3Simulator();
+        } catch (error) {
+          appendLog({ error: String(error), simulated: "puzzle3" });
+        }
       });
     }
 
@@ -981,12 +1285,7 @@
     if (showSolution) {
       showSolution.addEventListener("click", async () => {
         try {
-          const response = await fetch("/test/puzzle3_solution");
-          const data = await response.json();
-          if (!response.ok) {
-            throw new Error(data.error || "puzzle3_solution_failed");
-          }
-          simState.puzzle3Correct = data;
+          await refreshPuzzle3Solution();
           renderPuzzle3Simulator();
         } catch (error) {
           appendLog({ error: String(error), simulated: "puzzle3_solution" });
@@ -1077,72 +1376,280 @@
   }
 
   function renderPuzzle8Simulator() {
+    const syncPuzzle8State = async (silent = true) => {
+      const response = await fetch("/current_state");
+      const data = await response.json();
+      if (String(data.puzzle_id) !== "8") {
+        throw new Error("no activo");
+      }
+      simState.puzzle8Phase = data.phase || "idle";
+      simState.puzzle8Round = data.round || 0;
+      simState.puzzle8State = data;
+      if (!silent) {
+        setStatus("Puzzle 8 sincronizado");
+      }
+      return data;
+    };
+
+    const ensurePuzzle8Entries = () => {
+      if (!Array.isArray(simState.puzzle8Entries)) {
+        simState.puzzle8Entries = [];
+      }
+      while (simState.puzzle8Entries.length < 3) {
+        simState.puzzle8Entries.push({ symbol: "0", color: "1" });
+      }
+      return simState.puzzle8Entries;
+    };
+
     const tokenMap = [
-      { value: "0", label: "5", box: 3 },
-      { value: "1", label: "10", box: 5 },
-      { value: "2", label: "13", box: 6 },
-      { value: "3", label: "14", box: 1 },
-      { value: "4", label: "17", box: 2 },
-      { value: "5", label: "18", box: 0 },
-      { value: "6", label: "20", box: 4 },
-      { value: "7", label: "22", box: 9 },
-      { value: "8", label: "31", box: 7 },
-      { value: "9", label: "35", box: 8 }
+      { value: "0", label: "5", terminal: 3 },
+      { value: "1", label: "10", terminal: 5 },
+      { value: "2", label: "13", terminal: 6 },
+      { value: "3", label: "14", terminal: 1 },
+      { value: "4", label: "17", terminal: 2 },
+      { value: "5", label: "18", terminal: 0 },
+      { value: "6", label: "20", terminal: 4 },
+      { value: "7", label: "22", terminal: 9 },
+      { value: "8", label: "31", terminal: 7 },
+      { value: "9", label: "35", terminal: 8 }
     ];
-
-    const tokens = tokenMap
-      .map((token) => {
-        const selected = simState.puzzle8Token === token.value ? " is-selected" : "";
-        return `<button type="button" class="sim-token${selected}" data-sim-p8-token="${token.value}">${token.label}</button>`;
-      }).join("");
-
-    const symbols = [
-      "0 alpha", "1 beta", "2 delta", "3 epsilon", "4 gamma",
-      "5 lambda", "6 mu", "7 omega", "8 pi", "9 sigma"
-    ].map((label, index) => {
-      const selected = simState.puzzle8Symbol === String(index) ? " is-selected" : "";
-      return `<button type="button" class="sim-token${selected}" data-sim-p8-symbol="${index}">${label}</button>`;
-    }).join("");
-
-    const colors = [
-      "1 red", "2 yellow", "3 blue", "4 black", "5 green", "6 white"
-    ].map((label, index) => {
-      const value = String(index + 1);
-      const selected = simState.puzzle8Color === value ? " is-selected" : "";
-      return `<button type="button" class="sim-token${selected}" data-sim-p8-color="${value}">${label}</button>`;
-    }).join("");
-
+    const symbolNames = ["alpha", "beta", "delta", "epsilon", "gamma", "lambda", "mu", "omega", "pi", "sigma"];
+    const colorNames = { "1": "red", "2": "yellow", "3": "blue", "4": "black", "5": "green", "6": "white" };
+    const phase = simState.puzzle8Phase || "idle";
+    const state = simState.puzzle8State || {};
+    const tokenByTerminal = Object.fromEntries(tokenMap.map((token) => [token.terminal, token]));
+    const tokenByCode = Object.fromEntries(tokenMap.map((token) => [token.value, token]));
+    const symbolCodeByName = Object.fromEntries(symbolNames.map((name, index) => [name, String(index)]));
+    const colorCodeByName = Object.fromEntries(Object.entries(colorNames).map(([code, name]) => [name, code]));
+    const requiredEntries = Number(state.input_required || simState.puzzle8Round || 1);
     const activeToken = tokenMap.find((token) => token.value === simState.puzzle8Token);
-    const activeTokenLabel = activeToken?.label || simState.puzzle8Token;
-    const activeBoxLabel = activeToken ? `terminal ${activeToken.box}` : "--";
+    const inputEntries = ensurePuzzle8Entries().slice(0, requiredEntries);
+    const inputCounts = state.input_counts && typeof state.input_counts === "object" ? state.input_counts : {};
+    const inputStatus = state.input_status && typeof state.input_status === "object" ? state.input_status : {};
+
+    const renderSymbolIcon = (symbol, color, compact = false) => {
+      const safeSymbol = symbol || "alpha";
+      const safeColor = color || "white";
+      return `
+        <span class="sim-p8-icon-wrap${compact ? " is-compact" : ""}">
+          <span class="sim-p8-icon" style="-webkit-mask-image:url('/static/images/puzzle8/${safeSymbol}.svg');mask-image:url('/static/images/puzzle8/${safeSymbol}.svg');background:${safeColor};"></span>
+        </span>
+      `;
+    };
+
+    const solutionRows = Array.isArray(state.solution_rows) ? state.solution_rows : tokenMap
+      .slice()
+      .sort((left, right) => left.terminal - right.terminal)
+      .map((token) => ({ box: token.terminal, token: Number(token.label), token_code: Number(token.value), entries: [] }));
+
+    const solutionRowsMarkup = solutionRows.map((row) => {
+      const entries = Array.isArray(row.entries) ? row.entries : [];
+      const tokenLabel = row.token ?? "--";
+      const rowTokenCode = row.token_code != null ? String(row.token_code) : null;
+      const isSelected = rowTokenCode === simState.puzzle8Token;
+      const count = Number(inputCounts[row.box] || 0);
+      const status = inputStatus[row.box] || "pending";
+      const progressClass = status === "wrong"
+        ? " is-wrong"
+        : status === "complete"
+          ? " is-complete"
+          : status === "partial"
+            ? " is-partial"
+            : "";
+      const progressLabel = status === "wrong"
+        ? "Error"
+        : status === "complete"
+          ? "Enviado"
+          : count > 0
+            ? `${count}/${requiredEntries}`
+            : "";
+      const iconCell = entries.length
+        ? entries.map((entry) => renderSymbolIcon(entry.symbol, entry.color, true)).join("")
+        : '<span class="sim-p8-empty">--</span>';
+      return `
+        <div class="sim-p8-solution-row${isSelected ? " is-selected" : ""}${progressClass}" data-sim-p8-select-token="${rowTokenCode || ""}">
+          <div class="sim-p8-solution-grid">
+            <div class="sim-p8-solution-cell token">
+              <span>${tokenLabel}</span>
+              ${progressLabel ? `<span class="sim-p8-progress-pill">${progressLabel}</span>` : ""}
+            </div>
+            <div class="sim-p8-solution-cell icons">${iconCell}</div>
+            <div class="sim-p8-solution-cell action">
+              <button type="button" class="sim-button" data-sim-p8-solve-row="${row.box}">Resolver</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    const entryControlsMarkup = inputEntries.map((entry, index) => {
+      const symbolName = symbolNames[Number(entry.symbol)] || "alpha";
+      const colorName = colorNames[entry.color] || "red";
+      return `
+        <div class="sim-p8-manual-row">
+          <div class="sim-p8-manual-index">${index + 1}</div>
+          <div class="sim-p8-manual-preview">${renderSymbolIcon(symbolName, colorName)}</div>
+          <label>
+            <span class="field-label">Forma</span>
+            <select data-sim-p8-entry-symbol="${index}">
+              ${symbolNames.map((label, symbolIndex) => `<option value="${symbolIndex}"${entry.symbol === String(symbolIndex) ? " selected" : ""}>${label}</option>`).join("")}
+            </select>
+          </label>
+          <label>
+            <span class="field-label">Color</span>
+            <select data-sim-p8-entry-color="${index}">
+              ${Object.entries(colorNames).map(([value, label]) => `<option value="${value}"${entry.color === value ? " selected" : ""}>${label}</option>`).join("")}
+            </select>
+          </label>
+        </div>
+      `;
+    }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona simbolo, token y color. El simulador muestra el numero real del token, pero enviara el indice MQTT que espera backend.</div>
-      <div class="sim-selected-readout">Activo: <strong>${simState.puzzle8Symbol}</strong> · <strong>token ${activeTokenLabel}</strong> · <strong>${simState.puzzle8Color}</strong> · <strong>${activeBoxLabel}</strong></div>
-      <div class="field-label">Simbolo</div>
-      <div class="sim-palette">${symbols}</div>
-      <div class="field-label">Token</div>
-      <div class="sim-palette">${tokens}</div>
-      <div class="field-label">Color</div>
-      <div class="sim-palette">${colors}</div>
+      <div class="sim-selected-readout">
+        Fase: <strong>${phase}</strong> · Ronda: <strong>${simState.puzzle8Round || 0}</strong>
+      </div>
+      <div class="sim-p8-display">
+        <div class="field-label">Solucion</div>
+        <div class="sim-p8-solution-panel">
+          <div class="sim-p8-solution-head">
+            <span>Token</span>
+            <span>Icono</span>
+            <span></span>
+          </div>
+          <div class="sim-p8-solution-body">
+            ${solutionRowsMarkup}
+          </div>
+        </div>
+      </div>
+      <div class="sim-p8-entry">
+        <div class="sim-p8-entry-meta">
+          Token <strong>${activeToken?.label || "--"}</strong> · ${requiredEntries} forma${requiredEntries > 1 ? "s" : ""} para este token
+        </div>
+      </div>
+      <div class="sim-p8-manual">
+        ${entryControlsMarkup}
+      </div>
       <div class="sim-actions">
-        <button type="button" class="sim-button" data-sim-p8-send>Enviar combinacion</button>
+        <button type="button" class="sim-button" data-sim-p8-refresh>Actualizar</button>
+        <button type="button" class="sim-button" data-sim-p8-send>Enviar token</button>
+        <button type="button" class="sim-button" data-sim-p8-solve>Resolver todo</button>
       </div>
     `;
 
-    [["symbol", "Symbol"], ["token", "Token"], ["color", "Color"]].forEach(([prefix, stateKey]) => {
-      els.simContent.querySelectorAll(`[data-sim-p8-${prefix}]`).forEach((button) => {
-        button.addEventListener("click", () => {
-          simState[`puzzle8${stateKey}`] = button.dataset[`simP8${stateKey}`];
-          renderPuzzle8Simulator();
-        });
+    els.simContent.querySelectorAll("[data-sim-p8-select-token]").forEach((row) => {
+      row.addEventListener("click", (event) => {
+        if (event.target.closest("[data-sim-p8-solve-row]")) {
+          return;
+        }
+        const tokenCode = row.dataset.simP8SelectToken;
+        if (!tokenCode) {
+          return;
+        }
+        simState.puzzle8Token = tokenCode;
+        renderPuzzle8Simulator();
       });
     });
 
+    els.simContent.querySelectorAll("[data-sim-p8-entry-symbol]").forEach((select) => {
+      select.addEventListener("change", () => {
+        const index = Number(select.dataset.simP8EntrySymbol);
+        ensurePuzzle8Entries()[index].symbol = select.value;
+        renderPuzzle8Simulator();
+      });
+    });
+
+    els.simContent.querySelectorAll("[data-sim-p8-entry-color]").forEach((select) => {
+      select.addEventListener("change", () => {
+        const index = Number(select.dataset.simP8EntryColor);
+        ensurePuzzle8Entries()[index].color = select.value;
+        renderPuzzle8Simulator();
+      });
+    });
+
+    els.simContent.querySelector("[data-sim-p8-refresh]").addEventListener("click", async () => {
+      try {
+        await syncPuzzle8State(false);
+        renderPuzzle8Simulator();
+      } catch (error) {
+        setStatus(`Puzzle 8 · ${error.message || "error"}`);
+      }
+    });
+
     els.simContent.querySelector("[data-sim-p8-send]").addEventListener("click", async () => {
-      const payload = `P8,${simState.puzzle8Symbol},${simState.puzzle8Token},${simState.puzzle8Color}`;
-      await sendPayloads([payload]);
-      appendLog({ local: true, payload, simulated: "puzzle8" });
+      try {
+        const payloads = ensurePuzzle8Entries()
+          .slice(0, requiredEntries)
+          .map((entry) => `P8,${entry.symbol},${simState.puzzle8Token},${entry.color}`);
+        await sendPayloads(payloads);
+        appendLog({ local: true, payloads, simulated: "puzzle8", token: tokenByCode[simState.puzzle8Token]?.label });
+        await syncPuzzle8State(true);
+        renderPuzzle8Simulator();
+      } catch (error) {
+        setStatus(`Puzzle 8 · ${error.message || "error"}`);
+      }
+    });
+
+    els.simContent.querySelectorAll("[data-sim-p8-solve-row]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        try {
+          const box = Number(button.dataset.simP8SolveRow);
+          const latestState = await syncPuzzle8State(true);
+          if ((latestState.phase || phase) !== "input") {
+            setStatus("Puzzle 8 · espera fase input");
+            return;
+          }
+          const row = Array.isArray(latestState.solution_rows)
+            ? latestState.solution_rows.find((item) => Number(item.box) === box)
+            : null;
+          if (!row || !Array.isArray(row.entries) || !row.entries.length) {
+            setStatus("Puzzle 8 · fila sin solucion");
+            return;
+          }
+          const tokenCode = row.token_code ?? tokenByTerminal[row.box]?.value;
+          const payloads = row.entries.map((entry) => {
+            const symbolCode = entry.symbol_code ?? symbolCodeByName[entry.symbol];
+            const colorCode = entry.color_code ?? colorCodeByName[entry.color];
+            return `P8,${symbolCode},${tokenCode},${colorCode}`;
+          });
+          await sendPayloads(payloads);
+          appendLog({ local: true, simulated: "puzzle8_row_solve", payloads, token: row.token });
+          await syncPuzzle8State(true);
+          renderPuzzle8Simulator();
+        } catch (error) {
+          setStatus(`Puzzle 8 · ${error.message || "error"}`);
+        }
+      });
+    });
+
+    els.simContent.querySelector("[data-sim-p8-solve]").addEventListener("click", async () => {
+      try {
+        const latestState = await syncPuzzle8State(true);
+        if ((latestState.phase || phase) !== "input") {
+          setStatus("Puzzle 8 · espera fase input");
+          return;
+        }
+        const rows = Array.isArray(latestState.solution_rows) ? latestState.solution_rows : [];
+        const payloads = [];
+        rows.forEach((row) => {
+          const tokenCode = row.token_code ?? tokenByTerminal[row.box]?.value;
+          (row.entries || []).forEach((entry) => {
+            const symbolCode = entry.symbol_code ?? symbolCodeByName[entry.symbol];
+            const colorCode = entry.color_code ?? colorCodeByName[entry.color];
+            if (tokenCode != null && symbolCode != null && colorCode != null) {
+              payloads.push(`P8,${symbolCode},${tokenCode},${colorCode}`);
+            }
+          });
+        });
+        if (!payloads.length) {
+          setStatus("Puzzle 8 · sin solucion disponible");
+          return;
+        }
+        await sendPayloads(payloads);
+        appendLog({ local: true, simulated: "puzzle8_solve", payloads });
+      } catch (error) {
+        setStatus(`Puzzle 8 · ${error.message || "error"}`);
+      }
     });
   }
 
@@ -1392,6 +1899,51 @@
     `;
   }
 
+  function applyPuzzle2State(data) {
+    simState.puzzle2Alarm = !!data.alarm_mode;
+    (data.players || []).forEach((player) => {
+      simState.puzzle2Progress[player.player] = player.progress;
+    });
+  }
+
+  function wait(ms) {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
+  }
+
+  async function syncPuzzle2State(silent = false, options = {}) {
+    const { player = null, previousProgress = null, retries = 4, delayMs = 140 } = options;
+    let data = null;
+
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      const response = await fetch("/current_state");
+      data = await response.json();
+      if (String(data.puzzle_id) !== "2") {
+        throw new Error("no activo");
+      }
+
+      if (player === null || previousProgress === null) {
+        break;
+      }
+
+      const snapshot = Array.isArray(data.players) ? data.players : [];
+      const currentPlayer = snapshot.find((item) => Number(item.player) === Number(player));
+      const currentProgress = Number(currentPlayer?.progress ?? previousProgress);
+      if (currentProgress !== Number(previousProgress) || attempt === retries) {
+        break;
+      }
+
+      await wait(delayMs);
+    }
+
+    applyPuzzle2State(data);
+    if (!silent) {
+      setStatus("Puzzle 2 sincronizado");
+    }
+    return data;
+  }
+
   function renderStateSummary(data) {
     if (!data || typeof data !== "object") {
       return `<div class="state-empty">Sin datos</div>`;
@@ -1552,6 +2104,14 @@
       const inputColors = data.input_colors && typeof data.input_colors === "object"
         ? Object.entries(data.input_colors).map(([terminal, color]) => `T${terminal}: ${color}`)
         : [];
+      const solutionRows = Array.isArray(data.solution_rows)
+        ? data.solution_rows.map((row) => {
+            const entries = Array.isArray(row.entries)
+              ? row.entries.map((entry) => `${entry.symbol}/${entry.color}`).join(" · ")
+              : "--";
+            return `T${row.box}: ${row.token} -> ${entries}`;
+          })
+        : [];
       return `
         <div class="state-summary">
           <div class="state-grid">
@@ -1560,11 +2120,13 @@
               <div class="state-metrics">
                 ${stateMetric("Ronda", data.round)}
                 ${stateMetric("Fase", data.phase)}
+                ${stateMetric("Entradas por terminal", data.input_required || data.round || 1)}
                 ${stateMetric("Puzzle resuelto", data.puzzle_solved)}
               </div>
             </section>
             ${stateList("Simbolos en pantalla", symbols.map(String))}
             ${stateList("Colores objetivo", colors)}
+            ${stateList("Correctas", solutionRows)}
             ${stateList("Entradas simbolo", inputSymbols)}
             ${stateList("Entradas color", inputColors)}
           </div>
@@ -1617,6 +2179,10 @@
     try {
       const response = await fetch("/current_state");
       const data = await response.json();
+      if (String(data.puzzle_id) === "2" && els.puzzleSelect.value === "2") {
+        applyPuzzle2State(data);
+        renderPuzzle2Simulator();
+      }
       els.currentState.innerHTML = renderStateSummary(data);
     } catch (error) {
       els.currentState.innerHTML = `<div class="state-empty">Error: ${escapeHtml(String(error))}</div>`;

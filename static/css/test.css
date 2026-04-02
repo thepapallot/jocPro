@@ -694,6 +694,21 @@ textarea[readonly] {
     letter-spacing: 0.04em;
 }
 
+.sim-p3-terminal {
+    gap: 0.35rem;
+}
+
+.sim-p3-terminal img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    opacity: 0.88;
+}
+
+.sim-p3-terminal span {
+    font-size: 0.9rem;
+}
+
 .sim-token {
     min-height: 48px;
     padding: 0.58rem 0.66rem;
@@ -881,6 +896,367 @@ textarea[readonly] {
     margin-left: 0.35rem;
 }
 
+.sim-p2-head,
+.sim-p2-board,
+.sim-p2-next {
+    display: grid;
+    gap: 10px;
+}
+
+.sim-p2-head {
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+    align-items: start;
+}
+
+.sim-p2-board {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.sim-p2-status {
+    border: 1px solid rgba(15, 101, 80, 0.14);
+    background: rgba(236, 255, 248, 0.7);
+}
+
+.sim-p2-status strong {
+    color: #0f6550;
+}
+
+.sim-p2-status.is-alarm {
+    border-color: rgba(185, 72, 72, 0.36);
+    background: linear-gradient(135deg, rgba(255, 232, 232, 0.98), rgba(255, 206, 206, 0.98));
+    color: #7a1e1e;
+    box-shadow: 0 12px 24px rgba(185, 72, 72, 0.14);
+}
+
+.sim-p2-status.is-alarm strong {
+    color: #a11212;
+}
+
+.sim-p2-token {
+    gap: 0.25rem;
+    min-height: 52px;
+}
+
+.sim-p2-token.is-selected {
+    border-color: rgba(22, 117, 159, 0.48);
+    background: linear-gradient(135deg, rgba(200, 236, 255, 0.99), rgba(225, 255, 244, 0.99));
+    box-shadow: 0 14px 28px rgba(22, 117, 159, 0.18);
+}
+
+.sim-p2-token strong {
+    font-size: 1.05rem;
+}
+
+.sim-p2-token span {
+    font-size: 0.84rem;
+    color: rgba(20, 56, 74, 0.72);
+}
+
+.sim-p2-terminal {
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+    padding: 0.75rem 0.55rem;
+    border: 1px solid rgba(15, 101, 80, 0.14);
+    background: rgba(239, 255, 248, 0.72);
+    color: #14384a;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    text-align: center;
+}
+
+.sim-p2-terminal:hover {
+    transform: translateY(-1px);
+    border-color: rgba(15, 101, 80, 0.28);
+    box-shadow: 0 10px 20px rgba(35, 112, 150, 0.1);
+}
+
+.sim-p2-terminal.is-target {
+    border-color: rgba(22, 117, 159, 0.42);
+    box-shadow: 0 14px 28px rgba(22, 117, 159, 0.18);
+    background: linear-gradient(135deg, rgba(206, 238, 255, 0.99), rgba(223, 255, 246, 0.99));
+}
+
+.sim-p2-status.is-alarm ~ .sim-p2-board .sim-p2-terminal.is-target {
+    border-color: rgba(214, 72, 72, 0.46);
+    background: linear-gradient(135deg, rgba(255, 224, 224, 0.99), rgba(255, 241, 194, 0.99));
+    box-shadow: 0 16px 30px rgba(214, 72, 72, 0.2);
+}
+
+.sim-p2-terminal strong {
+    font-size: 0.96rem;
+    letter-spacing: 0.04em;
+}
+
+.sim-p2-shape-chip {
+    width: 58px;
+    min-height: 62px;
+    display: grid;
+    place-items: center;
+    padding: 0.45rem 0.3rem;
+    border-radius: 14px;
+    border: 1px solid rgba(20, 56, 74, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.sim-p2-shape-chip img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.sim-p5-hero,
+.sim-p5-meta {
+    display: grid;
+    gap: 10px;
+}
+
+.sim-p5-hero {
+    grid-template-columns: minmax(140px, 0.7fr) minmax(0, 1fr);
+    align-items: stretch;
+}
+
+.sim-p5-target {
+    display: grid;
+    place-items: center;
+    min-height: 120px;
+    border-radius: 20px;
+    border: 1px solid rgba(22, 117, 159, 0.16);
+    background: linear-gradient(135deg, rgba(206, 238, 255, 0.98), rgba(223, 255, 246, 0.98));
+    color: #115a79;
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    font-weight: 800;
+    line-height: 1;
+}
+
+.sim-p5-target span {
+    font-size: 0.45em;
+    margin-left: 0.12em;
+}
+
+.sim-p5-meta {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.sim-p8-display,
+.sim-p8-entry {
+    display: grid;
+    gap: 10px;
+}
+
+.sim-p8-entry {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.sim-p8-solution-panel {
+    padding: 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(22, 117, 159, 0.16);
+    background: linear-gradient(135deg, rgba(232, 244, 255, 0.98), rgba(240, 255, 248, 0.98));
+    display: grid;
+    gap: 10px;
+}
+
+.sim-p8-solution-head {
+    display: grid;
+    grid-template-columns: minmax(70px, 0.8fr) minmax(160px, 1fr) 110px;
+    gap: 10px;
+    padding: 0 10px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #115a79;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.sim-p8-solution-body {
+    display: grid;
+    gap: 8px;
+}
+
+.sim-p8-solution-row {
+    display: block;
+    cursor: pointer;
+}
+
+.sim-p8-solution-grid {
+    display: grid;
+    grid-template-columns: minmax(70px, 0.8fr) minmax(160px, 1fr) 110px;
+    gap: 10px;
+}
+
+.sim-p8-solution-row.is-selected .sim-p8-solution-cell:not(.action) {
+    border-color: rgba(15, 141, 92, 0.28);
+    background: linear-gradient(135deg, rgba(215, 250, 233, 0.96), rgba(235, 255, 246, 0.98));
+    box-shadow: 0 0 0 1px rgba(15, 141, 92, 0.12);
+}
+
+.sim-p8-solution-row.is-partial .sim-p8-solution-cell:not(.action) {
+    border-color: rgba(217, 154, 27, 0.24);
+    background: linear-gradient(135deg, rgba(255, 247, 217, 0.96), rgba(255, 251, 234, 0.98));
+}
+
+.sim-p8-solution-row.is-wrong .sim-p8-solution-cell:not(.action) {
+    border-color: rgba(194, 47, 70, 0.26);
+    background: linear-gradient(135deg, rgba(255, 228, 234, 0.96), rgba(255, 242, 245, 0.98));
+}
+
+.sim-p8-solution-row.is-complete .sim-p8-solution-cell:not(.action) {
+    border-color: rgba(15, 141, 92, 0.24);
+    background: linear-gradient(135deg, rgba(220, 252, 232, 0.96), rgba(240, 255, 246, 0.98));
+}
+
+.sim-p8-solution-cell {
+    min-height: 54px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(22, 117, 159, 0.12);
+    background: rgba(255, 255, 255, 0.78);
+    color: #115a79;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    text-align: center;
+    font-weight: 700;
+}
+
+.sim-p8-solution-cell.token {
+    font-size: 1.05rem;
+    justify-content: space-between;
+}
+
+.sim-p8-solution-cell.action {
+    padding: 6px;
+}
+
+.sim-p8-solution-cell.action .sim-button {
+    width: 100%;
+}
+
+.sim-p8-icon-wrap {
+    width: 44px;
+    height: 44px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(17, 90, 121, 0.08);
+}
+
+.sim-p8-icon-wrap.is-compact {
+    width: 36px;
+    height: 36px;
+}
+
+.sim-p8-icon {
+    width: 26px;
+    height: 26px;
+    display: inline-block;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+}
+
+.sim-p8-empty {
+    color: #6b8794;
+    font-weight: 600;
+}
+
+.sim-p8-progress-pill {
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    background: rgba(17, 90, 121, 0.1);
+    color: #115a79;
+    white-space: nowrap;
+}
+
+.sim-p8-solution-row.is-partial .sim-p8-progress-pill {
+    background: rgba(217, 154, 27, 0.18);
+    color: #9a6700;
+}
+
+.sim-p8-solution-row.is-wrong .sim-p8-progress-pill {
+    background: rgba(194, 47, 70, 0.16);
+    color: #a8203a;
+}
+
+.sim-p8-solution-row.is-complete .sim-p8-progress-pill {
+    background: rgba(15, 141, 92, 0.16);
+    color: #0b7a4f;
+}
+
+.sim-p8-entry-meta {
+    min-height: 48px;
+    padding: 0.8rem 1rem;
+    border-radius: 14px;
+    border: 1px solid rgba(22, 117, 159, 0.12);
+    background: rgba(255, 255, 255, 0.78);
+    color: #115a79;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+}
+
+.sim-p8-manual {
+    display: grid;
+    gap: 10px;
+}
+
+.sim-p8-manual-row {
+    display: grid;
+    grid-template-columns: 40px 64px minmax(150px, 1fr) minmax(150px, 1fr);
+    gap: 10px;
+    align-items: end;
+    padding: 10px 12px;
+    border-radius: 18px;
+    border: 1px solid rgba(22, 117, 159, 0.14);
+    background: linear-gradient(135deg, rgba(232, 244, 255, 0.98), rgba(240, 255, 248, 0.98));
+}
+
+.sim-p8-manual-index {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(27, 130, 172, 0.18), rgba(18, 173, 116, 0.18));
+    color: #115a79;
+    font-weight: 800;
+}
+
+.sim-p8-manual-preview {
+    display: grid;
+    place-items: center;
+}
+
+@media (max-width: 720px) {
+    .sim-p8-solution-head {
+        display: none;
+    }
+
+    .sim-p8-solution-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sim-p8-manual-row {
+        grid-template-columns: 40px 64px 1fr;
+    }
+
+    .sim-p8-manual-row label:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+
 .sim-p9-board {
     display: grid;
     gap: 8px;
@@ -1022,6 +1398,14 @@ textarea[readonly] {
 
     .sim-p1-operator {
         min-height: 24px;
+    }
+
+    .sim-p2-head {
+        grid-template-columns: 1fr;
+    }
+
+    .sim-p5-hero {
+        grid-template-columns: 1fr;
     }
 }
 
