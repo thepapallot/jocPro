@@ -78,13 +78,15 @@ class Puzzle3(BasePuzzle):
         with self.lock:
             self._choose_new_set()
             self._push_question()
-            
+
+    '''        
     def on_start(self):
         """Called when puzzle becomes active"""
         with self.lock:
             self._choose_new_set()
             self._push_question()
-            
+    '''   
+
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:

@@ -65,12 +65,6 @@ class Puzzle8(BasePuzzle):
         super().reset()
         with self.lock:
             self._cancel_timers()
-        self.on_start()
-        
-    def on_start(self):
-        """Initialize puzzle - start from round 1"""
-        with self.lock:
-            self._cancel_timers()
             self.round = 1
             self.phase = "idle"
             self.target_symbols_order = []

@@ -39,7 +39,9 @@ class Puzzle1(BasePuzzle):
                 "round": self.round,
                 "round_size": self.round_sizes[self.round]
             })
-            
+
+    #On_start no es fa servir mes
+    '''        
     def on_start(self):
         """Called when puzzle becomes active"""
         with self.lock:
@@ -53,7 +55,8 @@ class Puzzle1(BasePuzzle):
                 "start_timer": True,
                 "round_size": self.round_sizes[self.round]
             })
-            
+    '''    
+
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:

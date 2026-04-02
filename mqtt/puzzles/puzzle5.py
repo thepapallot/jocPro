@@ -20,10 +20,6 @@ class Puzzle5(BasePuzzle):
     def reset(self):
         """Full reset - identical to on_start"""
         super().reset()
-        self.on_start()
-        
-    def on_start(self):
-        """Initialize puzzle - start countdown to round 1"""
         with self.lock:
             self.current_round = 0
             self.round_times = {}

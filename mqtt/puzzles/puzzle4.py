@@ -104,10 +104,7 @@ class Puzzle4(BasePuzzle):
     def reset(self):
         """Full reset"""
         super().reset()
-        self.on_start()
         
-    def on_start(self):
-        """Called when puzzle becomes active"""
         with self.lock:
             self.streak = 0
             self.storing = False
@@ -126,6 +123,7 @@ class Puzzle4(BasePuzzle):
                     # Push sample start
                     self._push({
                         "streak": -1,
+                        "streak_bis": self.streak,
                         "total_required": 2,
                         "storing": False,
                         "current_progress": 0,
@@ -137,6 +135,8 @@ class Puzzle4(BasePuzzle):
                         "listening": True
                     })
                     # Start unblock timer
+                    streak1_rel_path_full = f"{self.AUDIO_SUBDIR}{self.streak1_sample}"
+                    self.streak1_sample_duration = self._get_audio_duration(streak1_rel_path_full) or self.streak1_sample_duration
                     self._play_sample_with_delay(
                         self.streak1_sample,
                         self.streak1_sample_duration
@@ -148,7 +148,6 @@ class Puzzle4(BasePuzzle):
         with self.lock:
             self.playing_sample = False
             self.validating = False
-
 
     def get_state(self):
         with self.lock:
@@ -185,15 +184,8 @@ class Puzzle4(BasePuzzle):
             })
 
             if streak >= total_required:
-                time.sleep(self.VALIDATION_FEEDBACK_SECONDS)
-                self._push({
-                    "show_completion": True,
-                    "streak": streak,
-                    "total_required": total_required
-                })
-
-                time.sleep(5)
-
+                time.sleep(2)
+                
                 with self.lock:
                     if self.solved:
                         return
@@ -222,7 +214,8 @@ class Puzzle4(BasePuzzle):
                 if self.solved:
                     return
                 self._push({
-                    "streak": -1,
+                    "streak": -1,    
+                    "streak_bis": self.streak,
                     "total_required": total_required,
                     "storing": False,
                     "current_progress": 0,
@@ -231,6 +224,9 @@ class Puzzle4(BasePuzzle):
                     "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"},
                     "listening": True
                 })
+
+                streak2_rel_path_full = f"{self.AUDIO_SUBDIR}{self.streak2_sample}"
+                self.streak2_sample_duration = self._get_audio_duration(streak2_rel_path_full) or self.streak2_sample_duration
                 self._play_sample_with_delay(self.streak2_sample, self.streak2_sample_duration)
             return
 
@@ -253,7 +249,6 @@ class Puzzle4(BasePuzzle):
                 "played_sequence": []
             })
 
-    
     def handle_message(self, parts):
         """Handle MQTT message: P4,button,song"""
         if len(parts) < 2:
@@ -402,93 +397,3 @@ class Puzzle4(BasePuzzle):
                     "played_sequence": self.played_sequence.copy()
                 })
                 
-
-    ''' 
-    def handle_message(self, parts):
-        if len(parts) < 2: return
-        try:
-            button = int(parts[1])
-            song = int(parts[2]) if len(parts) >= 3 else 0
-        except ValueError: return
-        
-        with self.lock:
-            if self.solved: return
-            
-            if self.playing_sample:
-                print(f"[Puzzle4] Ignoring input while playing sample")
-                return
-            
-            # NEW: Block input during validation
-            if self.validating:
-                print(f"[Puzzle4] Ignoring input during validation")
-                return
-            
-            if button == 4:
-                if self.streak == 0:
-                    self._push({"play_mostra": True, "url": f"/static/{self.AUDIO_SUBDIR}{self.streak1_sample}"})
-                elif self.streak == 1:
-                    self._push({"play_mostra": True, "url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"})
-                    
-                return
-
-            if button == 3:
-                self.storing = True
-                self.current_progress = 0
-                self.played_sequence = []
-                self._push({"storing": True, "streak": self.streak, "total_required": self.total_required, "current_progress": 0, "played_sequence": []})
-                return
-            
-            if button == 1:
-                self.storing = False
-                self._push({"storing": False, "streak": self.streak, "total_required": self.total_required})
-                return
-            
-            if button == 2:
-                self.current_progress = 0
-                self.played_sequence = []
-                self._push({"reset_attempt": True, "streak": self.streak, "total_required": self.total_required, "current_progress": 0, "played_sequence": []})
-                return
-            
-            if button == 0:
-
-                track_map = self._get_current_track_map()
-                required_order = self._get_current_required_order()
-                if song not in track_map: return
-                track_name, rel_path = track_map[song]
-                rel_path_full = f"{self.AUDIO_SUBDIR}{rel_path}"
-                full_fs_path = os.path.join(self.mqtt_client.app.static_folder, rel_path_full)
-                if not os.path.exists(full_fs_path):
-                    print(f"[Puzzle4] Audio file NOT FOUND: {full_fs_path}")
-                self.history.append(track_name)
-                
-                if self.storing:
-                    if len(self.played_sequence) < len(required_order):
-                        self.played_sequence.append(str(song))
-                    
-                    # Check if sequence is complete (all boxes filled)
-                    if len(self.played_sequence) >= len(required_order):
-                        # Mark as validating to block further input
-                        self.validating = True
-                        # Validate
-                        is_correct = self.played_sequence == required_order
-                        print(f"[Puzzle4] Validating: Expected={required_order}, Got={self.played_sequence}, Correct={is_correct}")
-
-                # Always push play event
-                if (self.validating):
-                    self._push({
-                        "sequence_correct": is_correct,
-                        "play": {"track": track_name, "code": song, "url": f"/static/{rel_path_full}"},
-                        "current_progress": len(self.played_sequence),
-                        "streak": self.streak,
-                        "total_required": self.total_required,
-                        "played_sequence": self.played_sequence.copy()
-                    })
-                else:
-                    self._push({
-                        "play": {"track": track_name, "code": song, "url": f"/static/{rel_path_full}"},
-                        "current_progress": len(self.played_sequence),
-                        "streak": self.streak,
-                        "total_required": self.total_required,
-                        "played_sequence": self.played_sequence.copy()
-                    })
-    '''

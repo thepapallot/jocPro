@@ -74,12 +74,6 @@ class Puzzle6(BasePuzzle):
             if not self.solved:
                 self._start_countdown_locked()
                 
-    def on_start(self):
-        """Called when puzzle becomes active"""
-        with self.lock:
-            if not self.solved:
-                self._start_countdown_locked()
-                
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:
