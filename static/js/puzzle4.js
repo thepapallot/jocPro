@@ -260,7 +260,8 @@
         }
 
         if (d.streak !== undefined && d.total_required !== undefined) {
-            updateRoundHud(d.streak, d.total_required);
+            const effectiveStreak = d.streak_bis !== undefined ? d.streak_bis : d.streak;
+            updateRoundHud(effectiveStreak, d.total_required);
         }
 
         if (typeof d.sample_countdown_seconds !== 'undefined' && d.sample_countdown_seconds > 0) {
@@ -279,11 +280,14 @@
         }
 
         if (d.streak !== undefined && !showingCompletion) {
+            const effectiveStreak = d.streak_bis !== undefined ? d.streak_bis : d.streak;
             const playedSequence = Array.isArray(d.played_sequence) ? d.played_sequence : [];
             if (d.reset_attempt) {
                 playSound(BTN_SOUND_URL);
             }
-            updateProgressBoxes(d.streak, playedSequence);
+            // Hide sequence boxes while the sample song is playing; -1 collapses both containers
+            const displayStreak = d.playing_sample ? -1 : effectiveStreak;
+            updateProgressBoxes(displayStreak, playedSequence);
         }
 
         if (d.play) {

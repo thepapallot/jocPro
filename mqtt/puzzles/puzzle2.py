@@ -60,11 +60,12 @@ class Puzzle2(BasePuzzle):
             })
             
             # Schedule new alarm
-            alarm_delay = random.randint(120, 140)
+            alarm_delay = random.randint(20, 40)
             print(f"[Puzzle2] Rescheduling alarm mode in {alarm_delay} seconds after reset")
             self.alarm_timer = threading.Timer(alarm_delay, self._enter_alarm_mode)
             self.alarm_timer.start()
-            
+
+    '''        
     def on_start(self):
         """Called when puzzle becomes active"""
         with self.lock:
@@ -86,7 +87,8 @@ class Puzzle2(BasePuzzle):
             print(f"[Puzzle2] Scheduling alarm mode in {alarm_delay} seconds")
             self.alarm_timer = threading.Timer(alarm_delay, self._enter_alarm_mode)
             self.alarm_timer.start()
-            
+    '''   
+
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:

@@ -29,7 +29,7 @@ class PuzzleFinal(BasePuzzle):
                         ((4,4,4,4,5,4),(4,3,5,2,6,5),(1,4,6,4,8,2),(6,2,2,8,4,3),(4,5,5,3,4,4)),
                         ((0,4,4,4,4,2),(0,3,6,5,2,2),(0,5,3,2,3,5),(0,3,5,6,2,2),(0,2,2,4,8,2)))
 
-    def on_start(self):
+    def reset(self):
         print("Starting Final Puzzle")
         with self.lock:
             self.current_streak = 1
@@ -43,9 +43,6 @@ class PuzzleFinal(BasePuzzle):
                 "num_giff": self.current_giff,
                 "duration": self.counters[self.current_streak - 1]["duration"]
             })
-
-    def reset(self):
-        self.on_start()
 
     def handle_message(self, parts):
         # parts = ['P-1', '<box_id>', '<buttons_string>']

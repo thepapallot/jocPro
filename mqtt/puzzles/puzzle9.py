@@ -15,7 +15,7 @@ class Puzzle9(BasePuzzle):
         self.solved = False
         self._good_timer_running = False
 
-    def on_start(self):
+    def reset(self):
         with self.lock:
             self.box_tokens = {i: None for i in range(0,10)}
             self.solved = False
@@ -25,9 +25,6 @@ class Puzzle9(BasePuzzle):
                 "status": "start",
                 "puzzle_solved": False
             })
-
-    def reset(self):
-        self.on_start()
 
     def handle_message(self, parts):
         # Expect: P9,box,token  (token -1 means empty)

@@ -26,15 +26,6 @@ class Puzzle7(BasePuzzle):
         super().reset()
         with self.lock:
             self.solved_boxes = set()
-            self._push({
-                "solved_boxes": sorted(self.solved_boxes),
-                "puzzle_solved": False
-            })
-            
-    def on_start(self):
-        """Called when puzzle becomes active"""
-        with self.lock:
-            self.solved_boxes = set()
             self.solved = False
             self._push({
                 "solved_boxes": sorted(self.solved_boxes),
