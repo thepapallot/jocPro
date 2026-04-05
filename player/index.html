@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Pirámide</title>
+    <link rel="stylesheet" href="/player/styles.css">
+</head>
+<body>
+    <div class="scene-shell">
+        <div class="scene-background"></div>
+
+        <main id="player-root" class="player-root">
+            <video id="scene-video" class="scene-video" playsinline preload="auto"></video>
+            <audio id="scene-audio" preload="auto"></audio>
+            <section id="ui-layer" class="ui-layer hidden" aria-live="polite"></section>
+            <section id="transition-layer" class="transition-layer hidden" aria-hidden="true"></section>
+            <section id="subtitle-overlay" class="subtitle-overlay hidden" aria-live="polite"></section>
+        </main>
+
+        <div id="boot-overlay" class="boot-overlay hidden"></div>
+    </div>
+
+    <script type="module" src="/player/main.js"></script>
+</body>
+</html>
