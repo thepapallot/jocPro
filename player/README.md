@@ -194,6 +194,31 @@ Por ahora están sintetizados en navegador. Más adelante se pueden sustituir po
 4. Sincronizar `phases` con frases concretas del audio.
 5. Mantener la información importante visible hasta el final cuando tenga sentido.
 
+## Checklist por puzzle
+
+Usa este proceso cada vez que adaptes una intro nueva:
+
+1. Duplicar `scenes/puzzle_intro_template.json` a una escena nueva.
+2. Definir el `scene_id` nuevo.
+3. Poner el `audio.src` definitivo.
+4. Escuchar la locución y dividirla en bloques con tiempos.
+5. Escribir `subtitles` por frase o por bloque corto.
+6. Redactar el `OBJETIVO` en una frase principal clara.
+7. Añadir en `ELEMENTOS` los iconos reales del puzzle.
+8. Añadir en `ATENCIÓN` las advertencias o condiciones de fallo.
+9. Repartir segmentos `character` y `fullscreen_ui` para que la intro tenga ritmo.
+10. Ajustar las `phases` para que cada elemento aparezca cuando el audio lo nombra.
+11. Probar lectura, sincronía y balance visual.
+12. Cuando la escena quede validada, usarla para sustituir la intro de vídeo antigua.
+
+Reglas fijas de producción:
+
+- el audio manda la duración total
+- `OBJETIVO`, `ELEMENTOS` y `ATENCIÓN` son módulos fijos
+- la UI acumula contenido, no se reinicia visualmente
+- los iconos apoyan la explicación, pero la locución lleva el detalle
+- los clips del personaje se usan para dar ritmo, no como vídeo continuo largo
+
 ## Clips del personaje
 
 El banco de clips está en:

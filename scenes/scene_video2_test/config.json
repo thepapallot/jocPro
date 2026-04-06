@@ -1,0 +1,143 @@
+{
+  "scene_id": "scene_video2_test",
+  "description": "Base de produccion para la intro del puzzle 2, replicando la estructura del video original sin audio separado.",
+  "ui_titles": {
+    "top": "OBJETIVO",
+    "left": "ELEMENTOS",
+    "right": "ATENCIÓN"
+  },
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "clip_start": 0.3,
+      "clip_end": 6.3,
+      "duration": 6,
+      "label": "intro_puzzle2"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 7,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "top": {
+            "text": "LLEGAR AL CENTRO DEL LABERINTO."
+          }
+        },
+        {
+          "at": 3.2,
+          "sfx": "token",
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Simbolo del puzzle 2"
+              }
+            ]
+          }
+        },
+        {
+          "at": 4.9,
+          "sfx": "token",
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Simbolo del puzzle 2"
+              },
+              {
+                "src": "/static/images/puzzle1/tarjeta.png",
+                "alt": "Icono de token"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 14,
+      "variant": "maze",
+      "label": "LABERINTO",
+      "image": "/static/images/puzzle2/Laberint.png",
+      "alt": "Laberinto del puzzle 2"
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "clip_start": 1.2,
+      "clip_end": 3.2,
+      "duration": 2,
+      "label": "puente_puzzle2"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 21,
+      "variant": "warning",
+      "phases": [
+        {
+          "at": 0,
+          "top": {
+            "text": "LLEGAR AL CENTRO DEL LABERINTO."
+          },
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Simbolo del puzzle 2"
+              },
+              {
+                "src": "/static/images/puzzle1/tarjeta.png",
+                "alt": "Icono de token"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.2,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "SÍMBOLOS OPUESTOS.",
+            "steps": [
+              "CUANDO EL LABERINTO SE VUELVA ROJO."
+            ]
+          }
+        },
+        {
+          "at": 5.8,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "SÍMBOLOS OPUESTOS.",
+            "steps": [
+              "CUANDO EL LABERINTO SE VUELVA ROJO.",
+              "UN SOLO ERROR: DEBERÉIS EMPEZAR DE NUEVO."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 1.209,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1.209,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1.209,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

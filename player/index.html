@@ -13,6 +13,17 @@
         <main id="player-root" class="player-root">
             <video id="scene-video" class="scene-video" playsinline preload="auto"></video>
             <audio id="scene-audio" preload="auto"></audio>
+            <section id="broadcast-overlay" class="broadcast-overlay hidden" aria-hidden="true">
+                <div class="broadcast-overlay__frame">
+                    <div class="broadcast-overlay__brand broadcast-overlay__brand--left">
+                        <span class="broadcast-overlay__eyebrow">Organización ADN</span>
+                    </div>
+                    <div class="broadcast-overlay__brand broadcast-overlay__brand--right">
+                        <span class="broadcast-overlay__pyramid"></span>
+                        <span class="broadcast-overlay__title">La Pirámide</span>
+                    </div>
+                </div>
+            </section>
             <section id="ui-layer" class="ui-layer hidden" aria-live="polite"></section>
             <section id="transition-layer" class="transition-layer hidden" aria-hidden="true"></section>
             <section id="subtitle-overlay" class="subtitle-overlay hidden" aria-live="polite"></section>

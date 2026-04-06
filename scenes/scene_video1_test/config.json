@@ -59,11 +59,11 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_medium.mp4",
-      "clip_start": 0,
-      "clip_end": 6,
+      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "clip_start": 0.2,
+      "clip_end": 6.2,
       "duration": 6,
-      "label": "intro_associacio"
+      "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
@@ -118,11 +118,11 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_idle_center_b.mp4",
-      "clip_start": 0,
-      "clip_end": 5,
+      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "clip_start": 1.4,
+      "clip_end": 6.4,
       "duration": 5,
-      "label": "facil_no_tanto"
+      "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
@@ -199,15 +199,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 0,
-      "clip_end": 2.696,
+      "src": "/static/videos/characters/character_chin_lift_soft.mp4",
+      "clip_start": 0.4,
+      "clip_end": 3.096,
       "duration": 2.696,
-      "label": "tancament_bona_sort"
+      "label": "cierre_suave"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 5,
+      "duration": 2,
       "variant": "warning",
       "top": {
         "variant": "mission",
@@ -238,6 +238,24 @@
           "SE ACABA EL TIEMPO."
         ]
       }
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
     }
   ]
 }

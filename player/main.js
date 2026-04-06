@@ -2,8 +2,10 @@ const DEFAULT_SCENE_ID = "scene_video1_test";
 const EPSILON = 0.12;
 
 const elements = {
+    playerRoot: document.getElementById("player-root"),
     video: document.getElementById("scene-video"),
     audio: document.getElementById("scene-audio"),
+    broadcastOverlay: document.getElementById("broadcast-overlay"),
     uiLayer: document.getElementById("ui-layer"),
     transitionLayer: document.getElementById("transition-layer"),
     subtitleOverlay: document.getElementById("subtitle-overlay"),
@@ -465,7 +467,7 @@ function updateZoneSlot(card, zone, { animate = false } = {}) {
 function createFullscreenPanel(segments, currentSegmentIndex, elapsedSeconds = 0) {
     const content = mergeAccumulatedUiState(segments, currentSegmentIndex, elapsedSeconds);
     const blueprint = collectAccumulatedBlueprint(segments, currentSegmentIndex);
-    const screen = createElement("section", "ui-screen");
+    const screen = createElement("section", "ui-screen ui-screen--enter");
     screen.dataset.variant = content.variant || "mission";
 
     const panel = createElement("article", "panel");
@@ -523,8 +525,31 @@ function updateFullscreenPanel(panelState, segments, currentSegmentIndex, elapse
 }
 
 function TransitionScreen(segment) {
-    const screen = createElement("section", "transition-screen");
-    screen.appendChild(createElement("div", "transition-screen__label", segment.label || "Transition"));
+    const classes = ["transition-screen"];
+    if (segment.variant) {
+        classes.push(`transition-screen--${segment.variant}`);
+    }
+    const screen = createElement("section", classes.join(" "));
+    const labelInsideMedia = Boolean(segment.image && segment.label && segment.variant === "maze");
+
+    if (segment.image) {
+        const media = createElement("div", "transition-screen__media");
+        if (labelInsideMedia) {
+            media.appendChild(
+                createElement("div", "transition-screen__media-label", segment.label),
+            );
+        }
+        const image = document.createElement("img");
+        image.className = "transition-screen__image";
+        image.src = segment.image;
+        image.alt = segment.alt || segment.label || "Transition";
+        media.appendChild(image);
+        screen.appendChild(media);
+    }
+
+    if (segment.label && !labelInsideMedia) {
+        screen.appendChild(createElement("div", "transition-screen__label", segment.label));
+    }
     return screen;
 }
 
@@ -933,9 +958,16 @@ class ScenePlayer {
         elements.transitionLayer.innerHTML = "";
         elements.uiLayer.classList.remove("layer-visible");
         elements.transitionLayer.classList.remove("layer-visible");
-        elements.video.classList.remove("scene-video--hidden");
+        elements.video.classList.remove("scene-video--hidden", "scene-video--reveal");
+        elements.playerRoot?.classList.remove("player-root--broadcast", "player-root--character-feed");
+        elements.broadcastOverlay?.classList.add("hidden");
 
         if (segment.type === "character") {
+            elements.playerRoot?.classList.add("player-root--broadcast");
+            elements.playerRoot?.classList.add("player-root--character-feed");
+            elements.broadcastOverlay?.classList.remove("hidden");
+            void elements.video.offsetWidth;
+            elements.video.classList.add("scene-video--reveal");
             return;
         }
 
