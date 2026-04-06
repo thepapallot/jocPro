@@ -1,4 +1,6 @@
-from flask import Flask, render_template, redirect, url_for, request, Response, jsonify, stream_with_context
+from pathlib import Path
+
+from flask import Flask, render_template, redirect, url_for, request, Response, jsonify, stream_with_context, send_from_directory, abort
 from mqtt import MQTTClient, create_puzzles
 from config import PUZZLE_ORDER, PROVA_FINAL  # Import PUZZLE_ORDER from config.py
 import queue
@@ -6,6 +8,7 @@ import json
 import threading
 
 app = Flask(__name__)
+BASE_DIR = Path(__file__).resolve().parent
 
 mqtt_client = MQTTClient(app, puzzle_order=PUZZLE_ORDER)
 
@@ -86,6 +89,31 @@ def puzzle_superat(puzzle_id):
 @app.route('/videoJocFinal', methods=['GET','POST'])
 def play_joc_final(): 
     return render_template('videojocFinal.html')
+
+
+##### Scene Player: rutas aisladas para intros híbridas de frontend #####
+@app.route('/player/')
+def scene_player():
+    return send_from_directory(BASE_DIR / 'player', 'index.html')
+
+@app.route('/player/<path:filename>')
+def scene_player_assets(filename):
+    return send_from_directory(BASE_DIR / 'player', filename)
+
+@app.route('/scenes/<scene_id>/config.json')
+def scene_config(scene_id):
+    scene_dir = (BASE_DIR / 'scenes' / scene_id).resolve()
+    scenes_root = (BASE_DIR / 'scenes').resolve()
+
+    if scenes_root not in scene_dir.parents:
+        abort(404)
+
+    config_path = scene_dir / 'config.json'
+    if not config_path.exists():
+        abort(404)
+
+    return send_from_directory(scene_dir, 'config.json')
+##### Fin Scene Player #####
 
 @app.route('/final', methods=['GET', 'POST'])
 def final():
@@ -254,3 +282,7 @@ def test_puzzle3_solution():
         "correct_answer": correct_index,
         "correct_text": correct_text
     }), 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

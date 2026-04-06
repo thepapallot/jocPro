@@ -239,29 +239,84 @@ Partes observadas:
 
 - funcion interna `_dispatch_message()`
 
+## 2026-04-05
+
+### app.py
+
+Archivo:
+
+- [app.py](./app.py)
+
+Estado del cambio:
+
+- `añadido`
+- `anotado`
+
+Partes tocadas:
+
+- [app.py:1](./app.py#L1)
+  - import de `Path`
+- [app.py:3](./app.py#L3)
+  - import de `send_from_directory`
+  - import de `abort`
+- [app.py:11](./app.py#L11)
+  - nueva constante `BASE_DIR`
+- [app.py:94](./app.py#L94)
+  - comentario de inicio del bloque `Scene Player`
+- [app.py:95](./app.py#L95)
+  - nueva ruta `scene_player()`
+- [app.py:99](./app.py#L99)
+  - nueva ruta `scene_player_assets()`
+- [app.py:103](./app.py#L103)
+  - nueva ruta `scene_config()`
+- [app.py:116](./app.py#L116)
+  - comentario de cierre del bloque `Scene Player`
+
 Tipo:
 
-- `detectado`
+- `utilidad interna`
 
-Observacion:
+Detalle:
 
-- el enrutado actual procesa cualquier payload `P*` que llegue por `TO_FLASK` aunque ese puzzle no sea el activo
-- eso permite que mensajes de simulacion o hardware modifiquen estado de puzzles inactivos
-- el efecto es especialmente delicado si `/test/send` se usa en paralelo con una partida real o con otra pantalla abierta
+- se añade una ruta aislada `/player/` para servir el frontend del scene player desde la carpeta `player/`
+- se añade una ruta `/player/<path:filename>` para servir `index.html`, `main.js`, `styles.css` y futuros assets del reproductor
+- se añade una ruta `/scenes/<scene_id>/config.json` para cargar la configuración JSON de cada escena
+- se introduce `BASE_DIR` para resolver de forma estable las carpetas `player/` y `scenes/`
+- la ruta de escenas valida que `scene_id` no pueda escapar del directorio `scenes/`
+- si la escena no existe, o si la resolución de ruta sale fuera del directorio permitido, devuelve `404`
+- el bloque queda acotado visualmente en `app.py` para que backend pueda localizarlo y revisarlo rápido
 
-No modificado:
+Cambio:
 
-- no se ha cambiado codigo en este archivo durante esta revision
-- solo se deja constancia para revision de contrato entre broker, simulador y puzzle activo
+- añadido soporte backend mínimo para el reproductor híbrido de intros
 
-Motivo de anotacion:
+Motivo:
 
-- evitar que un puzzle acumule progreso o eventos fuera de su turno
-- confirmar si backend quiere filtrar por `current_puzzle_id` antes de delegar `handle_message()`
+- permitir que el nuevo frontend de escenas híbridas cargue sus assets y sus configs sin tocar la lógica de puzzles
+- preparar la sustitución progresiva de los vídeos intro tradicionales por escenas nuevas construidas con:
+  - clips del personaje
+  - audio independiente
+  - UI programada
+  - subtítulos y sincronía por fases
+
+Impacto:
+
+- no cambia la lógica MQTT
+- no cambia timers
+- no cambia rutas de puzzle existentes
+- no modifica el flujo principal del juego
+- añade únicamente endpoints nuevos y acotados para el scene player
+- no sustituye todavía los vídeos intro actuales por sí mismo
+- deja lista la infraestructura para que, más adelante, esas nuevas escenas puedan reemplazar las intros de cada puzzle
+
+Riesgo:
+
+- bajo
+- solo habría conflicto si ya existiera otro uso de `/player/*` o `/scenes/*`
 
 Revision backend:
 
-- alta
+- baja
 
 ## 2026-03-26
 
