@@ -6,6 +6,9 @@
     "left": "ELEMENTOS",
     "right": "ATENCIÓN"
   },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_02.wav"
+  },
   "segments": [
     {
       "type": "character",
