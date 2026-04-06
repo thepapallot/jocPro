@@ -1,10 +1,10 @@
 :root {
     --final-line: rgba(69, 230, 255, 0.18);
-    --final-cyan: #7fd0ff;
+    --final-cyan: #45e6ff;
     --final-cyan-strong: #45e6ff;
     --final-pink: #ff59d6;
-    --final-good: #49e16b;
-    --final-bad: #ff5a66;
+    --final-good: #2dff9b;
+    --final-bad: #ff4f6d;
 }
 
 body {

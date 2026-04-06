@@ -39,14 +39,17 @@
 
         <aside id="p2-divider" aria-hidden="true">
             <div class="p2-divider-rail"></div>
-            <div class="p2-divider-pulse p2-divider-pulse-top"></div>
-            <div class="p2-divider-pulse p2-divider-pulse-mid"></div>
-            <div class="p2-divider-pulse p2-divider-pulse-bottom"></div>
+            <div class="p2-divider-node p2-divider-node-1"></div>
+            <div class="p2-divider-node p2-divider-node-2"></div>
+            <div class="p2-divider-node p2-divider-node-3"></div>
+            <div class="p2-divider-node p2-divider-node-4"></div>
         </aside>
 
         <section id="maze-stage">
             <div id="image-area">
-                <img src="{{ url_for('static', filename='images/puzzle2/Laberint.png') }}" alt="Laberint">
+                <div id="p2-maze-frame">
+                    <img src="{{ url_for('static', filename='images/puzzle2/Laberint.png') }}" alt="Laberint">
+                </div>
                 <div id="p2-complete-overlay" aria-live="polite" aria-hidden="true">
                     <div class="panel-kicker">Restablecimiento completo</div>
                     <h2 class="panel-title">10 rutas sincronizadas</h2>

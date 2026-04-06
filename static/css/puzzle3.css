@@ -1,10 +1,10 @@
 :root {
     --p3-line: rgba(69, 230, 255, 0.18);
-    --p3-cyan: #7fd0ff;
+    --p3-cyan: #45e6ff;
     --p3-soft: rgba(234, 252, 255, 0.72);
     --p3-ok: #2dff9b;
     --p3-bad: #ff4f6d;
-    --p3-blue: #5aa5ff;
+    --p3-blue: #67d9ff;
     --p3-panel: linear-gradient(180deg, rgba(8, 18, 33, 0.92) 0%, rgba(5, 12, 24, 0.82) 100%);
 }
 
