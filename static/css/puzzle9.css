@@ -1,12 +1,12 @@
 :root {
-    --p9-line: rgba(89, 231, 255, 0.18);
-    --p9-cyan: #79d8ff;
-    --p9-cyan-strong: #49e8ff;
-    --p9-violet: #af56ff;
+    --p9-line: rgba(69, 230, 255, 0.18);
+    --p9-cyan: #45e6ff;
+    --p9-cyan-strong: #00f0ff;
+    --p9-violet: #ff59d6;
     --p9-ink: rgba(5, 12, 24, 0.9);
-    --p9-soft: rgba(232, 249, 255, 0.74);
-    --p9-good: #49e16b;
-    --p9-wrong: #ff5a66;
+    --p9-soft: rgba(234, 252, 255, 0.72);
+    --p9-good: #2dff9b;
+    --p9-wrong: #ff4f6d;
     --p9-panel: linear-gradient(180deg, rgba(9, 18, 33, 0.94), rgba(5, 11, 22, 0.86));
 }
 
