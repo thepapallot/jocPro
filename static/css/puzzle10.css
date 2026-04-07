@@ -1,18 +1,16 @@
 :root {
-    --p7-line: rgba(69, 230, 255, 0.18);
-    --p7-cyan: #45e6ff;
-    --p7-soft: rgba(234, 252, 255, 0.72);
-    --p7-ok: #2dff9b;
-    --p7-panel: linear-gradient(180deg, rgba(8, 18, 33, 0.92) 0%, rgba(5, 12, 24, 0.82) 100%);
-    --p7-body: #2b2f36;
-    --p7-body-edge: #415469;
-    --p7-window: #0c121a;
-    --p7-glow: rgba(69, 230, 255, 0.08);
-    --p7-color-0: #f4f7fb;
-    --p7-color-1: #18f38b;
-    --p7-color-2: #ffd84f;
-    --p7-color-3: #56a4ff;
-    --p7-color-4: #ff5b6f;
+    --p10-line: rgba(69, 230, 255, 0.18);
+    --p10-cyan: #7fd0ff;
+    --p10-ok: #2dff9b;
+    --p10-panel: linear-gradient(180deg, rgba(8, 18, 33, 0.92) 0%, rgba(5, 12, 24, 0.82) 100%);
+    --p10-window: #0c121a;
+
+    /* User mapping: red=0, blue=1, purple=2, yellow=3, green=4 */
+    --p10-color-0: #ff4f62;
+    --p10-color-1: #4ca5ff;
+    --p10-color-2: #af66ff;
+    --p10-color-3: #ffd84f;
+    --p10-color-4: #20f38c;
 }
 
 body {
@@ -39,35 +37,34 @@ body::before {
 body::after {
     inset: auto 12% 4% 12%;
     height: 28vh;
-    background:
-        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), transparent 36%);
+    background: radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), transparent 36%);
     filter: blur(44px);
 }
 
-#puzzle7-shell {
+#puzzle10-shell {
     position: relative;
     z-index: 2;
     height: 100%;
     padding: 22px 28px 28px;
 }
 
-.p7-panel {
+.p10-panel {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 18px;
     height: 100%;
     padding: 20px;
-    border: 1px solid var(--p7-line);
+    border: 1px solid var(--p10-line);
     border-radius: 28px;
-    background: var(--p7-panel);
+    background: var(--p10-panel);
     box-shadow:
         0 0 28px rgba(0, 240, 255, 0.06),
         inset 0 0 24px rgba(0, 240, 255, 0.03);
     overflow: hidden;
 }
 
-.p7-panel::before {
+.p10-panel::before {
     content: "";
     position: absolute;
     inset: 12px;
@@ -85,6 +82,30 @@ body::after {
     gap: 18px;
 }
 
+.p10-head-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#p10-timer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    min-width: 86px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 216, 79, 0.38);
+    background: linear-gradient(180deg, rgba(255, 216, 79, 0.24), rgba(255, 216, 79, 0.08));
+    color: #fff4ca;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 0 14px rgba(255, 216, 79, 0.14);
+}
+
 .panel-kicker {
     color: rgba(234, 252, 255, 0.76);
     font-size: 0.76rem;
@@ -95,14 +116,14 @@ body::after {
 
 .panel-title {
     margin: 6px 0 0;
-    color: var(--p7-cyan);
+    color: var(--p10-cyan);
     font-size: clamp(1.5rem, 2.2vw, 2.4rem);
     line-height: 1.02;
     text-transform: uppercase;
     text-shadow: 0 0 12px rgba(69, 230, 255, 0.2);
 }
 
-#p7-status {
+#p10-status {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -123,7 +144,7 @@ body::after {
         color 180ms ease;
 }
 
-#p7-status.is-complete {
+#p10-status.is-complete {
     border-color: rgba(45, 255, 155, 0.4);
     background: linear-gradient(180deg, rgba(45, 255, 155, 0.22), rgba(45, 255, 155, 0.08));
     color: #effff7;
@@ -151,7 +172,7 @@ body::after {
     border-radius: 22px;
     border: 1px solid rgba(69, 230, 255, 0.06);
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.008)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.008)),
         radial-gradient(circle at 50% 12%, rgba(69, 230, 255, 0.08), transparent 28%);
     transition:
         transform 180ms ease,
@@ -177,10 +198,9 @@ body::after {
     min-height: 0;
     border-radius: 26px;
     border: 1px solid rgba(86, 126, 173, 0.42);
-    background:
-        linear-gradient(180deg, #383d44 0%, #2a3037 100%);
+    background: linear-gradient(180deg, #383d44 0%, #2a3037 100%);
     box-shadow:
-        inset 0 0 20px rgba(255,255,255,0.04),
+        inset 0 0 20px rgba(255, 255, 255, 0.04),
         0 0 18px rgba(69, 230, 255, 0.04);
 }
 
@@ -197,40 +217,39 @@ body::after {
     top: 50%;
     transform: translate(-50%, -50%);
     width: 42px;
-    height: calc(100% - 40px);
+    height: calc(100% - 44px);
     border-radius: 4px;
-    background: var(--p7-window);
+    background: var(--p10-window);
     overflow: hidden;
     box-shadow:
-        inset 0 0 10px rgba(255,255,255,0.08),
+        inset 0 0 10px rgba(255, 255, 255, 0.08),
         0 0 14px rgba(69, 230, 255, 0.05);
 }
 
 .led-segment {
     width: 100%;
-    height: 25%;
+    height: calc(100% / 3);
     box-shadow:
-        inset 0 0 6px rgba(255,255,255,0.12),
-        0 0 10px rgba(255,255,255,0.02);
+        inset 0 0 6px rgba(255, 255, 255, 0.12),
+        0 0 10px rgba(255, 255, 255, 0.02);
 }
 
 .led-segment + .led-segment {
     border-top: 1px solid rgba(7, 14, 22, 0.32);
 }
 
-.color-0 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-0) 94%, white), var(--p7-color-0)); }
-.color-1 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-1) 90%, white), var(--p7-color-1)); }
-.color-2 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-2) 92%, white), var(--p7-color-2)); }
-.color-3 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-3) 88%, white), var(--p7-color-3)); }
-.color-4 { background: linear-gradient(180deg, color-mix(in srgb, var(--p7-color-4) 88%, white), var(--p7-color-4)); }
+.color-0 { background: linear-gradient(180deg, color-mix(in srgb, var(--p10-color-0) 88%, white), var(--p10-color-0)); }
+.color-1 { background: linear-gradient(180deg, color-mix(in srgb, var(--p10-color-1) 88%, white), var(--p10-color-1)); }
+.color-2 { background: linear-gradient(180deg, color-mix(in srgb, var(--p10-color-2) 88%, white), var(--p10-color-2)); }
+.color-3 { background: linear-gradient(180deg, color-mix(in srgb, var(--p10-color-3) 90%, white), var(--p10-color-3)); }
+.color-4 { background: linear-gradient(180deg, color-mix(in srgb, var(--p10-color-4) 88%, white), var(--p10-color-4)); }
 
 .led-screw {
     position: absolute;
     width: 14px;
     height: 14px;
     border-radius: 999px;
-    background:
-        radial-gradient(circle at 35% 35%, #79828e, #1d232b 70%);
+    background: radial-gradient(circle at 35% 35%, #79828e, #1d232b 70%);
     box-shadow: 0 0 0 2px rgba(44, 78, 124, 0.55);
 }
 
@@ -242,14 +261,14 @@ body::after {
 .led-card.is-solved .led-rig {
     border-color: rgba(45, 255, 155, 0.56);
     box-shadow:
-        inset 0 0 20px rgba(255,255,255,0.04),
+        inset 0 0 20px rgba(255, 255, 255, 0.04),
         0 0 24px rgba(45, 255, 155, 0.14);
 }
 
 .led-card.is-solved {
     border-color: rgba(45, 255, 155, 0.18);
     background:
-        linear-gradient(180deg, rgba(45, 255, 155, 0.08), rgba(255,255,255,0.008)),
+        linear-gradient(180deg, rgba(45, 255, 155, 0.08), rgba(255, 255, 255, 0.008)),
         radial-gradient(circle at 50% 12%, rgba(45, 255, 155, 0.14), transparent 34%);
     box-shadow:
         inset 0 0 18px rgba(45, 255, 155, 0.04),
@@ -257,7 +276,7 @@ body::after {
 }
 
 .led-card.is-newly-solved {
-    animation: p7-card-pulse 760ms ease;
+    animation: p10-card-pulse 760ms ease;
 }
 
 .led-card.is-solved .led-rig::after {
@@ -277,13 +296,13 @@ body::after {
 }
 
 .led-card.is-solved .led-card-number {
-    color: var(--p7-ok);
+    color: var(--p10-ok);
     text-shadow:
         0 0 10px rgba(45, 255, 155, 0.18),
         0 0 18px rgba(45, 255, 155, 0.08);
 }
 
-@keyframes p7-card-pulse {
+@keyframes p10-card-pulse {
     0% {
         transform: translateY(0) scale(1);
         box-shadow: 0 0 0 rgba(45, 255, 155, 0);
@@ -313,14 +332,19 @@ body::after {
         flex-direction: column;
         align-items: start;
     }
+
+    .p10-head-right {
+        width: 100%;
+        justify-content: space-between;
+    }
 }
 
 @media (max-width: 640px) {
-    #puzzle7-shell {
+    #puzzle10-shell {
         padding: 16px;
     }
 
-    .p7-panel {
+    .p10-panel {
         padding: 16px;
     }
 
@@ -330,6 +354,6 @@ body::after {
 
     .led-rig {
         width: min(100%, 138px);
-        min-height: 220px;
+        min-height: 210px;
     }
 }

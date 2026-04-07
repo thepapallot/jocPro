@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Puzzle 10{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle10.css') }}">
+{% endblock %}
+
+{% block top_right %}{% endblock %}
+
+{% block puzzle_content %}
+<div id="puzzle10-shell">
+	<section id="reference-panel" class="p10-panel">
+		<div class="panel-head">
+			<div>
+				<div class="panel-kicker">Referencia</div>
+				<h2 class="panel-title">Replica los 3 colores por caja</h2>
+			</div>
+			<div class="p10-head-right">
+				<div id="p10-timer" aria-live="polite">01:00</div>
+				<div id="p10-status">0 / 10 sincronizadas</div>
+			</div>
+		</div>
+
+		<div id="led-grid">
+			{% set strips = [
+				(0, '042'),
+				(1, '414'),
+				(2, '323'),
+				(3, '104'),
+				(4, '033'),
+				(5, '431'),
+				(6, '104'),
+				(7, '222'),
+				(8, '110'),
+				(9, '423')
+			] %}
+			{% for box, code in strips %}
+			<article class="led-card" data-box="{{ box }}" data-code="{{ code }}">
+				<div class="led-card-number">{{ box }}</div>
+				<div class="led-rig">
+					<div class="led-screw led-screw-top-left"></div>
+					<div class="led-screw led-screw-top-right"></div>
+					<div class="led-screw led-screw-bottom-left"></div>
+					<div class="led-screw led-screw-bottom-right"></div>
+
+					<div class="led-rig-inner">
+						<div class="led-strip-window">
+							{% for digit in code %}
+							<div class="led-segment color-{{ digit }}"></div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</article>
+			{% endfor %}
+		</div>
+	</section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle10.js') }}"></script>
+{% endblock %}
