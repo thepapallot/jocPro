@@ -69,6 +69,7 @@ class Puzzle10(BasePuzzle):
                 return
 
             self.solved_boxes.add(box)
+            self.mqtt_client.send_message("FROM_FLASK", f"P10Solved{box}")
 
             self._push({
                 "solved_box": box,
