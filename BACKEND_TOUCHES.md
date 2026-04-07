@@ -305,7 +305,7 @@ Impacto:
 - no cambia timers
 - no cambia rutas de puzzle existentes
 - no modifica el flujo principal del juego
-- añade únicamente endpoints nuevos y acotados para el scene player
+- añade únicamente endpoints nuevos y acotados para el sscene player
 - no sustituye todavía los vídeos intro actuales por sí mismo
 - deja lista la infraestructura para que, más adelante, esas nuevas escenas puedan reemplazar las intros de cada puzzle
 

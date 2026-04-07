@@ -7,7 +7,7 @@
     "right": "ATENCIÓN"
   },
   "audio": {
-    "src": "/static/audios/scene/puzzle_intro_template.mp3"
+    "src": "/static/audios/scene/intro_puzzle_template.wav"
   },
   "subtitles": [
     {
