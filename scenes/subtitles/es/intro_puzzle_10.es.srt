@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:04,719
+Seguimos con una prueba en la que evaluaremos vuestra simbolización e interpretación.
+
+2
+00:00:04,719 --> 00:00:08,400
+El objetivo de este nivel será replicar en las luces de los terminales
+
+3
+00:00:08,400 --> 00:00:13,160
+los patrones de colores que aparecerán en la pantalla antes de que se agote el tiempo.
+
+4
+00:00:13,160 --> 00:00:18,640
+Para hacerlo necesitaréis los tokens, los botones y las luces de los terminales.
+
+5
+00:00:18,640 --> 00:00:24,440
+En la pantalla veréis diez patrones de colores, cada uno representando las luces de uno de los terminales.
+
+6
+00:00:24,440 --> 00:00:25,000
+Cuando pongáis
+
+7
+00:00:25,000 --> 00:00:29,399
+un token encima de un terminal y apretéis el botón negro, el botón rojo o el botón
+
+8
+00:00:29,399 --> 00:00:34,600
+verde, se encenderán luces en los terminales. Cada token hace que se enciendan las luces
+
+9
+00:00:34,600 --> 00:00:39,240
+de forma distinta, así que deberéis trabajar juntos para que en cada terminal aparezca
+
+10
+00:00:39,240 --> 00:00:45,880
+el mismo patrón de colores que en la pantalla. Daos prisa: si la cuenta atrás llega a cero, se reiniciará la
+
+11
+00:00:45,880 --> 00:00:46,240
+fase.

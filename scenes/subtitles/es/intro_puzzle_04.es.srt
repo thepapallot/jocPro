@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:05,000
+Seguimos con la siguiente prueba, en la que vamos a evaluar vuestra percepción auditiva.
+
+2
+00:00:05,000 --> 00:00:08,000
+Vuestro objetivo es ordenar los fragmentos de una canción.
+
+3
+00:00:08,000 --> 00:00:13,000
+Para superar este nivel necesitaréis los tokens y los botones de los terminales.
+
+4
+00:00:13,000 --> 00:00:17,000
+Al empezar la fase escucharéis un trozo de una canción.
+
+5
+00:00:17,000 --> 00:00:20,000
+Después tendréis que reproducir ese mismo trozo de canción,
+
+6
+00:00:20,000 --> 00:00:23,000
+pasando los tokens por los terminales.
+
+7
+00:00:23,000 --> 00:00:26,000
+Podréis escuchar los fragmentos las veces que necesitéis,
+
+8
+00:00:26,000 --> 00:00:31,000
+y, cuando creáis que habéis encontrado la secuencia musical correcta, la tendréis que registrar.
+
+9
+00:00:31,000 --> 00:00:36,000
+Pulsando los botones de cualquier terminal podréis volver a escuchar la canción,
+
+10
+00:00:36,000 --> 00:00:41,000
+registrar una secuencia de fragmentos, borrar los fragmentos que ya hayáis registrado;
+
+11
+00:00:41,000 --> 00:00:46,000
+os dejaré la función de cada botón en la pantalla. Este nivel tiene dos fases,
+
+12
+00:00:46,000 --> 00:00:52,000
+así que no hay tiempo que perder. Escuchad atentamente, porque la canción se va a reproducir inmediatamente.

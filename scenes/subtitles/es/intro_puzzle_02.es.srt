@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:03,859
+En este nivel vamos a evaluar vuestra flexibilidad cognitiva.
+
+2
+00:00:03,859 --> 00:00:07,120
+Vuestro objetivo va a ser llegar al centro del laberinto.
+
+3
+00:00:07,120 --> 00:00:11,359
+Lo lograréis usando vuestros tokens y estos símbolos de los terminales.
+
+4
+00:00:11,359 --> 00:00:14,439
+En la pantalla aparecerá un laberinto lleno de símbolos.
+
+5
+00:00:14,439 --> 00:00:18,679
+Para resolverlo, deberéis empezar por la entrada que tenga el número de vuestro token,
+
+6
+00:00:18,679 --> 00:00:23,600
+e ir pasándolo por los terminales que tengan los símbolos que os encontraréis por el camino.
+
+7
+00:00:23,600 --> 00:00:25,519
+Pero eso no es todo.
+
+8
+00:00:25,519 --> 00:00:30,239
+En algún momento sonará una alarma y el laberinto se volverá de color rojo. Cuando eso
+
+9
+00:00:30,239 --> 00:00:33,880
+pase, deberéis pasar el token por el terminal con el símbolo contrario al que
+
+10
+00:00:33,880 --> 00:00:38,920
+aparezca en el laberinto. Estad atentos, porque en cualquier momento el laberinto puede volver
+
+11
+00:00:38,920 --> 00:00:44,960
+a su forma original. Id con cuidado: un solo error y tendréis que empezar vuestro recorrido
+
+12
+00:00:44,960 --> 00:00:45,399
+de nuevo.

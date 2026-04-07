@@ -1,0 +1,59 @@
+1
+00:00:00,000 --> 00:00:02,080
+Prestad atención, porque en esta prueba
+
+2
+00:00:02,080 --> 00:00:05,080
+evaluaremos vuestro conocimiento colectivo.
+
+3
+00:00:05,080 --> 00:00:06,480
+Para superar este nivel,
+
+4
+00:00:06,480 --> 00:00:09,400
+tendréis que responder diez preguntas correctamente
+
+5
+00:00:09,400 --> 00:00:14,359
+y, para hacerlo, utilizaréis los botones y los números de colores de los terminales.
+
+6
+00:00:14,359 --> 00:00:18,359
+En la pantalla aparecerá una pregunta y seis posibles respuestas.
+
+7
+00:00:18,359 --> 00:00:20,559
+Entre todos tendréis que poneros de acuerdo
+
+8
+00:00:20,559 --> 00:00:23,199
+y decidir cuál es la respuesta correcta.
+
+9
+00:00:23,199 --> 00:00:24,719
+Cuando la hayáis escogido,
+
+10
+00:00:24,719 --> 00:00:26,600
+quedaos con el número de la respuesta.
+
+11
+00:00:26,600 --> 00:00:32,000
+En cada uno de los terminales que tenéis enfrente hay seis números, cada uno de un color.
+
+12
+00:00:32,000 --> 00:00:37,399
+Deberéis buscar el número de la respuesta correcta y apretar el botón que sea del mismo color.
+
+13
+00:00:37,399 --> 00:00:43,200
+Cuando se haya pulsado un botón en todos los terminales, se revelará si la respuesta era correcta o no.
+
+14
+00:00:43,200 --> 00:00:48,520
+Para pasar de nivel, deberéis contestar varias preguntas seguidas correctamente, así que
+
+15
+00:00:48,520 --> 00:00:52,280
+cuidado: si hay un solo error, la racha de respuestas se romperá.
