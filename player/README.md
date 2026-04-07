@@ -59,7 +59,7 @@ Ejemplo mínimo:
     "right": "ATENCIÓN"
   },
   "audio": {
-    "src": "/static/audios/scene/puzzle1_intro.mp3"
+    "src": "/static/audios/scene/intro_puzzle_01.wav"
   },
   "subtitles": [
     {
