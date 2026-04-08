@@ -1,7 +1,6 @@
 (function () {
     const COLOR_PREFIX = 'p8-color-';
     const TOTAL_ROUNDS = 3;
-    const ROMAN_ROUNDS = { 1: 'I', 2: 'II', 3: 'III' };
     let snapshotLoaded = false;
     let symbolsOrder = [];
     let solved = false;
@@ -117,8 +116,8 @@
         const el = document.getElementById('streak');
         if (!el) return;
         if (Number.isInteger(round) && round >= 1) {
-            const currentRound = ROMAN_ROUNDS[round] || String(round);
-            el.textContent = `${currentRound}/III`;
+            const currentRound = Math.min(round, TOTAL_ROUNDS);
+            el.textContent = `${currentRound}/${TOTAL_ROUNDS}`;
         }
         roundCards.forEach(card => {
             const cardRound = Number(card.dataset.roundCard);

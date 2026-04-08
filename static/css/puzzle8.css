@@ -53,13 +53,13 @@ body::after {
 }
 
 #streak {
-    color: var(--p8-cyan);
+    color: #ffffff;
     font-size: clamp(1.7rem, 3vw, 3rem);
     font-weight: 800;
     line-height: 1;
     text-shadow:
-        0 0 12px rgba(69, 230, 255, 0.24),
-        0 0 22px rgba(69, 230, 255, 0.1);
+        0 0 12px rgba(255, 255, 255, 0.3),
+        0 0 22px rgba(255, 255, 255, 0.12);
 }
 
 #p8-shell {
@@ -127,11 +127,74 @@ body::after {
 }
 
 .round-name {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 24px;
     color: #effbff;
     font-size: 0.9rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+}
+
+.round-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(69, 230, 255, 0.58);
+    background: linear-gradient(180deg, rgba(10, 26, 44, 0.96), rgba(6, 14, 26, 0.96));
+    box-shadow:
+        0 0 12px rgba(69, 230, 255, 0.18),
+        0 0 20px rgba(69, 230, 255, 0.06),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+        inset 0 0 10px rgba(69, 230, 255, 0.12);
+}
+
+.round-dot::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-radius: 999px;
+    background: rgba(69, 230, 255, 0.82);
+    box-shadow:
+        0 0 10px rgba(69, 230, 255, 0.3),
+        inset 0 0 4px rgba(255, 255, 255, 0.12);
+}
+
+.round-name-1 .round-dot {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.round-name-2 .round-dot:first-child {
+    top: 50%;
+    left: 3px;
+    transform: translateY(-50%);
+}
+
+.round-name-2 .round-dot:last-child {
+    top: 50%;
+    right: 3px;
+    transform: translateY(-50%);
+}
+
+.round-name-3 .round-dot:first-child {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.round-name-3 .round-dot:nth-child(2) {
+    bottom: 0;
+    left: 5px;
+}
+
+.round-name-3 .round-dot:nth-child(3) {
+    bottom: 0;
+    right: 5px;
 }
 
 #p8-stage {
