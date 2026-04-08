@@ -58,7 +58,7 @@ body::after {
 }
 
 #countdown {
-    color: var(--p6-cyan);
+    color: #ffffff;
     font-size: clamp(2rem, 4vw, 4.1rem);
     font-weight: 800;
     line-height: 1;
@@ -68,8 +68,8 @@ body::after {
         text-shadow 180ms ease,
         filter 180ms ease;
     text-shadow:
-        0 0 12px rgba(69, 230, 255, 0.26),
-        0 0 24px rgba(69, 230, 255, 0.1);
+        0 0 12px rgba(255, 255, 255, 0.3),
+        0 0 24px rgba(255, 255, 255, 0.12);
 }
 
 #countdown-panel::before {
