@@ -3,7 +3,7 @@
         Array.from(document.querySelectorAll('.led-card')).map(card => [Number(card.dataset.box), card])
     );
     const statusBadge = document.getElementById('p10-status');
-    const timerBadge = document.getElementById('p10-timer');
+    const timerBadge = document.getElementById('timer');
 
     let solved = false;
     let snapshotLoaded = false;
@@ -11,14 +11,88 @@
     let secondsLeft = roundSeconds;
     let timerId = null;
     let expireInFlight = false;
-
-    function playSound(url) {
-        const audio = new Audio(url);
-        audio.play().catch(err => console.warn('Audio play failed:', err));
-    }
+    let lastTimerExpiredSoundAt = 0;
+    let timeoutPauseInProgress = false;
+    let hydratingSnapshot = false;
+    let audioUnlocked = false;
+    const pendingSoundUrls = [];
+    const soundCache = new Map();
+    const TIMEOUT_PAUSE_MS = 3000;
 
     const BOX_OK_SOUND_URL = '/static/audios/effects/correcte.wav';
+    const TIMER_EXPIRED_SOUND_URL = '/static/audios/effects/fase_nocompletada.wav';
     const PUZZLE_COMPLETE_SOUND_URL = '/static/audios/effects/nivel_completado.wav';
+    const ROUND_RESET_SOUND_URL = '/static/audios/effects/apareix_contingut.wav';
+    const SOUND_URLS = [
+        BOX_OK_SOUND_URL,
+        TIMER_EXPIRED_SOUND_URL,
+        PUZZLE_COMPLETE_SOUND_URL,
+        ROUND_RESET_SOUND_URL
+    ];
+
+    function getCachedAudio(url) {
+        if (!soundCache.has(url)) {
+            const audio = new Audio(url);
+            audio.preload = 'auto';
+            soundCache.set(url, audio);
+        }
+        return soundCache.get(url);
+    }
+
+    function queueSound(url) {
+        if (pendingSoundUrls.length >= 20) {
+            pendingSoundUrls.shift();
+        }
+        pendingSoundUrls.push(url);
+    }
+
+    function flushPendingSounds() {
+        if (!pendingSoundUrls.length) return;
+        const queue = pendingSoundUrls.splice(0, pendingSoundUrls.length);
+        queue.forEach((url) => playSound(url));
+    }
+
+    function unlockAudio() {
+        if (audioUnlocked) return;
+
+        SOUND_URLS.forEach((url) => {
+            getCachedAudio(url).load();
+        });
+
+        const warm = getCachedAudio(BOX_OK_SOUND_URL);
+        const previousVolume = warm.volume;
+        warm.volume = 0;
+        warm.currentTime = 0;
+        warm.play()
+            .then(() => {
+                warm.pause();
+                warm.currentTime = 0;
+                warm.volume = previousVolume;
+                audioUnlocked = true;
+                flushPendingSounds();
+            })
+            .catch(() => {
+                warm.volume = previousVolume;
+            });
+    }
+
+    function playSound(url) {
+        const audio = getCachedAudio(url);
+        audio.currentTime = 0;
+        audio.play().catch(err => {
+            if (!audioUnlocked || document.hidden) {
+                queueSound(url);
+            }
+            console.warn('Audio play failed:', err);
+        });
+    }
+
+    function playTimerExpiredSound() {
+        const now = Date.now();
+        if (now - lastTimerExpiredSoundAt < 800) return;
+        lastTimerExpiredSoundAt = now;
+        playSound(TIMER_EXPIRED_SOUND_URL);
+    }
 
     function formatSeconds(totalSeconds) {
         const safeSeconds = Number.isFinite(totalSeconds) ? Math.max(0, Math.floor(totalSeconds)) : 0;
@@ -30,7 +104,20 @@
     function updateTimer(secondsLeft) {
         if (!timerBadge || typeof secondsLeft !== 'number') return;
         timerBadge.textContent = formatSeconds(secondsLeft);
+        timerBadge.classList.remove('warning', 'expired');
+
+        if (secondsLeft <= 0) {
+            timerBadge.classList.add('expired');
+            return;
+        }
+
+        if (secondsLeft <= 15) {
+            timerBadge.classList.add('warning');
+        }
+
+
     }
+
 
     function setRoundSeconds(value) {
         const parsed = Number(value);
@@ -40,9 +127,13 @@
         roundSeconds = normalized;
     }
 
-    function resetRoundTimer() {
+    function resetRoundTimer({ silent = false } = {}) {
         secondsLeft = roundSeconds;
+        timeoutPauseInProgress = false;
         updateTimer(secondsLeft);
+        if (!silent) {
+            playSound(ROUND_RESET_SOUND_URL);
+        }
     }
 
     function notifyTimerExpired() {
@@ -63,10 +154,25 @@
                 return;
             }
 
+            if (timeoutPauseInProgress) {
+                return;
+            }
+
             secondsLeft -= 1;
             if (secondsLeft <= 0) {
-                resetRoundTimer();
-                notifyTimerExpired();
+                secondsLeft = 0;
+                updateTimer(secondsLeft);
+                playTimerExpiredSound();
+                timeoutPauseInProgress = true;
+                window.setTimeout(() => {
+                    if (solved) {
+                        timeoutPauseInProgress = false;
+                        return;
+                    }
+
+                    resetRoundTimer();
+                    notifyTimerExpired({ silent: false });
+                }, TIMEOUT_PAUSE_MS);
                 return;
             }
 
@@ -96,13 +202,14 @@
 
     function setSolved(box, { animate = false } = {}) {
         const card = cards.get(box);
-        if (!card) return;
+        if (!card) return false;
         const wasSolved = card.classList.contains('is-solved');
         card.classList.add('is-solved');
         if (animate && !wasSolved) {
             pulseCard(card);
         }
         updateStatus();
+        return !wasSolved;
     }
 
     function renderCodeForBox(box, code) {
@@ -131,11 +238,13 @@
     function handleUpdate(d) {
         if (!d || d.puzzle_id !== 10) return;
 
+        let solvedThisUpdateCount = 0;
+
         if (typeof d.round_seconds === 'number') {
             const previousRoundSeconds = roundSeconds;
             setRoundSeconds(d.round_seconds);
             if (previousRoundSeconds !== roundSeconds) {
-                resetRoundTimer();
+                resetRoundTimer({ silent: true });
             }
         }
 
@@ -146,12 +255,23 @@
         }
 
         if (Array.isArray(d.solved_boxes)) {
-            d.solved_boxes.forEach(box => setSolved(box));
+            d.solved_boxes.forEach(box => {
+                if (setSolved(box)) {
+                    solvedThisUpdateCount += 1;
+                }
+            });
         }
 
         if (typeof d.solved_box === 'number') {
-            setSolved(d.solved_box, { animate: true });
-            playSound(BOX_OK_SOUND_URL);
+            if (setSolved(d.solved_box, { animate: true })) {
+                solvedThisUpdateCount += 1;
+            }
+        }
+
+        if (solvedThisUpdateCount > 0 && !hydratingSnapshot) {
+            for (let i = 0; i < solvedThisUpdateCount; i += 1) {
+                playSound(BOX_OK_SOUND_URL);
+            }
         }
 
         if (d.puzzle_solved && !solved) {
@@ -168,10 +288,14 @@
         fetch('/current_state')
             .then(r => r.json())
             .then(d => {
+                hydratingSnapshot = true;
                 handleUpdate(d);
+                hydratingSnapshot = false;
                 updateStatus();
             })
-            .catch(() => {});
+            .catch(() => {
+                hydratingSnapshot = false;
+            });
     }
 
     function initSSE() {
@@ -187,7 +311,26 @@
         };
     }
 
+    function initAudioPolicyHandling() {
+        const unlockHandler = () => unlockAudio();
+
+        document.addEventListener('pointerdown', unlockHandler, { passive: true });
+        document.addEventListener('keydown', unlockHandler);
+        document.addEventListener('touchstart', unlockHandler, { passive: true });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                flushPendingSounds();
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            flushPendingSounds();
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        initAudioPolicyHandling();
         updateStatus();
         resetRoundTimer();
         loadSnapshot();
