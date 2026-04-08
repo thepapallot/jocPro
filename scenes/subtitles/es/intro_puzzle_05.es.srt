@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:04,120
+Empieza el nivel en el que pondremos a prueba vuestra percepción temporal.
+
+2
+00:00:04,120 --> 00:00:09,720
+El objetivo de este nivel es contar exactamente el número de segundos que se os indicará en la pantalla.
+
+3
+00:00:09,720 --> 00:00:14,359
+Para hacerlo solo necesitaréis vuestros tokens y las luces de vuestro terminal.
+
+4
+00:00:14,359 --> 00:00:20,480
+Esta prueba consta de tres fases y, en cada una de ellas, deberéis contar un número de segundos distinto.
+
+5
+00:00:20,480 --> 00:00:25,000
+Cuando la fase empiece, las luces de los terminales se encenderán aleatoriamente.
+
+6
+00:00:25,000 --> 00:00:29,000
+Esta será la señal de que deberéis empezar a contar el tiempo indicado.
+
+7
+00:00:29,000 --> 00:00:34,000
+Cuando consideréis que han pasado los segundos, deberéis pasar el token por el terminal.
+
+8
+00:00:34,000 --> 00:00:39,000
+Si el tiempo que habéis contado no coincide exactamente con lo indicado en la pantalla,
+
+9
+00:00:39,000 --> 00:00:45,640
+los segundos contados de más o de menos se sumarán al total de error común de todos los terminales. Si el total
+
+10
+00:00:45,640 --> 00:00:50,960
+de error acumulado es mayor que el límite permitido, se reiniciará la fase. Tened en cuenta
+
+11
+00:00:50,960 --> 00:00:55,960
+que la luz de cada terminal se encenderá en un momento distinto, así que yo, de vosotros...

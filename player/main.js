@@ -80,11 +80,17 @@ function AssetsGrid(assets = []) {
             card.classList.add("asset-card--icon-only");
         }
         const media = createElement("div", "asset-card__media");
-        const image = document.createElement("img");
-        image.className = "asset-card__image";
-        image.src = asset.src || "";
-        image.alt = asset.alt || asset.label || "";
-        media.appendChild(image);
+        if (asset.swatchClass) {
+            const swatch = createElement("span", `asset-card__swatch ${asset.swatchClass}`);
+            swatch.setAttribute("aria-hidden", "true");
+            media.appendChild(swatch);
+        } else {
+            const image = document.createElement("img");
+            image.className = "asset-card__image";
+            image.src = asset.src || "";
+            image.alt = asset.alt || asset.label || "";
+            media.appendChild(image);
+        }
 
         card.appendChild(media);
 

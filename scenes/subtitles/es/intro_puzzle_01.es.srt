@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:04,400
+En esta prueba, la habilidad que se evaluará será vuestra capacidad de asociación.
+
+2
+00:00:04,400 --> 00:00:08,699
+El objetivo de este nivel es completar las operaciones que aparecerán en la pantalla.
+
+3
+00:00:08,699 --> 00:00:13,300
+Y, ¿cómo lo haréis? Con los tokens y los números de cada uno de los terminales.
+
+4
+00:00:13,300 --> 00:00:17,399
+Tendréis que superar tres fases para pasar de nivel. Fácil, ¿verdad?
+
+5
+00:00:17,399 --> 00:00:21,100
+Pues no tanto. Prestad atención.
+
+6
+00:00:21,100 --> 00:00:24,300
+Si hay un error en una operación, se reinicia la fase.
+
+7
+00:00:24,300 --> 00:00:28,359
+Si se resuelve una operación ya completada, se reinicia la fase.
+
+8
+00:00:28,359 --> 00:00:31,359
+Si se acaba el tiempo, se reinicia la fase.
+
+9
+00:00:31,359 --> 00:00:33,359
+Recordad: el trabajo en equipo es la clave.

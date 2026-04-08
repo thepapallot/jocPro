@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:01,360
+Increíble.
+
+2
+00:00:01,360 --> 00:00:03,359
+Hemos llegado a la última prueba.
+
+3
+00:00:03,359 --> 00:00:06,839
+Para superarla tendréis que trabajar en equipo más que nunca.
+
+4
+00:00:06,839 --> 00:00:10,000
+Solo os diré que tendréis que usar los botones de los terminales
+
+5
+00:00:10,000 --> 00:00:11,640
+y que, para superar las fases,
+
+6
+00:00:11,640 --> 00:00:20,699
+tendréis que mantener pulsados los botones correctos durante al menos cinco segundos. [Música]

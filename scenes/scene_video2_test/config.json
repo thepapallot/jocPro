@@ -9,18 +9,75 @@
   "audio": {
     "src": "/static/audios/scene/intro_puzzle_02.wav"
   },
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 3.859,
+      "text": "En este nivel vamos a evaluar vuestra flexibilidad cognitiva."
+    },
+    {
+      "start": 3.859,
+      "end": 7.12,
+      "text": "Vuestro objetivo va a ser llegar al centro del laberinto."
+    },
+    {
+      "start": 7.12,
+      "end": 11.359,
+      "text": "Lo lograréis usando vuestros tokens y estos símbolos de los terminales."
+    },
+    {
+      "start": 11.359,
+      "end": 14.439,
+      "text": "En la pantalla aparecerá un laberinto lleno de símbolos."
+    },
+    {
+      "start": 14.439,
+      "end": 18.679,
+      "text": "Para resolverlo, deberéis empezar por la entrada que tenga el número de vuestro token,"
+    },
+    {
+      "start": 18.679,
+      "end": 23.6,
+      "text": "e ir pasándolo por los terminales que tengan los símbolos que os encontraréis por el camino."
+    },
+    {
+      "start": 23.6,
+      "end": 25.519,
+      "text": "Pero eso no es todo."
+    },
+    {
+      "start": 25.519,
+      "end": 30.239,
+      "text": "En algún momento sonará una alarma y el laberinto se volverá de color rojo."
+    },
+    {
+      "start": 30.239,
+      "end": 33.88,
+      "text": "Cuando eso pase, deberéis pasar el token por el terminal con el símbolo contrario"
+    },
+    {
+      "start": 33.88,
+      "end": 38.92,
+      "text": "al que aparezca en el laberinto. Estad atentos, porque en cualquier momento el laberinto puede volver"
+    },
+    {
+      "start": 38.92,
+      "end": 45.399,
+      "text": "a su forma original. Id con cuidado: un solo error y tendréis que empezar vuestro recorrido de nuevo."
+    }
+  ],
   "segments": [
     {
       "type": "character",
       "src": "/static/videos/characters/character_hold_center_close.mp4",
       "clip_start": 0.3,
-      "clip_end": 6.3,
-      "duration": 6,
+      "clip_end": 4.159,
+      "duration": 3.859,
       "label": "intro_puzzle2"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 7,
+      "duration": 7.5,
       "variant": "objective",
       "phases": [
         {
@@ -31,19 +88,7 @@
           }
         },
         {
-          "at": 3.2,
-          "sfx": "token",
-          "left": {
-            "assets": [
-              {
-                "src": "/static/images/puzzle2/symbols/symbol_6.png",
-                "alt": "Simbolo del puzzle 2"
-              }
-            ]
-          }
-        },
-        {
-          "at": 4.9,
+          "at": 3.261,
           "sfx": "token",
           "left": {
             "assets": [
@@ -62,7 +107,7 @@
     },
     {
       "type": "transition",
-      "duration": 14,
+      "duration": 14.16,
       "variant": "maze",
       "label": "LABERINTO",
       "image": "/static/images/puzzle2/Laberint.png",
@@ -72,13 +117,13 @@
       "type": "character",
       "src": "/static/videos/characters/character_hold_center_close.mp4",
       "clip_start": 1.2,
-      "clip_end": 3.2,
-      "duration": 2,
+      "clip_end": 5.92,
+      "duration": 4.72,
       "label": "puente_puzzle2"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 21,
+      "duration": 16.551,
       "variant": "warning",
       "phases": [
         {
@@ -100,25 +145,38 @@
           }
         },
         {
-          "at": 2.2,
+          "at": 0,
           "sfx": "warning",
           "right": {
             "variant": "warning",
-            "text": "SÍMBOLOS OPUESTOS.",
+            "text": "LABERINTO ROJO.",
             "steps": [
-              "CUANDO EL LABERINTO SE VUELVA ROJO."
+              "SONARÁ UNA ALARMA."
             ]
           }
         },
         {
-          "at": 5.8,
+          "at": 4.72,
           "sfx": "warning",
           "right": {
             "variant": "warning",
             "text": "SÍMBOLOS OPUESTOS.",
             "steps": [
-              "CUANDO EL LABERINTO SE VUELVA ROJO.",
-              "UN SOLO ERROR: DEBERÉIS EMPEZAR DE NUEVO."
+              "SONARÁ UNA ALARMA.",
+              "USA EL SÍMBOLO CONTRARIO."
+            ]
+          }
+        },
+        {
+          "at": 12.774,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "SÍMBOLOS OPUESTOS.",
+            "steps": [
+              "SONARÁ UNA ALARMA.",
+              "USA EL SÍMBOLO CONTRARIO.",
+              "UN SOLO ERROR: EMPIEZA DE NUEVO."
             ]
           }
         }
