@@ -305,6 +305,40 @@
         "0->5, 1->10, 2->13, 3->14, 4->17, 5->18, 6->20, 7->22, 8->31, 9->35"
       ].join("\n")
     },
+    "10": {
+      label: "Puzzle 10",
+      route: "/puzzle/10",
+      startRoute: "/start_puzzle/10",
+      restartRoute: "/restart_puzzle/10",
+      help: "Formato MQTT: P10,box,code. code es un codigo de 3 digitos (0..4) para cada caja.",
+      fields: [
+        { id: "box", label: "Caja", type: "number", min: 0, max: 9, value: 0 },
+        { id: "code", label: "Codigo", type: "text", value: "042", fullWidth: true }
+      ],
+      build(values) {
+        return `P10,${values.box},${values.code}`;
+      },
+      examples: [
+        { label: "Caja 0 / 042", payload: "P10,0,042" },
+        { label: "Caja 5 / 431", payload: "P10,5,431" }
+      ],
+      reference: [
+        "Codigos objetivo por caja:",
+        "0 -> 042",
+        "1 -> 414",
+        "2 -> 323",
+        "3 -> 104",
+        "4 -> 033",
+        "5 -> 431",
+        "6 -> 104",
+        "7 -> 222",
+        "8 -> 110",
+        "9 -> 423",
+        "",
+        "Cada payload correcto resuelve una caja: P10,box,code",
+        "Al completar las 10 cajas, el puzzle se marca como superado."
+      ].join("\n")
+    },
     "-1": {
       label: "Puzzle final",
       route: "/puzzle/final",
@@ -388,7 +422,8 @@
       { symbol: "0", color: "1" },
       { symbol: "0", color: "1" }
     ],
-    puzzle9Token: "8"
+    puzzle9Token: "8",
+    puzzle10Box: "0"
   };
 
   function initPuzzleSelect() {
@@ -552,6 +587,24 @@
     }
     if (puzzleId === "9") {
       renderPuzzle9Simulator();
+      return;
+    }
+    if (puzzleId === "10") {
+      try {
+        renderPuzzle10Simulator();
+      } catch (error) {
+        console.error("Puzzle 10 simulator render failed", error);
+        els.simContent.innerHTML = `
+          <div class="sim-note">Error cargando la simulacion del puzzle 10.</div>
+          <div class="sim-actions">
+            <button type="button" class="sim-button" data-sim-p10-retry>Reintentar</button>
+          </div>
+        `;
+        const retryButton = els.simContent.querySelector("[data-sim-p10-retry]");
+        if (retryButton) {
+          retryButton.addEventListener("click", () => renderForm());
+        }
+      }
       return;
     }
     if (puzzleId === "-1") {
@@ -1375,6 +1428,89 @@
     });
   }
 
+  function syncPuzzle10FormAndEditor() {
+    const codeInput = document.getElementById("field-code");
+    const code = codeInput ? codeInput.value : "000";
+    setFormValue("box", simState.puzzle10Box);
+    setFormValue("code", code);
+    if (els.topicSelect.value === "TO_FLASK") {
+      els.messageEditor.value = buildPayload();
+    }
+  }
+
+  function renderPuzzle10Simulator() {
+    const targetsByBox = {
+      0: "042",
+      1: "414",
+      2: "323",
+      3: "104",
+      4: "033",
+      5: "431",
+      6: "104",
+      7: "222",
+      8: "110",
+      9: "423"
+    };
+
+    // Selection is controlled by simulator buttons, not form input
+    const targetCode = targetsByBox[Number(simState.puzzle10Box)] || "---";
+
+    const boxButtons = Array.from({ length: 10 }, (_, index) => {
+      const selected = simState.puzzle10Box === String(index) ? " is-selected" : "";
+      return `<button type="button" class="sim-box${selected}" data-sim-p10-box="${index}">Caja ${index}</button>`;
+    }).join("");
+
+    els.simContent.innerHTML = `
+      <div class="sim-note">Selecciona una caja y pulsa el boton para resolverla directamente.</div>
+      <div class="sim-selected-readout">Caja seleccionada: <strong>${simState.puzzle10Box}</strong> · Codigo objetivo: <strong>${targetCode}</strong></div>
+      <div class="field-label">Caja</div>
+      <div class="sim-grid box-grid">${boxButtons}</div>
+      <div class="sim-actions">
+        <button type="button" class="sim-button" data-sim-p10-solve-box>Solucionar caja</button>
+      </div>
+    `;
+
+    const sendSolveForSelectedBox = async () => {
+      const target = targetsByBox[Number(simState.puzzle10Box)];
+      if (!target) {
+        return;
+      }
+      const payload = `P10,${simState.puzzle10Box},${target}`;
+      const previousTopic = els.topicSelect.value;
+      try {
+        els.topicSelect.value = "TO_FLASK";
+        updateTopicHelp();
+        updateSendModeUI();
+        setFormValue("box", simState.puzzle10Box);
+        setFormValue("code", target);
+        syncPuzzle10FormAndEditor();
+        await sendPayloads([payload]);
+        appendLog({ local: true, payload, simulated: "puzzle10", action: "solve_box_direct" });
+      } finally {
+        if (previousTopic !== "TO_FLASK") {
+          els.topicSelect.value = previousTopic;
+          syncEditorForTopic();
+        }
+      }
+    };
+
+    els.simContent.querySelectorAll("[data-sim-p10-box]").forEach((button) => {
+      button.addEventListener("click", () => {
+        simState.puzzle10Box = button.dataset.simP10Box;
+        renderPuzzle10Simulator();
+      });
+    });
+
+    els.simContent.querySelector("[data-sim-p10-solve-box]").addEventListener("click", async () => {
+      await sendSolveForSelectedBox();
+      renderPuzzle10Simulator();
+    });
+
+    setFormValue("box", simState.puzzle10Box);
+    setFormValue("code", targetCode);
+    syncPuzzle10FormAndEditor();
+  }
+
   function renderPuzzle8Simulator() {
     const syncPuzzle8State = async (silent = true) => {
       const response = await fetch("/current_state");
@@ -2152,6 +2288,29 @@
             </section>
             ${stateList("Terminales", boxes)}
             ${stateList("Estado interno", status)}
+          </div>
+        </div>
+      `;
+    }
+
+    if (puzzleId === "10") {
+      const solvedBoxes = Array.isArray(data.solved_boxes) ? data.solved_boxes : [];
+      const targets = data.box_targets && typeof data.box_targets === "object"
+        ? Object.entries(data.box_targets).map(([box, code]) => `Caja ${box}: ${code}`)
+        : [];
+      return `
+        <div class="state-summary">
+          <div class="state-grid">
+            <section class="state-card">
+              <h3>Codigos</h3>
+              <div class="state-metrics">
+                ${stateMetric("Resueltas", `${solvedBoxes.length}/10`)}
+                ${stateMetric("Puzzle resuelto", data.puzzle_solved)}
+                ${stateMetric("Tiempo ronda", data.round_seconds)}
+              </div>
+            </section>
+            ${stateList("Cajas resueltas", solvedBoxes.map((box) => `Caja ${box}`))}
+            ${stateList("Objetivos", targets)}
           </div>
         </div>
       `;

@@ -9,28 +9,6 @@
 }
 
 /* =========================
-   PIRÁMIDE DE FONDO SUAVE
-========================= */
-
-#bottom-area::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 48%;
-    transform: translate(-50%, -50%);
-    width: min(56vw, 820px);
-    height: min(40vw, 620px);
-    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-    border: 2px solid rgba(69, 230, 255, 0.18);
-    box-shadow:
-        0 0 40px rgba(0, 240, 255, 0.12),
-        0 0 100px rgba(255, 89, 214, 0.08);
-    opacity: 0.55;
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* =========================
    GAME AREA
 ========================= */
 
@@ -69,7 +47,7 @@
     animation: floatPanel 6s ease-in-out infinite;
 }
 
-@keyframes floatPanel { 
+@keyframes floatPanel {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-6px); }
 }
@@ -438,6 +416,9 @@
     position: relative;
     z-index: 2;
     display: grid;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-content: start;
     justify-content: center;
     width: calc(100vw - 40px);
     max-width: 1600px;
@@ -458,23 +439,48 @@
 
 #puzzle-container.round-3 {
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: clamp(14px, 2vw, 30px);
+    gap: clamp(12px, 1.6vw, 24px);
 }
 
 #puzzle-container.round-3 .op {
-    min-height: 140px;
-    height: clamp(140px, 18vh, 184px);
+    min-height: 112px;
+    height: clamp(112px, 14vh, 156px);
 }
 
 @media (max-width: 1200px) {
     #puzzle-container.round-3 {
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: clamp(14px, 2.2vw, 24px);
+        gap: clamp(12px, 1.8vw, 20px);
     }
 
     #puzzle-container.round-3 .op {
-        min-height: 132px;
-        height: clamp(132px, 17vh, 174px);
+        min-height: 108px;
+        height: clamp(108px, 13.5vh, 148px);
+    }
+}
+
+@media (max-height: 980px) {
+    #bottom-area {
+        padding-top: 28px;
+        gap: 10px;
+    }
+
+    #objective-panel {
+        padding: 20px 32px;
+    }
+
+    #solved-container {
+        min-height: 44px;
+        margin-top: 2px;
+    }
+
+    #puzzle-container.round-3 {
+        gap: 12px;
+    }
+
+    #puzzle-container.round-3 .op {
+        min-height: 96px;
+        height: clamp(96px, 11.5vh, 132px);
     }
 }
 
