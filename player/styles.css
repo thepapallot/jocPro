@@ -711,6 +711,22 @@ body {
         rgba(255, 255, 255, 0.02);
 }
 
+.asset-card__swatch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 82px;
+    height: 82px;
+    border-radius: 999px;
+    border: 3px solid rgba(69, 230, 255, 0.24);
+    box-shadow:
+        inset 0 12px 14px rgba(255,255,255,0.18),
+        inset 0 -12px 16px rgba(0,0,0,0.22),
+        0 0 18px rgba(69, 230, 255, 0.08),
+        0 0 32px rgba(69, 230, 255, 0.04);
+}
+
 .asset-card__image {
     width: 100%;
     max-width: 156px;
@@ -821,6 +837,88 @@ body {
 
 .zone-card--right[data-zone-kind="steps"] {
     align-content: start;
+}
+
+.zone-card--right[data-zone-kind="assets"] {
+    align-content: start;
+}
+
+.zone-card--right[data-zone-kind="assets"] .asset-grid {
+    gap: 10px;
+}
+
+.zone-card--right[data-zone-kind="assets"] .asset-card {
+    grid-template-columns: minmax(70px, 88px) minmax(0, 1fr);
+    gap: 12px;
+    padding: 10px 12px;
+    align-items: center;
+}
+
+.zone-card--right[data-zone-kind="assets"] .asset-card__media {
+    min-height: 68px;
+    padding: 6px;
+}
+
+.zone-card--right[data-zone-kind="assets"] .asset-card__swatch {
+    width: 58px;
+    height: 58px;
+}
+
+.zone-card--right[data-zone-kind="assets"] .asset-card__image {
+    max-width: 62px;
+}
+
+.zone-card--right[data-zone-kind="assets"] .asset-card__label {
+    font-size: clamp(0.88rem, 1vw, 1rem);
+}
+
+.zone-card--right[data-zone-kind="assets"] .asset-card__text {
+    font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+    line-height: 1.3;
+}
+
+.button-blue {
+    border-color: rgba(77, 232, 255, 0.5);
+    background:
+        radial-gradient(circle at 34% 28%, rgba(210, 250, 255, 0.72), transparent 24%),
+        radial-gradient(circle at 50% 42%, rgba(66, 216, 255, 0.95), rgba(0, 124, 215, 0.96) 72%);
+    box-shadow:
+        inset 0 12px 16px rgba(214, 251, 255, 0.2),
+        inset 0 -12px 16px rgba(0, 66, 128, 0.4),
+        0 0 22px rgba(66, 216, 255, 0.28);
+}
+
+.button-green {
+    border-color: rgba(45, 255, 155, 0.48);
+    background:
+        radial-gradient(circle at 34% 28%, rgba(235, 255, 244, 0.66), transparent 24%),
+        radial-gradient(circle at 50% 42%, rgba(58, 255, 164, 0.96), rgba(0, 143, 84, 0.96) 72%);
+    box-shadow:
+        inset 0 12px 16px rgba(227, 255, 240, 0.18),
+        inset 0 -12px 16px rgba(0, 72, 40, 0.36),
+        0 0 22px rgba(45, 255, 155, 0.24);
+}
+
+.button-red {
+    border-color: rgba(255, 79, 109, 0.48);
+    background:
+        radial-gradient(circle at 34% 28%, rgba(255, 229, 235, 0.66), transparent 24%),
+        radial-gradient(circle at 50% 42%, rgba(255, 98, 127, 0.96), rgba(160, 12, 45, 0.96) 72%);
+    box-shadow:
+        inset 0 12px 16px rgba(255, 228, 234, 0.18),
+        inset 0 -12px 16px rgba(88, 0, 18, 0.36),
+        0 0 22px rgba(255, 79, 109, 0.24);
+}
+
+.button-white {
+    border-color: rgba(244, 248, 255, 0.72);
+    background:
+        radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.92), transparent 24%),
+        radial-gradient(circle at 50% 42%, rgba(250, 252, 255, 0.98), rgba(182, 192, 204, 0.98) 74%);
+    box-shadow:
+        inset 0 12px 16px rgba(255, 255, 255, 0.45),
+        inset 0 -12px 16px rgba(88, 98, 112, 0.34),
+        0 0 20px rgba(244, 248, 255, 0.16);
 }
 
 .symbols-panel {

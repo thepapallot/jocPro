@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:04,919
+Atención. En este nivel evaluaremos vuestra capacidad de razonamiento.
+
+2
+00:00:04,919 --> 00:00:10,099
+El objetivo de este nivel será colocar correctamente los diez tokens en los diez terminales.
+
+3
+00:00:10,099 --> 00:00:14,400
+Para hacerlo necesitaréis los tokens, los símbolos de los terminales y puede que
+
+4
+00:00:14,400 --> 00:00:19,480
+algún otro elemento. En la pantalla veréis unas afirmaciones sobre la posición de los tokens,
+
+5
+00:00:19,480 --> 00:00:24,519
+los terminales y sus características. Con esta información tendréis que colocar los tokens de
+
+6
+00:00:24,519 --> 00:00:30,300
+forma que se cumplan todas las afirmaciones de la pantalla. Así de sencillo. Aunque os habéis
+
+7
+00:00:30,300 --> 00:00:34,719
+confiado, yo de vosotros pensaría bien dónde va cada token. Porque aunque los tengáis...

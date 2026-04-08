@@ -1,0 +1,233 @@
+{
+  "scene_id": "scene_video3_test",
+  "description": "Base de produccion para la intro del puzzle 3, ajustada al audio y subtitulos oficiales.",
+  "ui_titles": {
+    "top": "OBJETIVO",
+    "left": "ELEMENTOS",
+    "right": "ATENCIÓN"
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_03.wav"
+  },
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 2.08,
+      "text": "Prestad atención, porque en esta prueba"
+    },
+    {
+      "start": 2.08,
+      "end": 5.08,
+      "text": "evaluaremos vuestro conocimiento colectivo."
+    },
+    {
+      "start": 5.08,
+      "end": 6.48,
+      "text": "Para superar este nivel,"
+    },
+    {
+      "start": 6.48,
+      "end": 9.4,
+      "text": "tendréis que responder diez preguntas correctamente"
+    },
+    {
+      "start": 9.4,
+      "end": 14.359,
+      "text": "y, para hacerlo, utilizaréis los botones y los números de colores de los terminales."
+    },
+    {
+      "start": 14.359,
+      "end": 18.359,
+      "text": "En la pantalla aparecerá una pregunta y seis posibles respuestas."
+    },
+    {
+      "start": 18.359,
+      "end": 20.559,
+      "text": "Entre todos tendréis que poneros de acuerdo"
+    },
+    {
+      "start": 20.559,
+      "end": 23.199,
+      "text": "y decidir cuál es la respuesta correcta."
+    },
+    {
+      "start": 23.199,
+      "end": 24.719,
+      "text": "Cuando la hayáis escogido,"
+    },
+    {
+      "start": 24.719,
+      "end": 26.6,
+      "text": "quedaos con el número de la respuesta."
+    },
+    {
+      "start": 26.6,
+      "end": 32,
+      "text": "En cada uno de los terminales que tenéis enfrente hay seis números, cada uno de un color."
+    },
+    {
+      "start": 32,
+      "end": 37.399,
+      "text": "Deberéis buscar el número de la respuesta correcta y apretar el botón que sea del mismo color."
+    },
+    {
+      "start": 37.399,
+      "end": 43.2,
+      "text": "Cuando se haya pulsado un botón en todos los terminales, se revelará si la respuesta era correcta o no."
+    },
+    {
+      "start": 43.2,
+      "end": 48.52,
+      "text": "Para pasar de nivel, deberéis contestar varias preguntas seguidas correctamente, así que"
+    },
+    {
+      "start": 48.52,
+      "end": 52.28,
+      "text": "cuidado: si hay un solo error, la racha de respuestas se romperá."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "clip_start": 0.2,
+      "clip_end": 5.28,
+      "duration": 5.08,
+      "label": "intro_puzzle3"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 9.279,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "top": {
+            "text": "RESPONDER 10 PREGUNTAS CORRECTAMENTE."
+          }
+        },
+        {
+          "at": 4.32,
+          "sfx": "token",
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel frontal con los seis botones arcade"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+                "alt": "Tira numerica de colores del 1 al 6"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 12.241,
+      "variant": "maze",
+      "label": "PREGUNTA",
+      "image": "/static/images/puzzle3/intro/question_board.jpg",
+      "alt": "Pantalla de pregunta y respuestas del puzzle 3"
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_hold_center_medium.mp4",
+      "clip_start": 0.6,
+      "clip_end": 6.0,
+      "duration": 5.4,
+      "label": "puente_puzzle3"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 21.395,
+      "variant": "warning",
+      "phases": [
+        {
+          "at": 0,
+          "top": {
+            "text": "RESPONDER 10 PREGUNTAS CORRECTAMENTE."
+          },
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel frontal con los seis botones arcade"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+                "alt": "Tira numerica de colores del 1 al 6"
+              }
+            ]
+          }
+        },
+        {
+          "at": 0,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "MISMO COLOR.",
+            "steps": [
+              "BUSCA EL NÚMERO CORRECTO."
+            ]
+          }
+        },
+        {
+          "at": 5.399,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "MISMO COLOR.",
+            "steps": [
+              "BUSCA EL NÚMERO CORRECTO.",
+              "PULSA EL BOTÓN DEL MISMO COLOR."
+            ]
+          }
+        },
+        {
+          "at": 11.2,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "RESPUESTA VÁLIDA.",
+            "steps": [
+              "SE REVELARÁ SI ERA CORRECTA."
+            ]
+          }
+        },
+        {
+          "at": 16.52,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "UN SOLO ERROR.",
+            "steps": [
+              "SE ROMPE LA RACHA."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}
