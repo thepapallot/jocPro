@@ -2,44 +2,12 @@
 <html>
 <head>
     <title>Intro Video</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background: black;
-        }
-        video {
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-        }
-    </style>
 </head>
 <body>
-    <video id="intro" width="800" autoplay>
-        <source src="{{ url_for('static', filename='videos/IntroESP.mp4') }}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
+    <p>Redirigiendo a la nueva intro…</p>
     <script>
-        const video = document.getElementById('intro');
-
-        // Request fullscreen when the video starts playing
-        video.addEventListener('play', () => {
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) { // Safari
-                video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) { // IE11
-                video.msRequestFullscreen();
-            }
-        });
-
-        video.onended = function() {
-            window.location.href = "{{ url_for('welcome', redirect_flag='puzzle1') }}"; // Correct endpoint
-            //window.location.href = "{{ url_for('puzzle', puzzle_id=1) }}"; // Correct endpoint
-        };
+        const target = `{{ url_for('scene_player') }}?scene=scene_intro_game_test&next=${encodeURIComponent({{ url_for('welcome', redirect_flag='puzzle1')|tojson }})}`;
+        window.location.replace(target);
     </script>
 </body>
 </html>

@@ -15,30 +15,80 @@
             height: 100vh;
             object-fit: cover;
         }
+        .video-start-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.72);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 1.25rem;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .video-start-overlay.visible {
+            display: flex;
+        }
     </style>
 </head>
 <body>
-    <video id="intro" width="800" autoplay>
+    <video id="intro" width="800" playsinline preload="auto">
         <source src="{{ url_for('static', filename='videos/ExplicacionsJocs/explicacioPuzzle' + puzzle_id|string + '.mp4') }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+    <button id="video-start-overlay" class="video-start-overlay" type="button">
+        Clica para reproducir el video
+    </button>
     <script>
         const video = document.getElementById('intro');
+        const overlay = document.getElementById('video-start-overlay');
 
-        // Request fullscreen when the video starts playing
-        video.addEventListener('play', () => {
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) { // Safari
-                video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) { // IE11
-                video.msRequestFullscreen();
+        async function requestVideoFullscreen() {
+            try {
+                if (video.requestFullscreen) {
+                    await video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) {
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) {
+                    video.msRequestFullscreen();
+                }
+            } catch (error) {
+                console.debug('Fullscreen blocked:', error);
             }
+        }
+
+        async function startVideo({ fromUserGesture = false } = {}) {
+            try {
+                overlay.classList.remove('visible');
+                await video.play();
+                if (fromUserGesture) {
+                    await requestVideoFullscreen();
+                }
+            } catch (error) {
+                overlay.classList.add('visible');
+                console.debug('Video playback blocked:', error);
+            }
+        }
+
+        overlay.addEventListener('click', () => startVideo({ fromUserGesture: true }));
+
+        video.addEventListener('click', () => {
+            if (video.paused) {
+                startVideo({ fromUserGesture: true });
+                return;
+            }
+
+            requestVideoFullscreen();
         });
 
         video.onended = function() {
             window.location.href = "{{ url_for('puzzle', puzzle_id=puzzle_id) }}"; // Redirect to the puzzle
         };
+
+        startVideo();
     </script>
 </body>
 </html>
