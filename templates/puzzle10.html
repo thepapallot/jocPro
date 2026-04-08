@@ -6,19 +6,16 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle10.css') }}">
 {% endblock %}
 
-{% block top_right %}{% endblock %}
+{% block top_right %}
+<div id="timer" aria-live="polite">01:00</div>
+{% endblock %}
 
 {% block puzzle_content %}
 <div id="puzzle10-shell">
 	<section id="reference-panel" class="p10-panel">
 		<div class="panel-head">
 			<div>
-				<div class="panel-kicker">Referencia</div>
-				<h2 class="panel-title">Replica los 3 colores por caja</h2>
-			</div>
-			<div class="p10-head-right">
-				<div id="p10-timer" aria-live="polite">01:00</div>
-				<div id="p10-status">0 / 10 sincronizadas</div>
+				<h2 class="panel-title">Replica los patrones en los terminales</h2>
 			</div>
 		</div>
 

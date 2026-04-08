@@ -449,12 +449,7 @@ body::after {
 }
 
 .orbit-core {
-    inset: 34%;
-    background:
-        radial-gradient(circle at 35% 35%, rgba(236, 251, 255, 0.92), rgba(69, 230, 255, 0.45) 38%, rgba(69, 230, 255, 0.08) 72%, transparent 100%);
-    box-shadow:
-        0 0 24px rgba(69, 230, 255, 0.18),
-        0 0 46px rgba(69, 230, 255, 0.08);
+    display: none;
 }
 
 #objective-card.is-countdown {

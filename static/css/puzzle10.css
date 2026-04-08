@@ -41,6 +41,7 @@ body::after {
     filter: blur(44px);
 }
 
+
 #puzzle10-shell {
     position: relative;
     z-index: 2;
@@ -49,6 +50,7 @@ body::after {
 }
 
 .p10-panel {
+    --p10-inner-frame-top: 98px;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -64,15 +66,6 @@ body::after {
     overflow: hidden;
 }
 
-.p10-panel::before {
-    content: "";
-    position: absolute;
-    inset: 12px;
-    border: 1px solid rgba(255, 89, 214, 0.08);
-    border-radius: 20px;
-    pointer-events: none;
-}
-
 .panel-head {
     position: relative;
     z-index: 1;
@@ -86,24 +79,6 @@ body::after {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-#p10-timer {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 34px;
-    min-width: 86px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 216, 79, 0.38);
-    background: linear-gradient(180deg, rgba(255, 216, 79, 0.24), rgba(255, 216, 79, 0.08));
-    color: #fff4ca;
-    font-size: 0.9rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    font-variant-numeric: tabular-nums;
-    box-shadow: 0 0 14px rgba(255, 216, 79, 0.14);
 }
 
 .panel-kicker {
@@ -166,6 +141,8 @@ body::after {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-self: center;
+    width: calc(100% - 10px);
     gap: 12px;
     min-height: 0;
     padding: 10px 8px 14px;
@@ -216,26 +193,65 @@ body::after {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 42px;
-    height: calc(100% - 44px);
-    border-radius: 4px;
-    background: var(--p10-window);
+    width: 58px;
+    height: calc(100% - 22px);
+    padding: 6px 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(24, 31, 42, 0.95);
+    background:
+        linear-gradient(180deg, rgba(67, 74, 84, 0.35), rgba(15, 20, 28, 0.75) 16%, rgba(15, 20, 28, 0.9) 84%, rgba(61, 70, 79, 0.34)),
+        var(--p10-window);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
     overflow: hidden;
     box-shadow:
-        inset 0 0 10px rgba(255, 255, 255, 0.08),
-        0 0 14px rgba(69, 230, 255, 0.05);
+        inset 0 0 0 1px rgba(111, 124, 142, 0.14),
+        inset 0 0 18px rgba(0, 0, 0, 0.62),
+        inset 0 10px 10px rgba(255, 255, 255, 0.05),
+        inset 0 -10px 10px rgba(0, 0, 0, 0.45),
+        0 2px 5px rgba(0, 0, 0, 0.45);
+}
+
+.led-strip-window::before,
+.led-strip-window::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    height: 7px;
+    border: 1px solid rgba(68, 77, 90, 0.55);
+    background: linear-gradient(180deg, rgba(56, 64, 74, 0.78), rgba(19, 24, 32, 0.88));
+    z-index: 2;
+    pointer-events: none;
+}
+
+.led-strip-window::before {
+    top: 1px;
+    border-radius: 3px 3px 2px 2px;
+}
+
+.led-strip-window::after {
+    bottom: 1px;
+    border-radius: 2px 2px 3px 3px;
 }
 
 .led-segment {
     width: 100%;
-    height: calc(100% / 3);
+    height: auto;
+    flex: 1;
+    border-radius: 1px;
+    position: relative;
+    z-index: 1;
     box-shadow:
         inset 0 0 6px rgba(255, 255, 255, 0.12),
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3),
         0 0 10px rgba(255, 255, 255, 0.02);
 }
 
 .led-segment + .led-segment {
-    border-top: 1px solid rgba(7, 14, 22, 0.32);
+    border-top: 0;
 }
 
 .color-0 { background: linear-gradient(180deg, color-mix(in srgb, var(--p10-color-0) 88%, white), var(--p10-color-0)); }
@@ -265,34 +281,29 @@ body::after {
         0 0 24px rgba(45, 255, 155, 0.14);
 }
 
+.led-card.is-solved .led-segment {
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--p10-color-4) 88%, white),
+        var(--p10-color-4)
+    );
+    box-shadow:
+        inset 0 0 6px rgba(255, 255, 255, 0.16),
+        0 0 12px rgba(45, 255, 155, 0.1);
+}
+
 .led-card.is-solved {
     border-color: rgba(45, 255, 155, 0.18);
     background:
-        linear-gradient(180deg, rgba(45, 255, 155, 0.08), rgba(255, 255, 255, 0.008)),
-        radial-gradient(circle at 50% 12%, rgba(45, 255, 155, 0.14), transparent 34%);
+        linear-gradient(180deg, rgba(45, 255, 155, 0.2), rgba(45, 255, 155, 0.03)),
+        radial-gradient(circle at 50% 12%, rgba(45, 255, 155, 0.28), transparent 40%);
     box-shadow:
-        inset 0 0 18px rgba(45, 255, 155, 0.04),
-        0 0 22px rgba(45, 255, 155, 0.06);
+        inset 0 0 24px rgba(45, 255, 155, 0.14),
+        0 0 34px rgba(45, 255, 155, 0.22);
 }
 
 .led-card.is-newly-solved {
     animation: p10-card-pulse 760ms ease;
-}
-
-.led-card.is-solved .led-rig::after {
-    content: "OK";
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    z-index: 2;
-    padding: 4px 8px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(45, 255, 155, 0.2), rgba(45, 255, 155, 0.08));
-    border: 1px solid rgba(45, 255, 155, 0.34);
-    color: #e7fff5;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
 }
 
 .led-card.is-solved .led-card-number {
@@ -317,6 +328,7 @@ body::after {
     }
 }
 
+
 @media (max-width: 1180px) {
     #led-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -324,6 +336,10 @@ body::after {
 }
 
 @media (max-width: 900px) {
+    .p10-panel {
+        --p10-inner-frame-top: 118px;
+    }
+
     #led-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -340,6 +356,10 @@ body::after {
 }
 
 @media (max-width: 640px) {
+    .p10-panel {
+        --p10-inner-frame-top: 104px;
+    }
+
     #puzzle10-shell {
         padding: 16px;
     }
