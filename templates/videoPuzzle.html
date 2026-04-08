@@ -2,43 +2,31 @@
 <html>
 <head>
     <title>Intro Video</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background: black;
-        }
-        video {
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-        }
-    </style>
 </head>
 <body>
-    <video id="intro" width="800" autoplay>
-        <source src="{{ url_for('static', filename='videos/IntrosJocs/IntroJoc' + idx_puzzle_id|string + '.mp4') }}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
     <script>
-        const video = document.getElementById('intro');
-
-        // Request fullscreen when the video starts playing
-        video.addEventListener('play', () => {
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) { // Safari
-                video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) { // IE11
-                video.msRequestFullscreen();
-            }
-        });
-
-        video.onended = function() {
-            window.location.href = "{{ url_for('play_explicacio_puzzles', idx_puzzle_id=idx_puzzle_id) }}"; // Redirect to the puzzle
+        const sceneMap = {
+            1: "scene_video1_test",
+            2: "scene_video2_test",
+            3: "scene_video3_test",
+            4: "scene_video4_test",
+            5: "scene_video5_test",
+            6: "scene_video6_test",
+            8: "scene_video8_test",
+            9: "scene_video9_test",
+            10: "scene_video10_test"
         };
+
+        const idx = {{ idx_puzzle_id|int }};
+        const sceneId = sceneMap[idx];
+        const nextUrl = {{ url_for('play_explicacio_puzzles', idx_puzzle_id=idx_puzzle_id)|tojson }};
+
+        if (sceneId) {
+            const target = `{{ url_for('scene_player') }}?scene=${encodeURIComponent(sceneId)}&next=${encodeURIComponent(nextUrl)}`;
+            window.location.replace(target);
+        } else {
+            window.location.replace(nextUrl);
+        }
     </script>
 </body>
 </html>

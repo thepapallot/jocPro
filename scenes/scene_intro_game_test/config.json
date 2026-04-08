@@ -1,0 +1,224 @@
+{
+  "scene_id": "scene_intro_game_test",
+  "description": "Base de produccion para la intro general del juego, ajustada al audio y subtitulos oficiales del game master.",
+  "ui_titles": {
+    "top": "OBJETIVO",
+    "left": "ELEMENTOS",
+    "right": "ATENCIÓN"
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_game_master.wav"
+  },
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 4,
+      "text": "Bienvenidos. No os imagináis cuánto me alegro de que estéis ya aquí."
+    },
+    {
+      "start": 4,
+      "end": 7.599,
+      "text": "Soy Cero, miembro de la Organización ADN."
+    },
+    {
+      "start": 7.599,
+      "end": 12,
+      "text": "Hace años que estamos investigando qué es lo que hace que algunos grupos humanos"
+    },
+    {
+      "start": 12,
+      "end": 14.8,
+      "text": "sean capaces de llegar más lejos que el resto."
+    },
+    {
+      "start": 14.8,
+      "end": 19.199,
+      "text": "Por qué hay equipos que juntos pueden lograr hitos que parecen imposibles."
+    },
+    {
+      "start": 19.199,
+      "end": 21.399,
+      "text": "Después de mucho tiempo analizando datos,"
+    },
+    {
+      "start": 21.399,
+      "end": 25,
+      "text": "hemos identificado un número muy reducido de grupos con un potencial"
+    },
+    {
+      "start": 25,
+      "end": 30.8,
+      "text": "único. Vosotros sois uno de ellos. Hace miles de años, la humanidad ya demostró lo que"
+    },
+    {
+      "start": 30.8,
+      "end": 35.399,
+      "text": "puede llegar a hacer cuando muchas personas comparten un objetivo común."
+    },
+    {
+      "start": 35.399,
+      "end": 41.119,
+      "text": "Obras colosales, legados que todavía hoy nos maravillan. Entre todas, una se levanta"
+    },
+    {
+      "start": 41.119,
+      "end": 45.5,
+      "text": "como símbolo de equilibrio, esfuerzo y precisión: la pirámide."
+    },
+    {
+      "start": 45.5,
+      "end": 51.2,
+      "text": "Hoy evaluaremos vuestras habilidades como equipo, y tendréis que superar una serie de retos"
+    },
+    {
+      "start": 51.2,
+      "end": 59.2,
+      "text": "para así construir vuestra propia pirámide, una construcción hecha de coordinación, ingenio y confianza."
+    },
+    {
+      "start": 59.2,
+      "end": 64.9,
+      "text": "Para superar estas pruebas, necesitaréis los diez terminales que están distribuidos por la sala,"
+    },
+    {
+      "start": 64.9,
+      "end": 65.239,
+      "text": "y unos tokens piramidales que repartiremos a cada uno de los grupos."
+    },
+    {
+      "start": 65.239,
+      "end": 70.4,
+      "text": "Y unos tokens piramidales que repartiremos a cada uno de los grupos. Estos tokens serán"
+    },
+    {
+      "start": 70.4,
+      "end": 75.56,
+      "text": "intransferibles. Para usarlos, deberéis colocarlos en la marca cuadrada que hay en la parte"
+    },
+    {
+      "start": 75.56,
+      "end": 82.28,
+      "text": "superior de los terminales. Os aviso: aquí no admitimos interferencias. Móviles y accesorios"
+    },
+    {
+      "start": 82.28,
+      "end": 90.359,
+      "text": "externos están prohibidos. Vuestras únicas herramientas serán las que tenéis delante y vuestra capacidad para colaborar."
+    },
+    {
+      "start": 90.359,
+      "end": 93.359,
+      "text": "De momento, esto es todo lo que os puedo contar."
+    },
+    {
+      "start": 93.359,
+      "end": 95.84,
+      "text": "Demostrad que sois un equipo capaz."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_chin_lift_center.mp4",
+      "clip_start": 0.2,
+      "clip_end": 4.2,
+      "duration": 4,
+      "label": "cero_open"
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_head_tilt_center.mp4",
+      "clip_start": 0.1,
+      "clip_end": 3.699,
+      "duration": 3.599,
+      "label": "cero_adn",
+      "broadcast": {
+        "logo_src": "/static/images/game_master/logo_adn.png",
+        "show_right_brand": false
+      }
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_hold_center_medium.mp4",
+      "clip_start": 0.15,
+      "clip_end": 7.75,
+      "duration": 11.6,
+      "label": "cero_presentacion"
+    },
+    {
+      "type": "transition",
+      "duration": 11.601,
+      "video": "/static/videos/game_master/network_core.mp4",
+      "clip_start": 0
+    },
+    {
+      "type": "transition",
+      "duration": 10.319,
+      "video": "/static/videos/game_master/city_wireframe.mp4",
+      "clip_start": 0
+    },
+    {
+      "type": "transition",
+      "duration": 4.381,
+      "video": "/static/videos/game_master/pyramid_outline.mp4",
+      "clip_start": 0
+    },
+    {
+      "type": "transition",
+      "duration": 5.041,
+      "video": "/static/videos/Video_inicial.mp4",
+      "clip_start": 0
+    },
+    {
+      "type": "transition",
+      "duration": 8.659,
+      "video": "/static/videos/game_master/pyramid_bricks.mp4",
+      "clip_start": 0
+    },
+    {
+      "type": "transition",
+      "duration": 5.7,
+      "variant": "gm-icon",
+      "image": "/static/images/puzzle1/caixa.png",
+      "alt": "Icono de terminal"
+    },
+    {
+      "type": "transition",
+      "duration": 5.5,
+      "variant": "gm-icon",
+      "image": "/static/images/puzzle1/tarjeta.png",
+      "alt": "Icono de token"
+    },
+    {
+      "type": "transition",
+      "duration": 5.16,
+      "variant": "gm-icon",
+      "image": "/static/images/puzzle1/tarjeta.png",
+      "alt": "Icono de token"
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_expressive_center.mp4",
+      "clip_start": 0.2,
+      "clip_end": 6.92,
+      "duration": 6.72,
+      "label": "cero_no_interferencias"
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "clip_start": 0.05,
+      "clip_end": 8.05,
+      "duration": 8,
+      "label": "cero_herramientas"
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_chin_lift_soft.mp4",
+      "clip_start": 0.2,
+      "clip_end": 5.76,
+      "duration": 5.56,
+      "label": "cero_cierre"
+    }
+  ]
+}

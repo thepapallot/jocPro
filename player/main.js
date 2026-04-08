@@ -6,6 +6,7 @@ const elements = {
     video: document.getElementById("scene-video"),
     audio: document.getElementById("scene-audio"),
     broadcastOverlay: document.getElementById("broadcast-overlay"),
+    broadcastOverlayLogo: document.getElementById("broadcast-overlay-logo"),
     uiLayer: document.getElementById("ui-layer"),
     transitionLayer: document.getElementById("transition-layer"),
     subtitleOverlay: document.getElementById("subtitle-overlay"),
@@ -15,6 +16,16 @@ const elements = {
 function resolveSceneId() {
     const params = new URLSearchParams(window.location.search);
     return params.get("scene") || DEFAULT_SCENE_ID;
+}
+
+function resolveNextUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("next") || "";
+}
+
+function resolveOnComplete() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("on_complete") || "";
 }
 
 function createElement(tag, className, text) {
@@ -66,6 +77,7 @@ function AssetsGrid(assets = []) {
 
     if (iconOnly) {
         grid.classList.add("asset-grid--icons");
+        grid.classList.add(`asset-grid--icons-${assets.length}`);
     }
 
     assets.forEach((asset) => {
@@ -536,9 +548,82 @@ function TransitionScreen(segment) {
         classes.push(`transition-screen--${segment.variant}`);
     }
     const screen = createElement("section", classes.join(" "));
+
+    if (segment.variant === "puzzle6-token-map") {
+        screen.appendChild(Puzzle6TokenMap(segment));
+        return screen;
+    }
+
+    if (segment.variant === "puzzle8-grid") {
+        screen.appendChild(Puzzle8GridTransition(segment));
+        return screen;
+    }
+
+    if (segment.variant === "puzzle9-board") {
+        screen.appendChild(Puzzle9BoardTransition(segment));
+        return screen;
+    }
+
+    if (segment.variant === "puzzle10-patterns") {
+        screen.appendChild(Puzzle10PatternsTransition(segment));
+        return screen;
+    }
+
+    if (segment.variant === "gm-network") {
+        screen.appendChild(GameMasterNetworkTransition(segment));
+        return screen;
+    }
+
+    if (segment.variant === "gm-pyramid") {
+        screen.appendChild(GameMasterPyramidTransition(segment));
+        return screen;
+    }
+
+    if (segment.variant === "gm-terminal") {
+        screen.appendChild(GameMasterTerminalTransition(segment));
+        return screen;
+    }
+
     const labelInsideMedia = Boolean(segment.image && segment.label && segment.variant === "maze");
 
-    if (segment.image) {
+    if (segment.video) {
+        const media = createElement("div", "transition-screen__media");
+        if (labelInsideMedia) {
+            media.appendChild(
+                createElement("div", "transition-screen__media-label", segment.label),
+            );
+        }
+
+        const video = document.createElement("video");
+        video.className = "transition-screen__video";
+        video.src = segment.video;
+        video.muted = true;
+        video.autoplay = true;
+        video.loop = false;
+        video.playsInline = true;
+        video.preload = "auto";
+
+        const clipStart = Number(segment.clip_start || 0);
+        if (clipStart > 0) {
+            const seekToStart = () => {
+                try {
+                    video.currentTime = clipStart;
+                } catch (error) {
+                    console.warn("No s'ha pogut posicionar el clip de transicio:", error);
+                }
+            };
+            video.addEventListener("loadedmetadata", seekToStart, { once: true });
+        }
+
+        video.addEventListener("canplay", () => {
+            video.play().catch((error) => {
+                console.warn("No s'ha pogut reproduir el video de transicio:", error);
+            });
+        }, { once: true });
+
+        media.appendChild(video);
+        screen.appendChild(media);
+    } else if (segment.image) {
         const media = createElement("div", "transition-screen__media");
         if (labelInsideMedia) {
             media.appendChild(
@@ -557,6 +642,289 @@ function TransitionScreen(segment) {
         screen.appendChild(createElement("div", "transition-screen__label", segment.label));
     }
     return screen;
+}
+
+function Puzzle6TokenMap(segment) {
+    const media = createElement("div", "transition-screen__media transition-screen__media--puzzle6-token-map");
+    const panel = createElement("div", "p6-map-panel");
+    const grid = createElement("div", "p6-map-grid");
+    const tokenSrc = segment.token_src || "/static/images/puzzle1/tarjeta.png";
+    const tokens = Array.isArray(segment.tokens) ? segment.tokens : [];
+
+    tokens.forEach((token) => {
+        const card = createElement("article", "p6-map-card");
+        card.style.setProperty("--token-color", token.color || "#45e6ff");
+
+        card.appendChild(createElement("div", "p6-map-card__number", String(token.code || "")));
+
+        const core = createElement("div", "p6-map-card__core");
+        const tokenImage = document.createElement("img");
+        tokenImage.className = "p6-map-card__token";
+        tokenImage.src = tokenSrc;
+        tokenImage.alt = token.alt || `Token ${token.code || ""}`;
+        core.appendChild(tokenImage);
+        card.appendChild(core);
+
+        grid.appendChild(card);
+    });
+
+    panel.appendChild(grid);
+    media.appendChild(panel);
+    return media;
+}
+
+function Puzzle8GridTransition(segment) {
+    const media = createElement("div", "transition-screen__media transition-screen__media--puzzle8-grid");
+    const stage = createElement("div", "p8-map-stage");
+
+    const rounds = createElement("div", "p8-map-rounds");
+    const activeRound = Number(segment.active_round || 1);
+    [1, 2, 3].forEach((round) => {
+        const card = createElement("div", "p8-map-round-card", round === 1 ? "I" : round === 2 ? "II" : "III");
+        if (round < activeRound) {
+            card.classList.add("is-complete");
+        } else if (round === activeRound) {
+            card.classList.add("is-active");
+        }
+        rounds.appendChild(card);
+    });
+    stage.appendChild(rounds);
+
+    const wrap = createElement("div", "p8-map-grid-wrap");
+    const grid = createElement("div", "p8-map-grid");
+    const items = Array.isArray(segment.grid_items) ? segment.grid_items : [];
+
+    for (let index = 0; index < 10; index += 1) {
+        const frame = createElement("div", "p8-map-frame");
+        const slot = createElement("div", "p8-map-slot");
+        const item = items[index];
+
+        if (item) {
+            if (item.type === "number") {
+                slot.appendChild(createElement("div", "p8-map-number", String(item.value || "")));
+            }
+
+            if (item.type === "symbol") {
+                const symbol = createElement("div", "p8-map-symbol");
+                symbol.style.setProperty("--p8-symbol-mask", `url('/static/images/puzzle8/${item.symbol}.svg')`);
+                if (item.color) {
+                    symbol.style.setProperty("--p8-item-color", item.color);
+                }
+                slot.appendChild(symbol);
+            }
+        }
+
+        frame.appendChild(slot);
+        grid.appendChild(frame);
+    }
+
+    wrap.appendChild(grid);
+    stage.appendChild(wrap);
+    media.appendChild(stage);
+    return media;
+}
+
+function Puzzle9BoardTransition(segment) {
+    const media = createElement("div", "transition-screen__media transition-screen__media--puzzle9-board");
+    const board = createElement("div", "p9-map-board");
+    const orbit = createElement("div", "p9-map-orbit");
+    const tokenSrc = segment.token_src || "/static/images/puzzle1/tarjeta.png";
+    const toneByIndex = ["tone-cyan", "tone-violet"];
+
+    (segment.clues || []).forEach((clue, index) => {
+        const card = createElement("article", `p9-map-clue-card ${toneByIndex[index % 2]}`);
+        if (clue.position_class) {
+            card.classList.add(clue.position_class);
+        }
+
+        if (clue.token != null) {
+            const tokenWrap = createElement("span", "p9-map-clue-token");
+            const tokenImage = document.createElement("img");
+            tokenImage.className = "p9-map-clue-token-icon";
+            tokenImage.src = tokenSrc;
+            tokenImage.alt = "";
+            tokenWrap.appendChild(tokenImage);
+            tokenWrap.appendChild(createElement("span", "p9-map-clue-token-number", String(clue.token)));
+            card.appendChild(tokenWrap);
+        }
+
+        card.appendChild(createElement("span", "p9-map-clue-copy", clue.text || ""));
+        orbit.appendChild(card);
+    });
+
+    const centerStage = createElement("div", "p9-map-center-stage");
+    const pyramidStage = createElement("div", "p9-map-pyramid-stage");
+    const rows = Array.isArray(segment.rows) ? segment.rows : [];
+
+    rows.forEach((row, rowIndex) => {
+        const rowEl = createElement("div", `p9-map-row p9-map-row-${rowIndex + 1}`);
+        row.forEach((box) => {
+            const boxEl = createElement("div", "p9-map-box");
+            boxEl.appendChild(createElement("span", "p9-map-box-id", String(box.id)));
+
+            const tokenImage = document.createElement("img");
+            tokenImage.className = "p9-map-token-icon";
+            tokenImage.src = tokenSrc;
+            tokenImage.alt = "Token";
+            boxEl.appendChild(tokenImage);
+
+            if (box.token != null) {
+                boxEl.appendChild(createElement("span", "p9-map-token-value", String(box.token)));
+                boxEl.classList.add("is-filled");
+            } else {
+                boxEl.appendChild(createElement("span", "p9-map-token-value", ""));
+            }
+
+            rowEl.appendChild(boxEl);
+        });
+        pyramidStage.appendChild(rowEl);
+    });
+
+    centerStage.appendChild(pyramidStage);
+    board.appendChild(orbit);
+    board.appendChild(centerStage);
+    media.appendChild(board);
+    return media;
+}
+
+function Puzzle10PatternsTransition(segment) {
+    const media = createElement("div", "transition-screen__media transition-screen__media--puzzle10-patterns");
+    const stage = createElement("div", "p10-map-stage");
+    const header = createElement("div", "p10-map-header");
+    const title = createElement("div", "p10-map-title", segment.title || "PATRONES OBJETIVO");
+    const kicker = createElement("div", "p10-map-kicker", segment.kicker || "PANTALLA CENTRAL");
+    const grid = createElement("div", "p10-map-grid");
+    const patterns = Array.isArray(segment.patterns) ? segment.patterns : [];
+
+    header.appendChild(kicker);
+    header.appendChild(title);
+    stage.appendChild(header);
+
+    for (let index = 0; index < 10; index += 1) {
+        const item = patterns[index] || {};
+        const card = createElement("article", "p10-map-card");
+        const boxLabel = createElement("div", "p10-map-card__box", String(item.box != null ? item.box : index));
+        const frame = createElement("div", "p10-map-card__frame");
+        const windowEl = createElement("div", "p10-map-card__window");
+        const code = String(item.code || "000").padEnd(3, "0").slice(0, 3);
+
+        for (const digit of code) {
+            const segmentEl = createElement("div", `p10-map-segment color-${digit}`);
+            windowEl.appendChild(segmentEl);
+        }
+
+        frame.appendChild(windowEl);
+        card.appendChild(boxLabel);
+        card.appendChild(frame);
+        grid.appendChild(card);
+    }
+
+    stage.appendChild(grid);
+    media.appendChild(stage);
+    return media;
+}
+
+function GameMasterNetworkTransition(segment) {
+    const media = createElement("div", "transition-screen__media transition-screen__media--gm-network");
+    const stage = createElement("div", "gm-stage gm-stage--network");
+    const skyline = createElement("div", "gm-network-skyline");
+    const nodes = createElement("div", "gm-network-nodes");
+    const copy = createElement("div", "gm-copy-block");
+
+    for (let index = 0; index < 18; index += 1) {
+        const pillar = createElement("span", "gm-network-pillar");
+        pillar.style.setProperty("--gm-pillar-x", `${(index / 17) * 100}%`);
+        pillar.style.setProperty("--gm-pillar-h", `${30 + (index % 6) * 9}%`);
+        skyline.appendChild(pillar);
+    }
+
+    for (let index = 0; index < 12; index += 1) {
+        const node = createElement("span", "gm-network-node");
+        node.style.setProperty("--gm-node-x", `${10 + ((index * 7) % 80)}%`);
+        node.style.setProperty("--gm-node-y", `${14 + ((index * 11) % 64)}%`);
+        nodes.appendChild(node);
+    }
+
+    if (segment.kicker) {
+        copy.appendChild(createElement("div", "gm-copy-block__kicker", segment.kicker));
+    }
+    if (segment.title) {
+        copy.appendChild(createElement("div", "gm-copy-block__title", segment.title));
+    }
+    if (segment.text) {
+        copy.appendChild(createElement("div", "gm-copy-block__text", segment.text));
+    }
+
+    stage.appendChild(skyline);
+    stage.appendChild(nodes);
+    stage.appendChild(copy);
+    media.appendChild(stage);
+    return media;
+}
+
+function GameMasterPyramidTransition(segment) {
+    const media = createElement("div", "transition-screen__media transition-screen__media--gm-pyramid");
+    const stage = createElement("div", "gm-stage gm-stage--pyramid");
+    const pyramid = createElement("div", "gm-pyramid-mark");
+    const copy = createElement("div", "gm-copy-block gm-copy-block--center");
+
+    pyramid.appendChild(createElement("div", "gm-pyramid-mark__core"));
+
+    if (segment.kicker) {
+        copy.appendChild(createElement("div", "gm-copy-block__kicker", segment.kicker));
+    }
+    if (segment.title) {
+        copy.appendChild(createElement("div", "gm-copy-block__title", segment.title));
+    }
+    if (segment.text) {
+        copy.appendChild(createElement("div", "gm-copy-block__text", segment.text));
+    }
+
+    stage.appendChild(pyramid);
+    stage.appendChild(copy);
+    media.appendChild(stage);
+    return media;
+}
+
+function GameMasterTerminalTransition(segment) {
+    const media = createElement("div", "transition-screen__media transition-screen__media--gm-terminal");
+    const stage = createElement("div", "gm-stage gm-stage--terminal");
+    const terminalWrap = createElement("div", "gm-terminal-wrap");
+    const terminal = document.createElement("img");
+    const token = document.createElement("img");
+    const badges = createElement("div", "gm-terminal-badges");
+    const copy = createElement("div", "gm-copy-block");
+
+    terminal.className = "gm-terminal-wrap__terminal";
+    terminal.src = segment.terminal_src || "/static/images/shared/terminal_3d/terminal_box_perspective_hero_white.png";
+    terminal.alt = segment.terminal_alt || "Terminal";
+
+    token.className = "gm-terminal-wrap__token";
+    token.src = segment.token_src || "/static/images/shared/terminal_3d/token_pyramid_neon.png";
+    token.alt = segment.token_alt || "Token";
+
+    terminalWrap.appendChild(terminal);
+    terminalWrap.appendChild(token);
+
+    (segment.badges || []).forEach((badgeText) => {
+        badges.appendChild(createElement("div", "gm-terminal-badge", badgeText));
+    });
+
+    if (segment.kicker) {
+        copy.appendChild(createElement("div", "gm-copy-block__kicker", segment.kicker));
+    }
+    if (segment.title) {
+        copy.appendChild(createElement("div", "gm-copy-block__title", segment.title));
+    }
+    if (segment.text) {
+        copy.appendChild(createElement("div", "gm-copy-block__text", segment.text));
+    }
+
+    stage.appendChild(terminalWrap);
+    stage.appendChild(badges);
+    stage.appendChild(copy);
+    media.appendChild(stage);
+    return media;
 }
 
 function normalizeSubtitles(scene) {
@@ -619,6 +987,39 @@ function normalizeScene(scene) {
     };
 }
 
+function applyBroadcastOverlay(segment) {
+    if (!elements.broadcastOverlay) {
+        return;
+    }
+
+    const leftBrand = elements.broadcastOverlay.querySelector(".broadcast-overlay__brand--left");
+    const rightBrand = elements.broadcastOverlay.querySelector(".broadcast-overlay__brand--right");
+    const eyebrow = elements.broadcastOverlay.querySelector(".broadcast-overlay__eyebrow");
+    const logo = elements.broadcastOverlayLogo;
+    const broadcast = segment.broadcast || {};
+
+    leftBrand?.classList.remove("hidden");
+    rightBrand?.classList.remove("hidden");
+
+    if (eyebrow) {
+        eyebrow.textContent = broadcast.eyebrow || "Organización ADN";
+        eyebrow.classList.toggle("hidden", broadcast.show_eyebrow === false);
+    }
+
+    if (logo) {
+        if (broadcast.logo_src) {
+            logo.src = broadcast.logo_src;
+            logo.classList.remove("hidden");
+        } else {
+            logo.removeAttribute("src");
+            logo.classList.add("hidden");
+        }
+    }
+
+    leftBrand?.classList.toggle("broadcast-overlay__brand--compact", Boolean(broadcast.logo_src) && broadcast.show_eyebrow === false);
+    rightBrand?.classList.toggle("hidden", broadcast.show_right_brand === false);
+}
+
 class ScenePlayer {
     constructor(scene) {
         this.scene = normalizeScene(scene);
@@ -633,6 +1034,9 @@ class ScenePlayer {
         this.activeSubtitleKey = "";
         this.fullscreenPanelState = null;
         this.audioContext = null;
+        this.nextUrl = resolveNextUrl();
+        this.onComplete = resolveOnComplete();
+        this.completionHandled = false;
 
         this.tick = this.tick.bind(this);
         this.onVideoTimeUpdate = this.onVideoTimeUpdate.bind(this);
@@ -849,6 +1253,7 @@ class ScenePlayer {
     }
 
     async play() {
+        this.hideBootOverlay();
         this.playing = true;
         this.segmentStartedAt = performance.now();
         await this.syncMedia(true);
@@ -891,6 +1296,7 @@ class ScenePlayer {
 
     async restart() {
         this.pause();
+        this.completionHandled = false;
         this.currentSegmentIndex = 0;
         this.segmentElapsed = 0;
         this.renderSegment();
@@ -913,7 +1319,7 @@ class ScenePlayer {
     async advanceSegment() {
         if (this.currentSegmentIndex >= this.segments.length - 1) {
             this.pause();
-            this.showBootOverlay("Escena completada", "Tots els segments s'han reproduit. Prem R per tornar a començar.");
+            this.handleSceneCompletion();
             return;
         }
 
@@ -922,6 +1328,35 @@ class ScenePlayer {
             autoplay: wasPlaying,
             preserveAudio: wasPlaying && this.hasMasterAudio(),
         });
+    }
+
+    handleSceneCompletion() {
+        if (this.completionHandled) {
+            return;
+        }
+
+        this.completionHandled = true;
+
+        if (this.nextUrl) {
+            window.setTimeout(() => {
+                window.location.href = this.nextUrl;
+            }, 180);
+            return;
+        }
+
+        if (this.onComplete === "blackout") {
+            elements.video.classList.add("hidden");
+            elements.uiLayer.classList.add("hidden");
+            elements.transitionLayer.classList.add("hidden");
+            elements.subtitleOverlay.classList.add("hidden");
+            elements.broadcastOverlay?.classList.add("hidden");
+            if (elements.playerRoot) {
+                elements.playerRoot.style.background = "#000";
+            }
+            return;
+        }
+
+        this.showBootOverlay("Escena completada", "Tots els segments s'han reproduit. Prem R per tornar a començar.");
     }
 
     async transitionToSegment(nextIndex, { autoplay = false, preserveAudio = false } = {}) {
@@ -972,6 +1407,7 @@ class ScenePlayer {
             elements.playerRoot?.classList.add("player-root--broadcast");
             elements.playerRoot?.classList.add("player-root--character-feed");
             elements.broadcastOverlay?.classList.remove("hidden");
+            applyBroadcastOverlay(segment);
             void elements.video.offsetWidth;
             elements.video.classList.add("scene-video--reveal");
             return;
@@ -1045,14 +1481,16 @@ class ScenePlayer {
         }
 
         try {
-            if (segment.type === "character") {
-                await elements.video.play();
-            }
-
             if (this.scene.audio?.src && (!preserveAudio || elements.audio.paused)) {
                 await elements.audio.play();
             }
+
+            if (segment.type === "character") {
+                await elements.video.play();
+            }
         } catch (error) {
+            elements.video.pause();
+            elements.audio.pause();
             this.playing = false;
             this.showBootOverlay("Reproduccio bloquejada", "El navegador necessita una interaccio de l'usuari. Prem espai o fes clic per continuar.");
         }
@@ -1179,6 +1617,12 @@ document.addEventListener("keydown", async (event) => {
 });
 
 elements.bootOverlay.addEventListener("click", async () => {
+    if (!playerInstance) {
+        return;
+    }
+
+    elements.bootOverlay.classList.add("hidden");
+    await playerInstance.play();
 });
 
 window.addEventListener("beforeunload", () => {
