@@ -1795,12 +1795,50 @@
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona un terminal y escribe el string de 6 botones detectados para la fase final.</div>
+      <div class="sim-note">Selecciona un terminal y escribe el string de 6 botones detectados para la fase final, o resuelve la ronda actual con el objetivo activo.</div>
       <div class="sim-grid answer-grid">
         <label class="full-width"><span class="field-label">Botones</span><input id="sim-pf-buttons" type="text" value="2413"></label>
       </div>
+      <div class="action-row">
+        <button type="button" class="sim-button primary-action" data-sim-pf-solve-round>Resolver ronda</button>
+      </div>
       <div class="sim-grid box-grid">${boxButtons}</div>
     `;
+
+    const solveRoundBtn = els.simContent.querySelector("[data-sim-pf-solve-round]");
+    if (solveRoundBtn) {
+      solveRoundBtn.addEventListener("click", async () => {
+        try {
+          const response = await fetch("/current_state");
+          const state = await response.json();
+          if (String(state.puzzle_id) !== "-1") {
+            setStatus("Puzzle final · no activo");
+            return;
+          }
+          const target = Array.isArray(state.target) ? state.target : [];
+          if (!target.length) {
+            setStatus("Puzzle final · sin target disponible");
+            return;
+          }
+
+          const box = 1;
+          const buttons = target.join("");
+          const payload = `P-1,${box},${buttons}`;
+          els.simContent.querySelector("#sim-pf-buttons").value = buttons;
+          await sendPayloads([payload]);
+          appendLog({
+            local: true,
+            payload,
+            simulated: "puzzleFinal_solve_round",
+            round: state.round,
+            num_giff: state.num_giff,
+            target
+          });
+        } catch (error) {
+          setStatus(`Puzzle final · ${error.message || "error"}`);
+        }
+      });
+    }
 
     els.simContent.querySelectorAll("[data-sim-pf-box]").forEach((button) => {
       button.addEventListener("click", async () => {
@@ -2317,15 +2355,24 @@
     }
 
     if (puzzleId === "-1") {
+      const target = Array.isArray(data.target) ? data.target.join("") : "--";
+      const activeBoxes = data.box_states && typeof data.box_states === "object"
+        ? Object.entries(data.box_states).map(([box, buttons]) => `T${box}: ${Array.isArray(buttons) ? buttons.join("") : buttons}`)
+        : [];
       return `
         <div class="state-summary">
           <div class="state-grid">
             <section class="state-card">
               <h3>Final</h3>
               <div class="state-metrics">
+                ${stateMetric("Ronda", data.round)}
+                ${stateMetric("GIF", data.num_giff)}
+                ${stateMetric("Duracion", data.duration)}
+                ${stateMetric("Objetivo", target)}
                 ${stateMetric("Puzzle resuelto", data.puzzle_solved)}
               </div>
             </section>
+            ${stateList("Terminales activos", activeBoxes)}
           </div>
         </div>
       `;

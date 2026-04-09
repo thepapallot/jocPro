@@ -19,6 +19,7 @@
     let roundLimits = 0;
     let lastRoundResult = null;  // Track if we just showed a result
     let snapshotRequested = false; // NEW: prevent double fetch on initial load
+    let activeCountdownDeadline = null;
 
     // Sound helpers and URLs
     function playSound(url) {
@@ -71,35 +72,45 @@
         }, 560);
     }
 
-    function showCountdownMessage(message, waitingSeconds) {
-        console.log('[P5] Showing countdown message:', message, waitingSeconds);
-        playersSection.style.display = 'none';
-        errorSection.style.display = 'none';
-        setDisplayMode('countdown');
-
+    function clearCountdown() {
         if (countdownInterval) {
             clearInterval(countdownInterval);
             countdownInterval = null;
         }
+        activeCountdownDeadline = null;
+    }
+
+    function computeRemainingSeconds(waitingSeconds, countdownDeadline) {
+        if (countdownDeadline) {
+            return Math.max(0, Math.ceil(countdownDeadline - (Date.now() / 1000)));
+        }
+        return Math.max(0, Number(waitingSeconds) || 0);
+    }
+
+    function showCountdownMessage(message, waitingSeconds, countdownDeadline = null) {
+        console.log('[P5] Showing countdown message:', message, waitingSeconds, countdownDeadline);
+        playersSection.style.display = 'none';
+        errorSection.style.display = 'none';
+        setDisplayMode('countdown');
+        clearCountdown();
 
         const baseMessage = (message || '').replace(/\d+\s*segundos?/, '').trim() || message || '';
         console.log('[P5] Base message for countdown:', baseMessage);
 
 
-        // Legacy: relative countdown (fallback)
-        if (waitingSeconds && waitingSeconds > 0) {
-            let remaining = waitingSeconds;
+        const remaining = computeRemainingSeconds(waitingSeconds, countdownDeadline);
+        if (remaining > 0) {
+            activeCountdownDeadline = countdownDeadline || ((Date.now() / 1000) + remaining);
             setObjectiveValue(remaining, '');
             console.log('[P5] Starting countdown from:', remaining);
             countdownInterval = setInterval(() => {
-                remaining = Math.max(0, remaining - 1);
+                const remaining = computeRemainingSeconds(null, activeCountdownDeadline);
                 if (remaining > 0) {
                     setObjectiveValue(remaining, '');
                     // Play beep each second during countdown
                     playSound(BEEP_COUNTDOWN_SOUND_URL);
                 } else {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
+                    clearCountdown();
                 }
             }, 1000);
         } else {
@@ -111,10 +122,7 @@
     function showGameUI(round) {
 
         // Clear any countdown interval
-        if (countdownInterval) {
-            clearInterval(countdownInterval);
-            countdownInterval = null;
-        }
+        clearCountdown();
         console.log('[P5] Showing game UI for round:', round);
         console.log('[P5] Round objectives:', roundObjectives);
         console .log('[P5] Round limits:', roundLimits);
@@ -143,13 +151,18 @@
     function showWaitingState({
         objective = roundObjectives || 10,
         message = null,
-        subtext = 'sec'
+        subtext = 'sec',
+        waitingSeconds = null,
+        countdownDeadline = null
     } = {}) {
-        setDisplayMode('play');
-        showObjectiveText(objective);
-        if (message !== null) {
-            setObjectiveValue(message, subtext);
+        if (waitingSeconds || countdownDeadline) {
+            showCountdownMessage(message, waitingSeconds, countdownDeadline);
+            return;
         }
+
+        clearCountdown();
+        setDisplayMode('countdown');
+        setObjectiveValue(objective, '');
         playersSection.style.display = 'none';
         errorSection.style.display = 'none';
     }
@@ -235,7 +248,10 @@
             roundLimits = d.limit || roundLimits;
             updateStreak(1);
             showWaitingState({
-                objective: roundObjectives
+                objective: roundObjectives,
+                message: d.countdown_message || 'Ronda empieza en 10 segundos',
+                waitingSeconds: d.waiting_seconds,
+                countdownDeadline: d.countdown_deadline
             });
             return;
         }
@@ -254,7 +270,10 @@
                 }
             } else {
                 showWaitingState({
-                    objective: roundObjectives
+                    objective: roundObjectives,
+                    message: d.countdown_message,
+                    waitingSeconds: d.waiting_seconds,
+                    countdownDeadline: d.countdown_deadline
                 });
             }
             return;
@@ -279,32 +298,8 @@
                 lastRoundResult = null;
             }
             
-            showObjectiveText(d.objective);  // show objective before countdown
-
-            setDisplayMode('countdown');
-            playersSection.style.display = 'none';
-            errorSection.style.display = 'none';
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-                countdownInterval = null;
-            }
-
-            if (d.waiting_seconds && d.waiting_seconds > 0) {
-                let remaining = d.waiting_seconds;
-                setObjectiveValue(remaining, '');
-                countdownInterval = setInterval(() => {
-                    remaining = Math.max(0, remaining - 1);
-                    if (remaining > 0) {
-                        setObjectiveValue(remaining, '');
-                        playSound(BEEP_COUNTDOWN_SOUND_URL);
-                    } else {
-                        clearInterval(countdownInterval);
-                        countdownInterval = null;
-                    }
-                }, 1000);
-            } else {
-                setObjectiveValue('', '');
-            }
+            roundObjectives = d.objective || roundObjectives || 10;
+            showCountdownMessage(d.countdown_message, d.waiting_seconds, d.countdown_deadline);
 
             return;
         }
@@ -357,8 +352,7 @@
             // Play final puzzle completion sound
             playSound(PUZZLE_COMPLETE_SOUND_URL);
             if (countdownInterval) {
-                clearInterval(countdownInterval);
-                countdownInterval = null;
+                clearCountdown();
             }
             setTimeout(() => window.location.href = '/puzzleSuperat/5', 3000);
         }
@@ -504,16 +498,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         setDisplayMode('play');
         installDebugHelpers();
-        loadSnapshot('DOMContentLoaded');
         initSSE();
     });
 
     // Clean up interval on page unload
     window.addEventListener('beforeunload', () => {
         console.log('[P5] Cleaning up before unload');
-        if (countdownInterval) {
-            clearInterval(countdownInterval);
-        }
+        clearCountdown();
         if (objectivePulseTimeout) {
             clearTimeout(objectivePulseTimeout);
         }

@@ -78,7 +78,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 9.059,
+      "duration": 6.059,
       "variant": "warning",
       "phases": [
         {
@@ -128,6 +128,24 @@
           }
         }
       ]
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
     }
   ]
 }

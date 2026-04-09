@@ -19,7 +19,8 @@
 
         const idx = {{ idx_puzzle_id|int }};
         const sceneId = sceneMap[idx];
-        const nextUrl = {{ url_for('play_explicacio_puzzles', idx_puzzle_id=idx_puzzle_id)|tojson }};
+        const puzzleId = {{ puzzle_id|tojson }};
+        const nextUrl = puzzleId ? {{ url_for('puzzle', puzzle_id=0)|replace('0', '__PUZZLE_ID__')|tojson }}.replace('__PUZZLE_ID__', puzzleId) : {{ url_for('welcome')|tojson }};
 
         if (sceneId) {
             const target = `{{ url_for('scene_player') }}?scene=${encodeURIComponent(sceneId)}&next=${encodeURIComponent(nextUrl)}`;
