@@ -67,6 +67,16 @@ body {
     letter-spacing: 0.02em;
 }
 
+#scene-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: center center;
+}
+
 .hidden {
     display: none !important;
 }
@@ -345,10 +355,10 @@ body {
 
 .panel {
     position: relative;
-    width: min(1760px, 100%);
+    width: min(2200px, calc(100% - 24px));
     margin: 0 auto;
     min-height: calc(100vh - 42px);
-    padding: clamp(24px, 2.6vw, 40px);
+    padding: clamp(24px, 2rem, 36px);
     border: 1px solid rgba(116, 219, 255, 0.24);
     border-radius: 0;
     background:
@@ -434,7 +444,7 @@ body {
 
 .ui-dashboard {
     position: relative;
-    grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
+    grid-template-columns: minmax(0, 1.18fr) minmax(360px, 0.82fr);
     grid-template-areas:
         "top top"
         "left right"
@@ -462,7 +472,7 @@ body {
     gap: 16px;
     min-height: 332px;
     min-width: 0;
-    padding: clamp(24px, 2.2vw, 34px);
+    padding: clamp(22px, 1.8rem, 32px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0;
     background:
@@ -494,7 +504,7 @@ body {
 
 .zone-card--top {
     grid-area: top;
-    min-height: 248px;
+    min-height: 196px;
     background:
         radial-gradient(circle at 50% 0%, rgba(87, 222, 245, 0.1), transparent 48%),
         linear-gradient(180deg, rgba(87, 222, 245, 0.05), rgba(5, 13, 22, 0.48) 38%),
@@ -503,16 +513,16 @@ body {
 
 .zone-card--left {
     grid-area: left;
-    min-height: 360px;
+    min-height: 320px;
     height: 100%;
-    padding-right: clamp(24px, 2.2vw, 34px);
+    padding-right: clamp(22px, 1.8rem, 32px);
 }
 
 .zone-card--right {
     grid-area: right;
-    min-height: 360px;
+    min-height: 320px;
     height: 100%;
-    padding-left: clamp(24px, 2.2vw, 34px);
+    padding-left: clamp(22px, 1.8rem, 32px);
     border-color: rgba(255, 122, 103, 0.28);
     background:
         radial-gradient(circle at 100% 0, rgba(255, 122, 103, 0.12), transparent 34%),
@@ -1185,11 +1195,11 @@ body {
 
 .transition-screen__media {
     position: relative;
-    width: min(76vw, 1080px);
+    width: min(1320px, calc(100% - 64px));
     max-width: calc(100% - 48px);
     display: grid;
     place-items: center;
-    padding: clamp(18px, 2vw, 26px);
+    padding: clamp(18px, 1.4rem, 26px);
     border: 1px solid rgba(116, 219, 255, 0.18);
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 18%),
@@ -1284,9 +1294,9 @@ body {
 }
 
 .transition-screen--gm-icon .transition-screen__media {
-    width: min(40vw, 460px);
+    width: min(520px, calc(100% - 96px));
     max-width: calc(100% - 96px);
-    padding: clamp(18px, 2vw, 28px);
+    padding: clamp(18px, 1.4rem, 28px);
     border: 1px solid rgba(116, 219, 255, 0.14);
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 18%),
@@ -1307,7 +1317,7 @@ body {
 
 .transition-screen--gm-icon .transition-screen__image {
     width: 100%;
-    max-width: min(30vw, 320px);
+    max-width: min(320px, calc(100% - 40px));
     max-height: min(46vh, 320px);
     margin-inline: auto;
 }
@@ -1324,7 +1334,7 @@ body {
     left: clamp(48px, 6vw, 96px);
     bottom: clamp(46px, 8vh, 92px);
     z-index: 4;
-    width: min(620px, calc(100vw - 96px));
+    width: min(760px, calc(100vw - 120px));
     display: grid;
     gap: 10px;
 }
@@ -1500,7 +1510,7 @@ body {
     right: clamp(32px, 7vw, 112px);
     top: 50%;
     transform: translateY(-50%);
-    width: min(46vw, 760px);
+    width: min(860px, 46vw);
     height: min(58vh, 560px);
 }
 
@@ -1558,9 +1568,9 @@ body {
 }
 
 .transition-screen--maze .transition-screen__media {
-    width: min(88vw, 1320px);
+    width: min(1500px, calc(100% - 64px));
     min-height: min(79vh, 980px);
-    padding: clamp(28px, 2.6vw, 36px);
+    padding: clamp(28px, 2rem, 36px);
     border-color: rgba(255, 255, 255, 0.08);
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.022), transparent 34%),
@@ -1612,7 +1622,7 @@ body {
 }
 
 .transition-screen__media--puzzle6-token-map {
-    width: min(92vw, 1500px);
+    width: min(1640px, calc(100% - 48px));
     min-height: min(82vh, 860px);
     align-content: stretch;
     gap: 0;
@@ -1774,7 +1784,7 @@ body {
 }
 
 .transition-screen__media--puzzle8-grid {
-    width: min(92vw, 1480px);
+    width: min(1600px, calc(100% - 48px));
     min-height: min(82vh, 860px);
     padding: 0;
     border: 0;
@@ -1956,7 +1966,7 @@ body {
 }
 
 .transition-screen__media--puzzle9-board {
-    width: min(94vw, 1500px);
+    width: min(1660px, calc(100% - 48px));
     min-height: min(82vh, 860px);
     padding: 0;
     border: 0;
@@ -2006,7 +2016,7 @@ body {
     align-items: center;
     justify-content: flex-start;
     gap: 14px;
-    width: min(18vw, 240px);
+    width: clamp(180px, 15%, 240px);
     min-height: 96px;
     padding: 18px 20px 20px;
     border-radius: 18px;
@@ -2069,11 +2079,11 @@ body {
 .p9-map-center-stage {
     position: relative;
     z-index: 1;
-    --p9-box-size: clamp(84px, 10vh, 132px);
-    width: min(58vw, 760px);
+    --p9-box-size: clamp(84px, 7rem, 132px);
+    width: min(760px, 58%);
     height: 100%;
     margin: 0 auto;
-    padding-block: clamp(16px, 3vh, 30px);
+    padding-block: clamp(16px, 1.4rem, 30px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -2085,12 +2095,12 @@ body {
     flex: 1 1 auto;
     display: grid;
     grid-template-rows: repeat(4, minmax(0, 1fr));
-    gap: clamp(18px, 2.8vh, 30px);
+    gap: clamp(18px, 1.4rem, 30px);
     justify-content: center;
     align-content: stretch;
     min-height: 0;
     height: 100%;
-    padding: clamp(10px, 2vh, 18px) 0;
+    padding: clamp(10px, 0.9rem, 18px) 0;
 }
 
 .p9-map-pyramid-stage::before {
@@ -2116,7 +2126,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: clamp(14px, 1.6vw, 22px);
+    gap: clamp(14px, 1rem, 22px);
 }
 
 .p9-map-box {
@@ -2188,7 +2198,7 @@ body {
 }
 
 .transition-screen__media--puzzle10-patterns {
-    width: min(92vw, 1480px);
+    width: min(1600px, calc(100% - 48px));
     min-height: min(82vh, 860px);
     padding: 0;
     border: 0;

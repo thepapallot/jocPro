@@ -142,7 +142,7 @@ body::after {
     padding: 18px 20px 20px;
     top: 0;
     left: 0;
-    width: min(18vw, 240px);
+    width: clamp(180px, 15%, 240px);
     min-height: 96px;
     border-radius: 18px;
     background: rgba(9, 18, 33, 0.9);
@@ -217,11 +217,11 @@ body::after {
 #p9-center-stage {
     position: relative;
     z-index: 1;
-    --p9-box-size: clamp(84px, 10vh, 132px);
-    width: min(58vw, 760px);
+    --p9-box-size: clamp(84px, 7rem, 132px);
+    width: min(760px, 58%);
     height: 100%;
     margin: 0 auto;
-    padding-block: clamp(16px, 3vh, 30px);
+    padding-block: clamp(16px, 1.4rem, 30px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -233,12 +233,12 @@ body::after {
     flex: 1 1 auto;
     display: grid;
     grid-template-rows: repeat(4, minmax(0, 1fr));
-    gap: clamp(18px, 2.8vh, 30px);
+    gap: clamp(18px, 1.4rem, 30px);
     justify-content: center;
     align-content: stretch;
     min-height: 0;
     height: 100%;
-    padding: clamp(10px, 2vh, 18px) 0;
+    padding: clamp(10px, 0.9rem, 18px) 0;
 }
 
 #p9-pyramid-stage::before {
@@ -264,7 +264,7 @@ body::after {
     display: grid;
     justify-content: center;
     align-items: center;
-    gap: clamp(16px, 1.9vw, 24px);
+    gap: clamp(16px, 1.1rem, 24px);
 }
 
 .p9-row-1 { grid-template-columns: repeat(1, minmax(0, var(--p9-box-size))); }
@@ -446,7 +446,7 @@ body::after {
     }
 
     .p9-clue-card {
-        width: min(16vw, 212px);
+        width: clamp(160px, 18%, 212px);
         min-height: 82px;
         padding: 14px 16px;
         font-size: clamp(0.74rem, 0.66vw, 0.9rem);
@@ -454,17 +454,17 @@ body::after {
     }
 
     #p9-center-stage {
-        width: min(50vw, 620px);
-        --p9-box-size: clamp(78px, 9.2vh, 116px);
-        padding-block: clamp(12px, 2vh, 20px);
+        width: min(620px, 54%);
+        --p9-box-size: clamp(78px, 6rem, 116px);
+        padding-block: clamp(12px, 0.95rem, 20px);
     }
 
     #p9-pyramid-stage {
-        gap: clamp(14px, 2.2vh, 22px);
+        gap: clamp(14px, 1rem, 22px);
     }
 
     .p9-row {
-        gap: clamp(12px, 1.6vw, 18px);
+        gap: clamp(12px, 0.9rem, 18px);
     }
 
     .p9-token-icon {

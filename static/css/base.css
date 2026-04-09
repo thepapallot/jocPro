@@ -75,8 +75,19 @@ body {
         linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-deep) 45%, #02040a 100%);
 }
 
+#game-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1920px;
+    height: 1080px;
+    min-height: 0;
+    overflow: hidden;
+    transform-origin: center center;
+}
+
 #game-frame {
-    position: fixed;
+    position: absolute;
     inset: 18px;
     z-index: 1;
     pointer-events: none;

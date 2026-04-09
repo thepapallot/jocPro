@@ -7,32 +7,54 @@
     <link rel="stylesheet" href="/player/styles.css">
 </head>
 <body>
-    <div class="scene-shell">
-        <div class="scene-background"></div>
+    <div id="scene-stage">
+        <div class="scene-shell">
+            <div class="scene-background"></div>
 
-        <main id="player-root" class="player-root">
-            <video id="scene-video" class="scene-video" playsinline preload="auto"></video>
-            <audio id="scene-audio" preload="auto"></audio>
-            <section id="broadcast-overlay" class="broadcast-overlay hidden" aria-hidden="true">
-                <div class="broadcast-overlay__frame">
-                    <div class="broadcast-overlay__brand broadcast-overlay__brand--left">
-                        <span class="broadcast-overlay__eyebrow">Organización ADN</span>
-                        <img id="broadcast-overlay-logo" class="broadcast-overlay__logo hidden" alt="Logo ADN">
+            <main id="player-root" class="player-root">
+                <video id="scene-video" class="scene-video" playsinline preload="auto"></video>
+                <audio id="scene-audio" preload="auto"></audio>
+                <section id="broadcast-overlay" class="broadcast-overlay hidden" aria-hidden="true">
+                    <div class="broadcast-overlay__frame">
+                        <div class="broadcast-overlay__brand broadcast-overlay__brand--left">
+                            <span class="broadcast-overlay__eyebrow">Organización ADN</span>
+                            <img id="broadcast-overlay-logo" class="broadcast-overlay__logo hidden" alt="Logo ADN">
+                        </div>
+                        <div class="broadcast-overlay__brand broadcast-overlay__brand--right">
+                            <span class="broadcast-overlay__pyramid"></span>
+                            <span class="broadcast-overlay__title">La Pirámide</span>
+                        </div>
                     </div>
-                    <div class="broadcast-overlay__brand broadcast-overlay__brand--right">
-                        <span class="broadcast-overlay__pyramid"></span>
-                        <span class="broadcast-overlay__title">La Pirámide</span>
-                    </div>
-                </div>
-            </section>
-            <section id="ui-layer" class="ui-layer hidden" aria-live="polite"></section>
-            <section id="transition-layer" class="transition-layer hidden" aria-hidden="true"></section>
-            <section id="subtitle-overlay" class="subtitle-overlay hidden" aria-live="polite"></section>
-        </main>
+                </section>
+                <section id="ui-layer" class="ui-layer hidden" aria-live="polite"></section>
+                <section id="transition-layer" class="transition-layer hidden" aria-hidden="true"></section>
+                <section id="subtitle-overlay" class="subtitle-overlay hidden" aria-live="polite"></section>
+            </main>
 
-        <div id="boot-overlay" class="boot-overlay hidden"></div>
+            <div id="boot-overlay" class="boot-overlay hidden"></div>
+        </div>
     </div>
 
     <script type="module" src="/player/main.js"></script>
+    <script>
+    (function () {
+        const BASE_WIDTH = 1920;
+        const BASE_HEIGHT = 1080;
+        const stage = document.getElementById("scene-stage");
+
+        function updateStageScale() {
+            if (!stage) return;
+            const scale = Math.min(
+                window.innerWidth / BASE_WIDTH,
+                window.innerHeight / BASE_HEIGHT
+            );
+
+            stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        }
+
+        window.addEventListener("resize", updateStageScale, { passive: true });
+        updateStageScale();
+    })();
+    </script>
 </body>
 </html>
