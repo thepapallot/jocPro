@@ -16,6 +16,7 @@ class Puzzle5(BasePuzzle):
         self.active_round = False
         self.waiting = False
         self._round_start_timer = None
+        self.waiting_deadline = None
         
     def reset(self):
         """Full reset - identical to on_start"""
@@ -26,12 +27,14 @@ class Puzzle5(BasePuzzle):
             self.solved = False
             self.active_round = False
             self.waiting = True
+            self.waiting_deadline = time.time() + 10
             self._cancel_timer()
             
             # Push countdown message
             self._push({
                 "countdown_message": "Ronda empieza en 10 segundos",
                 "waiting_seconds": 10,
+                "countdown_deadline": self.waiting_deadline,
                 "objective": self.round_objectives[1],
             })
             
@@ -64,7 +67,9 @@ class Puzzle5(BasePuzzle):
                 "puzzle_solved": self.solved,
                 "active_round": self.active_round,
                 "waiting": self.waiting,
-            }
+                "countdown_deadline": self.waiting_deadline,
+                "waiting_seconds": max(0, int(round(self.waiting_deadline - time.time()))) if self.waiting and self.waiting_deadline else None,
+                }
             
     def handle_message(self, parts):
         """
@@ -142,6 +147,7 @@ class Puzzle5(BasePuzzle):
         self.round_times[round_number] = {}
         self.active_round = True
         self.waiting = False
+        self.waiting_deadline = None
         
         # Send MQTT message to Arduino/hardware
         self.mqtt_client.send_message("FROM_FLASK", f"P5_Round{round_number}")
@@ -197,10 +203,12 @@ class Puzzle5(BasePuzzle):
                         # Schedule next round with 10-second countdown
                         self.waiting = True
                         next_round = round_number + 1
+                        self.waiting_deadline = time.time() + 10
                         
                         self._push({
                             "countdown_message": f"Ronda {next_round} empieza en 10 segundos",
                             "waiting_seconds": 10,
+                            "countdown_deadline": self.waiting_deadline,
                             "objective": self.round_objectives[next_round],
                         })
                         
@@ -209,10 +217,12 @@ class Puzzle5(BasePuzzle):
                     # Failed - retry same round with 9-second countdown
                     self.round_times[round_number] = {}
                     self.waiting = True
+                    self.waiting_deadline = time.time() + 9
                     
                     self._push({
                         "countdown_message": f"Ronda {round_number} reinicia en 9 segundos",
                         "waiting_seconds": 9,
+                        "countdown_deadline": self.waiting_deadline,
                         "objective": self.round_objectives[round_number]
                     })
                     

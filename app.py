@@ -50,11 +50,39 @@ def welcome():
 
 @app.route('/videoIntro')
 def play_video_intro():
-    return render_template('videoIntro.html')
+    next_url = url_for('welcome', redirect_flag='puzzle1')
+    target = f"{url_for('scene_player')}?scene=scene_intro_game_test&next={next_url}"
+    return redirect(target)
 
 @app.route('/videoPuzzles/<int:idx_puzzle_id>', methods=['GET','POST'])
 def play_video_puzzles(idx_puzzle_id): 
-    return render_template('videoPuzzle.html', idx_puzzle_id=idx_puzzle_id)
+    scene_map = {
+        1: 'scene_video1_test',
+        2: 'scene_video2_test',
+        3: 'scene_video3_test',
+        4: 'scene_video4_test',
+        5: 'scene_video5_test',
+        6: 'scene_video6_test',
+        8: 'scene_video8_test',
+        9: 'scene_video9_test',
+        10: 'scene_video10_test',
+    }
+
+    puzzle_id = None
+    if 1 <= idx_puzzle_id <= len(PUZZLE_ORDER):
+        puzzle_id = PUZZLE_ORDER[idx_puzzle_id - 1]
+
+    if puzzle_id is None:
+        return redirect(url_for('welcome'))
+
+    scene_id = scene_map.get(idx_puzzle_id)
+    next_url = url_for('puzzle', puzzle_id=puzzle_id)
+
+    if not scene_id:
+        return redirect(next_url)
+
+    target = f"{url_for('scene_player')}?scene={scene_id}&next={next_url}"
+    return redirect(target)
 
 @app.route('/direct/<int:idx_puzzle_id>', methods=['GET'])
 def play_directa_explicacio_puzzles(idx_puzzle_id): 
@@ -88,7 +116,9 @@ def puzzle_superat(puzzle_id):
 
 @app.route('/videoJocFinal', methods=['GET','POST'])
 def play_joc_final(): 
-    return render_template('videojocFinal.html')
+    next_url = url_for('puzzle_final')
+    target = f"{url_for('scene_player')}?scene=scene_videoFinal_test&next={next_url}"
+    return redirect(target)
 
 
 ##### Scene Player: rutas aisladas para intros híbridas de frontend #####
@@ -118,6 +148,10 @@ def scene_config(scene_id):
 @app.route('/final', methods=['GET', 'POST'])
 def final():
     return render_template('final.html')
+
+@app.route('/final-loop', methods=['GET'])
+def final_loop():
+    return render_template('finalLoop.html')
 
 
 @app.route('/puzzle/final', methods=['GET', 'POST'])

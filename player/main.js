@@ -1034,6 +1034,8 @@ class ScenePlayer {
         this.activeSubtitleKey = "";
         this.fullscreenPanelState = null;
         this.audioContext = null;
+        this.audioEndedSceneTime = null;
+        this.audioEndedPerfTime = 0;
         this.nextUrl = resolveNextUrl();
         this.onComplete = resolveOnComplete();
         this.completionHandled = false;
@@ -1041,6 +1043,7 @@ class ScenePlayer {
         this.tick = this.tick.bind(this);
         this.onVideoTimeUpdate = this.onVideoTimeUpdate.bind(this);
         this.onVideoEnded = this.onVideoEnded.bind(this);
+        this.onAudioEnded = this.onAudioEnded.bind(this);
     }
 
     updateSubtitleOverlay() {
@@ -1079,6 +1082,7 @@ class ScenePlayer {
         elements.video.playsInline = true;
         elements.video.addEventListener("timeupdate", this.onVideoTimeUpdate);
         elements.video.addEventListener("ended", this.onVideoEnded);
+        elements.audio.addEventListener("ended", this.onAudioEnded);
 
         if (this.scene.audio?.src) {
             elements.audio.src = this.scene.audio.src;
@@ -1220,6 +1224,7 @@ class ScenePlayer {
         elements.audio.pause();
         elements.video.removeEventListener("timeupdate", this.onVideoTimeUpdate);
         elements.video.removeEventListener("ended", this.onVideoEnded);
+        elements.audio.removeEventListener("ended", this.onAudioEnded);
     }
 
     get currentSegment() {
@@ -1244,8 +1249,20 @@ class ScenePlayer {
         this.setBootMessage(title, text);
     }
 
-    getSceneTime() {
+    resetAudioFallback() {
+        this.audioEndedSceneTime = null;
+        this.audioEndedPerfTime = 0;
+    }
+
+    getSceneTime(now = performance.now()) {
         if (this.hasMasterAudio()) {
+            if (this.audioEndedSceneTime != null) {
+                const tail = this.playing && this.audioEndedPerfTime
+                    ? Math.max(0, (now - this.audioEndedPerfTime) / 1000)
+                    : 0;
+                return Math.min(this.scene.durationSeconds, this.audioEndedSceneTime + tail);
+            }
+
             return elements.audio.currentTime || 0;
         }
 
@@ -1339,7 +1356,7 @@ class ScenePlayer {
 
         if (this.nextUrl) {
             window.setTimeout(() => {
-                window.location.href = this.nextUrl;
+                window.location.replace(this.nextUrl);
             }, 180);
             return;
         }
@@ -1456,6 +1473,7 @@ class ScenePlayer {
             : segment.timelineStart + this.segmentElapsed;
 
         if (this.scene.audio?.src && !preserveAudio) {
+            this.resetAudioFallback();
             elements.audio.currentTime = sceneTime;
         }
 
@@ -1511,7 +1529,7 @@ class ScenePlayer {
         }
 
         const elapsed = this.hasMasterAudio()
-            ? Math.max(0, this.getSceneTime() - this.currentSegment.timelineStart)
+            ? Math.max(0, this.getSceneTime(now) - this.currentSegment.timelineStart)
             : this.segmentElapsed + ((now - this.segmentStartedAt) / 1000);
 
         this.updateSubtitleOverlay();
@@ -1554,6 +1572,19 @@ class ScenePlayer {
     onVideoEnded() {
         if (this.playing && this.currentSegment.type === "character") {
             this.advanceSegment();
+        }
+    }
+
+    onAudioEnded() {
+        if (!this.hasMasterAudio() || this.audioEndedSceneTime != null) {
+            return;
+        }
+
+        this.audioEndedSceneTime = elements.audio.duration || elements.audio.currentTime || this.getSceneTime();
+        this.audioEndedPerfTime = performance.now();
+
+        if (this.playing && this.currentSegment.type !== "character") {
+            this.startTicking();
         }
     }
 }

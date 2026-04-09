@@ -332,7 +332,7 @@
         }
         updateHudState();
 
-        //loadCurrentState();
+        loadCurrentState();
 
         const es = new EventSource("/state_stream");
         es.onopen = () => {
@@ -346,6 +346,10 @@
             } catch (e) {
                 console.warn("Bad SSE data", e);
             }
+        };
+        es.onerror = () => {
+            es.close();
+            setTimeout(initSSE, 5000);
         };
     }
 

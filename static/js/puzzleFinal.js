@@ -135,6 +135,7 @@
         resetViewport();
         timerEl.style.display = 'none';
         waitScreen.style.display = 'block';
+        waitScreen.classList.add('is-countdown');
         setStatus(
             'countdown',
             'Compte enrere actiu',
@@ -156,6 +157,7 @@
                 clearInterval(countdownInterval);
                 countdownInterval = null;
                 waitScreen.style.display = 'none';
+                waitScreen.classList.remove('is-countdown');
                 countdownEl.textContent = '';
                 onDone();
             } else {
@@ -163,6 +165,14 @@
                 countdownEl.textContent = count;
             }
         }, 1000);
+    }
+
+    function showIdlePyramid() {
+        resetViewport();
+        timerEl.style.display = 'none';
+        waitScreen.style.display = 'block';
+        waitScreen.classList.remove('is-countdown');
+        countdownEl.textContent = '';
     }
 
     function handleUpdate(d) {
@@ -232,7 +242,8 @@
 
             redirectTimeout = setTimeout(() => {
                 console.log("Redirecting to Final");
-                window.location.href = "/final";
+                const target = window.PUZZLE_FINAL_OUTRO_URL || "/final";
+                window.location.replace(target);
             }, 3000);
             return;
         }
@@ -304,16 +315,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         updateRoundIndicator(0, roundCards.length, 'idle');
-        setStatus(
-            'idle',
-            'Sistema en espera',
-            'La pantalla està preparada per començar la seqüencia final quan el backend enviï la primera ronda.',
-            'En espera'
-        );
-        setPhase(
-            'Sincronitza la piramide',
-            'Cada nivell activa una nova seqüencia. Observa el patró, mantén l’estat correcte i completa les quatre fases.'
-        );
+        showIdlePyramid();
         installDebugHelpers();
         initSSE();
     });

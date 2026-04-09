@@ -96,8 +96,7 @@
                 window.location.href = "{{ url_for('welcome') }}?redirect_flag=start";
             } else if (isFinal) {
                 if (provaFinal) {
-                    const indexFinal = -1;
-                    window.location.href = "{{ url_for('welcome') }}?redirect_flag=indexFinal";
+                    window.location.href = "{{ url_for('play_joc_final') }}";
                 } else {
                     window.location.href = "{{ url_for('final') }}";
                 }

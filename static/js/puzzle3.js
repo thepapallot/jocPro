@@ -29,6 +29,10 @@
     let currentQuestionId = null;
     let activeQuestionNumber = 1;
 
+    function getDisplayStreak(streak, target) {
+        return Math.min(target, streak + 1);
+    }
+
     function initPlayers(count = totalPlayers) {
         totalPlayers = count;
         playerStatusEl.innerHTML = "";
@@ -87,7 +91,7 @@
         playSound(APAREIX_SOUND_URL);
 
         currentQuestionId = qObj.id;
-        activeQuestionNumber = streak + 1;
+        activeQuestionNumber = getDisplayStreak(streak, target);
         questionTextEl.textContent = qObj.q;
         answerAreaEl.innerHTML = ""; // clear answer area
         (qObj.answers || []).forEach((ans, idx) => {
@@ -104,7 +108,7 @@
             row.appendChild(textSpan);
             answerAreaEl.appendChild(row); // append to answer-area
         });
-        streakEl.textContent = `${streak + 1}/${target}`; // show current question number
+        streakEl.textContent = `${getDisplayStreak(streak, target)}/${target}`;
         feedbackEl.textContent = '';
         feedbackEl.className = "";
         resetPlayerChips(answeredPlayers); // Reset all chip styling first
@@ -112,7 +116,7 @@
     }
 
     function setStreak(streak, target) {
-        streakEl.textContent = `${streak + 1}/${target}`; // show current question number
+        streakEl.textContent = `${getDisplayStreak(streak, target)}/${target}`;
         updateSecurityLevels(streak, target);
     }
 

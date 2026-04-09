@@ -137,9 +137,19 @@ class PuzzleFinal(BasePuzzle):
 
     def get_state(self):
         with self.lock:
+            target = None
+            if 1 <= self.current_streak <= self.streaks and self.current_giff:
+                target = list(self.botons[self.current_streak - 1][self.current_giff - 1])
+
             return {
                 "puzzle_id": self.id,
-                "puzzle_solved": self.solved
+                "puzzle_solved": self.solved,
+                "round": self.current_streak,
+                "total_rounds": self.streaks,
+                "num_giff": self.current_giff,
+                "duration": self.counters[self.current_streak - 1]["duration"] if 1 <= self.current_streak <= self.streaks else None,
+                "target": target,
+                "box_states": self.box_states.copy()
             }
 
     def get_giff(self):

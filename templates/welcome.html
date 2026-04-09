@@ -78,7 +78,9 @@
                     overlayImg.style.display = 'block';
                     return;
                 }
-                window.location.href = "{{ url_for('play_video_intro') }}";
+                const next = {{ url_for('welcome', redirect_flag='puzzle1')|tojson }};
+                const target = `{{ url_for('scene_player') }}?scene=scene_intro_game_test&next=${encodeURIComponent(next)}`;
+                window.location.replace(target);
             });
         }
     </script>

@@ -204,9 +204,13 @@
         animateClues();
     }
 
-    function playSound(url) {
+    function playSound(url, onComplete) {
         const audio = new Audio(url);
+        if (typeof onComplete === 'function') {
+            audio.onended = onComplete;
+        }
         audio.play().catch(err => console.warn('Audio play failed:', err));
+        return audio;
     }
 
     const BTN_SOUND_URL = '/static/audios/effects/boto.wav';
@@ -282,6 +286,7 @@
         if (!statusMessage || typeof status !== 'string') return;
 
         if (status === 'good' || status === 'wrong') {
+            const isRepeatedStatus = stickyStatus === status && !hasBoxUpdate;
             stickyStatus = status;
             statusMessage.classList.add('visible');
             statusMessage.classList.toggle('status-good', status === 'good');
@@ -289,10 +294,12 @@
             statusMessage.textContent = status === 'good'
                 ? 'Tokens correctamente colocados'
                 : 'Tokens mal colocados';
-            if (status === 'good') {
-                playSound(PUZZLE_CORRECTE_SOUND_URL);
-            } else {
-                playSound(PUZZLE_INCORRECTE_SOUND_URL);
+            if (!isRepeatedStatus) {
+                if (status === 'good') {
+                    playSound(PUZZLE_CORRECTE_SOUND_URL);
+                } else {
+                    playSound(PUZZLE_INCORRECTE_SOUND_URL);
+                }
             }
             return;
         }
@@ -324,10 +331,9 @@
 
         if (d.puzzle_solved && !solved) {
             solved = true;
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
-            setTimeout(() => {
+            playSound(PUZZLE_COMPLETE_SOUND_URL, () => {
                 window.location.href = '/puzzleSuperat/9';
-            }, 500);
+            });
         }
     }
 
