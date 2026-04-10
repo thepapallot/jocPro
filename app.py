@@ -318,5 +318,21 @@ def test_puzzle3_solution():
     }), 200
 
 
+@app.route('/test/puzzle6/solve', methods=['POST'])
+def test_puzzle6_solve():
+    data = request.get_json(silent=True) or {}
+    solve_value = data.get("solvePuzzle", True)
+    solve_puzzle = str(solve_value).strip().lower() in ("1", "true", "yes", "on")
+
+    puzzle6 = mqtt_client.puzzles.get(6)
+    if puzzle6 is None:
+        return jsonify({"error": "puzzle6_not_found"}), 404
+
+    with puzzle6.lock:
+        puzzle6.solvePuzzle = solve_puzzle
+
+    return jsonify({"status": "ok", "puzzle_id": 6, "solvePuzzle": solve_puzzle}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)

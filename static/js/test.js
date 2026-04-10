@@ -383,6 +383,8 @@
     startBtn: document.getElementById("test-start-btn"),
     restartBtn: document.getElementById("test-restart-btn"),
     viewBtn: document.getElementById("test-view-btn"),
+    solveBtn: document.getElementById("test-solve-btn"),
+    unsolveBtn: document.getElementById("test-unsolve-btn"),
     currentState: document.getElementById("test-current-state"),
     refreshStateBtn: document.getElementById("test-refresh-state-btn"),
     eventLog: document.getElementById("test-event-log"),
@@ -491,6 +493,7 @@
     els.formBuilder.innerHTML = "";
     els.referenceOutput.textContent = config.reference || "Sin referencia disponible.";
     updateTopicHelp();
+    updateSolveButtonState();
 
     config.fields.forEach((field) => {
       const wrapper = document.createElement("label");
@@ -1991,6 +1994,57 @@
       : `${config.label} arrancado`);
   }
 
+  function updateSolveButtonState() {
+    if (!els.solveBtn || !els.unsolveBtn) {
+      return;
+    }
+    const isPuzzle6 = els.puzzleSelect.value === "6";
+    els.solveBtn.hidden = !isPuzzle6;
+    els.solveBtn.disabled = !isPuzzle6;
+    els.unsolveBtn.hidden = !isPuzzle6;
+    els.unsolveBtn.disabled = !isPuzzle6;
+  }
+
+  async function solvePuzzle6() {
+    if (els.puzzleSelect.value !== "6") {
+      setStatus("Soluciona solo aplica a Puzzle 6");
+      return;
+    }
+
+    const response = await fetch("/test/puzzle6/solve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ solvePuzzle: true })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.error || "solve_failed");
+    }
+
+    setStatus("Puzzle 6 · solvePuzzle activado");
+    appendLog({ local: true, action: "puzzle6_solve_enabled", data });
+  }
+
+  async function unsolvePuzzle6() {
+    if (els.puzzleSelect.value !== "6") {
+      setStatus("Unsoluciona solo aplica a Puzzle 6");
+      return;
+    }
+
+    const response = await fetch("/test/puzzle6/solve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ solvePuzzle: false })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.error || "unsolve_failed");
+    }
+
+    setStatus("Puzzle 6 · solvePuzzle desactivado");
+    appendLog({ local: true, action: "puzzle6_solve_disabled", data });
+  }
+
   function openPuzzleView() {
     const config = getSelectedConfig();
     window.open(config.route, "_blank", "noopener");
@@ -2414,6 +2468,16 @@
       startPuzzle(true).catch((error) => appendLog({ error: String(error) }));
     });
     els.viewBtn.addEventListener("click", openPuzzleView);
+    if (els.solveBtn) {
+      els.solveBtn.addEventListener("click", () => {
+        solvePuzzle6().catch((error) => appendLog({ error: String(error) }));
+      });
+    }
+    if (els.unsolveBtn) {
+      els.unsolveBtn.addEventListener("click", () => {
+        unsolvePuzzle6().catch((error) => appendLog({ error: String(error) }));
+      });
+    }
     if (els.refreshStateBtn) {
       els.refreshStateBtn.addEventListener("click", () => {
         refreshCurrentState();
