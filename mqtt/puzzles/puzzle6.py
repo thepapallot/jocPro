@@ -15,6 +15,7 @@ class Puzzle6(BasePuzzle):
         self.last_reset_message = None
         self.monitor_thread = None
         self.last_sent_remaining = None
+        self.solvePuzzle = False
         
     def _start_countdown_locked(self):
         """Start or restart the countdown timer"""
@@ -71,6 +72,7 @@ class Puzzle6(BasePuzzle):
         """Full reset - restart countdown"""
         super().reset()
         with self.lock:
+            self.solvePuzzle = False
             if not self.solved:
                 self._start_countdown_locked()
                 
@@ -112,6 +114,9 @@ class Puzzle6(BasePuzzle):
         
         When a box loses power, trigger 10-second reset sequence
         """
+        if self.solvePuzzle:
+            return
+
         if len(parts) < 2:
             return
             
