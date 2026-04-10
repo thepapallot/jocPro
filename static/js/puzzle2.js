@@ -377,6 +377,20 @@
         });
     }
 
+    function syncMazeFrame() {
+        const imageArea = document.getElementById('image-area');
+        const mazeFrame = document.getElementById('p2-maze-frame');
+        if (!imageArea || !mazeFrame) return;
+
+        const availableWidth = imageArea.clientWidth;
+        const availableHeight = imageArea.clientHeight;
+        if (!availableWidth || !availableHeight) return;
+
+        const size = Math.max(0, Math.min(availableWidth, availableHeight));
+        mazeFrame.style.width = `${size}px`;
+        mazeFrame.style.height = `${size}px`;
+    }
+
     function syncSecuredList() {
         const securedArea = document.getElementById('p2-secured-area');
         const securedList = document.getElementById('p2-secured-list');
@@ -433,13 +447,27 @@
     document.addEventListener("DOMContentLoaded", () => {
         installDebugHelpers();
         initSSE();
-        requestAnimationFrame(() => requestAnimationFrame(syncSecuredList));
-        window.addEventListener('load', () => requestAnimationFrame(syncSecuredList));
-        window.addEventListener('resize', syncSecuredList);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            syncMazeFrame();
+            syncSecuredList();
+        }));
+        window.addEventListener('load', () => requestAnimationFrame(() => {
+            syncMazeFrame();
+            syncSecuredList();
+        }));
+        window.addEventListener('resize', () => {
+            syncMazeFrame();
+            syncSecuredList();
+        });
         if (window.ResizeObserver) {
-            const ro = new ResizeObserver(() => requestAnimationFrame(syncSecuredList));
+            const ro = new ResizeObserver(() => requestAnimationFrame(() => {
+                syncMazeFrame();
+                syncSecuredList();
+            }));
             const pa = document.getElementById('progress-area');
+            const ia = document.getElementById('image-area');
             if (pa) ro.observe(pa);
+            if (ia) ro.observe(ia);
         }
     });
 })();

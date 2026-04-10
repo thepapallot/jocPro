@@ -66,7 +66,7 @@ body::after {
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: minmax(260px, 22vw) minmax(0, 1fr);
+    grid-template-columns: clamp(260px, 24%, 420px) minmax(0, 1fr);
     gap: 18px;
     height: 100%;
     padding: 22px 28px 28px;
@@ -512,7 +512,7 @@ body::after {
 
 @media (max-width: 1180px) {
     #puzzle3-shell {
-        grid-template-columns: minmax(240px, 24vw) minmax(0, 1fr);
+        grid-template-columns: clamp(240px, 28%, 360px) minmax(0, 1fr);
     }
 }
 

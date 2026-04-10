@@ -11,35 +11,56 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <div id="game-stage">
+        <div id="game-frame"></div>
 
-    <div id="game-frame"></div>
+        <div id="top-area">
+            <div id="top-left" class="top-cell">
+                <span class="level-title">
+                    {% block level_title %}NIVEL {{ current_level if current_level else 1 }}{% endblock %}
+                </span>
+            </div>
 
-    <div id="top-area">
-        <div id="top-left" class="top-cell">
-            <span class="level-title">
-                {% block level_title %}NIVEL {{ current_level if current_level else 1 }}{% endblock %}
-            </span>
+            <div id="top-center" class="top-cell">
+                <img
+                    id="top-video"
+                    src="{{ url_for('static', filename='images/piramidetrans.png') }}"
+                    alt="Piramide"
+                >
+            </div>
+
+            <div id="top-right" class="top-cell">
+                {% block top_right %}
+                <div id="timer">02:00</div>
+                {% endblock %}
+            </div>
         </div>
 
-        <div id="top-center" class="top-cell">
-            <img
-                id="top-video"
-                src="{{ url_for('static', filename='images/piramidetrans.png') }}"
-                alt="Piramide"
-            >
+        <div id="bottom-area">
+            {% block puzzle_content %}{% endblock %}
         </div>
-
-        <div id="top-right" class="top-cell">
-            {% block top_right %}
-            <div id="timer">02:00</div>
-            {% endblock %}
-        </div>
-    </div>
-
-    <div id="bottom-area">
-        {% block puzzle_content %}{% endblock %}
     </div>
 
     {% block extra_js %}{% endblock %}
+    <script>
+    (function () {
+        const BASE_WIDTH = 1920;
+        const BASE_HEIGHT = 1080;
+        const stage = document.getElementById("game-stage");
+
+        function updateStageScale() {
+            if (!stage) return;
+            const scale = Math.min(
+                window.innerWidth / BASE_WIDTH,
+                window.innerHeight / BASE_HEIGHT
+            );
+
+            stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        }
+
+        window.addEventListener("resize", updateStageScale, { passive: true });
+        updateStageScale();
+    })();
+    </script>
 </body>
 </html>

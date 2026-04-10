@@ -20,8 +20,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 40px;
-    gap: 14px;
+    padding-top: 24px;
+    gap: 18px;
 }
 
 /* =========================
@@ -34,10 +34,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: min(88vw, 980px);
+    width: min(92vw, 1120px);
     box-sizing: border-box;
-    gap: 10px;
-    padding: 24px 40px;
+    gap: 12px;
+    padding: 20px 40px;
     border-radius: 24px;
     background: rgba(7,16,31,0.85);
     border: 1px solid rgba(69,230,255,0.25);
@@ -418,18 +418,18 @@
     display: grid;
     flex: 1 1 auto;
     min-height: 0;
-    align-content: start;
+    align-content: center;
     justify-content: center;
-    width: calc(100vw - 40px);
-    max-width: 1600px;
-    padding: 0 20px;
+    width: min(1280px, calc(100vw - 48px));
+    max-width: 100%;
+    padding: 0 24px 18px;
     box-sizing: border-box;
-    margin-top: 6px;
+    margin-top: 0;
 }
 
 #puzzle-container.round-1 {
-    grid-template-columns: repeat(2, minmax(240px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    gap: 28px;
 }
 
 #puzzle-container.round-2 {
@@ -461,7 +461,7 @@
 
 @media (max-height: 980px) {
     #bottom-area {
-        padding-top: 28px;
+        padding-top: 20px;
         gap: 10px;
     }
 
@@ -498,12 +498,12 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: 132px;
-    height: clamp(132px, 17vh, 176px);
+    min-height: 148px;
+    height: clamp(148px, 18vh, 192px);
     border-radius: 20px;
     background: rgba(7,16,31,0.94);
     border: 1px solid rgba(69,230,255,0.30);
-    font-size: clamp(2.4rem, 3.8vw, 3.4rem);
+    font-size: clamp(2.4rem, 3.1vw, 3.4rem);
     font-weight: 800;
     color: var(--cyan-strong);
     box-shadow:
@@ -579,7 +579,7 @@
 @media (max-width: 900px) {
     #bottom-area {
         height: calc(100% - 150px);
-        gap: 28px;
+        gap: 20px;
     }
 
     #objective-panel {

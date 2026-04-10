@@ -162,15 +162,15 @@ body.p2-solved #p2-status-copy {
     isolation: isolate;
     height: 100%;
     min-height: 0;
-    padding: 8px 12px 12px;
+    padding: 4px 8px 8px;
     overflow: hidden;
 }
 
 #puzzle2-layout {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(300px, 36vw) clamp(70px, 8vw, 100px) minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: clamp(420px, 42%, 760px) clamp(48px, 3.5%, 72px) minmax(0, 1fr);
+    gap: 10px;
     align-items: stretch;
     height: 100%;
     min-height: 0;
@@ -233,8 +233,8 @@ body.p2-solved #p2-status-copy {
 .p2-divider-node {
     position: absolute;
     left: 50%;
-    width: clamp(24px, 2.4vw, 30px);
-    height: clamp(24px, 2.4vw, 30px);
+    width: clamp(24px, 1.4rem, 30px);
+    height: clamp(24px, 1.4rem, 30px);
     transform: translateX(-50%);
     border-radius: 999px;
     border: 1px solid rgba(69, 230, 255, 0.34);
@@ -341,7 +341,7 @@ body.p2-solved #p2-status-copy {
     width: auto;
     display: flex;
     flex-direction: column;
-    padding: 20px 18px 18px;
+    padding: 14px 12px 12px;
     min-height: 0;
     background:
         linear-gradient(180deg, rgba(7, 15, 29, 0.76) 0%, rgba(4, 10, 20, 0.7) 100%);
@@ -356,7 +356,7 @@ body.p2-solved #p2-status-copy {
     align-items: center;
     column-gap: 10px;
     row-gap: 0;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     padding: 0;
     min-height: 0;
     border: 0;
@@ -525,7 +525,7 @@ body.p2-solved #p2-status-copy {
     border-radius: 26px;
     display: flex;
     flex-direction: column;
-    padding: 4px;
+    padding: 2px;
     min-height: 0;
 }
 
@@ -553,21 +553,23 @@ body.p2-solved #p2-status-copy {
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
     flex: 1;
     min-height: 0;
     justify-content: space-between;
-    padding-left: 8px;
+    padding-left: 4px;
+    padding-right: 2px;
+    overflow: hidden;
 }
 
 .player-row {
     display: grid;
-    grid-template-columns: 70px minmax(0, 1fr);
+    grid-template-columns: 60px minmax(0, 1fr);
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     min-height: 0;
     flex: 1;
-    padding: 6px 4px 6px 10px;
+    padding: 4px 4px 4px 8px;
     border-radius: 16px;
     background:
         linear-gradient(90deg, rgba(255,255,255,0.014), rgba(255,255,255,0)),
@@ -630,7 +632,7 @@ body.p2-solved #p2-status-copy {
     position: relative;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 6px;
+    gap: 4px;
     align-items: center;
     height: 100%;
     width: 100%;
@@ -641,7 +643,7 @@ body.p2-solved #p2-status-copy {
 .progress-cell {
     position: relative;
     height: 100%;
-    min-height: 32px;
+    min-height: 26px;
     border: 1px solid rgba(69, 230, 255, 0.1);
     border-radius: 9px;
     background:
@@ -713,10 +715,10 @@ body.p2-solved #p2-status-copy {
     z-index: 1;
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
     min-height: 0;
-    padding: 8px 14px 10px;
+    padding: 4px 8px 6px;
     background:
         radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), transparent 60%),
         radial-gradient(circle at 50% 50%, rgba(103, 217, 255, 0.03), transparent 72%);
@@ -726,11 +728,12 @@ body.p2-solved #p2-status-copy {
 #p2-maze-frame {
     position: relative;
     z-index: 1;
-    display: inline-block;
-    width: min(100%, calc(100dvh - 150px));
+    display: block;
+    width: auto;
+    height: 100%;
     aspect-ratio: 1 / 1;
     max-width: 100%;
-    max-height: calc(100% - 4px);
+    max-height: 100%;
     box-sizing: border-box;
     border: 1px solid rgba(145, 240, 255, 0.42);
     box-shadow:
@@ -776,6 +779,10 @@ body.p2-solved #p2-status-copy {
     #p2-side-level {
         padding-left: 14px;
         font-size: clamp(1.9rem, 3.2vw, 3.2rem);
+    }
+
+    #image-area {
+        padding: 2px 6px 4px;
     }
 
     #players {
@@ -979,7 +986,7 @@ body.alarm-mode #p2-maze-frame {
     }
 
     #puzzle2-layout {
-        grid-template-columns: minmax(272px, 40vw) clamp(30px, 3.5vw, 44px) minmax(0, 1fr);
+        grid-template-columns: clamp(272px, 34%, 360px) clamp(30px, 4%, 44px) minmax(0, 1fr);
     }
 
     #progress-area {
@@ -1037,7 +1044,7 @@ body.alarm-mode #p2-maze-frame {
     }
 
     #puzzle2-layout {
-        grid-template-columns: minmax(216px, 45vw) clamp(24px, 3vw, 34px) minmax(0, 1fr);
+        grid-template-columns: clamp(216px, 38%, 300px) clamp(24px, 4%, 34px) minmax(0, 1fr);
         gap: 10px;
     }
 
