@@ -2,9 +2,9 @@
   "scene_id": "scene_intro_game_test",
   "description": "Base de produccion para la intro general del juego, ajustada al audio y subtitulos oficiales del game master.",
   "ui_titles": {
-    "top": "OBJETIVO",
-    "left": "ELEMENTOS",
-    "right": "ATENCIÓN"
+    "top": "MISIÓN",
+    "left": "RECURSOS",
+    "right": "PROTOCOLO"
   },
   "audio": {
     "src": "/static/audios/scene/intro_game_master.wav"
@@ -119,15 +119,15 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_chin_lift_center.mp4",
-      "clip_start": 0.2,
-      "clip_end": 4.2,
+      "src": "/static/videos/characters/character_idle_center_a.mp4",
+      "clip_start": 0.1,
+      "clip_end": 4.1,
       "duration": 4,
       "label": "cero_open"
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_head_tilt_center.mp4",
+      "src": "/static/videos/characters/character_subtle_expression_center.mp4",
       "clip_start": 0.1,
       "clip_end": 3.699,
       "duration": 3.599,
@@ -138,67 +138,123 @@
       }
     },
     {
+      "type": "transition",
+      "duration": 7.201,
+      "variant": "gm-hybrid",
+      "video": "/static/videos/game_master/network_core.mp4",
+      "clip_start": 0,
+      "clip_end": 8,
+      "badges": [
+        "ADN"
+      ],
+      "title": "PATRONES HUMANOS"
+    },
+    {
+      "type": "transition",
+      "duration": 10.2,
+      "variant": "gm-hybrid",
+      "video": "/static/videos/game_master/city_wireframe.mp4",
+      "clip_start": 0,
+      "clip_end": 8,
+      "badges": [
+        "SELECCIÓN",
+        "POTENCIAL"
+      ],
+      "title": "CAPACIDAD EXCEPCIONAL"
+    },
+    {
       "type": "character",
       "src": "/static/videos/characters/character_hold_center_medium.mp4",
       "clip_start": 0.15,
-      "clip_end": 7.75,
-      "duration": 11.6,
-      "label": "cero_presentacion"
+      "clip_end": 5.95,
+      "duration": 5.8,
+      "label": "cero_trabajo_comun"
     },
     {
       "type": "transition",
-      "duration": 11.601,
-      "video": "/static/videos/game_master/network_core.mp4",
-      "clip_start": 0
+      "duration": 4.599,
+      "variant": "gm-hybrid",
+      "image": "/static/images/piramidetrans.png",
+      "badges": [
+        "OBJETIVO",
+        "COMÚN"
+      ],
+      "title": "UN MISMO RUMBO"
     },
     {
       "type": "transition",
-      "duration": 10.319,
-      "video": "/static/videos/game_master/city_wireframe.mp4",
-      "clip_start": 0
+      "duration": 5.72,
+      "variant": "gm-hybrid",
+      "video": "/static/videos/Video_inicial.mp4",
+      "clip_start": 0,
+      "clip_end": 5.040998,
+      "badges": [
+        "LEGADOS",
+        "ESCALA"
+      ],
+      "title": "OBRAS COLOSALES"
     },
     {
       "type": "transition",
       "duration": 4.381,
+      "variant": "gm-hybrid",
       "video": "/static/videos/game_master/pyramid_outline.mp4",
-      "clip_start": 0
-    },
-    {
-      "type": "transition",
-      "duration": 5.041,
-      "video": "/static/videos/Video_inicial.mp4",
-      "clip_start": 0
-    },
-    {
-      "type": "transition",
-      "duration": 8.659,
-      "video": "/static/videos/game_master/pyramid_bricks.mp4",
-      "clip_start": 0
+      "clip_start": 0,
+      "clip_end": 4.381,
+      "badges": [
+        "EQUILIBRIO",
+        "ESFUERZO",
+        "PRECISIÓN"
+      ],
+      "title": "LA PIRÁMIDE"
     },
     {
       "type": "transition",
       "duration": 5.7,
-      "variant": "gm-icon",
-      "image": "/static/images/puzzle1/caixa.png",
-      "alt": "Icono de terminal"
-    },
-    {
-      "type": "transition",
-      "duration": 5.5,
-      "variant": "gm-icon",
-      "image": "/static/images/puzzle1/tarjeta.png",
-      "alt": "Icono de token"
-    },
-    {
-      "type": "transition",
-      "duration": 5.16,
-      "variant": "gm-icon",
-      "image": "/static/images/puzzle1/tarjeta.png",
-      "alt": "Icono de token"
+      "variant": "gm-hybrid",
+      "video": "/static/videos/game_master/pyramid_bricks.mp4",
+      "clip_start": 0,
+      "clip_end": 5.041667,
+      "badges": [
+        "RETOS",
+        "EQUIPO"
+      ],
+      "title": "SERIE DE RETOS"
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_expressive_center.mp4",
+      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "clip_start": 0,
+      "clip_end": 8,
+      "duration": 8,
+      "label": "cero_vuestra_piramide"
+    },
+    {
+      "type": "transition",
+      "duration": 5.7,
+      "variant": "gm-hybrid",
+      "image": "/static/images/puzzle1/caixa.png",
+      "badges": [
+        "10",
+        "TERMINALES"
+      ],
+      "title": "PUESTOS DE JUEGO"
+    },
+    {
+      "type": "transition",
+      "duration": 10.66,
+      "variant": "gm-hybrid",
+      "image": "/static/images/puzzle1/tarjeta.png",
+      "badges": [
+        "TOKENS",
+        "PERSONALES",
+        "INTRANSFERIBLES"
+      ],
+      "title": "ACTIVACIÓN"
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/character_head_tilt_center.mp4",
       "clip_start": 0.2,
       "clip_end": 6.92,
       "duration": 6.72,
@@ -206,9 +262,9 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 0.05,
-      "clip_end": 8.05,
+      "src": "/static/videos/characters/character_expressive_center.mp4",
+      "clip_start": 0,
+      "clip_end": 8,
       "duration": 8,
       "label": "cero_herramientas"
     },
