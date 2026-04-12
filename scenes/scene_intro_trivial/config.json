@@ -1,5 +1,5 @@
 {
-  "scene_id": "scene_video3_test",
+  "scene_id": "scene_intro_trivial",
   "description": "Base de produccion para la intro del puzzle 3, ajustada al audio y subtitulos oficiales.",
   "ui_titles": {
     "top": "OBJETIVO",

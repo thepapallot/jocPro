@@ -1,4 +1,4 @@
-const DEFAULT_SCENE_ID = "scene_video1_test";
+const DEFAULT_SCENE_ID = "scene_intro_sumas";
 const EPSILON = 0.12;
 
 const elements = {
@@ -121,6 +121,19 @@ function AssetsGrid(assets = []) {
     });
 
     return grid;
+}
+
+function updateAssetGridClasses(grid, assets = []) {
+    const iconOnly = assets.every((asset) => !asset.label && !asset.text);
+    grid.classList.toggle("asset-grid--icons", iconOnly);
+    Array.from(grid.classList).forEach((className) => {
+        if (className.startsWith("asset-grid--icons-")) {
+            grid.classList.remove(className);
+        }
+    });
+    if (iconOnly) {
+        grid.classList.add(`asset-grid--icons-${assets.length}`);
+    }
 }
 
 function zoneHasContent(zone) {
@@ -449,9 +462,7 @@ function updateZoneSlot(card, zone, { animate = false } = {}) {
                 text: asset.text || "",
             }));
             const prefixMatches = currentKeys.every((key, index) => key === nextKeys[index]);
-            const nextIconOnly = zone.assets.every((asset) => !asset.label && !asset.text);
-
-            currentAssets.classList.toggle("asset-grid--icons", nextIconOnly);
+            updateAssetGridClasses(currentAssets, zone.assets);
 
             if (!prefixMatches || currentKeys.length > nextKeys.length) {
                 const nextGrid = AssetsGrid(zone.assets);
@@ -584,6 +595,11 @@ function TransitionScreen(segment) {
         return screen;
     }
 
+    if (segment.variant === "gm-hybrid") {
+        screen.appendChild(GameMasterHybridTransition(segment));
+        return screen;
+    }
+
     const labelInsideMedia = Boolean(segment.image && segment.label && segment.variant === "maze");
 
     if (segment.video) {
@@ -594,32 +610,7 @@ function TransitionScreen(segment) {
             );
         }
 
-        const video = document.createElement("video");
-        video.className = "transition-screen__video";
-        video.src = segment.video;
-        video.muted = true;
-        video.autoplay = true;
-        video.loop = false;
-        video.playsInline = true;
-        video.preload = "auto";
-
-        const clipStart = Number(segment.clip_start || 0);
-        if (clipStart > 0) {
-            const seekToStart = () => {
-                try {
-                    video.currentTime = clipStart;
-                } catch (error) {
-                    console.warn("No s'ha pogut posicionar el clip de transicio:", error);
-                }
-            };
-            video.addEventListener("loadedmetadata", seekToStart, { once: true });
-        }
-
-        video.addEventListener("canplay", () => {
-            video.play().catch((error) => {
-                console.warn("No s'ha pogut reproduir el video de transicio:", error);
-            });
-        }, { once: true });
+        const video = createTransitionVideoElement(segment, "transition-screen__video");
 
         media.appendChild(video);
         screen.appendChild(media);
@@ -642,6 +633,41 @@ function TransitionScreen(segment) {
         screen.appendChild(createElement("div", "transition-screen__label", segment.label));
     }
     return screen;
+}
+
+function createTransitionVideoElement(segment, className = "transition-screen__video") {
+    const video = document.createElement("video");
+    const clipStart = Number(segment.clip_start || 0);
+    const canUseNativeLoop = Boolean(segment.loopsMedia && clipStart <= EPSILON);
+    video.className = className;
+    video.src = segment.video;
+    video.muted = true;
+    video.autoplay = true;
+    video.loop = canUseNativeLoop;
+    video.playsInline = true;
+    video.preload = "auto";
+
+    if (clipStart > 0) {
+        const seekToStart = () => {
+            try {
+                video.currentTime = clipStart;
+            } catch (error) {
+                console.warn("No s'ha pogut posicionar el clip de transicio:", error);
+            }
+        };
+        video.addEventListener("loadedmetadata", seekToStart, { once: true });
+    }
+
+    video.addEventListener("canplay", () => {
+        video.play().catch((error) => {
+            console.warn("No s'ha pogut reproduir el video de transicio:", error);
+        });
+    }, { once: true });
+
+    if (!canUseNativeLoop) {
+        attachSegmentVideoLoop(video, segment);
+    }
+    return video;
 }
 
 function Puzzle6TokenMap(segment) {
@@ -927,6 +953,65 @@ function GameMasterTerminalTransition(segment) {
     return media;
 }
 
+function GameMasterHybridTransition(segment) {
+    const media = createElement("div", "transition-screen__media transition-screen__media--gm-hybrid");
+    const layout = createElement("div", "gm-hybrid");
+    const visual = createElement("div", "gm-hybrid__visual");
+    const side = createElement("div", "gm-hybrid__side");
+    const copy = createElement("div", "gm-hybrid__copy");
+    const badges = createElement("div", "gm-hybrid__badges");
+
+    if (segment.layout === "image-left") {
+        layout.classList.add("gm-hybrid--image-left");
+    }
+
+    if (!segment.video && segment.image) {
+        layout.classList.add("gm-hybrid--image-only");
+    }
+
+    if (segment.video) {
+        const videoFrame = createElement("div", "gm-hybrid__video-frame");
+        videoFrame.appendChild(createTransitionVideoElement(segment, "gm-hybrid__video"));
+        visual.appendChild(videoFrame);
+    }
+
+    if (segment.image) {
+        const imageFrame = createElement("div", "gm-hybrid__image-frame");
+        const image = document.createElement("img");
+        image.className = "gm-hybrid__image";
+        image.src = segment.image;
+        image.alt = segment.alt || segment.title || "Transition";
+        imageFrame.appendChild(image);
+        side.appendChild(imageFrame);
+    }
+
+    (segment.badges || []).forEach((badgeText) => {
+        badges.appendChild(createElement("div", "gm-hybrid__badge", badgeText));
+    });
+
+    if (badges.childElementCount) {
+        copy.appendChild(badges);
+    }
+
+    if (segment.kicker) {
+        copy.appendChild(createElement("div", "gm-hybrid__kicker", segment.kicker));
+    }
+
+    if (segment.title) {
+        copy.appendChild(createElement("div", "gm-hybrid__title", segment.title));
+    }
+
+    if (segment.text) {
+        copy.appendChild(createElement("div", "gm-hybrid__text", segment.text));
+    }
+
+    side.appendChild(copy);
+    layout.appendChild(visual);
+    layout.appendChild(side);
+    media.appendChild(layout);
+    return media;
+}
+
 function normalizeSubtitles(scene) {
     return Array.isArray(scene.subtitles)
         ? scene.subtitles
@@ -967,9 +1052,19 @@ function normalizeScene(scene) {
             throw new Error(`Segment invalid sense durada: ${segmentWithTitles.type}`);
         }
 
+        const clipStart = Number(segmentWithTitles.clip_start || 0);
+        const clipEnd = segmentWithTitles.clip_end != null
+            ? Number(segmentWithTitles.clip_end)
+            : null;
+        const mediaDurationSeconds = clipEnd != null
+            ? Math.max(0, clipEnd - clipStart)
+            : null;
+
         const normalized = {
             ...segmentWithTitles,
             durationSeconds,
+            mediaDurationSeconds,
+            loopsMedia: Boolean(mediaDurationSeconds && durationSeconds - mediaDurationSeconds > EPSILON),
             timelineStart: accumulated,
             timelineEnd: accumulated + durationSeconds,
         };
@@ -985,6 +1080,43 @@ function normalizeScene(scene) {
         segments,
         subtitles: normalizeSubtitles(scene),
     };
+}
+
+function getSegmentMediaTime(segment, elapsedSeconds) {
+    const clipStart = Number(segment.clip_start || 0);
+    const mediaDurationSeconds = Number(segment.mediaDurationSeconds || 0);
+
+    if (segment.loopsMedia && mediaDurationSeconds > EPSILON) {
+        return clipStart + (elapsedSeconds % mediaDurationSeconds);
+    }
+
+    if (mediaDurationSeconds > EPSILON) {
+        return clipStart + Math.min(elapsedSeconds, mediaDurationSeconds);
+    }
+
+    return clipStart + elapsedSeconds;
+}
+
+function attachSegmentVideoLoop(video, segment) {
+    if (!segment.loopsMedia) {
+        return;
+    }
+
+    const clipStart = Number(segment.clip_start || 0);
+    const clipEnd = Number(segment.clip_end || 0);
+
+    if (clipEnd - clipStart <= EPSILON) {
+        return;
+    }
+
+    video.addEventListener("timeupdate", () => {
+        if (video.currentTime >= clipEnd - EPSILON) {
+            video.currentTime = clipStart;
+            if (!video.paused) {
+                video.play().catch(() => {});
+            }
+        }
+    });
 }
 
 function applyBroadcastOverlay(segment) {
@@ -1481,7 +1613,7 @@ class ScenePlayer {
             const elapsedInSegment = this.hasMasterAudio()
                 ? Math.max(0, sceneTime - segment.timelineStart)
                 : this.segmentElapsed;
-            const clipTime = Number(segment.clip_start || 0) + elapsedInSegment;
+            const clipTime = getSegmentMediaTime(segment, elapsedInSegment);
 
             if (elements.video.dataset.src !== segment.src) {
                 elements.video.src = segment.src;
@@ -1489,9 +1621,11 @@ class ScenePlayer {
                 elements.video.load();
             }
 
+            elements.video.loop = segment.loopsMedia && !segment.clip_end;
             elements.video.currentTime = clipTime;
         } else {
             elements.video.pause();
+            elements.video.loop = false;
         }
 
         if (!autoplay) {
@@ -1558,6 +1692,16 @@ class ScenePlayer {
             return;
         }
 
+        if (this.currentSegment.loopsMedia) {
+            const clipStart = Number(this.currentSegment.clip_start || 0);
+            const clipEnd = Number(this.currentSegment.clip_end || 0);
+
+            if (clipEnd - clipStart > EPSILON && elements.video.currentTime >= clipEnd - EPSILON) {
+                elements.video.currentTime = clipStart;
+                return;
+            }
+        }
+
         this.updateSubtitleOverlay();
 
         const elapsed = this.hasMasterAudio()
@@ -1570,7 +1714,7 @@ class ScenePlayer {
     }
 
     onVideoEnded() {
-        if (this.playing && this.currentSegment.type === "character") {
+        if (this.playing && this.currentSegment.type === "character" && !this.currentSegment.loopsMedia) {
             this.advanceSegment();
         }
     }

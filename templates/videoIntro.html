@@ -6,7 +6,7 @@
 <body>
     <p>Redirigiendo a la nueva intro…</p>
     <script>
-        const target = `{{ url_for('scene_player') }}?scene=scene_intro_game_test&next=${encodeURIComponent({{ url_for('welcome', redirect_flag='puzzle1')|tojson }})}`;
+        const target = `{{ url_for('scene_player') }}?scene=scene_intro_game&next=${encodeURIComponent({{ url_for('welcome', redirect_flag='puzzle1')|tojson }})}`;
         window.location.replace(target);
     </script>
 </body>

@@ -10,6 +10,20 @@
             overflow: hidden;
             background: black;
         }
+        #intro-stage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            transform-origin: center center;
+        }
+        #intro-stage video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         video {
             width: 100vw;
             height: 100vh;
@@ -35,16 +49,19 @@
     </style>
 </head>
 <body>
-    <video id="intro" width="800" playsinline preload="auto">
-        <source src="{{ url_for('static', filename='videos/JocsSuperats/JocSuperat' + idx_puzzle_id|string + '.mp4') }}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <button id="video-start-overlay" class="video-start-overlay" type="button">
-        Clica para reproducir el video
-    </button>
+    <div id="intro-stage">
+        <video id="intro" width="800" playsinline preload="auto">
+            <source src="{{ url_for('static', filename='videos/JocsSuperats/JocSuperat' + idx_puzzle_id|string + '.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <button id="video-start-overlay" class="video-start-overlay" type="button">
+            Clica para reproducir el video
+        </button>
+    </div>
     <script>
         const video = document.getElementById('intro');
         const overlay = document.getElementById('video-start-overlay');
+        const stage = document.getElementById('intro-stage');
         const nextPuzzleIndexStr = "{{ idx_puzzle_id }}"; // current (1-based) solved puzzle position
         const currentIndex = nextPuzzleIndexStr ? parseInt(nextPuzzleIndexStr, 10) : null;
         const nextPuzzleIndex = (currentIndex === null || Number.isNaN(currentIndex)) ? null : (currentIndex + 1);
@@ -80,6 +97,15 @@
             }
         }
 
+        function updateStageScale() {
+            if (!stage) return;
+            const scale = Math.min(
+                window.innerWidth / 1920,
+                window.innerHeight / 1080
+            );
+            stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        }
+
         overlay.addEventListener('click', () => startVideo({ fromUserGesture: true }));
 
         video.addEventListener('click', () => {
@@ -105,6 +131,8 @@
             }
         };
 
+        window.addEventListener('resize', updateStageScale, { passive: true });
+        updateStageScale();
         startVideo();
     </script>
 </body>

@@ -6,7 +6,7 @@
 <body>
     <p>Redirigiendo a la nueva intro final…</p>
     <script>
-        const target = `{{ url_for('scene_player') }}?scene=scene_videoFinal_test&next=${encodeURIComponent({{ url_for('puzzle_final')|tojson }})}`;
+        const target = `{{ url_for('scene_player') }}?scene=scene_video_final&next=${encodeURIComponent({{ url_for('puzzle_final')|tojson }})}`;
         window.location.replace(target);
     </script>
 </body>

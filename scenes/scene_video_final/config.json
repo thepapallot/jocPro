@@ -1,5 +1,5 @@
 {
-  "scene_id": "scene_videoFinal_test",
+  "scene_id": "scene_video_final",
   "description": "Base de produccion para la intro del juego final, ajustada al audio y subtitulos oficiales.",
   "ui_titles": {
     "top": "OBJETIVO",

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from flask import Flask, render_template, redirect, url_for, request, Response, jsonify, stream_with_context, send_from_directory, abort
 from mqtt import MQTTClient, create_puzzles
-from config import PUZZLE_ORDER, PROVA_FINAL  # Import PUZZLE_ORDER from config.py
+from config import PUZZLE_ORDER, PUZZLE_ALIASES, PROVA_FINAL  # Import config from config.py
 import queue
 import json
 import threading
@@ -11,6 +11,19 @@ app = Flask(__name__)
 BASE_DIR = Path(__file__).resolve().parent
 
 mqtt_client = MQTTClient(app, puzzle_order=PUZZLE_ORDER)
+
+LEGACY_ALIAS_TO_SCENE = {
+    "sumas": "scene_intro_sumas",
+    "laberinto": "scene_intro_laberinto",
+    "trivial": "scene_intro_trivial",
+    "musica": "scene_intro_musica",
+    "cronometro": "scene_intro_cronometro",
+    "energia": "scene_intro_energia",
+    "segments": "scene_intro_segments",
+    "segments dificil": "scene_intro_segments",
+    "memory": "scene_intro_memory",
+    "token a lloc": "scene_intro_token_a_lloc",
+}
 
 # Create puzzles based on PUZZLE_ORDER
 create_puzzles(mqtt_client, PUZZLE_ORDER)
@@ -25,6 +38,23 @@ def push_state_update(data):
             q.put(data)
 
 mqtt_client.set_update_callback(push_state_update)
+
+def resolve_intro_scene_for_puzzle(puzzle_id):
+    alias = PUZZLE_ALIASES.get(puzzle_id)
+    if not alias:
+        return None
+
+    alias = str(alias).strip().lower()
+    candidate = LEGACY_ALIAS_TO_SCENE.get(alias, alias)
+
+    if not candidate.startswith("scene_"):
+        candidate = f"scene_intro_{candidate}"
+
+    scene_dir = (BASE_DIR / "scenes" / candidate)
+    if (scene_dir / "config.json").exists():
+        return candidate
+
+    return None
 
 # Routes
 @app.route('/')
@@ -51,23 +81,11 @@ def welcome():
 @app.route('/videoIntro')
 def play_video_intro():
     next_url = url_for('welcome', redirect_flag='puzzle1')
-    target = f"{url_for('scene_player')}?scene=scene_intro_game_test&next={next_url}"
+    target = f"{url_for('scene_player')}?scene=scene_intro_game&next={next_url}"
     return redirect(target)
 
 @app.route('/videoPuzzles/<int:idx_puzzle_id>', methods=['GET','POST'])
 def play_video_puzzles(idx_puzzle_id): 
-    scene_map = {
-        1: 'scene_video1_test',
-        2: 'scene_video2_test',
-        3: 'scene_video3_test',
-        4: 'scene_video4_test',
-        5: 'scene_video5_test',
-        6: 'scene_video6_test',
-        8: 'scene_video8_test',
-        9: 'scene_video9_test',
-        10: 'scene_video10_test',
-    }
-
     puzzle_id = None
     if 1 <= idx_puzzle_id <= len(PUZZLE_ORDER):
         puzzle_id = PUZZLE_ORDER[idx_puzzle_id - 1]
@@ -75,7 +93,8 @@ def play_video_puzzles(idx_puzzle_id):
     if puzzle_id is None:
         return redirect(url_for('welcome'))
 
-    scene_id = scene_map.get(idx_puzzle_id)
+    scene_id = resolve_intro_scene_for_puzzle(puzzle_id)
+
     next_url = url_for('puzzle', puzzle_id=puzzle_id)
 
     if not scene_id:
@@ -117,7 +136,7 @@ def puzzle_superat(puzzle_id):
 @app.route('/videoJocFinal', methods=['GET','POST'])
 def play_joc_final(): 
     next_url = url_for('puzzle_final')
-    target = f"{url_for('scene_player')}?scene=scene_videoFinal_test&next={next_url}"
+    target = f"{url_for('scene_player')}?scene=scene_video_final&next={next_url}"
     return redirect(target)
 
 
@@ -257,7 +276,12 @@ def timer_expired():
 ##### Entorn de desenvolupament per fer Tests#####
 @app.route('/test', methods=['GET'])
 def test_lab():
-    return render_template('test.html', current_level=0)
+    return render_template(
+        'test.html',
+        current_level=0,
+        test_puzzle_order=PUZZLE_ORDER,
+        test_puzzle_aliases=PUZZLE_ALIASES
+    )
 
 @app.route('/test/send', methods=['POST'])
 def test_send_message():

@@ -26,7 +26,7 @@ python3 app.py
 Abrir:
 
 ```text
-http://127.0.0.1:5000/player/?scene=scene_video1_test
+http://127.0.0.1:5000/player/?scene=scene_intro_sumas
 ```
 
 El player intenta arrancar automáticamente si el navegador permite autoplay.
@@ -43,7 +43,7 @@ El player intenta arrancar automáticamente si el navegador permite autoplay.
 - `player/main.js`: motor de timeline, audio, acumulación de UI, subtítulos y SFX
 - `player/styles.css`: sistema visual fullscreen
 - `player/CHARACTER_CLIPS.md`: clasificación narrativa de los clips del personaje
-- `scenes/scene_video1_test/config.json`: prueba real del puzzle 1
+- `scenes/scene_intro_sumas/config.json`: prueba real del puzzle 1
 - `scenes/puzzle_intro_template.json`: plantilla maestra para futuros puzzles
 
 ## Concepto de escena
@@ -239,7 +239,7 @@ La guía de uso está en:
 
 ## Estado actual
 
-- `scene_video1_test` ya funciona como prueba real del puzzle 1
+- `scene_intro_sumas` ya funciona como prueba real del puzzle 1
 - usa audio independiente
 - usa iconos reales del juego
 - usa subtítulos sincronizados
