@@ -52,7 +52,7 @@
 
 {% block extra_js %}
 <script>
-window.PUZZLE_FINAL_OUTRO_URL = "{{ url_for('scene_player') }}?scene=scene_outro_game_test&next={{ url_for('final_loop') | urlencode }}";
+window.PUZZLE_FINAL_OUTRO_URL = "{{ url_for('scene_player') }}?scene=scene_outro_game&next={{ url_for('final_loop') | urlencode }}";
 </script>
 <script src="{{ url_for('static', filename='js/puzzleFinal.js') }}"></script>
 {% endblock %}

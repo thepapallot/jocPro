@@ -1,5 +1,5 @@
 {
-  "scene_id": "scene_video2_test",
+  "scene_id": "scene_intro_laberinto",
   "description": "Base de produccion para la intro del puzzle 2, replicando la estructura del video original sin audio separado.",
   "ui_titles": {
     "top": "OBJETIVO",

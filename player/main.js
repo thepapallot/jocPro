@@ -1,4 +1,4 @@
-const DEFAULT_SCENE_ID = "scene_video1_test";
+const DEFAULT_SCENE_ID = "scene_intro_sumas";
 const EPSILON = 0.12;
 
 const elements = {
@@ -121,6 +121,19 @@ function AssetsGrid(assets = []) {
     });
 
     return grid;
+}
+
+function updateAssetGridClasses(grid, assets = []) {
+    const iconOnly = assets.every((asset) => !asset.label && !asset.text);
+    grid.classList.toggle("asset-grid--icons", iconOnly);
+    Array.from(grid.classList).forEach((className) => {
+        if (className.startsWith("asset-grid--icons-")) {
+            grid.classList.remove(className);
+        }
+    });
+    if (iconOnly) {
+        grid.classList.add(`asset-grid--icons-${assets.length}`);
+    }
 }
 
 function zoneHasContent(zone) {
@@ -449,9 +462,7 @@ function updateZoneSlot(card, zone, { animate = false } = {}) {
                 text: asset.text || "",
             }));
             const prefixMatches = currentKeys.every((key, index) => key === nextKeys[index]);
-            const nextIconOnly = zone.assets.every((asset) => !asset.label && !asset.text);
-
-            currentAssets.classList.toggle("asset-grid--icons", nextIconOnly);
+            updateAssetGridClasses(currentAssets, zone.assets);
 
             if (!prefixMatches || currentKeys.length > nextKeys.length) {
                 const nextGrid = AssetsGrid(zone.assets);

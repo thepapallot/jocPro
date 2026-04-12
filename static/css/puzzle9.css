@@ -96,6 +96,7 @@ body::after {
     display: block;
     height: 100%;
     padding: 22px 28px 28px;
+    container-type: size;
 }
 
 .p9-panel {
@@ -147,7 +148,7 @@ body::after {
     border-radius: 18px;
     background: rgba(9, 18, 33, 0.9);
     color: #f2fbff;
-    font-size: clamp(0.94rem, 0.9vw, 1.14rem);
+    font-size: clamp(0.94rem, 0.9cqw, 1.14rem);
     line-height: 1.45;
     text-align: center;
     text-wrap: balance;
@@ -181,7 +182,7 @@ body::after {
     height: auto;
     padding: 0;
     border-radius: 0;
-    font-size: clamp(1.8rem, 1.6vw, 2.45rem);
+    font-size: clamp(1.8rem, 1.6cqw, 2.45rem);
     font-weight: 900;
     letter-spacing: 0.04em;
     line-height: 1;
@@ -196,6 +197,7 @@ body::after {
 .p9-clue-copy {
     display: block;
     font-size: inherit;
+    overflow-wrap: anywhere;
 }
 
 .p9-clue-card.tone-cyan {
@@ -278,7 +280,7 @@ body::after {
     align-content: start;
     justify-items: center;
     min-height: calc(var(--p9-box-size) * 1.08);
-    padding: clamp(8px, 0.9vw, 12px) clamp(8px, 0.9vw, 12px) clamp(10px, 1vw, 14px);
+    padding: clamp(8px, 0.9cqw, 12px) clamp(8px, 0.9cqw, 12px) clamp(10px, 1cqw, 14px);
     border-radius: 20px;
     border: 1px solid rgba(89, 231, 255, 0.15);
     background:
@@ -350,7 +352,7 @@ body::after {
 .p9-token-value {
     display: none;
     color: #effbff;
-    font-size: clamp(1.65rem, 2vw, 2.25rem);
+    font-size: clamp(1.65rem, 2cqw, 2.25rem);
     font-weight: 800;
     line-height: 1;
     text-shadow:
@@ -372,7 +374,7 @@ body::after {
     border: 2px solid rgba(89, 231, 255, 0.22);
     background: rgba(6, 20, 38, 0.92);
     color: #f5fbff;
-    font-size: clamp(1.3rem, 2vw, 2.2rem);
+    font-size: clamp(1.3rem, 2cqw, 2.2rem);
     font-weight: 800;
     text-align: center;
     box-shadow:
@@ -422,7 +424,7 @@ body::after {
         height: auto;
         margin: 0;
         padding-block: 4px;
-        --p9-box-size: clamp(86px, 11vw, 124px);
+        --p9-box-size: clamp(86px, 11cqw, 124px);
     }
 
     .clue-pos-1 { grid-column: 1; grid-row: 1; }
@@ -449,7 +451,7 @@ body::after {
         width: clamp(160px, 18%, 212px);
         min-height: 82px;
         padding: 14px 16px;
-        font-size: clamp(0.74rem, 0.66vw, 0.9rem);
+        font-size: clamp(0.74rem, 0.66cqw, 0.9rem);
         line-height: 1.25;
     }
 
@@ -489,7 +491,7 @@ body::after {
     .p9-clue-card {
         min-height: 132px;
         padding: 16px 18px;
-        font-size: clamp(0.96rem, 1.35vw, 1.12rem);
+        font-size: clamp(0.96rem, 1.35cqw, 1.12rem);
     }
 
     #p9-center-stage,
@@ -510,7 +512,7 @@ body::after {
         width: 100%;
         height: auto;
         padding-block: 8px;
-        --p9-box-size: clamp(78px, 18vw, 112px);
+        --p9-box-size: clamp(78px, 18cqw, 112px);
     }
 }
 
@@ -531,6 +533,6 @@ body::after {
     }
 
     #p9-center-stage {
-        --p9-box-size: clamp(62px, 19vw, 86px);
+        --p9-box-size: clamp(62px, 19cqw, 86px);
     }
 }

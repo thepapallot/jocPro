@@ -1,4 +1,9 @@
 (function () {
+  const activePuzzleOrder = Array.isArray(window.TEST_ACTIVE_PUZZLE_ORDER)
+    ? window.TEST_ACTIVE_PUZZLE_ORDER.map((id) => String(id))
+    : [];
+  const puzzleAliases = window.TEST_PUZZLE_ALIASES || {};
+
   const puzzleConfigs = {
     "1": {
       label: "Puzzle 1",
@@ -429,10 +434,22 @@
   };
 
   function initPuzzleSelect() {
-    Object.entries(puzzleConfigs).forEach(([id, config]) => {
+    const visibleIds = activePuzzleOrder.length > 0
+      ? activePuzzleOrder
+      : Object.keys(puzzleConfigs).filter((id) => id !== "-1");
+
+    visibleIds.forEach((id) => {
+      const config = puzzleConfigs[id];
+      if (!config) return;
+
+      const alias = puzzleAliases[id] || puzzleAliases[String(id)] || "";
+      const optionLabel = alias
+        ? `${id} · ${alias}`
+        : config.label;
+
       const option = document.createElement("option");
       option.value = id;
-      option.textContent = config.label;
+      option.textContent = optionLabel;
       els.puzzleSelect.appendChild(option);
     });
   }

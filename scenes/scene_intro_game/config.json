@@ -1,5 +1,5 @@
 {
-  "scene_id": "scene_intro_game_test",
+  "scene_id": "scene_intro_game",
   "description": "Base de produccion para la intro general del juego, ajustada al audio y subtitulos oficiales del game master.",
   "ui_titles": {
     "top": "MISIÓN",

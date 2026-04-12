@@ -92,6 +92,10 @@
         </main>
     </div>
 
+    <script>
+        window.TEST_ACTIVE_PUZZLE_ORDER = {{ test_puzzle_order|tojson }};
+        window.TEST_PUZZLE_ALIASES = {{ test_puzzle_aliases|tojson }};
+    </script>
     <script src="{{ url_for('static', filename='js/test.js') }}"></script>
 </body>
 </html>

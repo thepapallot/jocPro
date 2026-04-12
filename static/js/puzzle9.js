@@ -53,41 +53,96 @@
 
     function getBoardMetrics() {
         if (!boardEl || !centerStageEl) return null;
-        const boardRect = boardEl.getBoundingClientRect();
-        const padding = 12;
+        const width = boardEl.clientWidth;
+        const height = boardEl.clientHeight;
+        const padding = Math.max(24, Math.round(Math.min(width, height) * 0.02));
         return {
-            width: boardRect.width,
-            height: boardRect.height,
+            width,
+            height,
             padding
         };
+    }
+
+    function intersectsLocalRect(x, y, width, height, rect) {
+        return (
+            x < rect.x + rect.width &&
+            x + width > rect.x &&
+            y < rect.y + rect.height &&
+            y + height > rect.y
+        );
     }
 
     function placeCluesRandomly() {
         const metrics = getBoardMetrics();
         if (!metrics) return;
+        const baseArea = 1366 * 768;
+        const currentArea = Math.max(1, metrics.width * metrics.height);
+        const speedScale = clamp(Math.sqrt(currentArea / baseArea), 1, 1.9);
 
         const anchors = [
-            { x: 0.13, y: 0.18 },
-            { x: 0.39, y: 0.13 },
-            { x: 0.61, y: 0.20 },
-            { x: 0.88, y: 0.14 },
-            { x: 0.12, y: 0.57 },
-            { x: 0.38, y: 0.48 },
-            { x: 0.86, y: 0.57 },
-            { x: 0.30, y: 0.86 },
-            { x: 0.61, y: 0.84 }
+            { x: 0.12, y: 0.16 }, // izquierda 1
+            { x: 0.12, y: 0.44 }, // izquierda 2
+            { x: 0.12, y: 0.72 }, // izquierda 3
+            { x: 0.88, y: 0.16 }, // derecha 1
+            { x: 0.88, y: 0.44 }, // derecha 2
+            { x: 0.88, y: 0.72 }, // derecha 3
+            { x: 0.50, y: 0.12 }, // centro 1
+            { x: 0.50, y: 0.50 }, // centro 2
+            { x: 0.50, y: 0.86 }  // centro 3
         ];
 
+        const placed = [];
         clueState = clueEls.map((el, index) => {
             const width = el.offsetWidth;
             const height = el.offsetHeight;
             const maxX = Math.max(metrics.padding, metrics.width - width - metrics.padding);
             const maxY = Math.max(metrics.padding, metrics.height - height - metrics.padding);
             const anchor = anchors[index] || { x: 0.5, y: 0.5 };
-            const x = clamp((metrics.width * anchor.x) - (width / 2), metrics.padding, maxX);
-            const y = clamp((metrics.height * anchor.y) - (height / 2), metrics.padding, maxY);
+            let x = clamp((metrics.width * anchor.x) - (width / 2), metrics.padding, maxX);
+            let y = clamp((metrics.height * anchor.y) - (height / 2), metrics.padding, maxY);
+            let found = false;
 
-            const speed = 0.18 + (index * 0.015);
+            for (let attempt = 0; attempt < 120; attempt += 1) {
+                const jitterX = randomBetween(-24, 24);
+                const jitterY = randomBetween(-18, 18);
+                const testX = clamp(x + jitterX, metrics.padding, maxX);
+                const testY = clamp(y + jitterY, metrics.padding, maxY);
+                const blockedByCards = placed.some((card) =>
+                    intersectsLocalRect(testX, testY, width, height, card)
+                );
+                if (!blockedByCards) {
+                    x = testX;
+                    y = testY;
+                    found = true;
+                    break;
+                }
+            }
+
+            // Fallback determinista: barrido por rejilla para garantizar arranque sin solapes.
+            if (!found) {
+                const stepX = Math.max(16, Math.floor(width * 0.2));
+                const stepY = Math.max(14, Math.floor(height * 0.2));
+                outer:
+                for (let yy = metrics.padding; yy <= maxY; yy += stepY) {
+                    for (let xx = metrics.padding; xx <= maxX; xx += stepX) {
+                        const blockedByCards = placed.some((card) =>
+                            intersectsLocalRect(xx, yy, width, height, card)
+                        );
+                        if (!blockedByCards) {
+                            x = xx;
+                            y = yy;
+                            found = true;
+                            break outer;
+                        }
+                    }
+                }
+            }
+
+            x = clamp(x, metrics.padding, maxX);
+            y = clamp(y, metrics.padding, maxY);
+            placed.push({ x, y, width, height });
+
+            const speed = (0.18 + (index * 0.015)) * speedScale;
             const angle = Math.random() * Math.PI * 2;
             const state = {
                 el,
@@ -116,6 +171,8 @@
         if (!metrics || !clueMotionEnabled) return;
 
         clueState.forEach(item => {
+            item.width = item.el.offsetWidth;
+            item.height = item.el.offsetHeight;
             item.x += item.vx;
             item.y += item.vy;
 
@@ -132,55 +189,57 @@
             item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
         });
 
-        for (let i = 0; i < clueState.length; i += 1) {
-            for (let j = i + 1; j < clueState.length; j += 1) {
-                const a = clueState[i];
-                const b = clueState[j];
+        for (let pass = 0; pass < 2; pass += 1) {
+            for (let i = 0; i < clueState.length; i += 1) {
+                for (let j = i + 1; j < clueState.length; j += 1) {
+                    const a = clueState[i];
+                    const b = clueState[j];
 
-                if (!intersectsBox(a, b)) continue;
+                    if (!intersectsBox(a, b)) continue;
 
-                const aCenterX = a.x + (a.width / 2);
-                const aCenterY = a.y + (a.height / 2);
-                const bCenterX = b.x + (b.width / 2);
-                const bCenterY = b.y + (b.height / 2);
-                const dx = aCenterX - bCenterX;
-                const dy = aCenterY - bCenterY;
-                const overlapX = ((a.width + b.width) / 2) - Math.abs(dx);
-                const overlapY = ((a.height + b.height) / 2) - Math.abs(dy);
+                    const aCenterX = a.x + (a.width / 2);
+                    const aCenterY = a.y + (a.height / 2);
+                    const bCenterX = b.x + (b.width / 2);
+                    const bCenterY = b.y + (b.height / 2);
+                    const dx = aCenterX - bCenterX;
+                    const dy = aCenterY - bCenterY;
+                    const overlapX = ((a.width + b.width) / 2) - Math.abs(dx);
+                    const overlapY = ((a.height + b.height) / 2) - Math.abs(dy);
 
-                if (overlapX < overlapY) {
-                    const push = Math.max(4, overlapX / 2);
-                    if (dx >= 0) {
-                        a.x += push;
-                        b.x -= push;
+                    if (overlapX < overlapY) {
+                        const push = Math.max(6, overlapX / 2 + 1);
+                        if (dx >= 0) {
+                            a.x += push;
+                            b.x -= push;
+                        } else {
+                            a.x -= push;
+                            b.x += push;
+                        }
+                        const tmp = a.vx;
+                        a.vx = b.vx;
+                        b.vx = tmp;
                     } else {
-                        a.x -= push;
-                        b.x += push;
+                        const push = Math.max(6, overlapY / 2 + 1);
+                        if (dy >= 0) {
+                            a.y += push;
+                            b.y -= push;
+                        } else {
+                            a.y -= push;
+                            b.y += push;
+                        }
+                        const tmp = a.vy;
+                        a.vy = b.vy;
+                        b.vy = tmp;
                     }
-                    const tmp = a.vx;
-                    a.vx = b.vx;
-                    b.vx = tmp;
-                } else {
-                    const push = Math.max(4, overlapY / 2);
-                    if (dy >= 0) {
-                        a.y += push;
-                        b.y -= push;
-                    } else {
-                        a.y -= push;
-                        b.y += push;
-                    }
-                    const tmp = a.vy;
-                    a.vy = b.vy;
-                    b.vy = tmp;
+
+                    a.x = clamp(a.x, metrics.padding, metrics.width - a.width - metrics.padding);
+                    a.y = clamp(a.y, metrics.padding, metrics.height - a.height - metrics.padding);
+                    b.x = clamp(b.x, metrics.padding, metrics.width - b.width - metrics.padding);
+                    b.y = clamp(b.y, metrics.padding, metrics.height - b.height - metrics.padding);
+
+                    a.el.style.transform = `translate(${a.x}px, ${a.y}px)`;
+                    b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
                 }
-
-                a.x = clamp(a.x, metrics.padding, metrics.width - a.width - metrics.padding);
-                a.y = clamp(a.y, metrics.padding, metrics.height - a.height - metrics.padding);
-                b.x = clamp(b.x, metrics.padding, metrics.width - b.width - metrics.padding);
-                b.y = clamp(b.y, metrics.padding, metrics.height - b.height - metrics.padding);
-
-                a.el.style.transform = `translate(${a.x}px, ${a.y}px)`;
-                b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
             }
         }
 
@@ -394,7 +453,9 @@
     document.addEventListener('DOMContentLoaded', () => {
         installDebugHelpers();
         setupClueMotion();
+        requestAnimationFrame(setupClueMotion);
         initSSE();
         window.addEventListener('resize', setupClueMotion);
+        window.addEventListener('load', setupClueMotion, { once: true });
     });
 })();
