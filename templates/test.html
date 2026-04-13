@@ -15,14 +15,9 @@
                     <h1 class="test-title">Test Lab</h1>
                 </div>
 
-                <div class="test-header-controls">
-                    <select id="test-puzzle-select" aria-label="Puzzle"></select>
-
-                    <div class="action-row test-header-actions">
-                        <button type="button" id="test-start-btn" class="primary-action">Arrancar</button>
-                        <button type="button" id="test-restart-btn">Reiniciar</button>
-                        <button type="button" id="test-view-btn">Ver puzzle</button>
-                    </div>
+                <div id="test-tabs" role="tablist" aria-label="Test sections">
+                    <button type="button" id="test-tab-puzzles" class="test-tab is-active" role="tab" aria-selected="true" aria-controls="test-panel-puzzles">Puzzles</button>
+                    <button type="button" id="test-tab-system" class="test-tab" role="tab" aria-selected="false" aria-controls="test-panel-system">System</button>
                 </div>
             </div>
 
@@ -36,56 +31,103 @@
         </header>
 
         <main id="test-shell">
-            <section class="test-panel control-panel">
-                <div class="test-block test-sim-block section-sim">
-                    <div class="section-tag">Simulacion</div>
-                    <div id="test-sim-content"></div>
-                </div>
+            <section id="test-panel-puzzles" class="test-tab-panel is-active" role="tabpanel" aria-labelledby="test-tab-puzzles">
+                <div class="test-panel control-panel">
+                    <div class="test-block test-ops-block">
+                        <div class="section-tag">Control</div>
+                        <div class="test-header-controls test-header-controls--embedded">
+                            <select id="test-puzzle-select" aria-label="Puzzle"></select>
 
-                <div id="test-support-grid">
-                    <div class="test-block section-reference">
-                        <div class="section-tag">Solucion</div>
-                        <div class="action-row">
-                            <button type="button" id="test-copy-reference-btn">Copiar referencia</button>
-                            <button type="button" id="test-solve-btn" hidden>Soluciona</button>
-                            <button type="button" id="test-unsolve-btn" hidden>Unsoluciona</button>
+                            <div class="action-row test-header-actions">
+                                <button type="button" id="test-start-btn" class="primary-action">Arrancar</button>
+                                <button type="button" id="test-restart-btn">Reiniciar</button>
+                                <button type="button" id="test-view-btn">Ver puzzle</button>
+                            </div>
                         </div>
-                        <pre id="test-reference-output"></pre>
                     </div>
 
-                    <div class="test-block section-send">
-                        <div class="section-tag">Enviar</div>
-                        <div class="inline-fields">
-                            <label>
-                                <span class="field-label">Direccion</span>
-                                <select id="test-topic-select">
-                                    <option value="TO_FLASK">TO_FLASK</option>
-                                    <option value="FROM_FLASK">FROM_FLASK</option>
-                                </select>
-                                <div id="test-topic-help" class="help-text"></div>
-                            </label>
-                            <label id="test-message-field">
-                                <span class="field-label">Mensaje</span>
-                                <select id="test-message-select"></select>
-                            </label>
+                    <div class="test-block test-sim-block section-sim">
+                        <div class="section-tag">Simulacion</div>
+                        <div id="test-sim-content"></div>
+                    </div>
+
+                    <div id="test-support-grid">
+                        <div class="test-block section-reference">
+                            <div class="section-tag">Solucion</div>
+                            <div class="action-row">
+                                <button type="button" id="test-copy-reference-btn">Copiar referencia</button>
+                                <button type="button" id="test-solve-btn" hidden>Soluciona</button>
+                                <button type="button" id="test-unsolve-btn" hidden>Unsoluciona</button>
+                            </div>
+                            <pre id="test-reference-output"></pre>
                         </div>
-                        <form id="test-form-builder"></form>
-                        <div class="action-row">
-                            <button type="button" id="test-send-btn" class="primary-action">Enviar</button>
+
+                        <div class="test-block section-send">
+                            <div class="section-tag">Enviar</div>
+                            <div class="inline-fields">
+                                <label>
+                                    <span class="field-label">Direccion</span>
+                                    <select id="test-topic-select">
+                                        <option value="TO_FLASK">TO_FLASK</option>
+                                        <option value="FROM_FLASK">FROM_FLASK</option>
+                                    </select>
+                                    <div id="test-topic-help" class="help-text"></div>
+                                </label>
+                                <label id="test-message-field">
+                                    <span class="field-label">Mensaje</span>
+                                    <select id="test-message-select"></select>
+                                </label>
+                            </div>
+                            <form id="test-form-builder"></form>
+                            <div class="action-row">
+                                <button type="button" id="test-send-btn" class="primary-action">Enviar</button>
+                            </div>
+                            <textarea id="test-message-editor" spellcheck="false" placeholder="Mensaje MQTT"></textarea>
                         </div>
-                        <textarea id="test-message-editor" spellcheck="false" placeholder="Mensaje MQTT"></textarea>
                     </div>
                 </div>
             </section>
 
-            <section class="test-panel monitor-panel">
-                <div class="section-tag monitor-tag">Estado</div>
-                <div class="monitor-grid">
-                    <div class="monitor-card section-state">
-                        <div class="action-row">
-                            <button type="button" id="test-refresh-state-btn" class="primary-action">Actualizar estado</button>
+            <section id="test-panel-system" class="test-tab-panel" role="tabpanel" aria-labelledby="test-tab-system" hidden>
+                <div class="test-panel monitor-panel">
+                    <div class="section-tag monitor-tag">System</div>
+                    <div class="monitor-grid monitor-grid--single">
+                        <div class="monitor-card section-system-summary">
+                            <div class="action-row">
+                                <button type="button" id="test-refresh-system-btn" class="primary-action">Actualizar system</button>
+                                <button type="button" id="test-fullscreen-btn">Fullscreen</button>
+                                <button type="button" id="test-audio-btn">Audio test</button>
+                            </div>
+                            <div id="test-system-summary">Pulsa "Actualizar system"</div>
                         </div>
-                        <div id="test-current-state">Pulsa "Actualizar estado"</div>
+
+                        <div class="monitor-card section-scenes">
+                            <div class="action-row">
+                                <button type="button" id="test-refresh-scenes-btn" class="primary-action">Comprobar escenas</button>
+                            </div>
+                            <div id="test-scene-health">Pulsa "Comprobar escenas"</div>
+                            <div id="test-scene-links" class="scene-links"></div>
+                        </div>
+
+                        <div class="monitor-card section-system-actions">
+                            <div class="section-tag">Acciones rapidas</div>
+                            <div id="test-system-actions" class="scene-links"></div>
+                        </div>
+
+                        <div class="monitor-card section-system-logs">
+                            <div class="action-row">
+                                <button type="button" id="test-refresh-logs-btn" class="primary-action">Actualizar logs</button>
+                                <button type="button" id="test-clear-logs-btn">Borrar logs</button>
+                            </div>
+                            <div id="test-system-logs">Sin logs de player en esta sesion.</div>
+                        </div>
+
+                        <div class="monitor-card section-state">
+                            <div class="action-row">
+                                <button type="button" id="test-refresh-state-btn" class="primary-action">Actualizar estado</button>
+                            </div>
+                            <div id="test-current-state">Pulsa "Actualizar estado"</div>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -64,43 +64,51 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_chin_lift_soft.mp4",
-      "clip_start": 0.1,
-      "clip_end": 7.479,
-      "duration": 7.379,
+      "src": "/static/videos/characters/cero_outro_close_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.96,
+      "duration": 4.8,
       "label": "outro_apertura"
     },
     {
       "type": "transition",
-      "duration": 6,
+      "duration": 10.083334,
       "video": "/static/videos/game_master/pyramid_bricks.mp4",
-      "clip_start": 0
+      "clip_start": 0,
+      "clip_end": 5.041667
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_medium.mp4",
-      "clip_start": 0.2,
-      "clip_end": 7.461,
-      "duration": 7.261,
+      "src": "/static/videos/characters/cero_outro_close_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.96,
+      "duration": 4.8,
       "label": "outro_reflexion"
     },
     {
       "type": "transition",
-      "duration": 6.159,
+      "duration": 7.115666,
       "video": "/static/videos/game_master/pyramid_outline.mp4",
       "clip_start": 0
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 0.2,
-      "clip_end": 6.2,
-      "duration": 6,
+      "src": "/static/videos/characters/cero_outro_close_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.96,
+      "duration": 4.8,
       "label": "outro_cierre",
       "broadcast": {
         "logo_src": "/static/images/game_master/logo_adn.png",
         "show_right_brand": false
       }
+    },
+    {
+      "type": "transition",
+      "duration": 2.470796,
+      "variant": "gm-icon",
+      "image": "/static/images/game_master/logo_adn.png",
+      "alt": "Logo ADN"
     }
   ]
 }

@@ -71,7 +71,7 @@ Ejemplo mínimo:
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_idle_center_a.mp4",
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 6
     },

@@ -34,7 +34,7 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_idle_center_a.mp4",
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 4,
       "duration": 4,
@@ -84,7 +84,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_medium.mp4",
+      "src": "/static/videos/characters/cero_explanation_short_a.mp4",
       "clip_start": 0,
       "clip_end": 4,
       "duration": 4,
@@ -146,7 +146,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
       "clip_start": 0,
       "clip_end": 1,
       "duration": 1,

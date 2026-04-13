@@ -74,9 +74,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 0.2,
-      "clip_end": 5.2,
+      "src": "/static/videos/characters/cero_warning_stable_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5,
       "duration": 5,
       "label": "intro_puzzle4"
     },
@@ -112,9 +112,9 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_medium.mp4",
-      "clip_start": 0.5,
-      "clip_end": 10.5,
+      "src": "/static/videos/characters/cero_explanation_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 10,
       "duration": 10,
       "label": "explicacion_puzzle4_a"
     },
@@ -161,7 +161,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 15,
+      "duration": 17.353333,
       "variant": "warning",
       "phases": [
         {
@@ -212,10 +212,10 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 0.8,
-      "clip_end": 8.195,
-      "duration": 7.395,
+      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.041667,
+      "duration": 5.041667,
       "label": "cierre_puzzle4"
     },
     {

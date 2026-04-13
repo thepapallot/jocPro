@@ -59,9 +59,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_head_tilt_center.mp4",
-      "clip_start": 0.2,
-      "clip_end": 4.919,
+      "src": "/static/videos/characters/cero_intro_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.719,
       "duration": 4.719,
       "label": "intro_puzzle10"
     },
@@ -157,15 +157,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_expressive_center.mp4",
-      "clip_start": 0.3,
-      "clip_end": 6.94,
-      "duration": 6.64,
+      "src": "/static/videos/characters/cero_warning_stable_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.041667,
+      "duration": 5.041667,
       "label": "aviso_puzzle10"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 7.44,
+      "duration": 10.214977,
       "variant": "warning",
       "phases": [
         {
@@ -223,6 +223,24 @@
           }
         }
       ]
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
     }
   ]
 }

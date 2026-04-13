@@ -1,84 +1,40 @@
 # Character Clips
 
-Guia rapida per reutilitzar el banc de plans del personatge entre intros de puzzles.
+Guía rápida de la librería activa de Cero.
 
-## Inventari
+La librería anterior se ha movido a `static/videos/characters/archive/legacy/`. Las escenas y plantillas nuevas deben usar los nombres actuales de `static/videos/characters/`.
 
-- `character_idle_center_a.mp4`
-  Us recomanat: obertura neutra, frases d'introduccio, trams tranquils de veu en off.
+## Clips base
 
-- `character_idle_center_b.mp4`
-  Us recomanat: reforc d'explicacio, moments de pausa, blocs llargs sense canvi dramatic.
+- `cero_briefing_long_a.mp4`: briefing largo, apertura estable.
+- `cero_intro_long_b.mp4`: apertura sobria, explicación larga.
+- `cero_intro_neutral_b.mp4`: apertura corta y limpia.
+- `cero_neutral_intro_a.mp4`: introducción breve o instrucción neutra.
+- `cero_explanation_long_a.mp4`: explicación larga.
+- `cero_explanation_short_a.mp4`: explicación corta o puente.
+- `cero_warning_stable_a.mp4`: aviso estable.
+- `cero_warning_notice_a.mp4`: advertencia más marcada.
+- `cero_neutral_close_a.mp4`: cierre neutro.
+- `cero_outro_close_a.mp4`: cierre final u outro.
 
-- `character_hold_center_medium.mp4`
-  Us recomanat: explicacio principal, fragments on el personatge ha de mantenir presencia estable.
+## Clips de apoyo
 
-- `character_hold_center_close.mp4`
-  Us recomanat: remarcar una idea important o crear una mica mes de tensio visual.
+- `cero_briefing_short_a.mp4`
+- `cero_briefing_short_alt.mp4`
+- `cero_briefing_short_tilt.mp4`
+- `cero_bridge_neutral_a.mp4`
+- `cero_close_short_a.mp4`
+- `cero_intro_long_a.mp4`
 
-- `character_subtle_expression_center.mp4`
-  Us recomanat: transicions suaus, frases que necessiten una mica mes de vida sense exageracio.
+## Clips expresivos
 
-- `character_expressive_center.mp4`
-  Us recomanat: avisos, recordatoris de risc, moments on la locucio puja d'intensitat.
+- `cero_emphasis_forward.mp4`
+- `cero_emphasis_long_a.mp4`
+- `cero_gesture_medium_a.mp4`
+- `cero_warning_gesture.mp4`
+- `cero_warning_long_a.mp4`
 
-- `character_head_tilt_center.mp4`
-  Us recomanat: preguntes, invitacions a observar, canvis de bloc dins de la intro.
+## Regla práctica
 
-- `character_chin_lift_center.mp4`
-  Us recomanat: presentacio solemne, entrades fortes, inici d'instruccions importants.
-
-- `character_chin_lift_soft.mp4`
-  Us recomanat: tancaments elegants, pauses amb presencia, transicions menys agressives.
-
-- `character_turn_profile_a.mp4`
-  Us recomanat: entrada o sortida d'un bloc visual, canvis de ritme, tall entre UI i personatge.
-
-- `character_turn_profile_b.mp4`
-  Us recomanat: transicions alternatives per evitar repeticions entre puzzles.
-
-- `character_turn_profile_c.mp4`
-  Us recomanat: ultima opcio de gir per a puzzles que necessiten una tercera variant.
-
-- `character_return_from_profile_a.mp4`
-  Us recomanat: tornar a camera despres d'un bloc UI o d'un avís.
-
-- `character_return_from_profile_b.mp4`
-  Us recomanat: retorn a camera amb una variant visual diferent per no repetir sempre el mateix.
-
-## Repartiment orientatiu
-
-### Obertura
-
-- `character_idle_center_a.mp4`
-- `character_chin_lift_center.mp4`
-
-### Explicacio base
-
-- `character_hold_center_medium.mp4`
-- `character_idle_center_b.mp4`
-- `character_subtle_expression_center.mp4`
-
-### Canvi de bloc
-
-- `character_turn_profile_a.mp4`
-- `character_turn_profile_b.mp4`
-- `character_return_from_profile_a.mp4`
-
-### Avisos o tensio
-
-- `character_expressive_center.mp4`
-- `character_hold_center_close.mp4`
-- `character_head_tilt_center.mp4`
-
-### Tancament
-
-- `character_chin_lift_soft.mp4`
-- `character_return_from_profile_b.mp4`
-
-## Regles practiques
-
-- No repetir dos clips gairebe identics dins de la mateixa intro.
-- Alternar plans centrats i plans amb microgest per evitar monotonia.
-- Reservar els clips mes expressius per a avisos o punts clau.
-- Deixar que l'audio marqui el ritme: el clip acompanya, no substitueix la veu en off.
+- Si el clip no cubre el segmento, mejor cambiar de bloque que forzar un loop.
+- Para plantillas nuevas, partir de `cero_neutral_intro_a.mp4`, `cero_explanation_short_a.mp4` y `cero_neutral_close_a.mp4`.
