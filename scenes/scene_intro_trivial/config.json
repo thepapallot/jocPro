@@ -89,9 +89,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 0.2,
-      "clip_end": 5.28,
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.08,
       "duration": 5.08,
       "label": "intro_puzzle3"
     },
@@ -135,15 +135,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_medium.mp4",
-      "clip_start": 0.6,
-      "clip_end": 6.0,
-      "duration": 5.4,
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.041667,
+      "duration": 5.041667,
       "label": "puente_puzzle3"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 21.395,
+      "duration": 21.753333,
       "variant": "warning",
       "phases": [
         {

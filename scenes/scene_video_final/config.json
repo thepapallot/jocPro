@@ -44,9 +44,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_chin_lift_center.mp4",
-      "clip_start": 0.1,
-      "clip_end": 3.459,
+      "src": "/static/videos/characters/cero_explanation_short_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.359,
       "duration": 3.359,
       "label": "intro_final"
     },

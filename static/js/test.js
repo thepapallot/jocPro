@@ -3,6 +3,28 @@
     ? window.TEST_ACTIVE_PUZZLE_ORDER.map((id) => String(id))
     : [];
   const puzzleAliases = window.TEST_PUZZLE_ALIASES || {};
+  const sceneHealthConfigs = [
+    { id: "scene_intro_game", label: "Intro General", href: "/player/?scene=scene_intro_game" },
+    { id: "scene_intro_sumas", label: "Puzzle 1 Intro", href: "/player/?scene=scene_intro_sumas" },
+    { id: "scene_intro_laberinto", label: "Puzzle 2 Intro", href: "/player/?scene=scene_intro_laberinto" },
+    { id: "scene_intro_trivial", label: "Puzzle 3 Intro", href: "/player/?scene=scene_intro_trivial" },
+    { id: "scene_intro_musica", label: "Puzzle 4 Intro", href: "/player/?scene=scene_intro_musica" },
+    { id: "scene_intro_cronometro", label: "Puzzle 5 Intro", href: "/player/?scene=scene_intro_cronometro" },
+    { id: "scene_intro_energia", label: "Puzzle 6 Intro", href: "/player/?scene=scene_intro_energia" },
+    { id: "scene_intro_memory", label: "Puzzle 8 Intro", href: "/player/?scene=scene_intro_memory" },
+    { id: "scene_intro_token_a_lloc", label: "Puzzle 9 Intro", href: "/player/?scene=scene_intro_token_a_lloc" },
+    { id: "scene_intro_segments", label: "Puzzle 10 Intro", href: "/player/?scene=scene_intro_segments" },
+    { id: "scene_video_final", label: "Intro Final", href: "/player/?scene=scene_video_final" },
+    { id: "scene_outro_game", label: "Outro Final", href: "/player/?scene=scene_outro_game" }
+  ];
+  const systemQuickActions = [
+    { label: "Intro general", href: "/player/?scene=scene_intro_game" },
+    { label: "Puzzle 1 intro", href: "/player/?scene=scene_intro_sumas" },
+    { label: "Puzzle 10 intro", href: "/player/?scene=scene_intro_segments" },
+    { label: "Outro final", href: "/player/?scene=scene_outro_game" },
+    { label: "Puzzle 1", href: "/puzzle/1" },
+    { label: "Puzzle final", href: "/puzzle/final" }
+  ];
 
   const puzzleConfigs = {
     "1": {
@@ -377,6 +399,10 @@
   };
 
   const els = {
+    tabPuzzles: document.getElementById("test-tab-puzzles"),
+    tabSystem: document.getElementById("test-tab-system"),
+    panelPuzzles: document.getElementById("test-panel-puzzles"),
+    panelSystem: document.getElementById("test-panel-system"),
     puzzleSelect: document.getElementById("test-puzzle-select"),
     formBuilder: document.getElementById("test-form-builder"),
     sendBtn: document.getElementById("test-send-btn"),
@@ -392,12 +418,47 @@
     unsolveBtn: document.getElementById("test-unsolve-btn"),
     currentState: document.getElementById("test-current-state"),
     refreshStateBtn: document.getElementById("test-refresh-state-btn"),
+    refreshScenesBtn: document.getElementById("test-refresh-scenes-btn"),
+    sceneHealth: document.getElementById("test-scene-health"),
+    sceneLinks: document.getElementById("test-scene-links"),
+    refreshSystemBtn: document.getElementById("test-refresh-system-btn"),
+    systemSummary: document.getElementById("test-system-summary"),
+    systemActions: document.getElementById("test-system-actions"),
+    refreshLogsBtn: document.getElementById("test-refresh-logs-btn"),
+    clearLogsBtn: document.getElementById("test-clear-logs-btn"),
+    systemLogs: document.getElementById("test-system-logs"),
+    fullscreenBtn: document.getElementById("test-fullscreen-btn"),
+    audioBtn: document.getElementById("test-audio-btn"),
     eventLog: document.getElementById("test-event-log"),
     clearLogBtn: document.getElementById("test-clear-log-btn"),
     referenceOutput: document.getElementById("test-reference-output"),
     copyReferenceBtn: document.getElementById("test-copy-reference-btn"),
     simContent: document.getElementById("test-sim-content")
   };
+
+  function switchTab(tabId) {
+    const isSystem = tabId === "system";
+
+    if (els.tabPuzzles) {
+      els.tabPuzzles.classList.toggle("is-active", !isSystem);
+      els.tabPuzzles.setAttribute("aria-selected", String(!isSystem));
+    }
+
+    if (els.tabSystem) {
+      els.tabSystem.classList.toggle("is-active", isSystem);
+      els.tabSystem.setAttribute("aria-selected", String(isSystem));
+    }
+
+    if (els.panelPuzzles) {
+      els.panelPuzzles.classList.toggle("is-active", !isSystem);
+      els.panelPuzzles.hidden = isSystem;
+    }
+
+    if (els.panelSystem) {
+      els.panelSystem.classList.toggle("is-active", isSystem);
+      els.panelSystem.hidden = !isSystem;
+    }
+  }
 
   const simState = {
     puzzle1A: "4",
@@ -460,6 +521,32 @@
 
   function setStatus(message) {
     document.title = message ? `Test Lab · ${message}` : "Test Lab";
+  }
+
+  function renderSceneLinks() {
+    if (!els.sceneLinks) {
+      return;
+    }
+
+    els.sceneLinks.innerHTML = sceneHealthConfigs.map((scene) => `
+      <a class="scene-link" href="${scene.href}" target="_blank" rel="noopener">
+        <strong>${escapeHtml(scene.label)}</strong>
+        <span>${escapeHtml(scene.id)}</span>
+      </a>
+    `).join("");
+  }
+
+  function renderSystemActions() {
+    if (!els.systemActions) {
+      return;
+    }
+
+    els.systemActions.innerHTML = systemQuickActions.map((action) => `
+      <a class="scene-link" href="${action.href}" target="_blank" rel="noopener">
+        <strong>${escapeHtml(action.label)}</strong>
+        <span>${escapeHtml(action.href)}</span>
+      </a>
+    `).join("");
   }
 
   function updateTopicHelp() {
@@ -2144,6 +2231,312 @@
     `;
   }
 
+  async function resourceExists(url) {
+    try {
+      let response = await fetch(url, { method: "HEAD", cache: "no-store" });
+      if (response.ok) {
+        return true;
+      }
+      response = await fetch(url, { cache: "no-store" });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function collectSceneAssets(config) {
+    const urls = new Set();
+
+    if (config?.audio?.src) {
+      urls.add(config.audio.src);
+    }
+
+    const segments = Array.isArray(config?.segments) ? config.segments : [];
+    segments.forEach((segment) => {
+      if (segment?.src) {
+        urls.add(segment.src);
+      }
+      if (segment?.video) {
+        urls.add(segment.video);
+      }
+
+      const phases = Array.isArray(segment?.phases) ? segment.phases : [];
+      [segment, ...phases].forEach((entry) => {
+        ["top", "left", "right"].forEach((zoneKey) => {
+          const assets = Array.isArray(entry?.[zoneKey]?.assets) ? entry[zoneKey].assets : [];
+          assets.forEach((asset) => {
+            if (asset?.src) {
+              urls.add(asset.src);
+            }
+          });
+        });
+      });
+    });
+
+    return Array.from(urls);
+  }
+
+  function renderSceneHealth(results) {
+    if (!els.sceneHealth) {
+      return;
+    }
+
+    const okCount = results.filter((item) => item.status === "ok").length;
+    const warnCount = results.filter((item) => item.status === "warn").length;
+    const failCount = results.filter((item) => item.status === "fail").length;
+
+    els.sceneHealth.innerHTML = `
+      <div class="state-summary">
+        <div class="state-grid">
+          <section class="state-card">
+            <h3>Resumen</h3>
+            <div class="state-metrics">
+              ${stateMetric("OK", okCount)}
+              ${stateMetric("Warning", warnCount)}
+              ${stateMetric("Fail", failCount)}
+            </div>
+          </section>
+          ${results.map((item) => `
+            <section class="state-card">
+              <h3>${escapeHtml(item.label)}</h3>
+              <div class="state-metrics">
+                ${stateMetric("Estado", item.status.toUpperCase())}
+                ${stateMetric("Segmentos", item.segments)}
+                ${stateMetric("Recursos", `${item.okAssets}/${item.totalAssets}`)}
+                ${stateMetric("Audio", item.audioState)}
+                ${stateMetric("Duracion", item.durationState)}
+              </div>
+              <ul class="state-list">
+                ${(item.notes.length ? item.notes : ["Sin incidencias"]).map((note) => `<li>${escapeHtml(note)}</li>`).join("")}
+              </ul>
+            </section>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function hasSessionStorage() {
+    try {
+      const key = "__test_storage_probe__";
+      window.sessionStorage.setItem(key, "1");
+      window.sessionStorage.removeItem(key);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function renderSystemSummary() {
+    if (!els.systemSummary) {
+      return;
+    }
+
+    const audioEl = document.createElement("audio");
+    const canPlayWav = typeof audioEl.canPlayType === "function"
+      ? audioEl.canPlayType("audio/wav")
+      : "";
+    const autoplayState = navigator.userActivation?.hasBeenActive ? "Interaccion detectada" : "Pendiente";
+    const fullscreenState = document.fullscreenEnabled ? "Disponible" : "No";
+    const storageState = hasSessionStorage() ? "OK" : "Fail";
+    const onlineState = navigator.onLine ? "Online" : "Offline";
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ? "Reduce" : "Normal";
+
+    els.systemSummary.innerHTML = `
+      <div class="state-summary">
+        <div class="state-grid">
+          <section class="state-card">
+            <h3>Navegador</h3>
+            <div class="state-metrics">
+              ${stateMetric("Online", onlineState)}
+              ${stateMetric("Autoplay", autoplayState)}
+              ${stateMetric("Fullscreen", fullscreenState)}
+              ${stateMetric("WAV", canPlayWav || "No")}
+              ${stateMetric("Session", storageState)}
+              ${stateMetric("Pantalla", `${window.innerWidth}x${window.innerHeight}`)}
+              ${stateMetric("Motion", reducedMotion)}
+            </div>
+          </section>
+          <section class="state-card">
+            <h3>Entorno</h3>
+            <ul class="state-list">
+              <li>${escapeHtml(navigator.userAgent)}</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    `;
+  }
+
+  function readPlayerLogs() {
+    try {
+      return JSON.parse(window.sessionStorage.getItem("scenePlayerLogs") || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function renderPlayerLogs() {
+    if (!els.systemLogs) {
+      return;
+    }
+
+    const logs = readPlayerLogs().slice(-20).reverse();
+    if (!logs.length) {
+      els.systemLogs.innerHTML = `<div class="state-empty">Sin logs de player en esta sesion.</div>`;
+      return;
+    }
+
+    els.systemLogs.innerHTML = logs.map((entry) => `
+      <div class="system-log-entry">
+        <strong>${escapeHtml(entry.type || "event")}</strong>
+        <span>${escapeHtml(entry.scene || "--")} · seg ${escapeHtml(String((entry.segmentIndex ?? 0) + 1))}</span>
+        <span>${escapeHtml(entry.at || "--")}</span>
+        <span>${escapeHtml(JSON.stringify(entry.detail || {}))}</span>
+      </div>
+    `).join("");
+  }
+
+  function clearPlayerLogs() {
+    try {
+      window.sessionStorage.removeItem("scenePlayerLogs");
+    } catch (error) {
+      // Ignore storage issues.
+    }
+    renderPlayerLogs();
+  }
+
+  async function runAudioTest() {
+    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextCtor) {
+      setStatus("Audio test no disponible");
+      return;
+    }
+
+    const ctx = new AudioContextCtor();
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(660, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.28);
+    setStatus("Audio test OK");
+  }
+
+  async function toggleFullscreen() {
+    if (!document.fullscreenEnabled) {
+      setStatus("Fullscreen no disponible");
+      return;
+    }
+
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      setStatus("Fullscreen cerrado");
+      return;
+    }
+
+    await document.documentElement.requestFullscreen();
+    setStatus("Fullscreen abierto");
+  }
+
+  async function checkSceneHealth() {
+    if (!els.sceneHealth) {
+      return;
+    }
+
+    els.sceneHealth.innerHTML = `<div class="state-empty">Comprobando escenas...</div>`;
+    const results = [];
+
+    for (const scene of sceneHealthConfigs) {
+      const result = {
+        id: scene.id,
+        label: scene.label,
+        status: "ok",
+        segments: 0,
+        totalAssets: 0,
+        okAssets: 0,
+        audioState: "OK",
+        durationState: "OK",
+        notes: []
+      };
+
+      try {
+        const response = await fetch(`/scenes/${scene.id}/config.json`, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("config_missing");
+        }
+
+        const config = await response.json();
+        const segments = Array.isArray(config?.segments) ? config.segments : [];
+        const assets = collectSceneAssets(config);
+        result.segments = segments.length;
+        result.totalAssets = assets.length;
+
+        const assetChecks = await Promise.all(assets.map((url) => resourceExists(url)));
+        result.okAssets = assetChecks.filter(Boolean).length;
+
+        if (result.okAssets !== result.totalAssets) {
+          result.status = "fail";
+          result.notes.push("Faltan recursos o alguna ruta no responde.");
+        }
+
+        const audioDuration = Number(config?.audio?.duration || 0);
+        const subtitleEnd = Array.isArray(config?.subtitles) && config.subtitles.length
+          ? Math.max(...config.subtitles.map((item) => Number(item.end || 0)))
+          : 0;
+        const sceneDuration = segments.reduce((total, segment) => {
+          if (segment?.duration != null) {
+            return total + Number(segment.duration || 0);
+          }
+          if (segment?.type === "character") {
+            return total + Math.max(0, Number(segment?.clip_end || 0) - Number(segment?.clip_start || 0));
+          }
+          return total;
+        }, 0);
+
+        if (!config?.audio?.src) {
+          result.audioState = "NO";
+          result.status = result.status === "fail" ? "fail" : "warn";
+          result.notes.push("La escena no define audio maestro.");
+        }
+
+        if (sceneDuration <= 0 || segments.length === 0) {
+          result.status = "fail";
+          result.durationState = "FAIL";
+          result.notes.push("No hay segmentos válidos.");
+        } else if (subtitleEnd > 0 && sceneDuration + 0.2 < subtitleEnd) {
+          result.status = result.status === "fail" ? "fail" : "warn";
+          result.durationState = "WARN";
+          result.notes.push("Los subtítulos acaban después de la escena.");
+        } else if (audioDuration > 0 && Math.abs(sceneDuration - audioDuration) > 0.35) {
+          result.status = result.status === "fail" ? "fail" : "warn";
+          result.durationState = "WARN";
+          result.notes.push("Duración de escena y audio no parecen alineadas.");
+        }
+      } catch (error) {
+        result.status = "fail";
+        result.audioState = "FAIL";
+        result.durationState = "FAIL";
+        result.notes.push(`Error cargando config: ${String(error.message || error)}`);
+      }
+
+      results.push(result);
+    }
+
+    renderSceneHealth(results);
+    setStatus(`Escenas: ${results.filter((item) => item.status === "fail").length} fail`);
+  }
+
   function applyPuzzle2State(data) {
     simState.puzzle2Alarm = !!data.alarm_mode;
     (data.players || []).forEach((player) => {
@@ -2467,6 +2860,12 @@
   }
 
   function bindEvents() {
+    if (els.tabPuzzles) {
+      els.tabPuzzles.addEventListener("click", () => switchTab("puzzles"));
+    }
+    if (els.tabSystem) {
+      els.tabSystem.addEventListener("click", () => switchTab("system"));
+    }
     els.puzzleSelect.addEventListener("change", renderForm);
     els.topicSelect.addEventListener("change", () => {
       updateTopicHelp();
@@ -2500,6 +2899,41 @@
         refreshCurrentState();
       });
     }
+    if (els.refreshScenesBtn) {
+      els.refreshScenesBtn.addEventListener("click", () => {
+        checkSceneHealth().catch((error) => {
+          if (els.sceneHealth) {
+            els.sceneHealth.innerHTML = `<div class="state-empty">Error: ${escapeHtml(String(error))}</div>`;
+          }
+        });
+      });
+    }
+    if (els.refreshSystemBtn) {
+      els.refreshSystemBtn.addEventListener("click", () => {
+        renderSystemSummary();
+        renderPlayerLogs();
+      });
+    }
+    if (els.refreshLogsBtn) {
+      els.refreshLogsBtn.addEventListener("click", () => {
+        renderPlayerLogs();
+      });
+    }
+    if (els.clearLogsBtn) {
+      els.clearLogsBtn.addEventListener("click", () => {
+        clearPlayerLogs();
+      });
+    }
+    if (els.fullscreenBtn) {
+      els.fullscreenBtn.addEventListener("click", () => {
+        toggleFullscreen().catch((error) => appendLog({ error: String(error) }));
+      });
+    }
+    if (els.audioBtn) {
+      els.audioBtn.addEventListener("click", () => {
+        runAudioTest().catch((error) => appendLog({ error: String(error) }));
+      });
+    }
     if (els.clearLogBtn) {
       els.clearLogBtn.addEventListener("click", () => {
         if (els.eventLog) {
@@ -2522,6 +2956,11 @@
   }
 
   initPuzzleSelect();
+  switchTab("puzzles");
+  renderSceneLinks();
+  renderSystemActions();
+  renderSystemSummary();
+  renderPlayerLogs();
   renderForm();
   bindEvents();
 })();

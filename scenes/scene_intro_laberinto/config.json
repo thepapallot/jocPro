@@ -69,7 +69,7 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
+      "src": "/static/videos/characters/cero_intro_neutral_b.mp4",
       "clip_start": 0.3,
       "clip_end": 4.159,
       "duration": 3.859,
@@ -115,9 +115,9 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 1.2,
-      "clip_end": 5.92,
+      "src": "/static/videos/characters/cero_briefing_long_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 5.02,
       "duration": 4.72,
       "label": "puente_puzzle2"
     },

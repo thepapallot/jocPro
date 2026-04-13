@@ -1,5 +1,8 @@
 const DEFAULT_SCENE_ID = "scene_intro_sumas";
 const EPSILON = 0.12;
+const SAFE_NEXT_GRACE_SECONDS = 0.45;
+const STALL_THRESHOLD_MS = 2500;
+const STALL_RECOVERY_COOLDOWN_MS = 1800;
 
 const elements = {
     playerRoot: document.getElementById("player-root"),
@@ -1168,6 +1171,9 @@ class ScenePlayer {
         this.audioContext = null;
         this.audioEndedSceneTime = null;
         this.audioEndedPerfTime = 0;
+        this.lastProgressSceneTime = 0;
+        this.lastProgressPerfTime = 0;
+        this.lastRecoveryPerfTime = 0;
         this.nextUrl = resolveNextUrl();
         this.onComplete = resolveOnComplete();
         this.completionHandled = false;
@@ -1176,6 +1182,32 @@ class ScenePlayer {
         this.onVideoTimeUpdate = this.onVideoTimeUpdate.bind(this);
         this.onVideoEnded = this.onVideoEnded.bind(this);
         this.onAudioEnded = this.onAudioEnded.bind(this);
+        this.onVideoError = this.onVideoError.bind(this);
+        this.onAudioError = this.onAudioError.bind(this);
+        this.onVideoStalled = this.onVideoStalled.bind(this);
+        this.onAudioStalled = this.onAudioStalled.bind(this);
+    }
+
+    logEvent(type, detail = {}) {
+        const payload = {
+            type,
+            scene: this.scene.scene_id,
+            segmentIndex: this.currentSegmentIndex,
+            segmentLabel: this.currentSegment?.label || this.currentSegment?.type || "",
+            detail,
+            at: new Date().toISOString(),
+        };
+
+        try {
+            const key = "scenePlayerLogs";
+            const logs = JSON.parse(window.sessionStorage.getItem(key) || "[]");
+            logs.push(payload);
+            window.sessionStorage.setItem(key, JSON.stringify(logs.slice(-80)));
+        } catch (error) {
+            // Ignore storage issues in kiosk mode.
+        }
+
+        console.info("[scene-player]", payload);
     }
 
     updateSubtitleOverlay() {
@@ -1214,7 +1246,11 @@ class ScenePlayer {
         elements.video.playsInline = true;
         elements.video.addEventListener("timeupdate", this.onVideoTimeUpdate);
         elements.video.addEventListener("ended", this.onVideoEnded);
+        elements.video.addEventListener("error", this.onVideoError);
+        elements.video.addEventListener("stalled", this.onVideoStalled);
         elements.audio.addEventListener("ended", this.onAudioEnded);
+        elements.audio.addEventListener("error", this.onAudioError);
+        elements.audio.addEventListener("stalled", this.onAudioStalled);
 
         if (this.scene.audio?.src) {
             elements.audio.src = this.scene.audio.src;
@@ -1228,6 +1264,7 @@ class ScenePlayer {
         this.renderSegment();
         this.updateStatus();
         this.hideBootOverlay();
+        this.primeProgressWatch();
         await this.play();
     }
 
@@ -1356,7 +1393,11 @@ class ScenePlayer {
         elements.audio.pause();
         elements.video.removeEventListener("timeupdate", this.onVideoTimeUpdate);
         elements.video.removeEventListener("ended", this.onVideoEnded);
+        elements.video.removeEventListener("error", this.onVideoError);
+        elements.video.removeEventListener("stalled", this.onVideoStalled);
         elements.audio.removeEventListener("ended", this.onAudioEnded);
+        elements.audio.removeEventListener("error", this.onAudioError);
+        elements.audio.removeEventListener("stalled", this.onAudioStalled);
     }
 
     get currentSegment() {
@@ -1386,6 +1427,63 @@ class ScenePlayer {
         this.audioEndedPerfTime = 0;
     }
 
+    primeProgressWatch(now = performance.now()) {
+        this.lastProgressPerfTime = now;
+        this.lastProgressSceneTime = this.getSceneTime(now);
+    }
+
+    recordProgress(sceneTime, now = performance.now()) {
+        this.lastProgressSceneTime = sceneTime;
+        this.lastProgressPerfTime = now;
+    }
+
+    shouldForceComplete(sceneTime) {
+        return this.scene.durationSeconds - sceneTime <= SAFE_NEXT_GRACE_SECONDS;
+    }
+
+    async attemptRecovery(reason = "unknown") {
+        const now = performance.now();
+        if (now - this.lastRecoveryPerfTime < STALL_RECOVERY_COOLDOWN_MS) {
+            return;
+        }
+
+        this.lastRecoveryPerfTime = now;
+        this.logEvent("recovery_attempt", { reason });
+
+        const sceneTime = this.getSceneTime(now);
+        if (this.shouldForceComplete(sceneTime)) {
+            this.logEvent("recovery_complete", { reason, sceneTime });
+            this.pause();
+            this.handleSceneCompletion();
+            return;
+        }
+
+        if (this.hasMasterAudio() && elements.audio.paused && !elements.audio.ended) {
+            try {
+                await elements.audio.play();
+                this.recordProgress(this.getSceneTime(), performance.now());
+                return;
+            } catch (error) {
+                this.logEvent("audio_resume_failed", { reason, message: error?.message || String(error) });
+            }
+        }
+
+        if (this.currentSegment.type === "character" && elements.video.paused) {
+            try {
+                await elements.video.play();
+                this.recordProgress(this.getSceneTime(), performance.now());
+                return;
+            } catch (error) {
+                this.logEvent("video_resume_failed", { reason, message: error?.message || String(error) });
+            }
+        }
+
+        if (this.currentSegment.type !== "character" || this.currentSegmentIndex >= this.segments.length - 1) {
+            this.logEvent("recovery_skip_to_next", { reason });
+            await this.advanceSegment();
+        }
+    }
+
     getSceneTime(now = performance.now()) {
         if (this.hasMasterAudio()) {
             if (this.audioEndedSceneTime != null) {
@@ -1405,9 +1503,10 @@ class ScenePlayer {
         this.hideBootOverlay();
         this.playing = true;
         this.segmentStartedAt = performance.now();
+        this.primeProgressWatch(this.segmentStartedAt);
         await this.syncMedia(true);
 
-        if (this.currentSegment.type !== "character") {
+        if (this.hasMasterAudio() || this.currentSegment.type !== "character") {
             this.startTicking();
         }
     }
@@ -1450,6 +1549,7 @@ class ScenePlayer {
         this.segmentElapsed = 0;
         this.renderSegment();
         this.updateStatus();
+        this.primeProgressWatch();
         await this.syncMedia(false);
         this.showBootOverlay(this.scene.scene_id, "Escena reiniciada. Prem espai per reproduir la nova base.");
     }
@@ -1485,6 +1585,10 @@ class ScenePlayer {
         }
 
         this.completionHandled = true;
+        this.logEvent("scene_complete", {
+            nextUrl: this.nextUrl || "",
+            onComplete: this.onComplete || "",
+        });
 
         if (this.nextUrl) {
             window.setTimeout(() => {
@@ -1528,6 +1632,7 @@ class ScenePlayer {
         this.currentSegmentIndex = nextIndex;
         this.segmentElapsed = 0;
         this.segmentStartedAt = autoplay ? performance.now() : 0;
+        this.primeProgressWatch(this.segmentStartedAt || performance.now());
         this.renderSegment();
         this.updateStatus();
         await this.syncMedia(autoplay, { preserveAudio });
@@ -1619,6 +1724,7 @@ class ScenePlayer {
                 elements.video.src = segment.src;
                 elements.video.dataset.src = segment.src;
                 elements.video.load();
+                this.logEvent("video_load", { src: segment.src });
             }
 
             elements.video.loop = segment.loopsMedia && !segment.clip_end;
@@ -1635,10 +1741,12 @@ class ScenePlayer {
         try {
             if (this.scene.audio?.src && (!preserveAudio || elements.audio.paused)) {
                 await elements.audio.play();
+                this.logEvent("audio_play", { src: this.scene.audio.src, preserveAudio });
             }
 
             if (segment.type === "character") {
                 await elements.video.play();
+                this.logEvent("video_play", { src: segment.src });
             }
         } catch (error) {
             elements.video.pause();
@@ -1665,6 +1773,15 @@ class ScenePlayer {
         const elapsed = this.hasMasterAudio()
             ? Math.max(0, this.getSceneTime(now) - this.currentSegment.timelineStart)
             : this.segmentElapsed + ((now - this.segmentStartedAt) / 1000);
+        const sceneTime = this.getSceneTime(now);
+
+        if (Math.abs(sceneTime - this.lastProgressSceneTime) > EPSILON / 2) {
+            this.recordProgress(sceneTime, now);
+        } else if (now - this.lastProgressPerfTime > STALL_THRESHOLD_MS) {
+            this.attemptRecovery("tick_stalled");
+            this.rafId = requestAnimationFrame(this.tick);
+            return;
+        }
 
         this.updateSubtitleOverlay();
 
@@ -1707,6 +1824,7 @@ class ScenePlayer {
         const elapsed = this.hasMasterAudio()
             ? Math.max(0, this.getSceneTime() - this.currentSegment.timelineStart)
             : elements.video.currentTime - Number(this.currentSegment.clip_start || 0);
+        this.recordProgress(this.getSceneTime(), performance.now());
 
         if (elapsed >= this.currentSegment.durationSeconds - EPSILON) {
             this.advanceSegment();
@@ -1726,10 +1844,38 @@ class ScenePlayer {
 
         this.audioEndedSceneTime = elements.audio.duration || elements.audio.currentTime || this.getSceneTime();
         this.audioEndedPerfTime = performance.now();
+        this.recordProgress(this.audioEndedSceneTime, this.audioEndedPerfTime);
+        this.logEvent("audio_ended", { currentTime: this.audioEndedSceneTime });
 
-        if (this.playing && this.currentSegment.type !== "character") {
+        if (this.shouldForceComplete(this.audioEndedSceneTime)) {
+            this.pause();
+            this.handleSceneCompletion();
+            return;
+        }
+
+        if (this.playing) {
             this.startTicking();
         }
+    }
+
+    onVideoError() {
+        this.logEvent("video_error", { src: this.currentSegment?.src || "" });
+        this.attemptRecovery("video_error");
+    }
+
+    onAudioError() {
+        this.logEvent("audio_error", { src: this.scene.audio?.src || "" });
+        this.attemptRecovery("audio_error");
+    }
+
+    onVideoStalled() {
+        this.logEvent("video_stalled", { src: this.currentSegment?.src || "" });
+        this.attemptRecovery("video_stalled");
+    }
+
+    onAudioStalled() {
+        this.logEvent("audio_stalled", { src: this.scene.audio?.src || "" });
+        this.attemptRecovery("audio_stalled");
     }
 }
 

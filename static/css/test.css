@@ -41,9 +41,9 @@
 
 .test-header-main {
     display: grid;
-    grid-template-columns: auto minmax(320px, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 18px;
-    align-items: start;
+    align-items: center;
     flex: 1 1 auto;
     min-width: 0;
 }
@@ -59,6 +59,10 @@
     display: grid;
     gap: 10px;
     min-width: 0;
+}
+
+.test-header-controls--embedded {
+    max-width: 620px;
 }
 
 .test-header-controls #test-puzzle-select {
@@ -102,9 +106,49 @@
 
 #test-shell {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.9fr);
     gap: 18px;
     align-items: start;
+}
+
+#test-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.test-tab {
+    border: 1px solid rgba(22, 117, 159, 0.14);
+    background: rgba(255, 255, 255, 0.82);
+    color: #14384a;
+    padding: 0.8rem 1rem;
+    border-radius: 999px;
+    font: inherit;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.test-tab:hover {
+    transform: translateY(-1px);
+    border-color: rgba(22, 117, 159, 0.3);
+    box-shadow: 0 10px 22px rgba(35, 112, 150, 0.12);
+}
+
+.test-tab.is-active {
+    border-color: rgba(22, 117, 159, 0.18);
+    background: linear-gradient(135deg, rgba(86, 215, 255, 0.24), rgba(180, 140, 255, 0.2));
+    color: #0f2d3d;
+}
+
+.test-tab-panel {
+    display: none;
+}
+
+.test-tab-panel.is-active {
+    display: block;
 }
 
 .test-panel {
@@ -367,6 +411,10 @@
     gap: 18px;
 }
 
+.monitor-grid--single {
+    grid-template-columns: 1fr;
+}
+
 .monitor-card {
     display: grid;
     grid-template-rows: auto auto;
@@ -416,6 +464,21 @@ textarea {
 .section-state #test-current-state {
     background: rgba(227, 245, 255, 0.62);
     border-color: rgba(17, 90, 121, 0.16);
+}
+
+.section-scenes #test-scene-health {
+    background: rgba(234, 251, 240, 0.7);
+    border-color: rgba(18, 110, 72, 0.16);
+}
+
+.section-system-summary #test-system-summary {
+    background: rgba(236, 247, 255, 0.72);
+    border-color: rgba(22, 117, 159, 0.16);
+}
+
+.section-system-logs #test-system-logs {
+    background: rgba(255, 244, 220, 0.62);
+    border-color: rgba(145, 96, 20, 0.16);
 }
 
 .section-events #test-event-log {
@@ -512,7 +575,10 @@ textarea[readonly] {
 
 #test-current-state,
 #test-event-log,
-#test-reference-output {
+#test-reference-output,
+#test-scene-health,
+#test-system-summary,
+#test-system-logs {
     min-height: clamp(180px, 28vh, 320px);
     border-radius: 16px;
     border: 1px solid rgba(22, 117, 159, 0.1);
@@ -532,6 +598,71 @@ textarea[readonly] {
     min-height: 180px;
     white-space: pre-wrap;
     word-break: break-word;
+}
+
+#test-scene-health {
+    min-height: 220px;
+}
+
+#test-system-summary,
+#test-system-logs {
+    min-height: 180px;
+}
+
+.scene-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+.scene-link {
+    display: block;
+    padding: 0.78rem 0.82rem;
+    border-radius: 14px;
+    border: 1px solid rgba(22, 117, 159, 0.14);
+    background: rgba(255, 255, 255, 0.84);
+    color: #14384a;
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.scene-link:hover {
+    transform: translateY(-1px);
+    border-color: rgba(22, 117, 159, 0.3);
+    box-shadow: 0 10px 22px rgba(35, 112, 150, 0.12);
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.scene-link strong,
+.scene-link span {
+    display: block;
+}
+
+.scene-link span {
+    margin-top: 0.2rem;
+    font-size: 0.84rem;
+    color: rgba(20, 56, 74, 0.74);
+}
+
+.system-log-entry {
+    padding: 0.72rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid rgba(145, 96, 20, 0.12);
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.system-log-entry + .system-log-entry {
+    margin-top: 8px;
+}
+
+.system-log-entry strong,
+.system-log-entry span {
+    display: block;
+}
+
+.system-log-entry span {
+    color: rgba(20, 56, 74, 0.76);
+    font-size: 0.84rem;
 }
 
 #test-sim-content {

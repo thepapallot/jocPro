@@ -1,280 +1,414 @@
 {
   "scene_id": "scene_intro_game",
-  "description": "Base de produccion para la intro general del juego, ajustada al audio y subtitulos oficiales del game master.",
+  "description": "Intro general del juego con formato de briefing, audio actualizado y paneles de UI sincronizados con la locucion.",
   "ui_titles": {
-    "top": "MISIÓN",
+    "top": "BRIEFING",
     "left": "RECURSOS",
-    "right": "PROTOCOLO"
+    "right": "CLAVES"
   },
   "audio": {
-    "src": "/static/audios/scene/intro_game_master.wav"
+    "src": "/static/audios/scene/intro_game_master_v2.wav"
   },
   "subtitles": [
     {
       "start": 0,
       "end": 4,
-      "text": "Bienvenidos. No os imagináis cuánto me alegro de que estéis ya aquí."
+      "text": "Bienvenidos. No sabéis cuánto me alegro de que estéis hoy aquí."
     },
     {
       "start": 4,
-      "end": 7.599,
-      "text": "Soy Cero, miembro de la Organización ADN."
+      "end": 8,
+      "text": "Soy Cero, miembro de la organización ADN."
     },
     {
-      "start": 7.599,
-      "end": 12,
-      "text": "Hace años que estamos investigando qué es lo que hace que algunos grupos humanos"
+      "start": 8,
+      "end": 14,
+      "text": "Hace mucho tiempo que en la organización estamos investigando qué es lo que hace que algunos grupos humanos"
     },
     {
-      "start": 12,
-      "end": 14.8,
+      "start": 14,
+      "end": 17,
       "text": "sean capaces de llegar más lejos que el resto."
     },
     {
-      "start": 14.8,
-      "end": 19.199,
-      "text": "Por qué hay equipos que juntos pueden lograr hitos que parecen imposibles."
+      "start": 17,
+      "end": 22,
+      "text": "¿Por qué hay equipos que, juntos, pueden lograr hitos que parecen imposibles?"
     },
     {
-      "start": 19.199,
-      "end": 21.399,
-      "text": "Después de mucho tiempo analizando datos,"
+      "start": 22,
+      "end": 26,
+      "text": "Hace miles de años, la humanidad ya demostró lo que puede llegar a"
     },
     {
-      "start": 21.399,
-      "end": 25,
-      "text": "hemos identificado un número muy reducido de grupos con un potencial"
+      "start": 26,
+      "end": 32.719,
+      "text": "hacer cuando muchas personas comparten un objetivo común. Obras colosales, legados que todavía hoy"
     },
     {
-      "start": 25,
-      "end": 30.8,
-      "text": "único. Vosotros sois uno de ellos. Hace miles de años, la humanidad ya demostró lo que"
+      "start": 32.719,
+      "end": 39.56,
+      "text": "nos maravillan. Entre todas, una se levanta como símbolo de equilibrio, esfuerzo y precisión:"
     },
     {
-      "start": 30.8,
-      "end": 35.399,
-      "text": "puede llegar a hacer cuando muchas personas comparten un objetivo común."
+      "start": 39.56,
+      "end": 45,
+      "text": "la pirámide. Llevamos años estudiando patrones, cruzando datos,"
     },
     {
-      "start": 35.399,
-      "end": 41.119,
-      "text": "Obras colosales, legados que todavía hoy nos maravillan. Entre todas, una se levanta"
+      "start": 45,
+      "end": 48,
+      "text": "explorando los misterios de la creatividad humana,"
     },
     {
-      "start": 41.119,
-      "end": 45.5,
-      "text": "como símbolo de equilibrio, esfuerzo y precisión: la pirámide."
+      "start": 48,
+      "end": 50.039,
+      "text": "con un objetivo ambicioso."
     },
     {
-      "start": 45.5,
-      "end": 51.2,
-      "text": "Hoy evaluaremos vuestras habilidades como equipo, y tendréis que superar una serie de retos"
+      "start": 50.039,
+      "end": 53.28,
+      "text": "Comprender y recuperar la extraordinaria capacidad de creación"
     },
     {
-      "start": 51.2,
-      "end": 59.2,
-      "text": "para así construir vuestra propia pirámide, una construcción hecha de coordinación, ingenio y confianza."
+      "start": 53.28,
+      "end": 56.24,
+      "text": "que floreció en la época de las pirámides."
     },
     {
-      "start": 59.2,
-      "end": 64.9,
-      "text": "Para superar estas pruebas, necesitaréis los diez terminales que están distribuidos por la sala,"
+      "start": 56.24,
+      "end": 60.439,
+      "text": "Hoy, por fin, podemos decir que ese esfuerzo ha dado fruto."
     },
     {
-      "start": 64.9,
-      "end": 65.239,
-      "text": "y unos tokens piramidales que repartiremos a cada uno de los grupos."
+      "start": 60.439,
+      "end": 63.159,
+      "text": "Hemos identificado un número muy reducido de grupos"
     },
     {
-      "start": 65.239,
-      "end": 70.4,
-      "text": "Y unos tokens piramidales que repartiremos a cada uno de los grupos. Estos tokens serán"
+      "start": 63.159,
+      "end": 65.439,
+      "text": "que poseen un potencial verdaderamente"
     },
     {
-      "start": 70.4,
-      "end": 75.56,
-      "text": "intransferibles. Para usarlos, deberéis colocarlos en la marca cuadrada que hay en la parte"
+      "start": 65.439,
+      "end": 70.319,
+      "text": "excepcional. Y vosotros estáis entre ellos."
     },
     {
-      "start": 75.56,
-      "end": 82.28,
-      "text": "superior de los terminales. Os aviso: aquí no admitimos interferencias. Móviles y accesorios"
+      "start": 70.319,
+      "end": 76,
+      "text": "Hoy evaluaremos vuestras habilidades como equipo y tendréis que superar una serie de pruebas para"
     },
     {
-      "start": 82.28,
-      "end": 90.359,
-      "text": "externos están prohibidos. Vuestras únicas herramientas serán las que tenéis delante y vuestra capacidad para colaborar."
+      "start": 76,
+      "end": 84.519,
+      "text": "así construir vuestra propia pirámide, una construcción hecha de coordinación, ingenio y confianza."
     },
     {
-      "start": 90.359,
-      "end": 93.359,
-      "text": "De momento, esto es todo lo que os puedo contar."
+      "start": 84.519,
+      "end": 87.4,
+      "text": "Para superar estas pruebas necesitaréis los diez"
     },
     {
-      "start": 93.359,
-      "end": 95.84,
-      "text": "Demostrad que sois un equipo capaz."
+      "start": 87.4,
+      "end": 94,
+      "text": "terminales que están distribuidos por la sala y unos tokens piramidales que os repartiremos."
+    },
+    {
+      "start": 94,
+      "end": 99.64,
+      "text": "Estos tokens serán intransferibles. Para usarlos deberéis colocarlos en la marca cuadrada"
+    },
+    {
+      "start": 99.64,
+      "end": 107.34,
+      "text": "que hay en la parte superior de los terminales. Os aviso, aquí no admitimos interferencias. Móviles y accesorios"
+    },
+    {
+      "start": 107.34,
+      "end": 110.159,
+      "text": "externos están prohibidos."
+    },
+    {
+      "start": 110.159,
+      "end": 116.359,
+      "text": "Vuestras únicas herramientas serán las que tenéis delante y vuestra capacidad para colaborar."
     }
   ],
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_idle_center_a.mp4",
-      "clip_start": 0.1,
-      "clip_end": 4.1,
-      "duration": 4,
-      "label": "cero_open"
-    },
-    {
-      "type": "character",
-      "src": "/static/videos/characters/character_subtle_expression_center.mp4",
-      "clip_start": 0.1,
-      "clip_end": 3.699,
-      "duration": 3.599,
-      "label": "cero_adn",
+      "src": "/static/videos/characters/cero_briefing_long_a.mp4",
+      "clip_start": 0.2,
+      "clip_end": 8.2,
+      "duration": 8,
+      "label": "cero_bienvenida_estable",
       "broadcast": {
         "logo_src": "/static/images/game_master/logo_adn.png",
         "show_right_brand": false
       }
     },
     {
-      "type": "transition",
-      "duration": 7.201,
-      "variant": "gm-hybrid",
-      "video": "/static/videos/game_master/network_core.mp4",
-      "clip_start": 0,
-      "clip_end": 8,
-      "badges": [
-        "ADN"
-      ],
-      "title": "PATRONES HUMANOS"
+      "type": "fullscreen_ui",
+      "duration": 14,
+      "variant": "mission",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "mission",
+          "top": {
+            "variant": "mission",
+            "title": "DOSSIER ADN",
+            "text": "Patrones humanos"
+          },
+          "left": {
+            "variant": "steps",
+            "title": "ANÁLISIS",
+            "steps": [
+              "Cooperación.",
+              "Datos.",
+              "Creatividad."
+            ]
+          }
+        },
+        {
+          "at": 9,
+          "variant": "steps",
+          "right": {
+            "variant": "steps",
+            "title": "CLAVE",
+            "text": "Potencial de equipo"
+          }
+        }
+      ]
     },
     {
       "type": "transition",
-      "duration": 10.2,
-      "variant": "gm-hybrid",
+      "duration": 8,
       "video": "/static/videos/game_master/city_wireframe.mp4",
       "clip_start": 0,
-      "clip_end": 8,
+      "clip_end": 8
+    },
+    {
+      "type": "transition",
+      "duration": 2.1,
+      "video": "/static/videos/game_master/gm_abstract_transition_a.mp4",
+      "clip_start": 0,
+      "clip_end": 2.1
+    },
+    {
+      "type": "transition",
+      "duration": 7.46,
+      "video": "/static/videos/game_master/gm_network_grid_a.mp4",
+      "clip_start": 0,
+      "clip_end": 7.46
+    },
+    {
+      "type": "transition",
+      "duration": 5.44,
+      "video": "/static/videos/game_master/gm_pyramid_wide_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.44
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 11.24,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "objective",
+          "top": {
+            "variant": "objective",
+            "title": "PROYECTO ADN",
+            "text": "Creatividad colectiva"
+          },
+          "left": {
+            "variant": "objective",
+            "title": "OBJETIVO",
+            "text": "Recuperar capacidad de creación"
+          }
+        },
+        {
+          "at": 5.039,
+          "variant": "steps",
+          "right": {
+            "variant": "steps",
+            "title": "INDICADORES",
+            "steps": [
+              "Coordinación.",
+              "Ingenio.",
+              "Precisión."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 10.1,
+      "variant": "gm-hybrid",
+      "video": "/static/videos/game_master/gm_selection_group_scan.mp4",
+      "clip_start": 0,
+      "clip_end": 10.1,
+      "kicker": "RESULTADO DEL ANÁLISIS",
+      "title": "GRUPOS EXCEPCIONALES",
+      "text": "Potencial excepcional.",
       "badges": [
         "SELECCIÓN",
         "POTENCIAL"
-      ],
-      "title": "CAPACIDAD EXCEPCIONAL"
+      ]
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_medium.mp4",
-      "clip_start": 0.15,
-      "clip_end": 5.95,
-      "duration": 5.8,
-      "label": "cero_trabajo_comun"
+      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.279,
+      "duration": 3.979,
+      "label": "cero_entre_ellos"
     },
     {
-      "type": "transition",
-      "duration": 4.599,
-      "variant": "gm-hybrid",
-      "image": "/static/images/piramidetrans.png",
-      "badges": [
-        "OBJETIVO",
-        "COMÚN"
-      ],
-      "title": "UN MISMO RUMBO"
+      "type": "fullscreen_ui",
+      "duration": 14.2,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "objective",
+          "top": {
+            "variant": "objective",
+            "title": "EVALUACIÓN",
+            "text": "Serie de pruebas"
+          },
+          "right": {
+            "variant": "mission",
+            "title": "META",
+            "text": "Vuestra pirámide"
+          }
+        },
+        {
+          "at": 5.681,
+          "variant": "steps",
+          "left": {
+            "variant": "steps",
+            "title": "BASE",
+            "steps": [
+              "Coordinación.",
+              "Ingenio.",
+              "Confianza."
+            ]
+          }
+        }
+      ]
     },
     {
-      "type": "transition",
-      "duration": 5.72,
-      "variant": "gm-hybrid",
-      "video": "/static/videos/Video_inicial.mp4",
-      "clip_start": 0,
-      "clip_end": 5.040998,
-      "badges": [
-        "LEGADOS",
-        "ESCALA"
-      ],
-      "title": "OBRAS COLOSALES"
+      "type": "fullscreen_ui",
+      "duration": 15.121,
+      "variant": "mission",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "mission",
+          "top": {
+            "variant": "mission",
+            "title": "RECURSOS",
+            "text": "10 terminales + tokens"
+          },
+          "left": {
+            "variant": "objective",
+            "title": "ELEMENTOS",
+            "assets": [
+              {
+                "src": "/static/images/puzzle1/caixa.png",
+                "alt": "Icono de terminal"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.881,
+          "variant": "objective",
+          "left": {
+            "variant": "objective",
+            "title": "ELEMENTOS",
+            "assets": [
+              {
+                "src": "/static/images/puzzle1/caixa.png",
+                "alt": "Icono de terminal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/token_pyramid_neon.png",
+                "alt": "Icono de token"
+              }
+            ]
+          }
+        },
+        {
+          "at": 9.481,
+          "variant": "objective",
+          "left": {
+            "variant": "objective",
+            "title": "ACTIVACIÓN",
+            "assets": [
+              {
+                "src": "/static/images/puzzle1/caixa.png",
+                "alt": "Icono de terminal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/token_pyramid_neon.png",
+                "alt": "Icono de token"
+              }
+            ]
+          },
+          "right": {
+            "variant": "objective",
+            "title": "USO",
+            "text": "Token en la marca superior"
+          }
+        }
+      ]
     },
     {
-      "type": "transition",
-      "duration": 4.381,
-      "variant": "gm-hybrid",
-      "video": "/static/videos/game_master/pyramid_outline.mp4",
-      "clip_start": 0,
-      "clip_end": 4.381,
-      "badges": [
-        "EQUILIBRIO",
-        "ESFUERZO",
-        "PRECISIÓN"
-      ],
-      "title": "LA PIRÁMIDE"
-    },
-    {
-      "type": "transition",
-      "duration": 5.7,
-      "variant": "gm-hybrid",
-      "video": "/static/videos/game_master/pyramid_bricks.mp4",
-      "clip_start": 0,
-      "clip_end": 5.041667,
-      "badges": [
-        "RETOS",
-        "EQUIPO"
-      ],
-      "title": "SERIE DE RETOS"
+      "type": "fullscreen_ui",
+      "duration": 16.824909,
+      "variant": "warning",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "warning",
+          "top": {
+            "variant": "warning",
+            "title": "PROTOCOLO",
+            "text": "Sin interferencias"
+          },
+          "right": {
+            "variant": "warning",
+            "title": "REGLAS",
+            "steps": [
+              "Sin móviles.",
+              "Sin accesorios externos."
+            ]
+          }
+        },
+        {
+          "at": 5.319,
+          "variant": "objective",
+          "left": {
+            "variant": "objective",
+            "title": "CLAVE",
+            "text": "Colaboración"
+          }
+        }
+      ]
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 0,
-      "clip_end": 8,
-      "duration": 8,
-      "label": "cero_vuestra_piramide"
-    },
-    {
-      "type": "transition",
-      "duration": 5.7,
-      "variant": "gm-hybrid",
-      "image": "/static/images/puzzle1/caixa.png",
-      "badges": [
-        "10",
-        "TERMINALES"
-      ],
-      "title": "PUESTOS DE JUEGO"
-    },
-    {
-      "type": "transition",
-      "duration": 10.66,
-      "variant": "gm-hybrid",
-      "image": "/static/images/puzzle1/tarjeta.png",
-      "badges": [
-        "TOKENS",
-        "PERSONALES",
-        "INTRANSFERIBLES"
-      ],
-      "title": "ACTIVACIÓN"
-    },
-    {
-      "type": "character",
-      "src": "/static/videos/characters/character_head_tilt_center.mp4",
-      "clip_start": 0.2,
-      "clip_end": 6.92,
-      "duration": 6.72,
-      "label": "cero_no_interferencias"
-    },
-    {
-      "type": "character",
-      "src": "/static/videos/characters/character_expressive_center.mp4",
-      "clip_start": 0,
-      "clip_end": 8,
-      "duration": 8,
-      "label": "cero_herramientas"
-    },
-    {
-      "type": "character",
-      "src": "/static/videos/characters/character_chin_lift_soft.mp4",
-      "clip_start": 0.2,
-      "clip_end": 5.76,
-      "duration": 5.56,
-      "label": "cero_cierre"
+      "src": "/static/videos/characters/cero_briefing_long_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 10.041667,
+      "duration": 9.741667,
+      "label": "cero_cierre_estable"
     }
   ]
 }

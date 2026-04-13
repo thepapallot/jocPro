@@ -74,9 +74,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_chin_lift_center.mp4",
-      "clip_start": 0.1,
-      "clip_end": 4.699,
+      "src": "/static/videos/characters/cero_intro_long_b.mp4",
+      "clip_start": 0,
+      "clip_end": 4.599,
       "duration": 4.599,
       "label": "intro_puzzle6"
     },
@@ -162,9 +162,9 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_medium.mp4",
-      "clip_start": 0.3,
-      "clip_end": 5.381,
+      "src": "/static/videos/characters/cero_emphasis_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.041667,
       "duration": 5.081,
       "label": "aviso_luz_puzzle6"
     },
@@ -271,7 +271,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_chin_lift_soft.mp4",
+      "src": "/static/videos/characters/cero_close_short_a.mp4",
       "clip_start": 0,
       "clip_end": 0.688029,
       "duration": 0.688029,

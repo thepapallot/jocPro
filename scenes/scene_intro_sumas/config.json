@@ -59,9 +59,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 0.2,
-      "clip_end": 4.6,
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.7,
       "duration": 4.4,
       "label": "intro_estable"
     },
@@ -118,9 +118,9 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_hold_center_close.mp4",
-      "clip_start": 1.4,
-      "clip_end": 5.101,
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.001,
       "duration": 3.701,
       "label": "bloque_estable"
     },
@@ -199,9 +199,9 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/character_chin_lift_soft.mp4",
-      "clip_start": 0.4,
-      "clip_end": 3.569,
+      "src": "/static/videos/characters/cero_intro_long_b.mp4",
+      "clip_start": 0.3,
+      "clip_end": 3.469,
       "duration": 3.169,
       "label": "cierre_suave"
     },
