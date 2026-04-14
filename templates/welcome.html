@@ -3,6 +3,13 @@
 <head>
     <title>Welcome</title>
     <style>
+        @font-face {
+            font-family: 'Orbitron';
+            src: url('/static/fonts/Orbitron-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
@@ -10,15 +17,21 @@
             overflow: hidden;
             background: black;
         }
-        .overlay-image {
+        .overlay-message {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            max-width: 80%;
-            max-height: 80%;
+            width: min(1400px, 85%);
             z-index: 2;
             display: none; /* shown on first click */
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(40px, 3.3vw, 66px);
+            font-weight: 700;
+            line-height: 1.35;
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 0 0 16px rgba(0, 0, 0, 0.9);
         }
         #welcome-stage {
             position: relative;
@@ -46,8 +59,8 @@
             <source src="{{ url_for('static', filename='videos/Video_inicial.mp4') }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <img id="overlay" class="overlay-image" src="{{ url_for('static', filename='images/text_dividios.png') }}" alt="overlay">
-        <audio id="overlay-audio" src="{{ url_for('static', filename='audios/inicial/ESP_dividios.mp3') }}"></audio>
+        <div id="overlay" class="overlay-message">La Piramide está a punto de empezar. Dividánse en los 10 terminales y esperen instrucciones sin tocar nada</div>
+        <audio id="overlay-audio" src="{{ url_for('static', filename='audios/inicial/ESP_dividios.wav') }}"></audio>
     </div>
     <script>
         const stage = document.getElementById('welcome-stage');
@@ -67,37 +80,45 @@
             stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
 
-        if (redirectFlag === 'indexFinal') {
-            document.body.addEventListener('click', () => {
+        function onAdvance() {
+            if (redirectFlag === 'indexFinal') {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = `/videoJocFinal`;
                 document.body.appendChild(form);
                 form.submit();
-            });
-        } else if (redirectFlag && redirectFlag.startsWith('puzzle') && puzzleIdx !== null) {    
-            document.body.addEventListener('click', () => {
+            } else if (redirectFlag && redirectFlag.startsWith('puzzle') && puzzleIdx !== null) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = `/videoPuzzles/${puzzleIdx}`;
                 document.body.appendChild(form);
                 form.submit();
-            });
-        } else {
-            // Default "start" flow: first click plays audio + shows image, second click goes to intro
-            let firstClickDone = false;
-            document.body.addEventListener('click', () => {
-                if (!firstClickDone) {
-                    firstClickDone = true;
-                    try { overlayAudio.currentTime = 0; overlayAudio.play(); } catch {}
+            } else {
+                // Default "start" flow: first activation plays audio + shows text, second advances
+                if (!onAdvance._done) {
+                    onAdvance._done = true;
+                    try {
+                        overlayAudio.currentTime = 0;
+                        overlayAudio.loop = true;
+                        overlayAudio.play();
+                    } catch {}
                     overlayImg.style.display = 'block';
                     return;
                 }
+                try {
+                    overlayAudio.pause();
+                    overlayAudio.currentTime = 0;
+                    overlayAudio.loop = false;
+                } catch {}
                 const next = {{ url_for('welcome', redirect_flag='puzzle1')|tojson }};
                 const target = `{{ url_for('scene_player') }}?scene=scene_intro_game&next=${encodeURIComponent(next)}`;
                 window.location.replace(target);
-            });
+            }
         }
+        onAdvance._done = false;
+
+        document.body.addEventListener('click', onAdvance);
+        document.addEventListener('keydown', (e) => { if (e.key === ' ') onAdvance(); });
 
         window.addEventListener('resize', updateStageScale, { passive: true });
         updateStageScale();

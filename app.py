@@ -8,7 +8,7 @@ import json
 import threading
 
 app = Flask(__name__)
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent #Directori base del projecte jocPro/
 
 mqtt_client = MQTTClient(app, puzzle_order=PUZZLE_ORDER)
 
