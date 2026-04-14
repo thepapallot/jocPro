@@ -17,15 +17,6 @@
     { id: "scene_video_final", label: "Intro Final", href: "/player/?scene=scene_video_final" },
     { id: "scene_outro_game", label: "Outro Final", href: "/player/?scene=scene_outro_game" }
   ];
-  const systemQuickActions = [
-    { label: "Intro general", href: "/player/?scene=scene_intro_game" },
-    { label: "Puzzle 1 intro", href: "/player/?scene=scene_intro_sumas" },
-    { label: "Puzzle 10 intro", href: "/player/?scene=scene_intro_segments" },
-    { label: "Outro final", href: "/player/?scene=scene_outro_game" },
-    { label: "Puzzle 1", href: "/puzzle/1" },
-    { label: "Puzzle final", href: "/puzzle/final" }
-  ];
-
   const puzzleConfigs = {
     "1": {
       label: "Puzzle 1",
@@ -420,10 +411,8 @@
     refreshStateBtn: document.getElementById("test-refresh-state-btn"),
     refreshScenesBtn: document.getElementById("test-refresh-scenes-btn"),
     sceneHealth: document.getElementById("test-scene-health"),
-    sceneLinks: document.getElementById("test-scene-links"),
     refreshSystemBtn: document.getElementById("test-refresh-system-btn"),
     systemSummary: document.getElementById("test-system-summary"),
-    systemActions: document.getElementById("test-system-actions"),
     refreshLogsBtn: document.getElementById("test-refresh-logs-btn"),
     clearLogsBtn: document.getElementById("test-clear-logs-btn"),
     systemLogs: document.getElementById("test-system-logs"),
@@ -433,8 +422,24 @@
     clearLogBtn: document.getElementById("test-clear-log-btn"),
     referenceOutput: document.getElementById("test-reference-output"),
     copyReferenceBtn: document.getElementById("test-copy-reference-btn"),
-    simContent: document.getElementById("test-sim-content")
+    simContent: document.getElementById("test-sim-content"),
+    puzzleShortcuts: document.getElementById("test-puzzle-shortcuts"),
+    introShortcuts: document.getElementById("test-intro-shortcuts")
   };
+
+  function getAliasForPuzzle(puzzleId) {
+    const alias = puzzleAliases[puzzleId] ?? puzzleAliases[String(puzzleId)] ?? "";
+    return String(alias || "").trim();
+  }
+
+  function getVisiblePuzzleIds() {
+    if (activePuzzleOrder.length > 0) {
+      return activePuzzleOrder.map((id) => String(id));
+    }
+    return Object.keys(puzzleConfigs)
+      .filter((id) => id !== "-1")
+      .sort((a, b) => Number(a) - Number(b));
+  }
 
   function switchTab(tabId) {
     const isSystem = tabId === "system";
@@ -495,15 +500,13 @@
   };
 
   function initPuzzleSelect() {
-    const visibleIds = activePuzzleOrder.length > 0
-      ? activePuzzleOrder
-      : Object.keys(puzzleConfigs).filter((id) => id !== "-1");
+    const visibleIds = getVisiblePuzzleIds();
 
     visibleIds.forEach((id) => {
       const config = puzzleConfigs[id];
       if (!config) return;
 
-      const alias = puzzleAliases[id] || puzzleAliases[String(id)] || "";
+      const alias = getAliasForPuzzle(id);
       const optionLabel = alias
         ? `${id} · ${alias}`
         : config.label;
@@ -515,38 +518,77 @@
     });
   }
 
+  function renderShortcutButtons() {
+    if (!els.puzzleShortcuts || !els.introShortcuts) {
+      return;
+    }
+
+    const visibleIds = getVisiblePuzzleIds();
+    const shortcutPuzzleIds = [...visibleIds];
+    if (puzzleConfigs["-1"]) {
+      shortcutPuzzleIds.push("-1");
+    }
+
+    els.puzzleShortcuts.innerHTML = shortcutPuzzleIds.map((id) => {
+      const alias = id === "-1"
+        ? "puzzle final"
+        : (getAliasForPuzzle(id) || "sin alias");
+      const label = id === "-1" ? "Puzzle final" : `Puzzle ${id}`;
+      return `
+        <button type="button" class="test-shortcut-btn" data-shortcut-puzzle="${escapeHtml(id)}">
+          <strong>${escapeHtml(label)}</strong>
+          <span>${escapeHtml(alias)}</span>
+        </button>
+      `;
+    }).join("");
+
+    els.puzzleShortcuts.querySelectorAll("[data-shortcut-puzzle]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const puzzleId = String(button.dataset.shortcutPuzzle || "");
+        if (puzzleId === "-1") {
+          window.open("/puzzle/final", "_blank", "noopener");
+          return;
+        }
+        const config = puzzleConfigs[puzzleId];
+        if (!config || !config.route) {
+          return;
+        }
+        window.open(config.route, "_blank", "noopener");
+      });
+    });
+
+    const introRows = visibleIds.map((id, index) => {
+      const alias = getAliasForPuzzle(id) || "sin alias";
+      const configById = sceneHealthConfigs.find((scene) => scene.label === `Puzzle ${id} Intro`);
+      const href = configById ? configById.href : `/videoPuzzles/${index + 1}`;
+      return `
+        <a class="test-shortcut-btn test-shortcut-btn--intro" href="${href}" target="_blank" rel="noopener">
+          <strong>Intro ${escapeHtml(id)}</strong>
+          <span>${escapeHtml(alias)}</span>
+        </a>
+      `;
+    }).join("");
+
+    const extraIntros = `
+      <a class="test-shortcut-btn test-shortcut-btn--intro" href="/player/?scene=scene_intro_game" target="_blank" rel="noopener">
+        <strong>Intro general</strong>
+        <span>inicio</span>
+      </a>
+      <a class="test-shortcut-btn test-shortcut-btn--intro" href="/player/?scene=scene_video_final" target="_blank" rel="noopener">
+        <strong>Intro final</strong>
+        <span>cierre</span>
+      </a>
+    `;
+
+    els.introShortcuts.innerHTML = `${introRows}${extraIntros}`;
+  }
+
   function getSelectedConfig() {
     return puzzleConfigs[els.puzzleSelect.value];
   }
 
   function setStatus(message) {
     document.title = message ? `Test Lab · ${message}` : "Test Lab";
-  }
-
-  function renderSceneLinks() {
-    if (!els.sceneLinks) {
-      return;
-    }
-
-    els.sceneLinks.innerHTML = sceneHealthConfigs.map((scene) => `
-      <a class="scene-link" href="${scene.href}" target="_blank" rel="noopener">
-        <strong>${escapeHtml(scene.label)}</strong>
-        <span>${escapeHtml(scene.id)}</span>
-      </a>
-    `).join("");
-  }
-
-  function renderSystemActions() {
-    if (!els.systemActions) {
-      return;
-    }
-
-    els.systemActions.innerHTML = systemQuickActions.map((action) => `
-      <a class="scene-link" href="${action.href}" target="_blank" rel="noopener">
-        <strong>${escapeHtml(action.label)}</strong>
-        <span>${escapeHtml(action.href)}</span>
-      </a>
-    `).join("");
   }
 
   function updateTopicHelp() {
@@ -2956,9 +2998,8 @@
   }
 
   initPuzzleSelect();
+  renderShortcutButtons();
   switchTab("puzzles");
-  renderSceneLinks();
-  renderSystemActions();
   renderSystemSummary();
   renderPlayerLogs();
   renderForm();
