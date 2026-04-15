@@ -12,7 +12,7 @@ Para hacerlo solo necesitaréis vuestros tokens y las luces de vuestro terminal.
 
 4
 00:00:14,359 --> 00:00:20,480
-Esta prueba consta de tres fases y, en cada una de ellas, deberéis contar un número de segundos distinto.
+Esta prueba consta de dos fases y, en cada una de ellas, deberéis contar un número de segundos distinto.
 
 5
 00:00:20,480 --> 00:00:25,000

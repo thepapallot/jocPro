@@ -147,7 +147,6 @@
         "Rondas fijas:",
         "1 -> objetivo 10 s",
         "2 -> objetivo 30 s",
-        "3 -> objetivo 60 s",
         "",
         "El mensaje envia el error respecto al objetivo:",
         "P5,9,-0.5 -> terminal 9 se adelanta 0.5 s",
@@ -1234,7 +1233,7 @@
     }).join("");
 
     const roundLabel = simState.puzzle5Round || 1;
-    const objectiveLabel = simState.puzzle5Objective ?? (roundLabel === 1 ? 10 : roundLabel === 2 ? 30 : 60);
+    const objectiveLabel = simState.puzzle5Objective ?? (roundLabel === 1 ? 10 : 30);
     const statusLabel = simState.puzzle5Waiting
       ? "Esperando"
       : simState.puzzle5ActiveRound
@@ -2038,7 +2037,6 @@
         { label: "Start", payload: startPayload },
         { label: "Round 1", payload: "P5_Round1" },
         { label: "Round 2", payload: "P5_Round2" },
-        { label: "Round 3", payload: "P5_Round3" },
         { label: "End", payload: "P5_End" }
       ],
       "6": [

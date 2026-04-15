@@ -7,8 +7,9 @@ class Puzzle5(BasePuzzle):
         super().__init__(puzzle_id=5, mqtt_client=mqtt_client)
         
         # Round configuration
-        self.round_objectives = {1: 10, 2: 30, 3: 60}  # Target times per round (seconds)
-        self.round_limits = {1: 20, 2: 30, 3: 50}      # Maximum total error allowed per round
+        self.round_objectives = {1: 10, 2: 30}  # Target times per round (seconds)
+        self.round_limits = {1: 15, 2: 25}      # Maximum total error allowed per round
+        self.total_rounds = len(self.round_objectives)
         
         # State
         self.current_round = 0
@@ -60,6 +61,7 @@ class Puzzle5(BasePuzzle):
             return {
                 "puzzle_id": self.id,
                 "round": round_number,
+                "total_rounds": self.total_rounds,
                 "times": [{"player": p, "time": t} for p, t in sorted(current_times.items())],
                 "total": total,
                 "limit": limit,
@@ -156,6 +158,7 @@ class Puzzle5(BasePuzzle):
         self._push({
             "round": round_number,
             "round_start": True,
+            "total_rounds": self.total_rounds,
             "objective": self.round_objectives[round_number],
             "limit": self.round_limits[round_number]
         })
@@ -192,7 +195,7 @@ class Puzzle5(BasePuzzle):
             
             with self.lock:
                 if success:
-                    if round_number >= 3:
+                    if round_number >= self.total_rounds:
                         # Puzzle completed!
                         self.solved = True
                         self.mqtt_client.send_message("FROM_FLASK", "P5_End")
