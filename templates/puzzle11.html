@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Puzzle 11{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle11.css') }}">
+{% endblock %}
+
+
+
+{% block puzzle_content %}
+<div id="puzzle11-shell">
+	<section id="reference-panel" class="p11-panel">
+		<div class="panel-head">
+			<div>
+				<div class="panel-kicker">Referencia</div>
+
+				<h2 class="panel-title">Tutorial</h2>
+			</div>
+		</div>
+
+		
+	</section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/puzzle11.js') }}"></script>
+{% endblock %}
