@@ -38,14 +38,14 @@ class Puzzle4(BasePuzzle):
             1: ("1", f"{self.streak2_folder}/pista2.wav"),
             2: ("2", f"{self.streak2_folder}/pista7.wav"),
             3: ("3", "WrongSongs/wrong8.wav"),
-            4: ("4", "WrongSongs/wrong7.wav"),
-            5: ("5", f"{self.streak2_folder}/pista6.wav"),
+            4: ("4", f"{self.streak2_folder}/pista6.wav"),
+            5: ("5", "WrongSongs/wrong7.wav"),
             6: ("6", f"{self.streak2_folder}/pista1.wav"),
             7: ("7", f"{self.streak2_folder}/pista8.wav"),
             8: ("8", f"{self.streak2_folder}/pista5.wav"),
             9: ("9", f"{self.streak2_folder}/pista4.wav"),
         }
-        self.streak2_required_order = ["6", "1", "0", "9", "8", "5", "2", "7"]
+        self.streak2_required_order = ["6", "1", "0", "9", "8", "4", "2", "7"]
         
         # State
         self.total_required = 2
