@@ -4,6 +4,7 @@
     let redirected = false;
     const imgEl = document.querySelector("#image-area img");
     const progressReadoutEl = document.getElementById("p2-progress-readout");
+    const errorCounterEl = document.getElementById("p2-error-counter");
     const statusCopyEl = document.getElementById("p2-status-copy");
     const completeOverlayEl = document.getElementById("p2-complete-overlay");
     const completeCopyEl = document.getElementById("p2-complete-copy");
@@ -15,6 +16,8 @@
     const PHASE_RESET_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
     const progressByPlayer = {};
+    const errorsByPlayer = {};
+    let sharedErrorCounter = 0;
     const prevProgress = {}; // keep only for snapshot rendering after error flash
     let errorBlockUntil = 0;
     const activeErrorPlayers = new Set();
@@ -56,6 +59,30 @@
             const secured = (progressByPlayer[player] || 0) >= TOTAL;
             routeEl.classList.toggle("active", secured);
         });
+    }
+
+    function updateErrorsHud() {
+        if (errorCounterEl) {
+            errorCounterEl.textContent = `${sharedErrorCounter}/3`;
+        }
+
+        for (let player = 1; player <= PLAYER_COUNT; player++) {
+            const valueEl = document.getElementById(`error-player-${player}`);
+            if (!valueEl) continue;
+            const errorCount = errorsByPlayer[player] || 0;
+            valueEl.textContent = String(errorCount);
+            valueEl.classList.toggle("has-errors", errorCount > 0);
+        }
+    }
+
+    function registerError(player, counterValue) {
+        if (typeof player === "number") {
+            errorsByPlayer[player] = (errorsByPlayer[player] || 0) + 1;
+        }
+        if (typeof counterValue === "number") {
+            sharedErrorCounter = counterValue;
+        }
+        updateErrorsHud();
     }
 
     function updateHudState() {
@@ -141,6 +168,7 @@
         activeErrorPlayers.add(player);
         const barInner = document.getElementById(`bar-player-${player}`);
         const row = document.querySelector(`.player-row[data-player="${player}"]`);
+        const errorRow = document.querySelector(`.error-row[data-player="${player}"]`);
         const barOuter = row ? row.querySelector('.bar-outer') : null;
         const label = row ? row.querySelector('.player-label') : null;
 
@@ -148,10 +176,12 @@
         if (barOuter) barOuter.classList.add("error-flash");
         if (label) label.classList.add("error-flash");
         if (row) row.classList.add("error-flash");
+        if (errorRow) errorRow.classList.add("error-flash");
 
         setTimeout(() => {
             const elInner = document.getElementById(`bar-player-${player}`);
             const elRow = document.querySelector(`.player-row[data-player="${player}"]`);
+            const elErrorRow = document.querySelector(`.error-row[data-player="${player}"]`);
             const elOuter = elRow ? elRow.querySelector('.bar-outer') : null;
             const elLabel = elRow ? elRow.querySelector('.player-label') : null;
 
@@ -159,6 +189,7 @@
             if (elOuter) elOuter.classList.remove("error-flash");
             if (elLabel) elLabel.classList.remove("error-flash");
             if (elRow) elRow.classList.remove("error-flash");
+            if (elErrorRow) elErrorRow.classList.remove("error-flash");
 
             activeErrorPlayers.delete(player);
             if (activeErrorPlayers.size === 0) {
@@ -175,6 +206,7 @@
     function startErrorFlashOnly(player) {
         const barInner = document.getElementById(`bar-player-${player}`);
         const row = document.querySelector(`.player-row[data-player="${player}"]`);
+        const errorRow = document.querySelector(`.error-row[data-player="${player}"]`);
         const barOuter = row ? row.querySelector('.bar-outer') : null;
         const label = row ? row.querySelector('.player-label') : null;
 
@@ -182,10 +214,12 @@
         if (barOuter) barOuter.classList.add("error-flash");
         if (label) label.classList.add("error-flash");
         if (row) row.classList.add("error-flash");
+        if (errorRow) errorRow.classList.add("error-flash");
 
         setTimeout(() => {
             const elInner = document.getElementById(`bar-player-${player}`);
             const elRow = document.querySelector(`.player-row[data-player="${player}"]`);
+            const elErrorRow = document.querySelector(`.error-row[data-player="${player}"]`);
             const elOuter = elRow ? elRow.querySelector('.bar-outer') : null;
             const elLabel = elRow ? elRow.querySelector('.player-label') : null;
 
@@ -193,11 +227,17 @@
             if (elOuter) elOuter.classList.remove("error-flash");
             if (elLabel) elLabel.classList.remove("error-flash");
             if (elRow) elRow.classList.remove("error-flash");
+            if (elErrorRow) elErrorRow.classList.remove("error-flash");
         }, 4000);
     }
 
     function handleUpdate(data) {
         if (data.puzzle_id !== 2) return;
+
+        if (typeof data.error_counter === "number") {
+            sharedErrorCounter = data.error_counter;
+            updateErrorsHud();
+        }
 
         const inErrorBlock = errorBlockUntil && Date.now() < errorBlockUntil;
         if (inErrorBlock) {
@@ -212,6 +252,7 @@
 
         // Error increment (counter not yet at threshold): flash erroring player only, no reset
         if (data.error_increment) {
+            registerError(data.error_increment.player, data.error_counter);
             playSound(INCORRECT_SOUND_URL);
             startErrorFlashOnly(data.error_increment.player);
             return;
@@ -219,6 +260,7 @@
 
         // Error reset (counter reached threshold): queue reset snapshot and flash
         if (data.error_reset) {
+            registerError(data.error_reset.player, data.error_counter);
             playSound(INCORRECT_SOUND_URL);
             if (data.players) queuedSnapshot = data.players;
             startErrorFlash(data.error_reset.player);
@@ -350,6 +392,10 @@
             .then(data => {
                 if (!data || data.puzzle_id !== 2) return;
                 if (data.players) applySnapshot(data.players);
+                if (typeof data.error_counter === "number") {
+                    sharedErrorCounter = data.error_counter;
+                    updateErrorsHud();
+                }
                 if (data.alarm_mode !== undefined) {
                     stopAlarmFlash();
                     setAlarmMode(!!data.alarm_mode);
@@ -362,7 +408,10 @@
         
         for (let player = 1; player <= PLAYER_COUNT; player++) {
             setProgress(player, 0);
+            errorsByPlayer[player] = 0;
         }
+        sharedErrorCounter = 0;
+        updateErrorsHud();
         updateHudState();
 
         loadCurrentState();
@@ -407,6 +456,27 @@
             route.style.alignItems = '';
             route.style.justifyContent = '';
             route.style.zIndex = '';
+        });
+    }
+
+    function resetErrorListStyles(errorList, errorRows) {
+        errorList.style.position = '';
+        errorList.style.top = '';
+        errorList.style.height = '';
+        errorList.style.left = '';
+        errorList.style.right = '';
+        errorList.style.zIndex = '';
+        errorList.style.display = '';
+        errorList.style.margin = '';
+
+        errorRows.forEach((row) => {
+            row.style.position = '';
+            row.style.top = '';
+            row.style.height = '';
+            row.style.left = '';
+            row.style.right = '';
+            row.style.transform = '';
+            row.style.zIndex = '';
         });
     }
 
@@ -477,30 +547,88 @@
         });
     }
 
+    function syncErrorList() {
+        const errorsArea = document.getElementById('p2-errors-area');
+        const errorList = document.getElementById('p2-error-list');
+        const playersList = document.getElementById('players');
+        const playerRows = document.querySelectorAll('#players .player-row');
+        const errorRows = document.querySelectorAll('#p2-error-list .error-row');
+        if (!errorsArea || !errorList || !playersList || !playerRows.length || !errorRows.length) return;
+
+        // Keep mobile on CSS flow layout.
+        if (window.matchMedia('(max-width: 640px)').matches) {
+            resetErrorListStyles(errorList, errorRows);
+            return;
+        }
+
+        resetErrorListStyles(errorList, errorRows);
+
+        const areaRect = errorsArea.getBoundingClientRect();
+        const playersRect = playersList.getBoundingClientRect();
+
+        if (!areaRect.height || !playersRect.height) return;
+
+        errorList.style.position = 'absolute';
+        errorList.style.left = '10px';
+        errorList.style.right = '10px';
+        errorList.style.top = `${Math.max(0, playersRect.top - areaRect.top)}px`;
+        errorList.style.height = `${playersRect.height}px`;
+        errorList.style.display = 'block';
+        errorList.style.margin = '0';
+        errorList.style.zIndex = '1';
+
+        const listRect = errorList.getBoundingClientRect();
+        if (!listRect.height) return;
+
+        errorRows.forEach((errorRow) => {
+            const player = Number(errorRow.dataset.player);
+            const row = document.querySelector(`#players .player-row[data-player="${player}"]`);
+            if (!row) return;
+
+            const rowRect = row.getBoundingClientRect();
+            const centerY = rowRect.top + (rowRect.height / 2);
+            const yPercent = ((centerY - listRect.top) / listRect.height) * 100;
+
+            errorRow.style.position = 'absolute';
+            errorRow.style.left = '0';
+            errorRow.style.right = '0';
+            errorRow.style.top = `${Math.max(0, Math.min(100, yPercent))}%`;
+            errorRow.style.height = `${Math.max(26, rowRect.height)}px`;
+            errorRow.style.transform = 'translateY(-50%)';
+            errorRow.style.zIndex = '1';
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         installDebugHelpers();
         initSSE();
         requestAnimationFrame(() => requestAnimationFrame(() => {
             syncMazeFrame();
             syncSecuredList();
+            syncErrorList();
         }));
         window.addEventListener('load', () => requestAnimationFrame(() => {
             syncMazeFrame();
             syncSecuredList();
+            syncErrorList();
         }));
         window.addEventListener('resize', () => {
             syncMazeFrame();
             syncSecuredList();
+            syncErrorList();
         });
         if (window.ResizeObserver) {
             const ro = new ResizeObserver(() => requestAnimationFrame(() => {
                 syncMazeFrame();
                 syncSecuredList();
+                syncErrorList();
             }));
             const pa = document.getElementById('progress-area');
             const ia = document.getElementById('image-area');
+            const ea = document.getElementById('p2-errors-area');
             if (pa) ro.observe(pa);
             if (ia) ro.observe(ia);
+            if (ea) ro.observe(ea);
         }
     });
 })();
