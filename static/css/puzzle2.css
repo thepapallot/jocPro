@@ -170,145 +170,137 @@ body.p2-solved #p2-status-copy {
 #puzzle2-layout {
     position: relative;
     display: grid;
-    grid-template-columns: clamp(420px, 42%, 760px) clamp(48px, 3.5%, 72px) minmax(0, 1fr);
+    grid-template-columns: clamp(336px, 33%, 580px) clamp(112px, 12%, 160px) minmax(0, 1fr);
     gap: 10px;
     align-items: stretch;
     height: 100%;
     min-height: 0;
 }
 
-#p2-divider {
+#p2-errors-area {
     position: relative;
     grid-column: 2;
     grid-row: 1;
-    border: 1px solid rgba(69, 230, 255, 0.24);
+    border: 1px solid rgba(69, 230, 255, 0.22);
     border-radius: 20px;
     background:
-        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), rgba(4, 10, 20, 0.78) 64%),
-        linear-gradient(180deg, rgba(7, 16, 31, 0.88), rgba(5, 12, 24, 0.74));
+        linear-gradient(180deg, rgba(9, 20, 36, 0.9), rgba(5, 12, 24, 0.82));
     box-shadow:
-        inset 0 0 18px rgba(69, 230, 255, 0.08),
-        0 0 18px rgba(69, 230, 255, 0.08);
+        inset 0 0 18px rgba(69, 230, 255, 0.06),
+        0 0 16px rgba(69, 230, 255, 0.08);
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    row-gap: 10px;
+    align-items: start;
+    padding: 12px 10px;
     overflow: hidden;
 }
 
-#p2-divider::after {
-    content: "";
-    position: absolute;
-    inset: 18px 22%;
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(69, 230, 255, 0.04), rgba(103, 217, 255, 0.08), rgba(69, 230, 255, 0.04));
-    opacity: 0.42;
-    filter: blur(12px);
-    pointer-events: none;
-}
-
-#p2-divider::before {
+#p2-errors-area::before {
     content: "";
     position: absolute;
     inset: 10px;
     border-radius: 14px;
-    border: 1px solid rgba(103, 217, 255, 0.16);
-    opacity: 0.62;
+    border: 1px solid rgba(103, 217, 255, 0.14);
+    opacity: 0.55;
+    pointer-events: none;
 }
 
-.p2-divider-rail {
-    position: absolute;
-    left: 50%;
-    top: 16px;
-    bottom: 16px;
-    width: 2px;
-    transform: translateX(-50%);
-    background: linear-gradient(
-        180deg,
-        rgba(69, 230, 255, 0.12),
-        rgba(69, 230, 255, 0.72) 36%,
-        rgba(103, 217, 255, 0.42) 72%,
-        rgba(69, 230, 255, 0.2)
-    );
+#p2-errors-area .section-label {
+    margin-bottom: 0;
+    margin-top: 38px;
+    justify-content: center;
+    padding-left: 0;
+    font-size: 1.02rem;
+    color: #ff4a4a;
+    text-shadow: 0 0 10px rgba(211, 47, 47, 0.3);
+}
+
+#p2-error-counter {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-size: clamp(1.55rem, 2.35cqw, 2.35rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    color: #ffd8de;
+    text-shadow:
+        0 0 10px rgba(255, 92, 111, 0.32),
+        0 0 18px rgba(255, 92, 111, 0.14);
+}
+
+#p2-error-list {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    align-self: stretch;
+    min-height: 0;
+}
+
+.error-row {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr);
+    align-items: center;
+    gap: 6px;
+    padding: 3px 5px;
+    border: 1px solid rgba(69, 230, 255, 0.16);
+    border-radius: 12px;
+    background: linear-gradient(90deg, rgba(69, 230, 255, 0.08), rgba(69, 230, 255, 0.02));
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.error-arrow {
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 10px solid rgba(126, 232, 255, 0.95);
+    filter: drop-shadow(0 0 6px rgba(69, 230, 255, 0.34));
+}
+
+.error-value {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 0;
+    transform: translateX(-2mm);
+    font-size: clamp(1.75rem, 2.35cqw, 2.35rem);
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(245, 252, 255, 0.96);
+    text-shadow:
+        0 0 8px rgba(126, 232, 255, 0.12),
+        0 0 14px rgba(126, 232, 255, 0.06);
+}
+
+.error-value.has-errors {
+    color: #ff4a4a;
+    text-shadow:
+        0 0 8px rgba(211, 47, 47, 0.24),
+        0 0 14px rgba(211, 47, 47, 0.1);
+}
+
+.error-row.error-flash {
+    border-color: rgba(211, 47, 47, 0.66);
+    background: linear-gradient(90deg, rgba(211, 47, 47, 0.26), rgba(211, 47, 47, 0.1));
     box-shadow:
-        0 0 10px rgba(69, 230, 255, 0.44),
-        0 0 18px rgba(103, 217, 255, 0.22);
+        inset 0 0 10px rgba(211, 47, 47, 0.2),
+        0 0 12px rgba(211, 47, 47, 0.26);
 }
 
-.p2-divider-node {
-    position: absolute;
-    left: 50%;
-    width: clamp(24px, 1.4rem, 30px);
-    height: clamp(24px, 1.4rem, 30px);
-    transform: translateX(-50%);
-    border-radius: 999px;
-    border: 1px solid rgba(69, 230, 255, 0.34);
-    background:
-        radial-gradient(circle at 35% 35%, rgba(233, 250, 255, 0.95), rgba(69, 230, 255, 0.2) 34%, rgba(8, 18, 33, 0.9) 68%),
-        linear-gradient(180deg, rgba(12, 28, 48, 0.96), rgba(5, 12, 24, 0.96));
-    box-shadow:
-        0 0 12px rgba(69, 230, 255, 0.22),
-        0 0 22px rgba(103, 217, 255, 0.12),
-        inset 0 0 12px rgba(69, 230, 255, 0.08);
-    animation: p2DividerNode 3.6s ease-in-out infinite;
-    z-index: 2;
+.error-row.error-flash .error-value {
+    color: #ffd6d6;
 }
 
-.p2-divider-node::before,
-.p2-divider-node::after {
-    content: "";
-    position: absolute;
-    border-radius: 999px;
-}
-
-.p2-divider-node::before {
-    inset: 4px;
-    border: 1px solid rgba(103, 217, 255, 0.12);
-    opacity: 0.75;
-}
-
-.p2-divider-node::after {
-    inset: 8px;
-    background: radial-gradient(circle at 35% 35%, rgba(236, 252, 255, 0.95), rgba(69, 230, 255, 0.56) 54%, rgba(103, 217, 255, 0.14));
-    box-shadow: 0 0 12px rgba(69, 230, 255, 0.28);
-}
-
-.p2-divider-node-1 {
-    top: 15%;
-    animation-delay: 0s;
-}
-
-.p2-divider-node-2 {
-    top: 38%;
-    animation-delay: 0.45s;
-}
-
-.p2-divider-node-3 {
-    top: 61%;
-    animation-delay: 0.9s;
-}
-
-.p2-divider-node-4 {
-    top: 84%;
-    animation-delay: 1.35s;
-}
-
-@keyframes p2DividerNode {
-    0%,
-    100% {
-        opacity: 0.78;
-        transform: translateX(-50%) translateY(0) scale(0.96);
-        border-color: rgba(69, 230, 255, 0.28);
-        box-shadow:
-            0 0 10px rgba(69, 230, 255, 0.18),
-            0 0 18px rgba(103, 217, 255, 0.08),
-            inset 0 0 10px rgba(69, 230, 255, 0.06);
-    }
-    50% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-2px) scale(1.04);
-        border-color: rgba(69, 230, 255, 0.48);
-        box-shadow:
-            0 0 16px rgba(69, 230, 255, 0.32),
-            0 0 28px rgba(103, 217, 255, 0.16),
-            inset 0 0 14px rgba(69, 230, 255, 0.1);
-    }
+.error-row.error-flash .error-arrow {
+    border-right-color: #c7f6ff;
+    filter: drop-shadow(0 0 8px rgba(126, 232, 255, 0.44));
 }
 
 #progress-area,
@@ -526,8 +518,16 @@ body.p2-solved #p2-status-copy {
     border-radius: 26px;
     display: flex;
     flex-direction: column;
-    padding: 2px;
+    padding: 0;
     min-height: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+}
+
+#maze-stage::before {
+    display: none;
 }
 
 .section-label {
@@ -719,7 +719,7 @@ body.p2-solved #p2-status-copy {
     align-items: stretch;
     justify-content: center;
     min-height: 0;
-    padding: 4px 8px 6px;
+    padding: 4px 0 6px;
     background:
         radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), transparent 60%),
         radial-gradient(circle at 50% 50%, rgba(103, 217, 255, 0.03), transparent 72%);
@@ -783,7 +783,7 @@ body.p2-solved #p2-status-copy {
     }
 
     #image-area {
-        padding: 2px 6px 4px;
+        padding: 2px 2px 4px;
     }
 
     #players {
@@ -987,7 +987,7 @@ body.alarm-mode #p2-maze-frame {
     }
 
     #puzzle2-layout {
-        grid-template-columns: clamp(272px, 34%, 360px) clamp(30px, 4%, 44px) minmax(0, 1fr);
+        grid-template-columns: clamp(248px, 33%, 340px) clamp(80px, 11%, 116px) minmax(0, 1fr);
     }
 
     #progress-area {
@@ -995,7 +995,7 @@ body.alarm-mode #p2-maze-frame {
     }
 
     #image-area {
-        padding: 8px 12px 10px;
+        padding: 8px 1px 10px;
     }
 
     #p2-side-pyramid {
@@ -1045,7 +1045,7 @@ body.alarm-mode #p2-maze-frame {
     }
 
     #puzzle2-layout {
-        grid-template-columns: clamp(216px, 38%, 300px) clamp(24px, 4%, 34px) minmax(0, 1fr);
+        grid-template-columns: clamp(206px, 33%, 276px) clamp(74px, 12%, 102px) minmax(0, 1fr);
         gap: 10px;
     }
 
@@ -1061,7 +1061,7 @@ body.alarm-mode #p2-maze-frame {
     }
 
     #image-area {
-        padding: 8px 10px 10px;
+        padding: 8px 1px 10px;
     }
 
     #p2-side-head {
@@ -1136,8 +1136,38 @@ body.alarm-mode #p2-maze-frame {
         min-height: 100%;
     }
 
-    #p2-divider {
-        display: none;
+    #p2-errors-area {
+        order: 2;
+        grid-column: auto;
+        grid-row: auto;
+        padding: 10px 10px;
+        border-radius: 16px;
+    }
+
+    #p2-error-list {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .error-row {
+        grid-template-columns: 12px minmax(0, 1fr);
+        justify-items: stretch;
+        gap: 4px;
+        padding: 3px 4px;
+    }
+
+    .error-arrow {
+        align-self: center;
+        justify-self: start;
+        border-top-width: 5px;
+        border-bottom-width: 5px;
+        border-right-width: 8px;
+    }
+
+    .error-value {
+        padding-left: 0;
+        transform: translateX(-2mm);
+        font-size: clamp(1.45rem, 4.9vw, 1.95rem);
     }
 
     #maze-stage {
@@ -1203,7 +1233,7 @@ body.alarm-mode #p2-maze-frame {
     }
 
     #image-area {
-        padding: 8px 8px 8px;
+        padding: 8px 4px 8px;
     }
 
     #p2-side-head {

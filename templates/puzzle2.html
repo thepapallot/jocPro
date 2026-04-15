@@ -37,12 +37,17 @@
             </div>
         </aside>
 
-        <aside id="p2-divider" aria-hidden="true">
-            <div class="p2-divider-rail"></div>
-            <div class="p2-divider-node p2-divider-node-1"></div>
-            <div class="p2-divider-node p2-divider-node-2"></div>
-            <div class="p2-divider-node p2-divider-node-3"></div>
-            <div class="p2-divider-node p2-divider-node-4"></div>
+        <aside id="p2-errors-area" aria-live="polite">
+            <div class="section-label">Errors</div>
+            <div id="p2-error-counter">0/3</div>
+            <div id="p2-error-list">
+                {% for p in range(1, 10 + 1) %}
+                <div class="error-row" data-player="{{ p }}" title="Token {{ token_map[p-1] }}">
+                    <span class="error-arrow" aria-hidden="true"></span>
+                    <span class="error-value" id="error-player-{{ p }}">0</span>
+                </div>
+                {% endfor %}
+            </div>
         </aside>
 
         <section id="maze-stage">
