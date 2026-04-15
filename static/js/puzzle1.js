@@ -1,4 +1,5 @@
 (function() {
+    const totalRounds = 2;
     const puzzleContainer = document.getElementById('puzzle-container');
     const bottomArea = document.getElementById('bottom-area');
 
@@ -16,8 +17,6 @@
         roundIndicator.setAttribute('aria-label', 'Fase actual');
         roundIndicator.innerHTML = `
             <span class="phase-step is-active"></span>
-            <span class="phase-link"></span>
-            <span class="phase-step"></span>
             <span class="phase-link"></span>
             <span class="phase-step"></span>
         `;
@@ -38,6 +37,7 @@
     const formulaLeftValue = document.getElementById('formula-left-value');
     const formulaRightValue = document.getElementById('formula-right-value');
     const formulaResultValue = document.getElementById('formula-result-value');
+    const objectiveMessage = document.getElementById('objective-message');
     let formulaResetTimeout = null;
 
     let timer = 120;
@@ -92,7 +92,8 @@
     }
 
     function parseExpression(expression) {
-        const match = /^(\d+)\s*\+\s*(\d+)\s*=\s*(\d+)$/.exec(expression || '');
+        const normalized = String(expression || '').trim();
+        const match = /(\d+)\s*\+\s*(\d+)\s*=\s*(\d+)\s*$/.exec(normalized);
         if (!match) return null;
         return {
             left: match[1],
@@ -118,13 +119,29 @@
         if (formulaResultValue) formulaResultValue.textContent = '--';
         if (formulaLeftImage) formulaLeftImage.hidden = false;
         if (formulaRightImage) formulaRightImage.hidden = false;
+        if (objectiveMessage) {
+            objectiveMessage.textContent = '';
+            objectiveMessage.classList.remove('is-visible', 'is-error');
+        }
+    }
+
+    function setObjectiveMessage(text, state = 'idle') {
+        if (!objectiveMessage) return;
+
+        const value = String(text || '').trim();
+        objectiveMessage.textContent = value;
+        objectiveMessage.classList.remove('is-error');
+        objectiveMessage.classList.toggle('is-visible', value.length > 0);
+        if (state === 'error' && value.length > 0) {
+            objectiveMessage.classList.add('is-error');
+        }
     }
 
     function isFormulaPreviewActive() {
         return formulaResetTimeout !== null;
     }
 
-    function setObjectiveFormula(expression, state = 'idle', resultOnly = false) {
+    function setObjectiveFormula(expression, state = 'idle', resultOnly = false, displayMs = null) {
         const parsed = parseExpression(expression);
         if (!parsed || !objectiveFormula) {
             resetObjectiveFormula();
@@ -157,9 +174,10 @@
         if (formulaRightValue) formulaRightValue.textContent = parsed.right;
         if (formulaResultValue) formulaResultValue.textContent = parsed.result;
 
+        const timeoutMs = Number(displayMs) > 0 ? Number(displayMs) : (resultOnly ? 2000 : 3000);
         formulaResetTimeout = setTimeout(() => {
             resetObjectiveFormula();
-        }, resultOnly ? 2000 : 3000);
+        }, timeoutMs);
     }
 
     function setRoundIndicator(round, count = null) {
@@ -180,15 +198,18 @@
 
         document.body.classList.remove(
             'round-1-active',
-            'round-2-active',
-            'round-3-active'
+            'round-2-active'
         );
-        document.body.classList.add(`round-${round}-active`);
+        if (round <= totalRounds) {
+            document.body.classList.add(`round-${round}-active`);
+        }
     }
 
     function setPuzzleGridClass(round) {
-        puzzleContainer.classList.remove('round-1', 'round-2', 'round-3');
-        puzzleContainer.classList.add(`round-${round}`);
+        puzzleContainer.classList.remove('round-1', 'round-2');
+        if (round <= totalRounds) {
+            puzzleContainer.classList.add(`round-${round}`);
+        }
     }
 
     function animateGridIn() {
@@ -314,6 +335,7 @@
             if (data.start_timer) {
                 playEffect('apareix_contingut.wav');
                 timerElement.classList.remove('expired');
+                clearSolvedContainer();
                 resetObjectiveFormula();
                 startTimer();
             }
@@ -365,6 +387,7 @@
 
             if (data.solved) {
                 clearSolvedContainer();
+                setObjectiveMessage('');
                 setObjectiveFormula(data.solved.text, 'success', false);
                 pendingSolvedResult = String(data.solved.result);
 
@@ -393,10 +416,12 @@
                     operationsDelayTimeout = null;
                 }
                 awaitingRecoveryOperations = false;
+                const incorrectDisplayMs = Number(data.incorrect.display_ms) || 5000;
 
                 playEffect('incorrecte.wav');
                 renderStatus('error');
-                setObjectiveFormula(data.incorrect.text, 'error', false);
+                setObjectiveMessage(data.incorrect.text, 'error');
+                setObjectiveFormula(data.incorrect.text, 'error', false, incorrectDisplayMs);
 
                 clearInterval(timerInterval);
                 timerRunning = false;
@@ -409,9 +434,9 @@
 
                 setTimeout(() => {
                     resetObjectiveFormula();
-                    renderStatus('reset');
+                    //renderStatus('reset');
                     awaitingRecoveryOperations = true;
-                }, 3000);
+                }, incorrectDisplayMs);
             }
 
             if (data.operations) {
@@ -429,7 +454,7 @@
 
                 if (awaitingRecoveryOperations) {
                     awaitingRecoveryOperations = false;
-                    renderStatus('reset');
+                    //renderStatus('reset');
 
                     operationsDelayTimeout = setTimeout(() => {
                         clearSolvedContainer();
@@ -565,7 +590,7 @@
 
     function startTimer() {
         clearInterval(timerInterval);
-        timer = 120;
+        timer = 90;
         timerElement.classList.remove('expired', 'warning');
         updateTimerDisplay();
 
