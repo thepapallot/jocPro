@@ -221,7 +221,8 @@
         if (!stripWindow) return;
 
         stripWindow.innerHTML = '';
-        for (const digit of code) {
+        for (let i = code.length - 1; i >= 0; i -= 1) {
+            const digit = code[i];
             const segment = document.createElement('div');
             segment.className = `led-segment color-${digit}`;
             stripWindow.appendChild(segment);
