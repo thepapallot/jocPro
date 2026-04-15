@@ -12,6 +12,7 @@
     const CORRECT_SOUND_URL = "/static/audios/effects/correcte.wav";
     const INCORRECT_SOUND_URL = "/static/audios/effects/incorrecte.wav";
     const PHASE_COMPLETE_SOUND_URL = "/static/audios/effects/fase_completada.wav";
+    const PHASE_RESET_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
     const progressByPlayer = {};
     const prevProgress = {}; // keep only for snapshot rendering after error flash
@@ -163,10 +164,35 @@
             if (activeErrorPlayers.size === 0) {
                 errorBlockUntil = 0;
                 if (queuedSnapshot) {
+                    playSound(PHASE_RESET_SOUND_URL);
                     applySnapshot(queuedSnapshot);
                     queuedSnapshot = null;
                 }
             }
+        }, 4000);
+    }
+
+    function startErrorFlashOnly(player) {
+        const barInner = document.getElementById(`bar-player-${player}`);
+        const row = document.querySelector(`.player-row[data-player="${player}"]`);
+        const barOuter = row ? row.querySelector('.bar-outer') : null;
+        const label = row ? row.querySelector('.player-label') : null;
+
+        if (barInner) barInner.classList.add("error-flash");
+        if (barOuter) barOuter.classList.add("error-flash");
+        if (label) label.classList.add("error-flash");
+        if (row) row.classList.add("error-flash");
+
+        setTimeout(() => {
+            const elInner = document.getElementById(`bar-player-${player}`);
+            const elRow = document.querySelector(`.player-row[data-player="${player}"]`);
+            const elOuter = elRow ? elRow.querySelector('.bar-outer') : null;
+            const elLabel = elRow ? elRow.querySelector('.player-label') : null;
+
+            if (elInner) elInner.classList.remove("error-flash");
+            if (elOuter) elOuter.classList.remove("error-flash");
+            if (elLabel) elLabel.classList.remove("error-flash");
+            if (elRow) elRow.classList.remove("error-flash");
         }, 4000);
     }
 
@@ -184,7 +210,14 @@
             return;
         }
 
-        // Wrong symbol: queue reset snapshot, flash, and return
+        // Error increment (counter not yet at threshold): flash erroring player only, no reset
+        if (data.error_increment) {
+            playSound(INCORRECT_SOUND_URL);
+            startErrorFlashOnly(data.error_increment.player);
+            return;
+        }
+
+        // Error reset (counter reached threshold): queue reset snapshot and flash
         if (data.error_reset) {
             playSound(INCORRECT_SOUND_URL);
             if (data.players) queuedSnapshot = data.players;
