@@ -1,29 +1,37 @@
 {% extends "base.html" %}
 
-{% block title %}Puzzle 11{% endblock %}
+{% block title %}Puzzle 11 – Tutorial{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle11.css') }}">
 {% endblock %}
 
-
+{% block top_right %}{% endblock %}
 
 {% block puzzle_content %}
-<div id="puzzle11-shell">
-	<section id="reference-panel" class="p11-panel">
-		<div class="panel-head">
-			<div>
-				<div class="panel-kicker">Referencia</div>
+<div id="p11-shell">
+    <div id="p11-timeline" aria-label="Progreso del tutorial"></div>
 
-				<h2 class="panel-title">Tutorial</h2>
-			</div>
-		</div>
+    <div id="p11-current-card">
+        <div id="p11-card-header">
+            <img
+                id="p11-pyramid"
+                src="{{ url_for('static', filename='images/piramidetrans.png') }}"
+                alt="Pirámide"
+            >
+            <div id="p11-phase-title">FASE DE ENERGÍA</div>
+        </div>
+        <div id="p11-step-text"></div>
+    </div>
 
-		
-	</section>
+    <div id="p11-solved-banner" class="hidden">
+        ✓ ¡Tutorial completo — La pirámide está activada!
+    </div>
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
+<script>var NEXT_PUZZLE_ID = {{ next_puzzle_id | tojson }};</script>
 <script src="{{ url_for('static', filename='js/puzzle11.js') }}"></script>
 {% endblock %}
