@@ -21,7 +21,7 @@ class Puzzle10(BasePuzzle):
         }
 
         # Round duration source of truth for frontend timer (seconds).
-        self.round_seconds = 60
+        self.round_seconds = 90
 
         self.solved_boxes = set()
         self.current_codes = self.solution_codes.copy()
