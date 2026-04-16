@@ -100,7 +100,13 @@ def play_video_puzzles(idx_puzzle_id):
     if not scene_id:
         return redirect(next_url)
 
-    target = f"{url_for('scene_player')}?scene={scene_id}&next={next_url}"
+    intro_target = f"{url_for('scene_player')}?scene={scene_id}&next={next_url}"
+    target = url_for(
+        'scene_player',
+        scene='scene_between_puzzles',
+        next=intro_target,
+        brief_progress=f"{idx_puzzle_id}/{len(PUZZLE_ORDER)}"
+    )
     return redirect(target)
 
 @app.route('/direct/<int:idx_puzzle_id>', methods=['GET'])

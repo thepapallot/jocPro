@@ -3,6 +3,7 @@ const EPSILON = 0.12;
 const SAFE_NEXT_GRACE_SECONDS = 0.45;
 const STALL_THRESHOLD_MS = 2500;
 const STALL_RECOVERY_COOLDOWN_MS = 1800;
+let briefContentCatalog = {};
 
 const elements = {
     playerRoot: document.getElementById("player-root"),
@@ -13,6 +14,7 @@ const elements = {
     uiLayer: document.getElementById("ui-layer"),
     transitionLayer: document.getElementById("transition-layer"),
     subtitleOverlay: document.getElementById("subtitle-overlay"),
+    persistentElementsStrip: document.getElementById("persistent-elements-strip"),
     bootOverlay: document.getElementById("boot-overlay"),
 };
 
@@ -29,6 +31,43 @@ function resolveNextUrl() {
 function resolveOnComplete() {
     const params = new URLSearchParams(window.location.search);
     return params.get("on_complete") || "";
+}
+
+function resolveNextSceneId() {
+    const next = resolveNextUrl();
+    if (!next) {
+        return "";
+    }
+
+    try {
+        const nextUrl = new URL(next, window.location.origin);
+        return nextUrl.searchParams.get("scene") || "";
+    } catch (error) {
+        return "";
+    }
+}
+
+function resolveIntroBriefOverrides() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        progress: params.get("brief_progress"),
+        kicker: params.get("brief_kicker"),
+        title: params.get("brief_title"),
+        objective: params.get("brief_objective"),
+        evaluation: params.get("brief_evaluation"),
+        cta: params.get("brief_cta"),
+    };
+}
+
+const introBriefOverrides = resolveIntroBriefOverrides();
+const nextSceneId = resolveNextSceneId();
+
+function getBriefContentForNextScene() {
+    if (!nextSceneId) {
+        return {};
+    }
+    const entry = briefContentCatalog[nextSceneId];
+    return entry && typeof entry === "object" ? entry : {};
 }
 
 function createElement(tag, className, text) {
@@ -137,6 +176,54 @@ function updateAssetGridClasses(grid, assets = []) {
     if (iconOnly) {
         grid.classList.add(`asset-grid--icons-${assets.length}`);
     }
+}
+
+function createPersistentStripAssetItem(asset = {}) {
+    const item = createElement("article", "persistent-elements-strip__item");
+    const media = createElement("div", "persistent-elements-strip__media");
+    const image = document.createElement("img");
+    image.className = "persistent-elements-strip__image";
+    image.src = asset.src || "";
+    image.alt = asset.alt || asset.label || "";
+    media.appendChild(image);
+    item.appendChild(media);
+    return item;
+}
+
+function updatePersistentStripAssets(row, assets = []) {
+    if (!row) {
+        return;
+    }
+
+    row.replaceChildren();
+    assets.forEach((asset) => {
+        row.appendChild(createPersistentStripAssetItem(asset));
+    });
+}
+
+function PersistentElementsStrip({ title = "", objective = "", assetsTitle = "" } = {}) {
+    const strip = createElement("div", "persistent-elements-strip__inner");
+    const info = createElement("div", "persistent-elements-strip__info");
+    const assets = createElement("div", "persistent-elements-strip__assets");
+    const row = createElement("div", "persistent-elements-strip__row");
+
+    if (title) {
+        info.appendChild(createElement("h3", "persistent-elements-strip__title", title));
+    }
+
+    if (objective) {
+        info.appendChild(createElement("p", "persistent-elements-strip__objective", objective));
+    }
+
+    if (assetsTitle) {
+        assets.appendChild(createElement("p", "persistent-elements-strip__assets-title", assetsTitle));
+    }
+
+    assets.appendChild(row);
+    strip.appendChild(info);
+    strip.appendChild(assets);
+
+    return { strip, row };
 }
 
 function zoneHasContent(zone) {
@@ -603,6 +690,11 @@ function TransitionScreen(segment) {
         return screen;
     }
 
+    if (segment.variant === "intro-brief") {
+        screen.appendChild(IntroBriefTransition(segment));
+        return screen;
+    }
+
     const labelInsideMedia = Boolean(segment.image && segment.label && segment.variant === "maze");
 
     if (segment.video) {
@@ -638,10 +730,70 @@ function TransitionScreen(segment) {
     return screen;
 }
 
+function IntroBriefTransition(segment) {
+    const briefContent = getBriefContentForNextScene();
+    const progressText = introBriefOverrides.progress ?? segment.progress ?? "";
+    const kickerText = briefContent.kicker ?? introBriefOverrides.kicker ?? segment.kicker ?? "";
+    const titleText = briefContent.title ?? introBriefOverrides.title ?? segment.title ?? "";
+    const objectiveText = briefContent.objective ?? introBriefOverrides.objective ?? segment.objective ?? "";
+    const evaluationText = briefContent.evaluation ?? introBriefOverrides.evaluation ?? segment.evaluation ?? "";
+    const ctaText = briefContent.cta ?? introBriefOverrides.cta ?? segment.cta ?? "";
+
+    const media = createElement("div", "transition-screen__media transition-screen__media--intro-brief");
+    const card = createElement("section", "intro-brief-card");
+    const content = createElement("div", "intro-brief-card__content");
+    const header = createElement("div", "intro-brief-card__header");
+    const details = createElement("div", "intro-brief-card__grid");
+
+    if (kickerText) {
+        header.appendChild(createElement("p", "intro-brief-card__kicker", kickerText));
+    }
+
+    if (progressText) {
+        header.appendChild(createElement("p", "intro-brief-card__progress", progressText));
+    }
+
+    if (header.children.length > 0) {
+        content.appendChild(header);
+    }
+
+    if (titleText) {
+        content.appendChild(createElement("h2", "intro-brief-card__title", titleText));
+    }
+
+    if (objectiveText) {
+        const objectiveBlock = createElement("article", "intro-brief-block intro-brief-block--objective");
+        objectiveBlock.appendChild(createElement("h3", "intro-brief-block__title", "OBJETIVO"));
+        objectiveBlock.appendChild(createElement("p", "intro-brief-block__text", objectiveText));
+        details.appendChild(objectiveBlock);
+    }
+
+    if (evaluationText) {
+        const evaluationBlock = createElement("article", "intro-brief-block intro-brief-block--evaluation");
+        evaluationBlock.appendChild(createElement("h3", "intro-brief-block__title", "EVALUACION"));
+        evaluationBlock.appendChild(createElement("p", "intro-brief-block__text", evaluationText));
+        details.appendChild(evaluationBlock);
+    }
+
+    if (details.children.length > 0) {
+        content.appendChild(details);
+    }
+
+    if (ctaText) {
+        content.appendChild(createElement("p", "intro-brief-card__cta", ctaText));
+    }
+
+    card.appendChild(content);
+    media.appendChild(card);
+    return media;
+}
+
 function createTransitionVideoElement(segment, className = "transition-screen__video") {
     const video = document.createElement("video");
     const clipStart = Number(segment.clip_start || 0);
-    const canUseNativeLoop = Boolean(segment.loopsMedia && clipStart <= EPSILON);
+    const clipEnd = segment.clip_end != null ? Number(segment.clip_end) : null;
+    const hasClippedWindow = clipEnd != null && clipEnd - clipStart > EPSILON;
+    const canUseNativeLoop = Boolean(segment.loopsMedia && clipStart <= EPSILON && !hasClippedWindow);
     video.className = className;
     video.src = segment.video;
     video.muted = true;
@@ -1168,6 +1320,7 @@ class ScenePlayer {
         this.activePhaseIndex = -1;
         this.activeSubtitleKey = "";
         this.fullscreenPanelState = null;
+        this.persistentStripState = null;
         this.audioContext = null;
         this.audioEndedSceneTime = null;
         this.audioEndedPerfTime = 0;
@@ -1261,11 +1414,70 @@ class ScenePlayer {
             throw new Error("La escena no te segments.");
         }
 
+        this.setupPersistentElementsStrip();
+
         this.renderSegment();
         this.updateStatus();
         this.hideBootOverlay();
         this.primeProgressWatch();
+
+        if (this.currentSegment?.advance_on_space) {
+            return;
+        }
+
         await this.play();
+    }
+
+    setupPersistentElementsStrip() {
+        if (!elements.persistentElementsStrip) {
+            return;
+        }
+
+        const stripConfig = this.scene?.persistent_elements_strip;
+        if (!stripConfig || typeof stripConfig !== "object") {
+            return;
+        }
+
+        const title = stripConfig.title || "";
+        const objective = stripConfig.objective || "";
+        const assetsTitle = stripConfig.assets_title || "";
+
+        elements.playerRoot?.classList.remove("player-root--persistent-strip");
+        elements.persistentElementsStrip.classList.add("hidden");
+        elements.persistentElementsStrip.innerHTML = "";
+        this.persistentStripState = null;
+
+        const strip = PersistentElementsStrip({
+            title,
+            objective,
+            assetsTitle,
+        });
+
+        this.persistentStripState = strip;
+        elements.playerRoot?.classList.add("player-root--persistent-strip");
+        elements.playerRoot?.classList.add("player-root--subtitle-up");
+        elements.persistentElementsStrip.appendChild(strip.strip);
+        elements.persistentElementsStrip.classList.remove("hidden");
+        this.updatePersistentElementsStrip(0);
+    }
+
+    resolvePersistentStripAssets(elapsedSeconds = 0) {
+        if (!this.persistentStripState) {
+            return [];
+        }
+
+        const content = mergeAccumulatedUiState(this.segments, this.currentSegmentIndex, elapsedSeconds);
+        const assets = Array.isArray(content?.left?.assets) ? content.left.assets : [];
+        return assets.filter((asset) => asset && asset.src);
+    }
+
+    updatePersistentElementsStrip(elapsedSeconds = 0) {
+        if (!this.persistentStripState?.row) {
+            return;
+        }
+
+        const assets = this.resolvePersistentStripAssets(elapsedSeconds);
+        updatePersistentStripAssets(this.persistentStripState.row, assets);
     }
 
     ensureAudioContext() {
@@ -1496,7 +1708,13 @@ class ScenePlayer {
             return elements.audio.currentTime || 0;
         }
 
-        return this.currentSegment.timelineStart + this.segmentElapsed;
+        let elapsed = this.segmentElapsed;
+        if (this.playing && this.segmentStartedAt) {
+            elapsed += Math.max(0, (now - this.segmentStartedAt) / 1000);
+        }
+
+        elapsed = Math.min(this.currentSegment.durationSeconds, Math.max(0, elapsed));
+        return this.currentSegment.timelineStart + elapsed;
     }
 
     async play() {
@@ -1628,16 +1846,18 @@ class ScenePlayer {
             elements.audio.pause();
         }
 
-        this.playing = autoplay;
+        const nextSegment = this.segments[nextIndex];
+        const shouldAutoplay = autoplay && !nextSegment?.advance_on_space;
+        this.playing = shouldAutoplay;
         this.currentSegmentIndex = nextIndex;
         this.segmentElapsed = 0;
-        this.segmentStartedAt = autoplay ? performance.now() : 0;
+        this.segmentStartedAt = shouldAutoplay ? performance.now() : 0;
         this.primeProgressWatch(this.segmentStartedAt || performance.now());
         this.renderSegment();
         this.updateStatus();
-        await this.syncMedia(autoplay, { preserveAudio });
+        await this.syncMedia(shouldAutoplay, { preserveAudio });
 
-        if (autoplay && this.currentSegment.type !== "character") {
+        if (shouldAutoplay && this.currentSegment.type !== "character") {
             this.startTicking();
         }
     }
@@ -1655,7 +1875,11 @@ class ScenePlayer {
         elements.transitionLayer.classList.remove("layer-visible");
         elements.video.classList.remove("scene-video--hidden", "scene-video--reveal");
         elements.playerRoot?.classList.remove("player-root--broadcast", "player-root--character-feed");
+        if (!elements.playerRoot?.classList.contains("player-root--persistent-strip")) {
+            elements.playerRoot?.classList.remove("player-root--subtitle-up");
+        }
         elements.broadcastOverlay?.classList.add("hidden");
+        this.updatePersistentElementsStrip(this.segmentElapsed);
 
         if (segment.type === "character") {
             elements.playerRoot?.classList.add("player-root--broadcast");
@@ -1672,6 +1896,9 @@ class ScenePlayer {
         if (segment.type === "fullscreen_ui") {
             elements.uiLayer.classList.remove("hidden");
             this.fullscreenPanelState = createFullscreenPanel(this.segments, this.currentSegmentIndex, this.segmentElapsed);
+            if (this.fullscreenPanelState?.screen?.dataset?.variant === "immersive-strip") {
+                elements.playerRoot?.classList.add("player-root--subtitle-up");
+            }
             elements.uiLayer.appendChild(this.fullscreenPanelState.screen);
             this.activePhaseKey = this.getPhaseKey(segment, this.segmentElapsed);
             this.playPhaseSfx(segment, this.segmentElapsed);
@@ -1791,6 +2018,7 @@ class ScenePlayer {
                 if (this.fullscreenPanelState) {
                     updateFullscreenPanel(this.fullscreenPanelState, this.segments, this.currentSegmentIndex, elapsed);
                 }
+                this.updatePersistentElementsStrip(elapsed);
                 this.activePhaseKey = phaseKey;
                 this.playPhaseSfx(this.currentSegment, elapsed);
             }
@@ -1897,6 +2125,9 @@ async function bootstrap() {
 
     try {
         const scene = await loadScene(sceneId);
+        briefContentCatalog = scene?.brief_by_scene && typeof scene.brief_by_scene === "object"
+            ? scene.brief_by_scene
+            : {};
         playerInstance = new ScenePlayer(scene);
         await playerInstance.init();
     } catch (error) {
@@ -1921,6 +2152,12 @@ document.addEventListener("keydown", async (event) => {
 
     if (event.code === "Space") {
         event.preventDefault();
+
+        if (playerInstance.currentSegment?.advance_on_space) {
+            await playerInstance.advanceSegment();
+            return;
+        }
+
         await playerInstance.togglePlayback();
         return;
     }

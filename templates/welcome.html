@@ -110,7 +110,7 @@
                     overlayAudio.currentTime = 0;
                     overlayAudio.loop = false;
                 } catch {}
-                const next = {{ url_for('welcome', redirect_flag='puzzle1')|tojson }};
+                const next = {{ url_for('play_video_puzzles', idx_puzzle_id=1, from_intro_game=1)|tojson }};
                 const target = `{{ url_for('scene_player') }}?scene=scene_intro_game&next=${encodeURIComponent(next)}`;
                 window.location.replace(target);
             }
