@@ -1,5 +1,5 @@
 # Configurable order of puzzles (reorder or insert/remove to change flow)
-PUZZLE_ORDER = [11,1,2,3,4,5,6,10,8,9]
+PUZZLE_ORDER = [11,8,2,10,3,1,5,4,6]
 
 # Alias funcional de cada puzzle por puzzle_id.
 # Se usa como source of truth de la escena intro asociada a cada puzzle.
