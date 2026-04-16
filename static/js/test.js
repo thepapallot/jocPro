@@ -29,6 +29,17 @@
     "El token 31 pasa por el terminal 7 dos veces y despues pulsa rojo.",
     "El token 35 pasa por el terminal que tiene el simbolo pi."
   ];
+  // Final puzzle button targets: botons[round_index][giff_index] = [b1, b2, b3, b4, b5, b6]
+  const finalPuzzleBotons = [
+    // Round 1
+    [[2,2,1,2,2,1], [2,1,2,1,2,2], [1,1,1,3,3,1], [2,1,3,2,1,1], [1,2,1,2,1,3]],
+    // Round 2
+    [[2,2,5,2,2,2], [2,3,4,2,3,1], [3,3,2,3,1,3], [1,1,3,4,4,2], [4,1,1,5,1,3]],
+    // Round 3
+    [[4,4,4,4,5,4], [4,3,5,2,6,5], [1,4,6,4,8,2], [6,2,2,8,4,3], [4,5,5,3,4,4]],
+    // Round 4
+    [[0,8,5,8,6,1], [0,4,10,7,6,1], [0,6,8,9,4,1], [0,4,8,8,7,1], [0,5,3,9,10,1]]
+  ];
   const puzzleConfigs = {
     "11": {
       label: "Puzzle 11",
@@ -558,6 +569,15 @@
       option.textContent = optionLabel;
       els.puzzleSelect.appendChild(option);
     });
+
+    // Add Final Puzzle at the end
+    const finalConfig = puzzleConfigs["-1"];
+    if (finalConfig) {
+      const option = document.createElement("option");
+      option.value = "-1";
+      option.textContent = finalConfig.label;
+      els.puzzleSelect.appendChild(option);
+    }
   }
 
   function renderShortcutButtons() {
@@ -2168,20 +2188,95 @@
   }
 
   function renderPuzzleFinalSimulator() {
+    // Get current state
+    const currentStateData = {};
+    
+    // Build targets table HTML
+    let targetsTableHTML = `<table style="width: 100%; font-size: 0.85em; border-collapse: collapse;">
+      <thead><tr style="background: #2a2a2a; color: #fff;">
+        <th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">Ronda</th>
+        <th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">GIF</th>`;
+    for (let i = 1; i <= 6; i++) {
+      targetsTableHTML += `<th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">B${i}</th>`;
+    }
+    targetsTableHTML += `</tr></thead><tbody>`;
+    for (let round = 1; round <= 4; round++) {
+      for (let gif = 1; gif <= 5; gif++) {
+        const targets = finalPuzzleBotons[round - 1][gif - 1];
+        targetsTableHTML += `<tr><td style="padding: 0.5rem; border: 1px solid #444; text-align: center;">${round}</td>
+          <td style="padding: 0.5rem; border: 1px solid #444; text-align: center;">${gif}</td>`;
+        targets.forEach(btn => {
+          targetsTableHTML += `<td style="padding: 0.5rem; border: 1px solid #444; text-align: center; font-weight: bold;">${btn}</td>`;
+        });
+        targetsTableHTML += `</tr>`;
+      }
+    }
+    targetsTableHTML += `</tbody></table>`;
+
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
       return `<button type="button" class="sim-box" data-sim-pf-box="${index + 1}">Terminal ${index + 1}</button>`;
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona un terminal y escribe el string de 6 botones detectados para la fase final, o resuelve la ronda actual con el objetivo activo.</div>
-      <div class="sim-grid answer-grid">
-        <label class="full-width"><span class="field-label">Botones</span><input id="sim-pf-buttons" type="text" value="2413"></label>
+      <div class="sim-note">Control del juego final. Usa "Resolver ronda" para enviar automáticamente el objetivo actual, o envía manualmente.</div>
+      <div class="inline-fields" style="margin-bottom: 1rem;">
+        <label>
+          <span class="field-label">Ronda</span>
+          <select id="sim-pf-round">
+            <option value="1">Ronda 1 (30s)</option>
+            <option value="2">Ronda 2 (45s)</option>
+            <option value="3">Ronda 3 (90s)</option>
+            <option value="4">Ronda 4 (90s)</option>
+          </select>
+        </label>
+        <label>
+          <span class="field-label">GIF</span>
+          <select id="sim-pf-gif">
+            <option value="1">GIF 1</option>
+            <option value="2">GIF 2</option>
+            <option value="3">GIF 3</option>
+            <option value="4">GIF 4</option>
+            <option value="5">GIF 5</option>
+          </select>
+        </label>
       </div>
-      <div class="action-row">
+      <div style="padding: 1rem; background: #f5f5f5; border-radius: 4px; margin-bottom: 1rem; font-family: monospace; text-align: center;">
+        <div style="color: #666; margin-bottom: 0.5rem;">Objetivo actual</div>
+        <div id="sim-pf-target-display" style="font-size: 1.3em; font-weight: bold; letter-spacing: 0.5em; color: #333;">-- -- -- -- -- --</div>
+      </div>
+      <div class="action-row" style="margin-bottom: 1rem;">
         <button type="button" class="sim-button primary-action" data-sim-pf-solve-round>Resolver ronda</button>
       </div>
+      <div class="field-label">Objetivos por ronda/GIF</div>
+      <div style="overflow-x: auto; max-height: 300px; overflow-y: auto; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 4px;">
+        ${targetsTableHTML}
+      </div>
+      <div class="field-label">Terminales</div>
       <div class="sim-grid box-grid">${boxButtons}</div>
+      <div class="field-label" style="margin-top: 1rem;">Envío manual</div>
+      <div class="inline-fields">
+        <label><span class="field-label">Terminal</span><input id="sim-pf-box-manual" type="number" min="1" max="10" value="1" style="width: 80px;"></label>
+        <label><span class="field-label">Botones</span><input id="sim-pf-buttons" type="text" maxlength="6" value="000000" style="width: 100px;"></label>
+      </div>
+      <div class="action-row">
+        <button type="button" class="sim-button" data-sim-pf-send-manual>Enviar manual</button>
+      </div>
     `;
+
+    const updateDisplay = () => {
+      const round = Number(document.getElementById("sim-pf-round").value);
+      const gif = Number(document.getElementById("sim-pf-gif").value);
+      const targets = finalPuzzleBotons[round - 1][gif - 1];
+      const display = document.getElementById("sim-pf-target-display");
+      if (display) {
+        display.textContent = targets.join(" ");
+      }
+      document.getElementById("sim-pf-buttons").value = targets.join("");
+    };
+
+    // Event listeners
+    document.getElementById("sim-pf-round").addEventListener("change", updateDisplay);
+    document.getElementById("sim-pf-gif").addEventListener("change", updateDisplay);
 
     const solveRoundBtn = els.simContent.querySelector("[data-sim-pf-solve-round]");
     if (solveRoundBtn) {
@@ -2218,6 +2313,25 @@
       });
     }
 
+    const sendManualBtn = els.simContent.querySelector("[data-sim-pf-send-manual]");
+    if (sendManualBtn) {
+      sendManualBtn.addEventListener("click", async () => {
+        try {
+          const box = document.getElementById("sim-pf-box-manual").value;
+          const buttons = document.getElementById("sim-pf-buttons").value.trim();
+          if (!buttons || buttons.length !== 6) {
+            setStatus("Botones debe ser exactamente 6 dígitos");
+            return;
+          }
+          const payload = `P-1,${box},${buttons}`;
+          await sendPayloads([payload]);
+          appendLog({ local: true, payload, simulated: "puzzleFinal_manual" });
+        } catch (error) {
+          setStatus(`Puzzle final · ${error.message || "error"}`);
+        }
+      });
+    }
+
     els.simContent.querySelectorAll("[data-sim-pf-box]").forEach((button) => {
       button.addEventListener("click", async () => {
         const box = button.dataset.simPfBox;
@@ -2227,6 +2341,9 @@
         appendLog({ local: true, payload, simulated: "puzzleFinal" });
       });
     });
+
+    // Update display on init
+    updateDisplay();
   }
 
   function collectValues() {
