@@ -18,17 +18,33 @@
     { id: "scene_outro_game", label: "Outro Final", href: "/player/?scene=scene_outro_game" }
   ];
   const puzzle11Steps = [
-    "El token 5 pasa por el terminal 6 y pulsa el boton verde.",
-    "El token 10 pasa por el terminal 2 y despues por el 5.",
-    "El token 13 pasa 3 veces por el terminal 2.",
-    "El token 14 pasa por el terminal 1 y pulsa rojo, verde y amarillo.",
-    "El token 17 pasa por terminal 1, despues 2 y despues 3.",
-    "El token 18 pasa por el terminal 9 y pulsa el boton negro dos veces.",
-    "El token 20 pasa por el terminal que tiene el simbolo 3 en raya azul.",
-    "El token 22 pasa por terminal 3, despues terminal 4 y alli pulsa amarillo.",
-    "El token 31 pasa por el terminal 7 dos veces y despues pulsa rojo.",
-    "El token 35 pasa por el terminal que tiene el simbolo pi."
+    "El token 5 debe pasar por el terminal 6 y apretar el botón verde",
+    "El token 10 debe pasar por el terminal 2 y seguidamente por el terminal 5",
+    "El token 13 debe pasar 3 veces por el terminal 2",
+    "El token 14 debe pasar por el terminal 1 y apretar el botón rojo, luego el botón verde y luego el botón amarillo",
+    "El token 17 debe pasar por el terminal 1, luego por el terminal 2 y luego por el terminal 3",
+    "El token 18 debe pasar por el terminal 9 y apretar el botón negro dos veces",
+    "El token 20 se debe pasar por el terminal que tenga un símbolo con una sola onda y dos puntos",
+    "El token 22 debe pasar por el terminal 3, luego por el terminal 4 y allí apretar el botón amarillo",
+    "El token 31 debe pasar por el terminal 7 dos veces y luego apretar el botón rojo",
+    "El token 35 debe pasar por el terminal que tiene el símbolo \"pi\""
   ];
+  // Mirrored from STEP_SEQUENCES in puzzle11.py — format: [box, token, color]
+  const puzzle11Sequences = [
+    [[6,0,-1],[6,-1,5]],
+    [[2,1,-1],[5,1,-1]],
+    [[2,2,-1],[2,2,-1],[2,2,-1]],
+    [[1,3,-1],[1,-1,1],[1,-1,5],[1,-1,2]],
+    [[1,4,-1],[2,4,-1],[3,4,-1]],
+    [[9,5,-1],[9,-1,4],[9,-1,4]],
+    [[0,6,-1]],
+    [[3,7,-1],[4,7,-1],[4,-1,2]],
+    [[7,8,-1],[7,8,-1],[7,-1,1]],
+    [[8,9,-1]]
+  ];
+  function p11StepPayloads(stepIndex) {
+    return (puzzle11Sequences[stepIndex] || []).map(([box, token, color]) => `P11,${box},${token},${color}`);
+  }
   // Final puzzle button targets: botons[round_index][giff_index] = [b1, b2, b3, b4, b5, b6]
   const finalPuzzleBotons = [
     // Round 1
@@ -46,24 +62,27 @@
       route: "/puzzle/11",
       startRoute: "/start_puzzle/11",
       restartRoute: "/restart_puzzle/11",
-      help: "Formato MQTT: P11,step_index. step_index va de 0 a 9 y debe llegar en orden.",
+      help: "Formato MQTT: P11,box,token,color. Envia todos los substeps del paso en orden.",
       fields: [
-        { id: "step", label: "Paso", type: "number", min: 0, max: 9, value: 0 }
+        { id: "box", label: "Box", type: "number", min: 0, max: 9, value: 6 },
+        { id: "token", label: "Token", type: "number", min: -1, max: 35, value: 0 },
+        { id: "color", label: "Color", type: "number", min: -1, max: 9, value: -1 }
       ],
       build(values) {
-        return `P11,${values.step}`;
+        return `P11,${values.box},${values.token},${values.color}`;
       },
       examples: [
-        { label: "Paso 1", payload: "P11,0" },
-        { label: "Paso 10", payload: "P11,9" }
+        { label: "Paso 1 substep 1", payload: "P11,6,0,-1" },
+        { label: "Paso 1 substep 2", payload: "P11,6,-1,5" }
       ],
       reference: [
-        "Secuencia tutorial fija de 10 pasos:",
-        ...puzzle11Steps.map((step, index) => `${index + 1}. ${step}`),
+        "Secuencia tutorial fija de 10 pasos (P11,box,token,color):",
+        ...puzzle11Steps.map((step, index) => {
+          const payloads = p11StepPayloads(index).join(" -> ");
+          return `${index + 1}. ${step}\n   ${payloads}`;
+        }),
         "",
-        "Solo avanza si el paso enviado coincide con current_step.",
-        "",
-        "Payload: P11,step_index"
+        "Solo avanza si el substep enviado coincide con el substep actual del paso."
       ].join("\n")
     },
     "1": {
@@ -1848,9 +1867,9 @@
               setStatus("Puzzle 11 · tutorial completado");
               return;
             }
-            const payload = `P11,${step}`;
-            await runToFlask([payload]);
-            appendLog({ local: true, payload, simulated: "puzzle11_next_step" });
+            const payloads = p11StepPayloads(step);
+            await runToFlask(payloads);
+            appendLog({ local: true, payloads, simulated: "puzzle11_next_step" });
             await syncPuzzle11State(true);
             renderUI();
           } catch (error) {
@@ -1872,7 +1891,7 @@
               setStatus("Puzzle 11 · tutorial completado");
               return;
             }
-            const payloads = Array.from({ length: puzzle11Steps.length - step }, (_, index) => `P11,${step + index}`);
+            const payloads = Array.from({ length: puzzle11Steps.length - step }, (_, index) => p11StepPayloads(step + index)).flat();
             await runToFlask(payloads);
             appendLog({ local: true, payloads, simulated: "puzzle11_solve_remaining" });
             await syncPuzzle11State(true);
@@ -1887,9 +1906,9 @@
         button.addEventListener("click", async () => {
           try {
             const step = Number(button.dataset.simP11SendStep);
-            const payload = `P11,${step}`;
-            await runToFlask([payload]);
-            appendLog({ local: true, payload, simulated: "puzzle11_manual_step" });
+            const payloads = p11StepPayloads(step);
+            await runToFlask(payloads);
+            appendLog({ local: true, payloads, simulated: "puzzle11_manual_step" });
             await syncPuzzle11State(true);
             renderUI();
           } catch (error) {
