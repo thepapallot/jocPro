@@ -1,16 +1,16 @@
 (function () {
-    var BTN_SOUND_URL       = '/static/audios/effects/boto.wav';
-    var CORRECT_SOUND_URL   = '/static/audios/effects/correcte.wav';
-    var COMPLETE_SOUND_URL  = '/static/audios/effects/nivel_completado.wav';
+    var CORRECT_SOUND_URL         = '/static/audios/effects/correcte.wav';
+    var PHASE_COMPLETE_SOUND_URL  = '/static/audios/effects/fase_completada.wav';
+    var COMPLETE_SOUND_URL        = '/static/audios/effects/nivel_completado.wav';
 
     function playSound(url) {
         var a = new Audio(url);
         a.play().catch(function (e) { console.warn('Audio play failed:', e); });
     }
 
-    var prevEventCount     = -1;
-    var prevCompletedCount = -1;
-    var redirectedOnSolve  = false;
+    var prevSubstepSuccessCount = -1;
+    var prevCompletedCount      = -1;
+    var redirectedOnSolve       = false;
     var STEPS = [
         'El token 5 tiene que pasar por el terminal 6 y apretar el botón verde',
         'El token 10 tiene que pasar por el terminal 2 y después por el 5',
@@ -90,15 +90,19 @@
     function handleUpdate(d) {
         if (!d || d.puzzle_id !== 11) return;
 
-        var eventCount     = d.event_count     || 0;
+        var substepSuccessCount = d.substep_success_count || 0;
         var completedCount = (d.completed_steps || []).length;
 
-        if (prevEventCount !== -1) {
-            if (eventCount > prevEventCount)     { playSound(BTN_SOUND_URL); }
-            if (completedCount > prevCompletedCount) { playSound(CORRECT_SOUND_URL); }
+        if (prevSubstepSuccessCount !== -1) {
+            if (substepSuccessCount > prevSubstepSuccessCount) {
+                playSound(CORRECT_SOUND_URL);
+            }
+            if (completedCount > prevCompletedCount) {
+                playSound(PHASE_COMPLETE_SOUND_URL);
+            }
         }
 
-        prevEventCount     = eventCount;
+        prevSubstepSuccessCount = substepSuccessCount;
         prevCompletedCount = completedCount;
 
         render(d.current_step, d.completed_steps || [], d.puzzle_solved || false);
