@@ -230,6 +230,13 @@ body.p2-solved #p2-status-copy {
         0 0 18px rgba(255, 92, 111, 0.14);
 }
 
+#p2-error-counter.is-critical {
+    color: #ff4a4a;
+    text-shadow:
+        0 0 10px rgba(211, 47, 47, 0.42),
+        0 0 18px rgba(211, 47, 47, 0.2);
+}
+
 #p2-error-list {
     position: relative;
     z-index: 1;
