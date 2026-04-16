@@ -12,16 +12,16 @@
     var prevCompletedCount      = -1;
     var redirectedOnSolve       = false;
     var STEPS = [
-        'El token 5 tiene que pasar por el terminal 6 y apretar el botón verde',
-        'El token 10 tiene que pasar por el terminal 2 y después por el 5',
-        'El token 13 tiene que pasar 3 veces por el terminal 2',
-        'El token 14 tiene que pasar por el terminal 1 y apretar el botón rojo, después el verde y después el amarillo',
-        'El token 17 tiene que pasar por el terminal 1, después por el terminal 2 y después por el terminal 3',
-        'El token 18 tiene que pasar por el terminal 9 y apretar el botón negro dos veces',
-        'El token 20 tiene que pasar por el terminal que tenga el símbolo 3 en raya azul',
-        'El token 22 tiene que pasar por el terminal 3, después por el terminal 4 y allí apretar el botón amarillo',
-        'El token 31 tiene que pasar por el terminal 7 dos veces y después apretar el botón rojo',
-        'El token 35 tiene que pasar por el terminal que tiene el símbolo "pi"',
+        'El token 5 debe pasar por el terminal 6 y apretar el botón verde',
+        'El token 10 debe pasar por el terminal 2 y seguidamente por el terminal 5',
+        'El token 13 debe pasar 3 veces por el terminal 2',
+        'El token 14 debe pasar por el terminal 1 y apretar el botón rojo, luego el botón verde y luego el botón amarillo',
+        'El token 17 debe pasar por el terminal 1, luego por el terminal 2 y luego por el terminal 3',
+        'El token 18 debe pasar por el terminal 9 y apretar el botón negro dos veces',
+        'El token 20 se debe pasar por el terminal que tenga un símbolo con una sola onda y dos puntos',
+        'El token 22 debe pasar por el terminal 3, luego por el terminal 4 y allí apretar el botón amarillo',
+        'El token 31 debe pasar por el terminal 7 dos veces y luego apretar el botón rojo',
+        'El token 35 debe pasar por el terminal que tiene el símbolo "pi"',
     ];
 
     var timeline     = document.getElementById('p11-timeline');
@@ -78,9 +78,11 @@
         renderTimeline(currentStep, solved);
 
         if (solved) {
+            timeline.classList.add('hidden');
             currentCard.classList.add('hidden');
             solvedBanner.classList.remove('hidden');
         } else {
+            timeline.classList.remove('hidden');
             stepText.textContent = STEPS[currentStep] || '';
             currentCard.classList.remove('hidden');
             solvedBanner.classList.add('hidden');
@@ -115,7 +117,7 @@
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
                     ? NEXT_PUZZLE_ID : 1;
                 window.location.href = '/?redirect_flag=puzzle' + nextId;
-            }, 2200);
+            }, 5200);
         }
     }
 
