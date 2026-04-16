@@ -18,6 +18,7 @@
     const progressByPlayer = {};
     const errorsByPlayer = {};
     let sharedErrorCounter = 0;
+    let holdErrorCounterAtMax = false;
     const prevProgress = {}; // keep only for snapshot rendering after error flash
     let errorBlockUntil = 0;
     const activeErrorPlayers = new Set();
@@ -64,6 +65,7 @@
     function updateErrorsHud() {
         if (errorCounterEl) {
             errorCounterEl.textContent = `${sharedErrorCounter}/3`;
+            errorCounterEl.classList.toggle("is-critical", holdErrorCounterAtMax || sharedErrorCounter >= 3);
         }
 
         for (let player = 1; player <= PLAYER_COUNT; player++) {
@@ -80,7 +82,14 @@
             errorsByPlayer[player] = (errorsByPlayer[player] || 0) + 1;
         }
         if (typeof counterValue === "number") {
-            sharedErrorCounter = counterValue;
+            if (counterValue === 0) {
+                // Keep 3/3 visible during the reset flash until progress is reapplied.
+                holdErrorCounterAtMax = true;
+                sharedErrorCounter = 3;
+            } else {
+                holdErrorCounterAtMax = false;
+                sharedErrorCounter = counterValue;
+            }
         }
         updateErrorsHud();
     }
@@ -198,6 +207,11 @@
                     playSound(PHASE_RESET_SOUND_URL);
                     applySnapshot(queuedSnapshot);
                     queuedSnapshot = null;
+                    if (holdErrorCounterAtMax) {
+                        holdErrorCounterAtMax = false;
+                        sharedErrorCounter = 0;
+                        updateErrorsHud();
+                    }
                 }
             }
         }, 4000);
@@ -234,7 +248,7 @@
     function handleUpdate(data) {
         if (data.puzzle_id !== 2) return;
 
-        if (typeof data.error_counter === "number") {
+        if (typeof data.error_counter === "number" && !(holdErrorCounterAtMax && data.error_counter === 0)) {
             sharedErrorCounter = data.error_counter;
             updateErrorsHud();
         }
@@ -393,6 +407,7 @@
                 if (!data || data.puzzle_id !== 2) return;
                 if (data.players) applySnapshot(data.players);
                 if (typeof data.error_counter === "number") {
+                    holdErrorCounterAtMax = false;
                     sharedErrorCounter = data.error_counter;
                     updateErrorsHud();
                 }
@@ -410,6 +425,7 @@
             setProgress(player, 0);
             errorsByPlayer[player] = 0;
         }
+        holdErrorCounterAtMax = false;
         sharedErrorCounter = 0;
         updateErrorsHud();
         updateHudState();

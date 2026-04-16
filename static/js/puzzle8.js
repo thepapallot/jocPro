@@ -5,6 +5,12 @@
     let symbolsOrder = [];
     let solved = false;
     const roundCards = Array.from(document.querySelectorAll('.round-card'));
+    const grid = document.getElementById('p8-grid');
+
+    function setInputPhase(active) {
+        if (!grid) return;
+        grid.classList.toggle('p8-input-phase', active);
+    }
 
     function clearColorClasses(el) {
         if (!el) return;
@@ -14,12 +20,12 @@
     }
 
     function clearGrid() {
+        setInputPhase(false);
         const slots = document.querySelectorAll('#p8-grid .p8-slot');
         slots.forEach(slot => { 
             slot.innerHTML = ''; 
-            slot.classList.remove('p8-duo', 'p8-trio'); // NEW: reset duo and trio layout
+            slot.classList.remove('p8-duo', 'p8-trio');
         });
-        // Also clear any result feedback classes
         const frames = document.querySelectorAll('#p8-grid .p8-frame');
         frames.forEach(f => {
             f.classList.remove('p8-correct', 'p8-wrong');
@@ -49,6 +55,9 @@
             slot.innerHTML = '';
             const n = nums[idx];
             if (n == null) return;
+            // Store token number on the frame so the CSS ::before always shows it
+            const frame = slot.closest('.p8-frame');
+            if (frame) frame.setAttribute('data-token', n);
             slot.appendChild(createNumberElement(n));
         });
     }
@@ -143,6 +152,8 @@
     function handleUpdate(d) {
         if (!d || d.puzzle_id !== 8) return;
 
+        const entersInputPhase = d.phase === 'input' || (d.clear === true && Array.isArray(d.symbols));
+
         // NEW: redirect when puzzle solved
         if (d.puzzle_solved && !solved) {
             solved = true;
@@ -182,8 +193,9 @@
         }
 
         // Input phase setup: render symbols order but leave uncolored
-        if (Array.isArray(d.symbols) && d.phase === 'input') {
+        if (Array.isArray(d.symbols) && entersInputPhase) {
             symbolsOrder = d.symbols.slice();
+            setInputPhase(true);
             // frames remain empty; hydrate partial inputs if present
             if (d.input_symbols && d.input_colors) {
                 Object.entries(d.input_symbols).forEach(([boxStr, sym]) => {
@@ -203,7 +215,7 @@
         }
 
         // Incremental input update with explicit symbol
-        if (d.input_update && d.phase === 'input') {
+        if (d.input_update && entersInputPhase) {
             const { box, color, symbol } = d.input_update;
             if (typeof box === 'number' && typeof color === 'string') {
                 colorBox(box, color, typeof symbol === 'string' ? symbol : undefined);
