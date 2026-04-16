@@ -1,0 +1,303 @@
+{
+  "scene_id": "scene_intro_memory",
+  "description": "Base de produccion para la intro del puzzle 8, ajustada al audio y subtitulos oficiales.",
+  "ui_titles": {
+    "top": "OBJETIVO",
+    "left": "ELEMENTOS",
+    "right": "ATENCIÓN"
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_08.wav"
+  },
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 4.879,
+      "text": "Escuchadme atentamente. En este nivel pondremos a prueba vuestra memoria."
+    },
+    {
+      "start": 4.879,
+      "end": 10.16,
+      "text": "Vuestro objetivo será recordar las letras griegas y los colores que aparezcan en la pantalla."
+    },
+    {
+      "start": 10.16,
+      "end": 15.96,
+      "text": "Para hacerlo usaréis vuestros tokens, las letras griegas de los terminales y los botones."
+    },
+    {
+      "start": 15.96,
+      "end": 19.48,
+      "text": "Al empezar, en la pantalla veréis los números de vuestros tokens."
+    },
+    {
+      "start": 19.48,
+      "end": 25,
+      "text": "Estad atentos, porque desaparecerán. Y, en su lugar, veréis una letra griega de un color."
+    },
+    {
+      "start": 25,
+      "end": 31,
+      "text": "Vosotros tendréis que coger vuestro token y llevarlo al terminal con la letra griega que haya aparecido."
+    },
+    {
+      "start": 31,
+      "end": 38,
+      "text": "Una vez esté colocado, debéis pulsar el botón del mismo color que la letra griega que habéis visto en la pantalla."
+    },
+    {
+      "start": 38,
+      "end": 46,
+      "text": "Debéis prestar mucha atención, porque si una sola persona se equivoca, la fase se reiniciará. Parece sencillo, ¿no?"
+    },
+    {
+      "start": 46,
+      "end": 48,
+      "text": "Puede que lo sea al principio."
+    },
+    {
+      "start": 48,
+      "end": 50,
+      "text": "Pero esta prueba tiene tres fases distintas,"
+    },
+    {
+      "start": 50,
+      "end": 53,
+      "text": "cada una con más letras a recordar."
+    },
+    {
+      "start": 53,
+      "end": 55,
+      "text": "Así que, buena suerte."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_intro_neutral_b.mp4",
+      "clip_start": 0,
+      "clip_end": 4.879,
+      "duration": 4.879,
+      "label": "intro_puzzle8"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 11.081,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "top": {
+            "text": "RECORDAR LETRAS GRIEGAS Y COLORES."
+          }
+        },
+        {
+          "at": 5.281,
+          "sfx": "token",
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              },
+              {
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Letra griega alfa"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel de botones del terminal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 3.52,
+      "variant": "puzzle8-grid",
+      "active_round": 1,
+      "grid_items": [
+        { "type": "number", "value": "5" },
+        { "type": "number", "value": "31" },
+        { "type": "number", "value": "13" },
+        { "type": "number", "value": "14" },
+        { "type": "number", "value": "20" },
+        { "type": "number", "value": "22" },
+        { "type": "number", "value": "17" },
+        { "type": "number", "value": "10" },
+        { "type": "number", "value": "18" },
+        { "type": "number", "value": "35" }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 5.52,
+      "variant": "puzzle8-grid",
+      "active_round": 1,
+      "grid_items": [
+        { "type": "symbol", "symbol": "alpha", "color": "#ff4f6d" },
+        { "type": "symbol", "symbol": "beta", "color": "#45e6ff" },
+        { "type": "symbol", "symbol": "gamma", "color": "#ffd84f" },
+        { "type": "symbol", "symbol": "delta", "color": "#bb6cff" },
+        { "type": "symbol", "symbol": "epsilon", "color": "#2dff9b" },
+        { "type": "symbol", "symbol": "lambda", "color": "#ff4f6d" },
+        { "type": "symbol", "symbol": "mu", "color": "#45e6ff" },
+        { "type": "symbol", "symbol": "omega", "color": "#ffd84f" },
+        { "type": "symbol", "symbol": "pi", "color": "#bb6cff" },
+        { "type": "symbol", "symbol": "sigma", "color": "#2dff9b" }
+      ]
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 13,
+      "variant": "warning",
+      "phases": [
+        {
+          "at": 0,
+          "top": {
+            "text": "RECORDAR LETRAS GRIEGAS Y COLORES."
+          },
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              },
+              {
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Letra griega alfa"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel de botones del terminal"
+              }
+            ]
+          },
+          "right": {
+            "variant": "warning",
+            "text": "MISMO COLOR.",
+            "steps": [
+              "LLEVAD EL TOKEN AL TERMINAL CON LA LETRA CORRECTA."
+            ]
+          }
+        },
+        {
+          "at": 6,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "MISMO COLOR.",
+            "steps": [
+              "LLEVAD EL TOKEN AL TERMINAL CON LA LETRA CORRECTA.",
+              "PULSAD EL BOTÓN DEL MISMO COLOR."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_warning_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 8,
+      "duration": 8,
+      "label": "aviso_error_puzzle8"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 10.333107,
+      "variant": "warning",
+      "phases": [
+        {
+          "at": 0,
+          "top": {
+            "text": "RECORDAR LETRAS GRIEGAS Y COLORES."
+          },
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              },
+              {
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Letra griega alfa"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel de botones del terminal"
+              }
+            ]
+          },
+          "right": {
+            "variant": "warning",
+            "text": "TRES FASES.",
+            "steps": [
+              "SI UNA PERSONA FALLA, LA FASE SE REINICIA."
+            ]
+          }
+        },
+        {
+          "at": 2,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "TRES FASES.",
+            "steps": [
+              "SI UNA PERSONA FALLA, LA FASE SE REINICIA.",
+              "HAY TRES FASES DISTINTAS."
+            ]
+          }
+        },
+        {
+          "at": 4,
+          "sfx": "warning",
+          "right": {
+            "variant": "warning",
+            "text": "TRES FASES.",
+            "steps": [
+              "SI UNA PERSONA FALLA, LA FASE SE REINICIA.",
+              "HAY TRES FASES DISTINTAS.",
+              "CADA FASE TIENE MÁS LETRAS QUE RECORDAR."
+            ]
+          }
+        },
+        {
+          "at": 7,
+          "sfx": "final",
+          "right": {
+            "variant": "warning",
+            "text": "TRES FASES.",
+            "steps": [
+              "SI UNA PERSONA FALLA, LA FASE SE REINICIA.",
+              "HAY TRES FASES DISTINTAS.",
+              "CADA FASE TIENE MÁS LETRAS QUE RECORDAR.",
+              "BUENA SUERTE."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

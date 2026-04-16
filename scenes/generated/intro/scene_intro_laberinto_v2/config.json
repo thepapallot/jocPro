@@ -1,0 +1,212 @@
+{
+  "scene_id": "scene_intro_laberinto_v2",
+  "description": "Intro v2 generada desde plantilla para scene_intro_laberinto_v2 (base legacy: scene_intro_laberinto).",
+  "broadcast_title": "Núcleo del Laberinto",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_02.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 3.859,
+      "text": "En este nivel vamos a evaluar vuestra flexibilidad cognitiva."
+    },
+    {
+      "start": 3.859,
+      "end": 7.12,
+      "text": "Vuestro objetivo va a ser llegar al centro del laberinto."
+    },
+    {
+      "start": 7.12,
+      "end": 11.359,
+      "text": "Lo lograréis usando vuestros tokens y estos símbolos de los terminales."
+    },
+    {
+      "start": 11.359,
+      "end": 14.439,
+      "text": "En la pantalla aparecerá un laberinto lleno de símbolos."
+    },
+    {
+      "start": 14.439,
+      "end": 18.679,
+      "text": "Para resolverlo, deberéis empezar por la entrada que tenga el número de vuestro token,"
+    },
+    {
+      "start": 18.679,
+      "end": 23.6,
+      "text": "e ir pasándolo por los terminales que tengan los símbolos que os encontraréis por el camino."
+    },
+    {
+      "start": 23.6,
+      "end": 25.519,
+      "text": "Pero eso no es todo."
+    },
+    {
+      "start": 25.519,
+      "end": 30.239,
+      "text": "En algún momento sonará una alarma y el laberinto se volverá de color rojo."
+    },
+    {
+      "start": 30.239,
+      "end": 33.88,
+      "text": "Cuando eso pase, deberéis pasar el token por el terminal con el símbolo contrario"
+    },
+    {
+      "start": 33.88,
+      "end": 38.92,
+      "text": "al que aparezca en el laberinto. Estad atentos, porque en cualquier momento el laberinto puede volver"
+    },
+    {
+      "start": 38.92,
+      "end": 45.399,
+      "text": "a su forma original. Id con cuidado: un solo error y tendréis que empezar vuestro recorrido de nuevo."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.7,
+      "duration": 3.859,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 7.5,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "NÚCLEO DEL LABERINTO"
+          }
+        },
+        {
+          "at": 3.261,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.001,
+      "duration": 14.16,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 4.72,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Error en operacion"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.2,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/repeated_operation.png",
+                "alt": "Operacion repetida"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 7.259,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Tiempo agotado"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_intro_long_b.mp4",
+      "clip_start": 0.3,
+      "clip_end": 3.469,
+      "duration": 16.551,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1.209,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1.209,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1.209,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

@@ -8,7 +8,7 @@ Guía rápida para reutilizar el material actual sin volver a depender de nombre
 - Audio antiguo archivado: `static/audios/scene/archive/intro_game_master_legacy.wav`
 - Librería activa de Cero: `static/videos/characters/`
 - Librería legacy archivada: `static/videos/characters/archive/legacy/`
-- Recursos de `game_master`: `static/videos/game_master/`
+- Recursos varios: `static/videos/recursos_varios/`
 
 ## Cero
 

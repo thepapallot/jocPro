@@ -1,0 +1,217 @@
+{
+  "scene_id": "scene_intro_musica_v2",
+  "description": "Intro v2 generada desde plantilla para scene_intro_musica_v2 (base legacy: scene_intro_musica).",
+  "broadcast_title": "Código Sonoro",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_04.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 5,
+      "text": "Seguimos con la siguiente prueba, en la que vamos a evaluar vuestra percepción auditiva."
+    },
+    {
+      "start": 5,
+      "end": 8,
+      "text": "Vuestro objetivo es ordenar los fragmentos de una canción."
+    },
+    {
+      "start": 8,
+      "end": 13,
+      "text": "Para superar este nivel necesitaréis los tokens y los botones de los terminales."
+    },
+    {
+      "start": 13,
+      "end": 17,
+      "text": "Al empezar la fase escucharéis un trozo de una canción."
+    },
+    {
+      "start": 17,
+      "end": 20,
+      "text": "Después tendréis que reproducir ese mismo trozo de canción,"
+    },
+    {
+      "start": 20,
+      "end": 23,
+      "text": "pasando los tokens por los terminales."
+    },
+    {
+      "start": 23,
+      "end": 26,
+      "text": "Podréis escuchar los fragmentos las veces que necesitéis,"
+    },
+    {
+      "start": 26,
+      "end": 31,
+      "text": "y, cuando creáis que habéis encontrado la secuencia musical correcta, la tendréis que registrar."
+    },
+    {
+      "start": 31,
+      "end": 36,
+      "text": "Pulsando los botones de cualquier terminal podréis volver a escuchar la canción,"
+    },
+    {
+      "start": 36,
+      "end": 41,
+      "text": "registrar una secuencia de fragmentos, borrar los fragmentos que ya hayáis registrado;"
+    },
+    {
+      "start": 41,
+      "end": 46,
+      "text": "os dejaré la función de cada botón en la pantalla. Este nivel tiene dos fases,"
+    },
+    {
+      "start": 46,
+      "end": 52,
+      "text": "así que no hay tiempo que perder. Escuchad atentamente, porque la canción se va a reproducir inmediatamente."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.7,
+      "duration": 5,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 8,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "CÓDIGO SONORO"
+          }
+        },
+        {
+          "at": 3,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.001,
+      "duration": 10,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 8,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Error en operacion"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.2,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/repeated_operation.png",
+                "alt": "Operacion repetida"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 7.259,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Tiempo agotado"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_intro_long_b.mp4",
+      "clip_start": 0.3,
+      "clip_end": 3.469,
+      "duration": 17.353333,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 5.041667,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

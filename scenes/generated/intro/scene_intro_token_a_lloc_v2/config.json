@@ -1,0 +1,192 @@
+{
+  "scene_id": "scene_intro_token_a_lloc_v2",
+  "description": "Intro v2 generada desde plantilla para scene_intro_token_a_lloc_v2 (base legacy: scene_intro_token_a_lloc).",
+  "broadcast_title": "Arquitectos del Orden",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_09.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 4.919,
+      "text": "Atención. En este nivel evaluaremos vuestra capacidad de razonamiento."
+    },
+    {
+      "start": 4.919,
+      "end": 10.099,
+      "text": "El objetivo de este nivel será colocar correctamente los diez tokens en los diez terminales."
+    },
+    {
+      "start": 10.099,
+      "end": 14.4,
+      "text": "Para hacerlo necesitaréis los tokens, los símbolos de los terminales y puede que"
+    },
+    {
+      "start": 14.4,
+      "end": 19.48,
+      "text": "algún otro elemento. En la pantalla veréis unas afirmaciones sobre la posición de los tokens,"
+    },
+    {
+      "start": 19.48,
+      "end": 24.519,
+      "text": "los terminales y sus características. Con esta información tendréis que colocar los tokens de"
+    },
+    {
+      "start": 24.519,
+      "end": 30.3,
+      "text": "forma que se cumplan todas las afirmaciones de la pantalla. Así de sencillo. Aunque os habéis"
+    },
+    {
+      "start": 30.3,
+      "end": 34.719,
+      "text": "confiado, yo de vosotros pensaría bien dónde va cada token. Porque aunque los tengáis..."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.7,
+      "duration": 4.919,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 9.481,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "ARQUITECTOS DEL ORDEN"
+          }
+        },
+        {
+          "at": 5.18,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.001,
+      "duration": 10,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 4.419,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Error en operacion"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.2,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/repeated_operation.png",
+                "alt": "Operacion repetida"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 7.259,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Tiempo agotado"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_intro_long_b.mp4",
+      "clip_start": 0.3,
+      "clip_end": 3.469,
+      "duration": 9.826306,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

@@ -39,6 +39,28 @@ def push_state_update(data):
 
 mqtt_client.set_update_callback(push_state_update)
 
+def iter_scene_candidate_dirs(scene_id):
+    return [
+        BASE_DIR / "scenes" / scene_id,  # legacy root
+        BASE_DIR / "scenes" / "source" / "intro" / scene_id,
+        BASE_DIR / "scenes" / "source" / "between" / scene_id,
+        BASE_DIR / "scenes" / "source" / "outro" / scene_id,
+        BASE_DIR / "scenes" / "generated" / scene_id,  # legacy generated root
+        BASE_DIR / "scenes" / "generated" / "intro" / scene_id,
+    ]
+
+
+def find_scene_dir(scene_id):
+    scenes_root = (BASE_DIR / "scenes").resolve()
+    for candidate in iter_scene_candidate_dirs(scene_id):
+        scene_dir = candidate.resolve()
+        if scenes_root not in scene_dir.parents:
+            continue
+        if (scene_dir / "config.json").exists():
+            return scene_dir
+    return None
+
+
 def resolve_intro_scene_for_puzzle(puzzle_id):
     alias = PUZZLE_ALIASES.get(puzzle_id)
     if not alias:
@@ -50,8 +72,7 @@ def resolve_intro_scene_for_puzzle(puzzle_id):
     if not candidate.startswith("scene_"):
         candidate = f"scene_intro_{candidate}"
 
-    scene_dir = (BASE_DIR / "scenes" / candidate)
-    if (scene_dir / "config.json").exists():
+    if find_scene_dir(candidate):
         return candidate
 
     return None
@@ -157,17 +178,11 @@ def scene_player_assets(filename):
 
 @app.route('/scenes/<scene_id>/config.json')
 def scene_config(scene_id):
-    scene_dir = (BASE_DIR / 'scenes' / scene_id).resolve()
-    scenes_root = (BASE_DIR / 'scenes').resolve()
+    scene_dir = find_scene_dir(scene_id)
+    if scene_dir:
+        return send_from_directory(scene_dir, 'config.json')
 
-    if scenes_root not in scene_dir.parents:
-        abort(404)
-
-    config_path = scene_dir / 'config.json'
-    if not config_path.exists():
-        abort(404)
-
-    return send_from_directory(scene_dir, 'config.json')
+    abort(404)
 ##### Fin Scene Player #####
 
 @app.route('/final', methods=['GET', 'POST'])

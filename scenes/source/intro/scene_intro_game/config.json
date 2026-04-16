@@ -1,0 +1,414 @@
+{
+  "scene_id": "scene_intro_game",
+  "description": "Intro general del juego con formato de briefing, audio actualizado y paneles de UI sincronizados con la locucion.",
+  "ui_titles": {
+    "top": "BRIEFING",
+    "left": "RECURSOS",
+    "right": "CLAVES"
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_game_master_v2.wav"
+  },
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 4,
+      "text": "Bienvenidos. No sabéis cuánto me alegro de que estéis hoy aquí."
+    },
+    {
+      "start": 4,
+      "end": 8,
+      "text": "Soy Cero, miembro de la organización ADN."
+    },
+    {
+      "start": 8,
+      "end": 14,
+      "text": "Hace mucho tiempo que en la organización estamos investigando qué es lo que hace que algunos grupos humanos"
+    },
+    {
+      "start": 14,
+      "end": 17,
+      "text": "sean capaces de llegar más lejos que el resto."
+    },
+    {
+      "start": 17,
+      "end": 22,
+      "text": "¿Por qué hay equipos que, juntos, pueden lograr hitos que parecen imposibles?"
+    },
+    {
+      "start": 22,
+      "end": 26,
+      "text": "Hace miles de años, la humanidad ya demostró lo que puede llegar a"
+    },
+    {
+      "start": 26,
+      "end": 32.719,
+      "text": "hacer cuando muchas personas comparten un objetivo común. Obras colosales, legados que todavía hoy"
+    },
+    {
+      "start": 32.719,
+      "end": 39.56,
+      "text": "nos maravillan. Entre todas, una se levanta como símbolo de equilibrio, esfuerzo y precisión:"
+    },
+    {
+      "start": 39.56,
+      "end": 45,
+      "text": "la pirámide. Llevamos años estudiando patrones, cruzando datos,"
+    },
+    {
+      "start": 45,
+      "end": 48,
+      "text": "explorando los misterios de la creatividad humana,"
+    },
+    {
+      "start": 48,
+      "end": 50.039,
+      "text": "con un objetivo ambicioso."
+    },
+    {
+      "start": 50.039,
+      "end": 53.28,
+      "text": "Comprender y recuperar la extraordinaria capacidad de creación"
+    },
+    {
+      "start": 53.28,
+      "end": 56.24,
+      "text": "que floreció en la época de las pirámides."
+    },
+    {
+      "start": 56.24,
+      "end": 60.439,
+      "text": "Hoy, por fin, podemos decir que ese esfuerzo ha dado fruto."
+    },
+    {
+      "start": 60.439,
+      "end": 63.159,
+      "text": "Hemos identificado un número muy reducido de grupos"
+    },
+    {
+      "start": 63.159,
+      "end": 65.439,
+      "text": "que poseen un potencial verdaderamente"
+    },
+    {
+      "start": 65.439,
+      "end": 70.319,
+      "text": "excepcional. Y vosotros estáis entre ellos."
+    },
+    {
+      "start": 70.319,
+      "end": 76,
+      "text": "Hoy evaluaremos vuestras habilidades como equipo y tendréis que superar una serie de pruebas para"
+    },
+    {
+      "start": 76,
+      "end": 84.519,
+      "text": "así construir vuestra propia pirámide, una construcción hecha de coordinación, ingenio y confianza."
+    },
+    {
+      "start": 84.519,
+      "end": 87.4,
+      "text": "Para superar estas pruebas necesitaréis los diez"
+    },
+    {
+      "start": 87.4,
+      "end": 94,
+      "text": "terminales que están distribuidos por la sala y unos tokens piramidales que os repartiremos."
+    },
+    {
+      "start": 94,
+      "end": 99.64,
+      "text": "Estos tokens serán intransferibles. Para usarlos deberéis colocarlos en la marca cuadrada"
+    },
+    {
+      "start": 99.64,
+      "end": 107.34,
+      "text": "que hay en la parte superior de los terminales. Os aviso, aquí no admitimos interferencias. Móviles y accesorios"
+    },
+    {
+      "start": 107.34,
+      "end": 110.159,
+      "text": "externos están prohibidos."
+    },
+    {
+      "start": 110.159,
+      "end": 116.359,
+      "text": "Vuestras únicas herramientas serán las que tenéis delante y vuestra capacidad para colaborar."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_long_a.mp4",
+      "clip_start": 0.2,
+      "clip_end": 8.2,
+      "duration": 8,
+      "label": "cero_bienvenida_estable",
+      "broadcast": {
+        "logo_src": "/static/images/shared/branding/logo_adn.png",
+        "show_right_brand": false
+      }
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 14,
+      "variant": "mission",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "mission",
+          "top": {
+            "variant": "mission",
+            "title": "DOSSIER ADN",
+            "text": "Patrones humanos"
+          },
+          "left": {
+            "variant": "steps",
+            "title": "ANÁLISIS",
+            "steps": [
+              "Cooperación.",
+              "Datos.",
+              "Creatividad."
+            ]
+          }
+        },
+        {
+          "at": 9,
+          "variant": "steps",
+          "right": {
+            "variant": "steps",
+            "title": "CLAVE",
+            "text": "Potencial de equipo"
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 8,
+      "video": "/static/videos/recursos_varios/city_wireframe.mp4",
+      "clip_start": 0,
+      "clip_end": 8
+    },
+    {
+      "type": "transition",
+      "duration": 2.1,
+      "video": "/static/videos/recursos_varios/gm_abstract_transition_a.mp4",
+      "clip_start": 0,
+      "clip_end": 2.1
+    },
+    {
+      "type": "transition",
+      "duration": 7.46,
+      "video": "/static/videos/recursos_varios/gm_network_grid_a.mp4",
+      "clip_start": 0,
+      "clip_end": 7.46
+    },
+    {
+      "type": "transition",
+      "duration": 5.44,
+      "video": "/static/videos/recursos_varios/gm_pyramid_wide_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.44
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 11.24,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "objective",
+          "top": {
+            "variant": "objective",
+            "title": "PROYECTO ADN",
+            "text": "Creatividad colectiva"
+          },
+          "left": {
+            "variant": "objective",
+            "title": "OBJETIVO",
+            "text": "Recuperar capacidad de creación"
+          }
+        },
+        {
+          "at": 5.039,
+          "variant": "steps",
+          "right": {
+            "variant": "steps",
+            "title": "INDICADORES",
+            "steps": [
+              "Coordinación.",
+              "Ingenio.",
+              "Precisión."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 10.1,
+      "variant": "gm-hybrid",
+      "video": "/static/videos/recursos_varios/gm_selection_group_scan.mp4",
+      "clip_start": 0,
+      "clip_end": 10.1,
+      "kicker": "RESULTADO DEL ANÁLISIS",
+      "title": "GRUPOS EXCEPCIONALES",
+      "text": "Potencial excepcional.",
+      "badges": [
+        "SELECCIÓN",
+        "POTENCIAL"
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.279,
+      "duration": 3.979,
+      "label": "cero_entre_ellos"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 14.2,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "objective",
+          "top": {
+            "variant": "objective",
+            "title": "EVALUACIÓN",
+            "text": "Serie de pruebas"
+          },
+          "right": {
+            "variant": "mission",
+            "title": "META",
+            "text": "Vuestra pirámide"
+          }
+        },
+        {
+          "at": 5.681,
+          "variant": "steps",
+          "left": {
+            "variant": "steps",
+            "title": "BASE",
+            "steps": [
+              "Coordinación.",
+              "Ingenio.",
+              "Confianza."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 15.121,
+      "variant": "mission",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "mission",
+          "top": {
+            "variant": "mission",
+            "title": "RECURSOS",
+            "text": "10 terminales + tokens"
+          },
+          "left": {
+            "variant": "objective",
+            "title": "ELEMENTOS",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Icono de terminal"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.881,
+          "variant": "objective",
+          "left": {
+            "variant": "objective",
+            "title": "ELEMENTOS",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Icono de terminal"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
+              }
+            ]
+          }
+        },
+        {
+          "at": 9.481,
+          "variant": "objective",
+          "left": {
+            "variant": "objective",
+            "title": "ACTIVACIÓN",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Icono de terminal"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
+              }
+            ]
+          },
+          "right": {
+            "variant": "objective",
+            "title": "USO",
+            "text": "Token en la marca superior"
+          }
+        }
+      ]
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 16.824909,
+      "variant": "warning",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "warning",
+          "top": {
+            "variant": "warning",
+            "title": "PROTOCOLO",
+            "text": "Sin interferencias"
+          },
+          "right": {
+            "variant": "warning",
+            "title": "REGLAS",
+            "steps": [
+              "Sin móviles.",
+              "Sin accesorios externos."
+            ]
+          }
+        },
+        {
+          "at": 5.319,
+          "variant": "objective",
+          "left": {
+            "variant": "objective",
+            "title": "CLAVE",
+            "text": "Colaboración"
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_long_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 10.041667,
+      "duration": 9.741667,
+      "label": "cero_cierre_estable"
+    }
+  ]
+}

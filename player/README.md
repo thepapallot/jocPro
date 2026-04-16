@@ -44,7 +44,7 @@ El player intenta arrancar automáticamente si el navegador permite autoplay.
 - `player/styles.css`: sistema visual fullscreen
 - `player/CHARACTER_CLIPS.md`: clasificación narrativa de los clips del personaje
 - `scenes/scene_intro_sumas/config.json`: prueba real del puzzle 1
-- `scenes/puzzle_intro_template.json`: plantilla maestra para futuros puzzles
+- `scenes/templates/intro/puzzle_intro_template.json`: plantilla maestra para futuros puzzles
 
 ## Concepto de escena
 
@@ -91,7 +91,7 @@ Ejemplo mínimo:
           "left": {
             "assets": [
               {
-                "src": "/static/images/puzzle1/tarjeta.png",
+                "src": "/static/images/shared/gameplay/token_card.png",
                 "alt": "Token"
               }
             ]
@@ -198,7 +198,7 @@ Por ahora están sintetizados en navegador. Más adelante se pueden sustituir po
 
 Usa este proceso cada vez que adaptes una intro nueva:
 
-1. Duplicar `scenes/puzzle_intro_template.json` a una escena nueva.
+1. Duplicar `scenes/templates/intro/puzzle_intro_template.json` a una escena nueva.
 2. Definir el `scene_id` nuevo.
 3. Poner el `audio.src` definitivo.
 4. Escuchar la locución y dividirla en bloques con tiempos.

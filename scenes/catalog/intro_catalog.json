@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "template": "scenes/templates/intro/scene_intro_template.json",
+  "default_output_root": "scenes/generated/intro",
+  "entries": [
+    {
+      "output_scene_id": "scene_intro_sumas_v2",
+      "legacy_scene_id": "scene_intro_sumas",
+      "game_title": "Cálculo Extremo",
+      "headline": "COMPLETAD LAS OPERACIONES"
+    },
+    {
+      "output_scene_id": "scene_intro_laberinto_v2",
+      "legacy_scene_id": "scene_intro_laberinto",
+      "game_title": "Núcleo del Laberinto",
+      "headline": "NÚCLEO DEL LABERINTO"
+    },
+    {
+      "output_scene_id": "scene_intro_trivial_v2",
+      "legacy_scene_id": "scene_intro_trivial",
+      "game_title": "Mente Colmena",
+      "headline": "MENTE COLMENA"
+    },
+    {
+      "output_scene_id": "scene_intro_musica_v2",
+      "legacy_scene_id": "scene_intro_musica",
+      "game_title": "Código Sonoro",
+      "headline": "CÓDIGO SONORO"
+    },
+    {
+      "output_scene_id": "scene_intro_cronometro_v2",
+      "legacy_scene_id": "scene_intro_cronometro",
+      "game_title": "Pulso de Tiempo",
+      "headline": "PULSO DE TIEMPO"
+    },
+    {
+      "output_scene_id": "scene_intro_energia_v2",
+      "legacy_scene_id": "scene_intro_energia",
+      "game_title": "Carga Crítica",
+      "headline": "CARGA CRÍTICA"
+    },
+    {
+      "output_scene_id": "scene_intro_memory_v2",
+      "legacy_scene_id": "scene_intro_memory",
+      "game_title": "Memoria Fantasma",
+      "headline": "MEMORIA FANTASMA"
+    },
+    {
+      "output_scene_id": "scene_intro_token_a_lloc_v2",
+      "legacy_scene_id": "scene_intro_token_a_lloc",
+      "game_title": "Arquitectos del Orden",
+      "headline": "ARQUITECTOS DEL ORDEN"
+    },
+    {
+      "output_scene_id": "scene_intro_segments_v2",
+      "legacy_scene_id": "scene_intro_segments",
+      "game_title": "Patrón Maestro",
+      "headline": "PATRÓN MAESTRO"
+    },
+    {
+      "output_scene_id": "scene_intro_sumas_cover_v2",
+      "legacy_scene_id": "scene_intro_sumas_cover",
+      "game_title": "Cálculo Extremo",
+      "headline": "COMPLETAD LAS OPERACIONES"
+    }
+  ],
+  "defaults": {
+    "sync_timing_with_legacy": true,
+    "intro_assets": [
+      {
+        "src": "/static/images/shared/gameplay/token_card.png",
+        "alt": "Token"
+      },
+      {
+        "src": "/static/images/shared/gameplay/terminal_box.png",
+        "alt": "Terminal"
+      }
+    ],
+    "warning_asset_pairs": [
+      [
+        {
+          "src": "/static/images/shared/warnings/operation_error.png",
+          "alt": "Error en operacion"
+        },
+        {
+          "src": "/static/images/shared/warnings/restart_button.png",
+          "alt": "Boton de reinicio"
+        }
+      ],
+      [
+        {
+          "src": "/static/images/shared/warnings/repeated_operation.png",
+          "alt": "Operacion repetida"
+        },
+        {
+          "src": "/static/images/shared/warnings/restart_button.png",
+          "alt": "Boton de reinicio"
+        }
+      ],
+      [
+        {
+          "src": "/static/images/shared/warnings/timeout.png",
+          "alt": "Tiempo agotado"
+        },
+        {
+          "src": "/static/images/shared/warnings/restart_button.png",
+          "alt": "Boton de reinicio"
+        }
+      ]
+    ]
+  }
+}

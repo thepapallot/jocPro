@@ -1,0 +1,232 @@
+{
+  "scene_id": "scene_intro_trivial_v2",
+  "description": "Intro v2 generada desde plantilla para scene_intro_trivial_v2 (base legacy: scene_intro_trivial).",
+  "broadcast_title": "Mente Colmena",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_03.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 2.08,
+      "text": "Prestad atención, porque en esta prueba"
+    },
+    {
+      "start": 2.08,
+      "end": 5.08,
+      "text": "evaluaremos vuestro conocimiento colectivo."
+    },
+    {
+      "start": 5.08,
+      "end": 6.48,
+      "text": "Para superar este nivel,"
+    },
+    {
+      "start": 6.48,
+      "end": 9.4,
+      "text": "tendréis que responder diez preguntas correctamente"
+    },
+    {
+      "start": 9.4,
+      "end": 14.359,
+      "text": "y, para hacerlo, utilizaréis los botones y los números de colores de los terminales."
+    },
+    {
+      "start": 14.359,
+      "end": 18.359,
+      "text": "En la pantalla aparecerá una pregunta y seis posibles respuestas."
+    },
+    {
+      "start": 18.359,
+      "end": 20.559,
+      "text": "Entre todos tendréis que poneros de acuerdo"
+    },
+    {
+      "start": 20.559,
+      "end": 23.199,
+      "text": "y decidir cuál es la respuesta correcta."
+    },
+    {
+      "start": 23.199,
+      "end": 24.719,
+      "text": "Cuando la hayáis escogido,"
+    },
+    {
+      "start": 24.719,
+      "end": 26.6,
+      "text": "quedaos con el número de la respuesta."
+    },
+    {
+      "start": 26.6,
+      "end": 32,
+      "text": "En cada uno de los terminales que tenéis enfrente hay seis números, cada uno de un color."
+    },
+    {
+      "start": 32,
+      "end": 37.399,
+      "text": "Deberéis buscar el número de la respuesta correcta y apretar el botón que sea del mismo color."
+    },
+    {
+      "start": 37.399,
+      "end": 43.2,
+      "text": "Cuando se haya pulsado un botón en todos los terminales, se revelará si la respuesta era correcta o no."
+    },
+    {
+      "start": 43.2,
+      "end": 48.52,
+      "text": "Para pasar de nivel, deberéis contestar varias preguntas seguidas correctamente, así que"
+    },
+    {
+      "start": 48.52,
+      "end": 52.28,
+      "text": "cuidado: si hay un solo error, la racha de respuestas se romperá."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.7,
+      "duration": 5.08,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 9.279,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "MENTE COLMENA"
+          }
+        },
+        {
+          "at": 4.32,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.001,
+      "duration": 12.241,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 5.041667,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Error en operacion"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.2,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/repeated_operation.png",
+                "alt": "Operacion repetida"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 7.259,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Tiempo agotado"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_intro_long_b.mp4",
+      "clip_start": 0.3,
+      "clip_end": 3.469,
+      "duration": 21.753333,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

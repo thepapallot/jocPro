@@ -860,7 +860,7 @@
         <div class="sim-p1-piece">
           <div class="field-label">Tarjeta</div>
           <div class="sim-p1-card">
-            <img src="/static/images/puzzle1/tarjeta.png" alt="" aria-hidden="true">
+            <img src="/static/images/shared/gameplay/token_card.png" alt="" aria-hidden="true">
             <input id="sim-p1-a" class="sim-p1-input sim-p1-card-input" type="number" value="${simState.puzzle1A}" aria-label="Valor tarjeta">
           </div>
         </div>
@@ -870,7 +870,7 @@
         <div class="sim-p1-piece">
           <div class="field-label">Terminal</div>
           <div class="sim-p1-card">
-            <img src="/static/images/puzzle1/caixa.png" alt="" aria-hidden="true">
+            <img src="/static/images/shared/gameplay/terminal_box.png" alt="" aria-hidden="true">
             <input id="sim-p1-b" class="sim-p1-input sim-p1-card-input" type="number" value="${simState.puzzle1B}" aria-label="Valor terminal">
           </div>
         </div>
@@ -1468,7 +1468,7 @@
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
       return `
         <button type="button" class="sim-box sim-p3-terminal" data-sim-p3-box="${index}">
-          <img src="/static/images/puzzle1/caixa.png" alt="" aria-hidden="true">
+          <img src="/static/images/shared/gameplay/terminal_box.png" alt="" aria-hidden="true">
           <span>${index}</span>
         </button>
       `;

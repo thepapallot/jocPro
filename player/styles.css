@@ -217,6 +217,10 @@ body {
 
 .broadcast-overlay__brand--left {
     left: 22px;
+    display: grid;
+    gap: 4px;
+    justify-items: start;
+    align-items: start;
 }
 
 .broadcast-overlay__brand--right {
@@ -231,6 +235,15 @@ body {
     text-transform: uppercase;
     color: rgba(239, 249, 255, 0.78);
     text-shadow: 0 0 16px rgba(87, 222, 245, 0.08);
+}
+
+.broadcast-overlay__subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(0.7rem, 0.82cqw, 0.9rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(239, 249, 255, 0.62);
+    text-shadow: 0 0 12px rgba(87, 222, 245, 0.08);
 }
 
 .broadcast-overlay__logo {
@@ -302,7 +315,7 @@ body {
 .player-root--persistent-strip .ui-layer,
 .player-root--persistent-strip .transition-layer,
 .player-root--persistent-strip .broadcast-overlay {
-    inset: 0 0 182px 0;
+    inset: 182px 0 0 0;
 }
 
 .player-root--persistent-strip .scene-video {
@@ -313,75 +326,108 @@ body {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
+    top: 0;
     z-index: 24;
     min-height: 182px;
     padding: 10px 26px 16px;
-    border-top: 1px solid rgba(116, 219, 255, 0.25);
+    border-bottom: 1px solid rgba(116, 219, 255, 0.25);
     background:
         linear-gradient(180deg, rgba(7, 18, 31, 0.76), rgba(4, 11, 21, 0.88)),
         radial-gradient(circle at 12% 0, rgba(87, 222, 245, 0.14), transparent 34%),
         radial-gradient(circle at 88% 0, rgba(255, 79, 214, 0.1), transparent 40%);
-    box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
     pointer-events: none;
 }
 
 .persistent-elements-strip__inner {
     display: grid;
-    grid-template-columns: minmax(300px, 0.42fr) minmax(0, 1fr);
-    align-items: center;
-    gap: 18px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 12px;
     width: 100%;
     height: 100%;
 }
 
-.persistent-elements-strip__info {
+.persistent-elements-strip__block {
     display: grid;
     gap: 8px;
-    align-content: center;
-    min-height: 100%;
-    padding-right: 18px;
-    border-right: 1px solid rgba(116, 219, 255, 0.22);
+    align-content: start;
+    min-height: 132px;
+    padding: 10px 12px 12px;
+    border: 1px solid rgba(116, 219, 255, 0.2);
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, rgba(7, 18, 31, 0.56), rgba(4, 11, 21, 0.74)),
+        radial-gradient(circle at 14% 0, rgba(87, 222, 245, 0.14), transparent 42%);
+    opacity: 0.2;
+    transform: translateY(6px);
+    transition: opacity 220ms ease, transform 220ms ease, border-color 220ms ease;
+}
+
+.persistent-elements-strip__block--visible {
+    opacity: 1;
+    transform: translateY(0);
+    border-color: rgba(116, 219, 255, 0.34);
+}
+
+.persistent-elements-strip__block-label {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(214, 246, 255, 0.68);
+}
+
+.persistent-elements-strip__block-value {
+    margin: 0;
+}
+
+.persistent-elements-strip__kicker {
+    font-family: var(--font-display);
+    font-size: clamp(0.95rem, 1.1cqw, 1.15rem);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(234, 252, 255, 0.86);
 }
 
 .persistent-elements-strip__title {
-    margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(1.28rem, 1.5cqw, 1.7rem);
+    font-size: clamp(1.08rem, 1.34cqw, 1.45rem);
     line-height: 1.1;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(239, 249, 255, 0.8);
+    color: rgba(239, 249, 255, 0.88);
 }
 
 .persistent-elements-strip__objective {
-    margin: 0;
-    font-size: clamp(1.32rem, 1.52cqw, 1.6rem);
-    line-height: 1.28;
+    font-size: clamp(1.02rem, 1.16cqw, 1.22rem);
+    line-height: 1.26;
     color: rgba(239, 249, 255, 0.96);
 }
 
-.persistent-elements-strip__assets {
-    display: grid;
-    gap: 8px;
-    align-content: center;
+.persistent-elements-strip__warning {
+    font-size: clamp(0.98rem, 1.1cqw, 1.18rem);
+    line-height: 1.24;
+    color: rgba(255, 225, 184, 0.96);
 }
 
 .persistent-elements-strip__assets-title {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(1.1rem, 1.3cqw, 1.4rem);
+    font-size: clamp(0.95rem, 1.1cqw, 1.15rem);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(239, 249, 255, 0.62);
+    color: rgba(214, 246, 255, 0.78);
 }
 
 .persistent-elements-strip__row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 160px));
-    justify-content: center;
+    grid-template-columns: repeat(2, minmax(78px, 112px));
+    justify-content: start;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .persistent-elements-strip__item {
@@ -392,13 +438,13 @@ body {
 .persistent-elements-strip__media {
     display: grid;
     place-items: center;
-    min-height: 112px;
+    min-height: 72px;
 }
 
 .persistent-elements-strip__image {
     width: 100%;
-    max-width: 122px;
-    max-height: 122px;
+    max-width: 88px;
+    max-height: 88px;
     object-fit: contain;
     filter:
         drop-shadow(0 0 10px rgba(69, 230, 255, 0.15))
@@ -549,6 +595,207 @@ body {
     display: none;
 }
 
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] {
+    padding: 0;
+    background: transparent;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"]::before,
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"]::after {
+    display: none;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .panel {
+    width: 100%;
+    min-height: 100%;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    clip-path: none;
+    backdrop-filter: none;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .ui-dashboard {
+    grid-template-areas: "top";
+    grid-template-rows: 1fr;
+    min-height: 100%;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--left,
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--right,
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .subtitle-bar {
+    display: none;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--top {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    display: grid;
+    place-items: center;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--top::before {
+    display: none;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid,
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons {
+    width: min(92vw, 1500px);
+    margin: 0 auto;
+    align-self: center;
+    justify-self: center;
+    justify-content: center;
+    justify-items: center;
+    align-content: center;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--top .title-block {
+    margin: 0;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--top .title-block__text {
+    text-align: center;
+}
+
+.player-root--unified-frame .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2:not(.asset-grid--with-equals) {
+    grid-template-columns: repeat(2, minmax(280px, 420px));
+    gap: 84px;
+}
+
+/* Force exact centering for the test scene only */
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .ui-dashboard {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    min-height: 0 !important;
+    height: 100% !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .panel {
+    position: relative !important;
+    padding: 0 !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--left,
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--right,
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .subtitle-bar {
+    display: none !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: min(96%, 1760px) !important;
+    max-height: calc(100% - 120px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top.zone-card--enter {
+    animation: none !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .title-block {
+    display: none !important;
+    margin: 0 !important;
+    width: 0 !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .title-block__title {
+    display: none !important;
+}
+
+/* Keep text-only objective/title phases visible in v2 scenes */
+.player-root[data-scene-id$="_v2"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-kind="text"] .title-block {
+    display: grid !important;
+    width: min(90%, 1200px) !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid,
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons {
+    height: auto !important;
+    min-height: 0 !important;
+    width: max-content !important;
+    max-width: calc(100% - 32px) !important;
+    align-content: center !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2 {
+    grid-template-columns: repeat(2, clamp(360px, 30vw, 620px)) !important;
+    gap: clamp(72px, 7vw, 150px) !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2.asset-grid--with-equals {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: max-content !important;
+    max-width: calc(100% - 32px) !important;
+    grid-template-columns: repeat(2, clamp(360px, 30vw, 620px)) !important;
+    gap: clamp(72px, 7vw, 150px) !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+    height: auto !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2 .asset-card__image {
+    width: clamp(300px, 28vw, 560px) !important;
+    max-width: 100% !important;
+    max-height: min(76cqh, 880px) !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2 .asset-card {
+    width: clamp(360px, 30vw, 620px) !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-1 .asset-card__image {
+    width: clamp(620px, 58vw, 1280px) !important;
+    max-width: min(92vw, 1400px) !important;
+    max-height: min(78cqh, 920px) !important;
+}
+
+/* Some legacy intro PNGs include large transparent margins; scale them up in covers. */
+.player-root:is([data-scene-id*="_cover"], [data-scene-id$="_v2"]) .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card__image[src*=\"/static/images/shared/warnings/\"] {
+    transform: scale(1.16) !important;
+    transform-origin: center center !important;
+}
+
 .ui-screen[data-variant="immersive-strip"] .ui-dashboard {
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -568,26 +815,192 @@ body {
 .ui-screen[data-variant="immersive-strip"] .zone-card--top {
     min-height: 0;
     height: 100%;
-    border: none;
+    border: 1px solid rgba(116, 219, 255, 0.18);
     border-radius: 22px;
     background:
-        radial-gradient(circle at 50% 14%, rgba(87, 222, 245, 0.08), transparent 40%),
-        linear-gradient(180deg, rgba(4, 11, 20, 0.18), rgba(4, 10, 18, 0.12));
+        radial-gradient(circle at 50% 12%, rgba(87, 222, 245, 0.12), transparent 44%),
+        linear-gradient(180deg, rgba(4, 11, 20, 0.38), rgba(4, 10, 18, 0.28));
     clip-path: none;
-    box-shadow: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    padding: 18px 18px 20px;
 }
 
 .ui-screen[data-variant="immersive-strip"] .zone-card--top::before,
-.ui-screen[data-variant="immersive-strip"] .zone-card--top .title-block,
-.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid,
 .ui-screen[data-variant="immersive-strip"] .zone-card--top .steps-list {
     display: none;
 }
 
 .ui-screen[data-variant="immersive-strip"] .zone-card--top.zone-card--empty {
     min-height: 0;
-    border: none;
+    border-color: transparent;
     background: transparent;
+    box-shadow: none;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .title-block {
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .title-block__title {
+    font-size: clamp(1.02rem, 1.18cqw, 1.2rem);
+    letter-spacing: 0.18em;
+    color: rgba(214, 246, 255, 0.74);
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .title-block__text {
+    max-width: 100%;
+    font-size: clamp(1.18rem, 1.34cqw, 1.45rem);
+    line-height: 1.22;
+    font-weight: 700;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-kind="text"] {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    height: 100%;
+    padding: 0;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-kind="text"] .title-block {
+    margin: 0;
+    width: min(90%, 1200px);
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-kind="text"] .title-block__title {
+    display: none;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-kind="text"] .title-block__text {
+    font-size: clamp(2.4rem, 5.3cqw, 5.2rem);
+    line-height: 1.02;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-shadow:
+        0 0 20px rgba(87, 222, 245, 0.18),
+        0 0 34px rgba(255, 79, 214, 0.12);
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid,
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    align-items: stretch;
+    gap: 12px;
+    padding: 0;
+    height: 100%;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons::after {
+    display: none;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2.asset-grid--with-equals {
+    position: relative;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    justify-items: center;
+    align-items: center;
+    gap: 120px;
+    height: 100%;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2.asset-grid--with-equals::after {
+    content: "=";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 132px;
+    height: 132px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-family: var(--font-display);
+    font-size: 4.2rem;
+    font-weight: 800;
+    color: rgba(234, 252, 255, 0.94);
+    background: transparent;
+    border: none;
+    box-shadow: 0 0 18px rgba(87, 222, 245, 0.22);
+    pointer-events: none;
+    z-index: 3;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card {
+    min-height: 154px;
+    border: 1px solid rgba(116, 219, 255, 0.16);
+    border-radius: 14px;
+    clip-path: none;
+    background:
+        linear-gradient(180deg, rgba(7, 17, 29, 0.7), rgba(5, 11, 20, 0.8)),
+        radial-gradient(circle at 20% 0, rgba(87, 222, 245, 0.12), transparent 42%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    padding: 10px 10px 12px;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2 .asset-card {
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-color: rgba(116, 219, 255, 0.24);
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2 .asset-card__media {
+    min-height: 100%;
+    height: 100%;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-2 .asset-card__image {
+    max-width: min(42vw, 760px);
+    max-height: min(58cqh, 700px);
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-1 {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-1 .asset-card {
+    min-height: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-1 .asset-card__body {
+    display: none;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card__media {
+    min-height: 78px;
+    background: transparent;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card__image {
+    max-width: 88px;
+    max-height: 88px;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-1 .asset-card__image {
+    max-width: min(88vw, 1320px);
+    max-height: min(72cqh, 820px);
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card__label {
+    font-size: clamp(0.84rem, 0.92cqw, 0.98rem);
+    letter-spacing: 0.12em;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card__text {
+    font-size: clamp(0.92rem, 1cqw, 1.06rem);
+    line-height: 1.22;
 }
 
 .ui-screen[data-variant="immersive-strip"] .zone-card--left {
@@ -1427,7 +1840,7 @@ body {
 }
 
 .player-root--subtitle-up .subtitle-overlay {
-    bottom: 192px;
+    bottom: 26px;
     width: min(1240px, 68%);
     border-radius: 999px;
     clip-path: none;

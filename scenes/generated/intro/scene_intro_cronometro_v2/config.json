@@ -1,0 +1,212 @@
+{
+  "scene_id": "scene_intro_cronometro_v2",
+  "description": "Intro v2 generada desde plantilla para scene_intro_cronometro_v2 (base legacy: scene_intro_cronometro).",
+  "broadcast_title": "Pulso de Tiempo",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_05.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 4.12,
+      "text": "Empieza el nivel en el que pondremos a prueba vuestra percepción temporal."
+    },
+    {
+      "start": 4.12,
+      "end": 9.72,
+      "text": "El objetivo de este nivel es contar exactamente el número de segundos que se os indicará en la pantalla."
+    },
+    {
+      "start": 9.72,
+      "end": 14.359,
+      "text": "Para hacerlo solo necesitaréis vuestros tokens y las luces de vuestro terminal."
+    },
+    {
+      "start": 14.359,
+      "end": 20.48,
+      "text": "Esta prueba consta de dos fases y, en cada una de ellas, deberéis contar un número de segundos distinto."
+    },
+    {
+      "start": 20.48,
+      "end": 25,
+      "text": "Cuando la fase empiece, las luces de los terminales se encenderán aleatoriamente."
+    },
+    {
+      "start": 25,
+      "end": 29,
+      "text": "Esta será la señal de que deberéis empezar a contar el tiempo indicado."
+    },
+    {
+      "start": 29,
+      "end": 34,
+      "text": "Cuando consideréis que han pasado los segundos, deberéis pasar el token por el terminal."
+    },
+    {
+      "start": 34,
+      "end": 39,
+      "text": "Si el tiempo que habéis contado no coincide exactamente con lo indicado en la pantalla,"
+    },
+    {
+      "start": 39,
+      "end": 45.64,
+      "text": "los segundos contados de más o de menos se sumarán al total de error común de todos los terminales. Si el total"
+    },
+    {
+      "start": 45.64,
+      "end": 50.96,
+      "text": "de error acumulado es mayor que el límite permitido, se reiniciará la fase. Tened en cuenta"
+    },
+    {
+      "start": 50.96,
+      "end": 55.96,
+      "text": "que la luz de cada terminal se encenderá en un momento distinto, así que yo, de vosotros..."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.7,
+      "duration": 4.12,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 10.239,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "PULSO DE TIEMPO"
+          }
+        },
+        {
+          "at": 5.6,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0.3,
+      "clip_end": 4.001,
+      "duration": 5.041667,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 14.599333,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Error en operacion"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 4.52,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/repeated_operation.png",
+                "alt": "Operacion repetida"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        },
+        {
+          "at": 8.52,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Tiempo agotado"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Boton de reinicio"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_intro_long_b.mp4",
+      "clip_start": 0.3,
+      "clip_end": 3.469,
+      "duration": 5,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 14.918333,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 5.041667,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1.115087,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}
