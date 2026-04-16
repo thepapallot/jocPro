@@ -15,7 +15,9 @@ class Puzzle1(BasePuzzle):
         self.processing_wrong_result = False
         self.countdown_next_round_active = False
         self.round = 1
-        self.round_sizes = {1: 4, 2: 8, 3: 15}
+        self.round_sizes = {1: 8, 2: 15}
+        self.total_rounds = len(self.round_sizes)
+        self.incorrect_feedback_seconds = 5
         
     def _reset_operations(self, size=None):
         """Generate random operations for current round"""
@@ -90,10 +92,15 @@ class Puzzle1(BasePuzzle):
                 return
                 
             result = a + b
+            matching_operation = None
             
             # Check if result matches any unsolved operation
             for op in self.operations_with_metadata:
-                if op[0] == result and op[2] == "N":
+                if op[0] != result:
+                    continue
+
+                matching_operation = op
+                if op[2] == "N":
                     op[2] = "Y"
                     solved_text = f"{a} + {b} = {result}"
                     
@@ -106,7 +113,7 @@ class Puzzle1(BasePuzzle):
                     
                     # Check if round is complete
                     if all(o[2] == "Y" for o in self.operations_with_metadata):
-                        if self.round < 3:
+                        if self.round < self.total_rounds:
                             # Advance to next round with countdown
                             next_round = self.round + 1
                             
@@ -155,12 +162,25 @@ class Puzzle1(BasePuzzle):
                                 "round": self.round
                             })
                     return
+                break
                     
             # Incorrect answer
             self.processing_wrong_result = True
+            if matching_operation is None:
+                reason = "Suma no existente"
+                reason_key = "not_existing"
+            else:
+                reason = "Suma ya realizada"
+                reason_key = "already_solved"
+
             self._push({
                 "operations": self.operations_with_metadata.copy(),
-                "incorrect": {"result": result, "text": f"{a} + {b} = {result}"},
+                "incorrect": {
+                    "result": result,
+                    "text": f"{reason}  {a} + {b} = {result}",
+                    "reason": reason_key,
+                    "display_ms": self.incorrect_feedback_seconds * 1000
+                },
                 "round": self.round,
                 "round_size": self.round_sizes[self.round]
             })
@@ -168,7 +188,7 @@ class Puzzle1(BasePuzzle):
             
     def _delayed_reset(self):
         """Reset operations after wrong answer"""
-        time.sleep(3)
+        time.sleep(self.incorrect_feedback_seconds)
         with self.lock:
             self.processing_wrong_result = False
             self._reset_operations()

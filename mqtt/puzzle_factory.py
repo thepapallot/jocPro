@@ -8,6 +8,7 @@ from .puzzles.puzzle7 import Puzzle7
 from .puzzles.puzzle8 import Puzzle8
 from .puzzles.puzzle9 import Puzzle9
 from .puzzles.puzzle10 import Puzzle10
+from .puzzles.puzzle11 import Puzzle11
 from .puzzles.puzzleFinal import PuzzleFinal
 
 
@@ -21,7 +22,8 @@ PUZZLE_CLASSES = {
     7: Puzzle7,
     8: Puzzle8,
     9: Puzzle9,
-    10: Puzzle10
+    10: Puzzle10,
+    11: Puzzle11
 }
 
 def create_puzzles(mqtt_client, puzzle_order):

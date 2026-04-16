@@ -32,6 +32,8 @@ class Puzzle2(BasePuzzle):
         self.alarm_timer = None
         self.input_blocked = False
         self.block_until = 0
+        self.errorsToReset = 3
+        self.error_counter = 0
         
     def _snapshot(self):
         """Return player progress snapshot"""
@@ -44,6 +46,7 @@ class Puzzle2(BasePuzzle):
         """Full reset of puzzle"""
         super().reset()
         with self.lock:
+            self.error_counter = 0
             self.progress = {p: 0 for p in self.sequences.keys()}
             self.alarm_mode = False
             self.input_blocked = False
@@ -56,7 +59,8 @@ class Puzzle2(BasePuzzle):
                 
             self._push({
                 "players": self._snapshot(),
-                "alarm_mode": False
+                "alarm_mode": False,
+                "error_counter": 0
             })
             
             # Schedule new alarm
@@ -65,29 +69,6 @@ class Puzzle2(BasePuzzle):
             self.alarm_timer = threading.Timer(alarm_delay, self._enter_alarm_mode)
             self.alarm_timer.start()
 
-    '''        
-    def on_start(self):
-        """Called when puzzle becomes active"""
-        with self.lock:
-            self.progress = {p: 0 for p in self.sequences.keys()}
-            self.alarm_mode = False
-            self.input_blocked = False
-            
-            if self.alarm_timer:
-                self.alarm_timer.cancel()
-                self.alarm_timer = None
-                
-            self._push({
-                "players": self._snapshot(),
-                "alarm_mode": False
-            })
-            
-            # Schedule alarm with random delay 2-4 minutes
-            alarm_delay = random.randint(20, 40)
-            print(f"[Puzzle2] Scheduling alarm mode in {alarm_delay} seconds")
-            self.alarm_timer = threading.Timer(alarm_delay, self._enter_alarm_mode)
-            self.alarm_timer.start()
-    '''   
 
     def stop(self):
         """Cleanup on puzzle stop"""
@@ -107,7 +88,8 @@ class Puzzle2(BasePuzzle):
             return {
                 "puzzle_id": self.id,
                 "players": self._snapshot(),
-                "alarm_mode": self.alarm_mode
+                "alarm_mode": self.alarm_mode,
+                "error_counter": self.error_counter
             }
             
     def _enter_alarm_mode(self):
@@ -240,29 +222,47 @@ class Puzzle2(BasePuzzle):
                     self._push({"puzzle_solved": True})
                     
             else:
-                # Wrong symbol - reset all non-finished players
-                for p in self.progress:
-                    if self.progress[p] < 5:
-                        self.progress[p] = 0
-                        
-                # Block input during error animation (4 seconds)
-                self.input_blocked = True
-                self.block_until = time.time() + 4
-                
-                self._push({
-                    "players": self._snapshot(),
-                    "error_reset": {
-                        "player": player,
-                        "symbol": symbol,
-                        "expected": expected
-                    }
-                })
-                
-                # Unblock after 4 seconds
-                def _unblock_later():
-                    time.sleep(4)
-                    with self.lock:
-                        self.input_blocked = False
-                        print(f"[Puzzle2] Error flash finished, input unblocked")
-                        
-                threading.Thread(target=_unblock_later, daemon=True).start()
+                # Wrong symbol - increment shared error counter
+                self.error_counter += 1
+                print(f"[Puzzle2] Error by player {player}, counter {self.error_counter}/{self.errorsToReset}")
+
+                if self.error_counter >= self.errorsToReset:
+                    # Threshold reached: reset all non-finished players
+                    self.error_counter = 0
+                    for p in self.progress:
+                        if self.progress[p] < 5:
+                            self.progress[p] = 0
+
+                    # Block input during error animation (4 seconds)
+                    self.input_blocked = True
+                    self.block_until = time.time() + 4
+
+                    self._push({
+                        "players": self._snapshot(),
+                        "error_reset": {
+                            "player": player,
+                            "symbol": symbol,
+                            "expected": expected
+                        },
+                        "error_counter": 0
+                    })
+
+                    # Unblock after 4 seconds
+                    def _unblock_later():
+                        time.sleep(4)
+                        with self.lock:
+                            self.input_blocked = False
+                            print(f"[Puzzle2] Error flash finished, input unblocked")
+
+                    threading.Thread(target=_unblock_later, daemon=True).start()
+
+                else:
+                    # Counter not yet at threshold: flash the erroring player only
+                    self._push({
+                        "error_increment": {
+                            "player": player,
+                            "symbol": symbol,
+                            "expected": expected
+                        },
+                        "error_counter": self.error_counter
+                    })

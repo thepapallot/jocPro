@@ -249,6 +249,32 @@
         0 0 18px rgba(255,79,109,0.1);
 }
 
+#objective-message {
+    width: min(94%, 960px);
+    min-height: 1.4em;
+    text-align: center;
+    font-size: clamp(1.7rem, 2.9vw, 2.35rem);
+    font-weight: 700;
+    line-height: 1.3;
+    color: rgba(216,243,255,0.95);
+    text-shadow: 0 0 10px rgba(180,235,255,0.14);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#objective-message.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#objective-message.is-error {
+    color: var(--bad);
+    text-shadow:
+        0 0 10px rgba(255,79,109,0.24),
+        0 0 18px rgba(255,79,109,0.1);
+}
+
 #objective-panel.p1-formula-error {
     border-color: rgba(255,79,109,0.72);
     background:
@@ -428,34 +454,43 @@
 }
 
 #puzzle-container.round-1 {
-    grid-template-columns: repeat(2, minmax(300px, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(16px, 2vw, 28px);
 }
 
 #puzzle-container.round-2 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: clamp(16px, 2.4vw, 36px);
-}
-
-#puzzle-container.round-3 {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: clamp(12px, 1.6vw, 24px);
 }
 
-#puzzle-container.round-3 .op {
-    min-height: 112px;
-    height: clamp(112px, 14vh, 156px);
+#puzzle-container.round-1 .op {
+    min-height: 116px;
+    height: clamp(116px, 14vh, 156px);
+}
+
+#puzzle-container.round-2 .op {
+    min-height: 92px;
+    height: clamp(92px, 11vh, 126px);
+    font-size: clamp(1.85rem, 2.4vw, 2.8rem);
 }
 
 @media (max-width: 1200px) {
-    #puzzle-container.round-3 {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+    #puzzle-container.round-1 {
         gap: clamp(12px, 1.8vw, 20px);
     }
 
-    #puzzle-container.round-3 .op {
-        min-height: 108px;
-        height: clamp(108px, 13.5vh, 148px);
+    #puzzle-container.round-2 {
+        gap: clamp(10px, 1.4vw, 18px);
+    }
+
+    #puzzle-container.round-1 .op {
+        min-height: 104px;
+        height: clamp(104px, 13vh, 140px);
+    }
+
+    #puzzle-container.round-2 .op {
+        min-height: 84px;
+        height: clamp(84px, 10.5vh, 116px);
     }
 }
 
@@ -474,13 +509,22 @@
         margin-top: 2px;
     }
 
-    #puzzle-container.round-3 {
-        gap: 12px;
+    #puzzle-container.round-1 {
+        gap: 14px;
     }
 
-    #puzzle-container.round-3 .op {
-        min-height: 96px;
-        height: clamp(96px, 11.5vh, 132px);
+    #puzzle-container.round-2 {
+        gap: 10px;
+    }
+
+    #puzzle-container.round-1 .op {
+        min-height: 94px;
+        height: clamp(94px, 11.5vh, 126px);
+    }
+
+    #puzzle-container.round-2 .op {
+        min-height: 76px;
+        height: clamp(76px, 9.5vh, 102px);
     }
 }
 
@@ -604,24 +648,29 @@
         font-size: 2.8rem;
     }
 
+    #objective-message {
+        font-size: clamp(1.35rem, 2.9vw, 1.85rem);
+    }
+
     #puzzle-container.round-1 {
-        grid-template-columns: repeat(2, minmax(185px, 1fr));
-        gap: 18px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
     }
 
     #puzzle-container.round-2 {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 14px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
     }
 
-    #puzzle-container.round-3 {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 16px;
+    #puzzle-container.round-1 .op {
+        min-height: 82px;
+        height: clamp(82px, 12vh, 112px);
     }
 
-    #puzzle-container.round-3 .op {
-        min-height: 116px;
-        height: clamp(116px, 16vh, 154px);
+    #puzzle-container.round-2 .op {
+        min-height: 70px;
+        height: clamp(70px, 9.5vh, 92px);
+        font-size: clamp(1.45rem, 3vw, 2rem);
     }
 
     .op {
@@ -668,6 +717,11 @@
         font-size: 2rem;
     }
 
+    #objective-message {
+        font-size: clamp(1.2rem, 4.2vw, 1.55rem);
+        width: 100%;
+    }
+
     #round-indicator {
         gap: 8px;
         padding: 10px 14px;
@@ -691,20 +745,27 @@
         font-size: 1rem;
     }
 
-    #puzzle-container.round-1,
+    #puzzle-container.round-1 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
     #puzzle-container.round-2 {
-        grid-template-columns: repeat(2, minmax(136px, 1fr));
-        gap: 14px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
     }
 
-    #puzzle-container.round-3 {
-        grid-template-columns: repeat(3, minmax(112px, 1fr));
-        gap: 16px;
+    #puzzle-container.round-1 .op {
+        min-height: 68px;
+        height: clamp(68px, 10.5vh, 88px);
+        font-size: clamp(1.3rem, 4vw, 1.8rem);
     }
 
-    #puzzle-container.round-3 .op {
-        min-height: 102px;
-        height: clamp(102px, 14.5vh, 132px);
+    #puzzle-container.round-2 .op {
+        min-height: 58px;
+        height: clamp(58px, 8.2vh, 72px);
+        font-size: clamp(1.05rem, 3.8vw, 1.45rem);
+        border-radius: 14px;
     }
 
     .op {

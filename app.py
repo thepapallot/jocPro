@@ -201,7 +201,8 @@ def puzzle(puzzle_id):
     mqtt_client.set_current_sequence_index(puzzle_index)
     #mqtt_client.send_message("FROM_FLASK", f"P{puzzle_id}Start")
 
-    return render_template(f'puzzle{puzzle_id}.html', current_level=mqtt_client.current_puzzle_index)
+    next_puzzle_id = puzzle_index + 1 if puzzle_index < len(PUZZLE_ORDER) else None
+    return render_template(f'puzzle{puzzle_id}.html', current_level=mqtt_client.current_puzzle_index, next_puzzle_id=next_puzzle_id)
 
 @app.route('/puzzle4_sample_finished', methods=['POST'])
 def puzzle4_sample_finished():

@@ -48,7 +48,7 @@
 
 					<div class="led-rig-inner">
 						<div class="led-strip-window">
-							{% for digit in code %}
+							{% for digit in code|reverse %}
 							<div class="led-segment color-{{ digit }}"></div>
 							{% endfor %}
 						</div>

@@ -11,12 +11,14 @@
     const playersSection = document.getElementById('players-section');
     const errorSection = document.getElementById('error-section');
     const roundSteps = document.querySelectorAll('.round-step');
+    const totalRounds = roundSteps.length || 0;
     
     let solved = false;
     let currentRound = 0;
     let countdownInterval = null;
     let roundObjectives = 0;
     let roundLimits = 0;
+    let backendTotalRounds = totalRounds;
     let lastRoundResult = null;  // Track if we just showed a result
     let snapshotRequested = false; // NEW: prevent double fetch on initial load
     let activeCountdownDeadline = null;
@@ -169,7 +171,7 @@
 
     function updateStreak(round) {
         if (streakEl && round) {
-            streakEl.textContent = `${round}/3`;
+            streakEl.textContent = `${round}/${backendTotalRounds || totalRounds || round}`;
         }
         roundSteps.forEach(step => {
             const stepRound = Number(step.dataset.roundStep);
@@ -239,6 +241,10 @@
         if (!d || d.puzzle_id !== 5) return;
 
         console.log('[P5] handleUpdate received:', d);
+
+        if (d.total_rounds) {
+            backendTotalRounds = d.total_rounds;
+        }
 
         // If backend snapshot says we're waiting but didn't include countdown_message,
         // rebuild the best possible UI instead of staying blank.
@@ -359,55 +365,68 @@
     }
 
     function installDebugHelpers() {
+        function getDebugObjective(round) {
+            return round === 1 ? 10 : 30;
+        }
+
+        function getDebugLimit(round) {
+            return round === 1 ? 15 : 25;
+        }
+
         window.puzzle5Debug = {
             push(payload) {
                 handleUpdate({ puzzle_id: 5, ...payload }, 'debug');
             },
-            countdown(seconds = 5, objective = 10, round = 1) {
+            countdown(seconds = 5, objective = null, round = 1) {
                 handleUpdate({
                     puzzle_id: 5,
                     countdown_message: `Ronda ${round} empieza en ${seconds} segundos`,
                     waiting_seconds: seconds,
-                    objective
+                    objective: objective ?? getDebugObjective(round),
+                    total_rounds: 2
                 }, 'debug-countdown');
             },
-            round(round = 1, objective = 10, limit = 20) {
+            round(round = 1, objective = null, limit = null) {
                 handleUpdate({
                     puzzle_id: 5,
                     round,
                     round_start: true,
-                    objective,
-                    limit
+                    objective: objective ?? getDebugObjective(round),
+                    limit: limit ?? getDebugLimit(round),
+                    total_rounds: 2
                 }, 'debug-round');
             },
-            partial(times, round = 1, objective = 10, limit = 20) {
+            partial(times, round = 1, objective = null, limit = null) {
                 const total = (times || []).reduce((acc, item) => acc + Math.abs(item.time), 0);
                 handleUpdate({
                     puzzle_id: 5,
                     round,
-                    objective,
-                    limit,
+                    objective: objective ?? getDebugObjective(round),
+                    limit: limit ?? getDebugLimit(round),
+                    total_rounds: 2,
                     times,
                     total
                 }, 'debug-partial');
             },
-            success(round = 1, total = 7.5, limit = 20) {
+            success(round = 1, total = 7.5, limit = null) {
                 handleUpdate({
                     puzzle_id: 5,
+                    total_rounds: 2,
                     round_result: {
                         success: true,
                         total,
-                        limit
+                        limit: limit ?? getDebugLimit(round)
                     }
                 }, 'debug-success');
             },
-            failure(round = 1, total = 38.1, limit = 30) {
+            failure(round = 1, total = 38.1, limit = null) {
                 handleUpdate({
                     puzzle_id: 5,
+                    total_rounds: 2,
                     round_result: {
                         success: false,
                         total,
-                        limit
+                        limit: limit ?? getDebugLimit(round)
                     }
                 }, 'debug-failure');
             },

@@ -17,7 +17,44 @@
     { id: "scene_video_final", label: "Intro Final", href: "/player/?scene=scene_video_final" },
     { id: "scene_outro_game", label: "Outro Final", href: "/player/?scene=scene_outro_game" }
   ];
+  const puzzle11Steps = [
+    "El token 5 pasa por el terminal 6 y pulsa el boton verde.",
+    "El token 10 pasa por el terminal 2 y despues por el 5.",
+    "El token 13 pasa 3 veces por el terminal 2.",
+    "El token 14 pasa por el terminal 1 y pulsa rojo, verde y amarillo.",
+    "El token 17 pasa por terminal 1, despues 2 y despues 3.",
+    "El token 18 pasa por el terminal 9 y pulsa el boton negro dos veces.",
+    "El token 20 pasa por el terminal que tiene el simbolo 3 en raya azul.",
+    "El token 22 pasa por terminal 3, despues terminal 4 y alli pulsa amarillo.",
+    "El token 31 pasa por el terminal 7 dos veces y despues pulsa rojo.",
+    "El token 35 pasa por el terminal que tiene el simbolo pi."
+  ];
   const puzzleConfigs = {
+    "11": {
+      label: "Puzzle 11",
+      route: "/puzzle/11",
+      startRoute: "/start_puzzle/11",
+      restartRoute: "/restart_puzzle/11",
+      help: "Formato MQTT: P11,step_index. step_index va de 0 a 9 y debe llegar en orden.",
+      fields: [
+        { id: "step", label: "Paso", type: "number", min: 0, max: 9, value: 0 }
+      ],
+      build(values) {
+        return `P11,${values.step}`;
+      },
+      examples: [
+        { label: "Paso 1", payload: "P11,0" },
+        { label: "Paso 10", payload: "P11,9" }
+      ],
+      reference: [
+        "Secuencia tutorial fija de 10 pasos:",
+        ...puzzle11Steps.map((step, index) => `${index + 1}. ${step}`),
+        "",
+        "Solo avanza si el paso enviado coincide con current_step.",
+        "",
+        "Payload: P11,step_index"
+      ].join("\n")
+    },
     "1": {
       label: "Puzzle 1",
       route: "/puzzle/1",
@@ -123,7 +160,7 @@
         "5, 1, 8, 3",
         "",
         "Orden correcto fase 2:",
-        "6, 1, 0, 9, 8, 5, 2, 7"
+        "6, 1, 0, 9, 8, 4, 2, 7"
       ].join("\n")
     },
     "5": {
@@ -147,7 +184,6 @@
         "Rondas fijas:",
         "1 -> objetivo 10 s",
         "2 -> objetivo 30 s",
-        "3 -> objetivo 60 s",
         "",
         "El mensaje envia el error respecto al objetivo:",
         "P5,9,-0.5 -> terminal 9 se adelanta 0.5 s",
@@ -496,7 +532,13 @@
       { symbol: "0", color: "1" }
     ],
     puzzle9Token: "8",
-    puzzle10Box: "0"
+    puzzle10Box: "0",
+    puzzle11: {
+      active: false,
+      currentStep: 0,
+      completedSteps: [],
+      solved: false
+    }
   };
 
   function initPuzzleSelect() {
@@ -754,6 +796,10 @@
           retryButton.addEventListener("click", () => renderForm());
         }
       }
+      return;
+    }
+    if (puzzleId === "11") {
+      renderPuzzle11Simulator();
       return;
     }
     if (puzzleId === "-1") {
@@ -1234,7 +1280,7 @@
     }).join("");
 
     const roundLabel = simState.puzzle5Round || 1;
-    const objectiveLabel = simState.puzzle5Objective ?? (roundLabel === 1 ? 10 : roundLabel === 2 ? 30 : 60);
+    const objectiveLabel = simState.puzzle5Objective ?? (roundLabel === 1 ? 10 : 30);
     const statusLabel = simState.puzzle5Waiting
       ? "Esperando"
       : simState.puzzle5ActiveRound
@@ -1660,6 +1706,189 @@
     syncPuzzle10FormAndEditor();
   }
 
+  function renderPuzzle11Simulator() {
+    const syncPuzzle11State = async (silent = true) => {
+      const response = await fetch("/current_state", { cache: "no-store" });
+      const data = await response.json();
+
+      if (String(data.puzzle_id) !== "11") {
+        simState.puzzle11.active = false;
+        simState.puzzle11.currentStep = 0;
+        simState.puzzle11.completedSteps = [];
+        simState.puzzle11.solved = false;
+        if (!silent) {
+          setStatus("Puzzle 11 · no activo");
+        }
+        return null;
+      }
+
+      simState.puzzle11.active = true;
+      simState.puzzle11.currentStep = Number(data.current_step || 0);
+      simState.puzzle11.completedSteps = Array.isArray(data.completed_steps)
+        ? data.completed_steps.map((step) => Number(step))
+        : [];
+      simState.puzzle11.solved = !!data.puzzle_solved;
+
+      if (!silent) {
+        setStatus("Puzzle 11 sincronizado");
+      }
+      return data;
+    };
+
+    const renderUI = () => {
+      const currentStep = Number(simState.puzzle11.currentStep || 0);
+      const completed = new Set(simState.puzzle11.completedSteps || []);
+      const solved = !!simState.puzzle11.solved;
+      const nextStep = Math.min(currentStep, puzzle11Steps.length - 1);
+      const nextCopy = solved
+        ? "Tutorial completado."
+        : puzzle11Steps[nextStep] || "Sin paso activo.";
+
+      const phaseRows = puzzle11Steps.map((text, index) => {
+        const stateClass = completed.has(index)
+          ? " is-selected"
+          : (index === currentStep && !solved ? "" : "");
+        const badge = completed.has(index)
+          ? "Completado"
+          : (index === currentStep && !solved ? "Actual" : "Pendiente");
+
+        return `
+          <div class="sim-solution-item${stateClass}">
+            <span>${index + 1}. ${escapeHtml(text)} <em>(${badge})</em></span>
+            <button type="button" class="sim-button" data-sim-p11-send-step="${index}" ${solved || index !== currentStep ? "disabled" : ""}>Enviar</button>
+          </div>
+        `;
+      }).join("");
+
+      els.simContent.innerHTML = `
+        <div class="sim-selected-readout">
+          Estat: <strong>${simState.puzzle11.active ? "actiu" : "inactiu"}</strong>
+          · Pas: <strong>${solved ? "10/10" : `${Math.min(currentStep + 1, 10)}/10`}</strong>
+          · Resolt: <strong>${solved ? "si" : "no"}</strong>
+        </div>
+        <div class="sim-note">Fase actual: ${escapeHtml(nextCopy)}</div>
+        <div class="sim-actions">
+          <button type="button" class="sim-button" data-sim-p11-refresh>Actualizar</button>
+          <button type="button" class="sim-button" data-sim-p11-start>Arrancar puzzle 11</button>
+          <button type="button" class="sim-button primary-action" data-sim-p11-next ${solved ? "disabled" : ""}>Enviar fase actual</button>
+          <button type="button" class="sim-button" data-sim-p11-solve ${solved ? "disabled" : ""}>Resolver fases restants</button>
+        </div>
+        <div class="sim-solution-card">
+          <div class="field-label">Fases del Puzzle 11</div>
+          <div class="sim-solution-list">${phaseRows}</div>
+        </div>
+      `;
+
+      const runToFlask = async (payloads) => {
+        const previousTopic = els.topicSelect.value;
+        try {
+          els.topicSelect.value = "TO_FLASK";
+          updateTopicHelp();
+          updateSendModeUI();
+          await sendPayloads(payloads);
+        } finally {
+          if (previousTopic !== "TO_FLASK") {
+            els.topicSelect.value = previousTopic;
+            syncEditorForTopic();
+          }
+        }
+      };
+
+      const refreshBtn = els.simContent.querySelector("[data-sim-p11-refresh]");
+      if (refreshBtn) {
+        refreshBtn.addEventListener("click", async () => {
+          await syncPuzzle11State(false);
+          renderUI();
+        });
+      }
+
+      const startBtn = els.simContent.querySelector("[data-sim-p11-start]");
+      if (startBtn) {
+        startBtn.addEventListener("click", async () => {
+          try {
+            await startPuzzle(false);
+            await syncPuzzle11State(true);
+            renderUI();
+          } catch (error) {
+            setStatus(`Puzzle 11 · ${error.message || "error"}`);
+          }
+        });
+      }
+
+      const nextBtn = els.simContent.querySelector("[data-sim-p11-next]");
+      if (nextBtn) {
+        nextBtn.addEventListener("click", async () => {
+          try {
+            if (!simState.puzzle11.active) {
+              await startPuzzle(false);
+              await syncPuzzle11State(true);
+            }
+            const step = Number(simState.puzzle11.currentStep || 0);
+            if (step >= puzzle11Steps.length) {
+              setStatus("Puzzle 11 · tutorial completado");
+              return;
+            }
+            const payload = `P11,${step}`;
+            await runToFlask([payload]);
+            appendLog({ local: true, payload, simulated: "puzzle11_next_step" });
+            await syncPuzzle11State(true);
+            renderUI();
+          } catch (error) {
+            setStatus(`Puzzle 11 · ${error.message || "error"}`);
+          }
+        });
+      }
+
+      const solveBtn = els.simContent.querySelector("[data-sim-p11-solve]");
+      if (solveBtn) {
+        solveBtn.addEventListener("click", async () => {
+          try {
+            if (!simState.puzzle11.active) {
+              await startPuzzle(false);
+              await syncPuzzle11State(true);
+            }
+            const step = Number(simState.puzzle11.currentStep || 0);
+            if (step >= puzzle11Steps.length) {
+              setStatus("Puzzle 11 · tutorial completado");
+              return;
+            }
+            const payloads = Array.from({ length: puzzle11Steps.length - step }, (_, index) => `P11,${step + index}`);
+            await runToFlask(payloads);
+            appendLog({ local: true, payloads, simulated: "puzzle11_solve_remaining" });
+            await syncPuzzle11State(true);
+            renderUI();
+          } catch (error) {
+            setStatus(`Puzzle 11 · ${error.message || "error"}`);
+          }
+        });
+      }
+
+      els.simContent.querySelectorAll("[data-sim-p11-send-step]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          try {
+            const step = Number(button.dataset.simP11SendStep);
+            const payload = `P11,${step}`;
+            await runToFlask([payload]);
+            appendLog({ local: true, payload, simulated: "puzzle11_manual_step" });
+            await syncPuzzle11State(true);
+            renderUI();
+          } catch (error) {
+            setStatus(`Puzzle 11 · ${error.message || "error"}`);
+          }
+        });
+      });
+    };
+
+    syncPuzzle11State(true)
+      .then(() => {
+        renderUI();
+      })
+      .catch((error) => {
+        setStatus(`Puzzle 11 · ${error.message || "error"}`);
+        renderUI();
+      });
+  }
+
   function renderPuzzle8Simulator() {
     const syncPuzzle8State = async (silent = true) => {
       const response = await fetch("/current_state");
@@ -2022,6 +2251,10 @@
         { label: "Start", payload: startPayload },
         { label: "End", payload: "P1End" }
       ],
+      "11": [
+        { label: "Start", payload: startPayload },
+        { label: "End", payload: "P11End" }
+      ],
       "2": [
         { label: "Start", payload: startPayload },
         { label: "End", payload: "P2End" }
@@ -2038,7 +2271,6 @@
         { label: "Start", payload: startPayload },
         { label: "Round 1", payload: "P5_Round1" },
         { label: "Round 2", payload: "P5_Round2" },
-        { label: "Round 3", payload: "P5_Round3" },
         { label: "End", payload: "P5_End" }
       ],
       "6": [
