@@ -732,7 +732,6 @@ function TransitionScreen(segment) {
 
 function IntroBriefTransition(segment) {
     const briefContent = getBriefContentForNextScene();
-    const progressText = introBriefOverrides.progress ?? segment.progress ?? "";
     const kickerText = briefContent.kicker ?? introBriefOverrides.kicker ?? segment.kicker ?? "";
     const titleText = briefContent.title ?? introBriefOverrides.title ?? segment.title ?? "";
     const objectiveText = briefContent.objective ?? introBriefOverrides.objective ?? segment.objective ?? "";
@@ -747,10 +746,6 @@ function IntroBriefTransition(segment) {
 
     if (kickerText) {
         header.appendChild(createElement("p", "intro-brief-card__kicker", kickerText));
-    }
-
-    if (progressText) {
-        header.appendChild(createElement("p", "intro-brief-card__progress", progressText));
     }
 
     if (header.children.length > 0) {
