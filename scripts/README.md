@@ -17,11 +17,11 @@ Genera escenas intro (`_v2`) a partir de:
 - un catalogo (`scenes/catalog/intro_catalog.json`)
 - un catalogo de media (`scenes/catalog/media_catalog.json`)
 - un catalogo semantico de imagenes (`scenes/catalog/image_semantics.json`)
-- escenas base legacy (`scenes/source/intropuzzles/...`)
+- escenas base legacy (`scenes/source/intros/intropuzzles/...`)
 
 Que hace:
 
-- crea `config.json` en `scenes/source/intropuzzles/<scene_id>/`
+- crea `config.json` en `scenes/source/intros/intropuzzles/<scene_id>/`
 - inyecta titulos, audio, assets y subtitulos
 - sincroniza timings con la escena legacy (si esta activado en catalogo)
 - selecciona clips de Cero segun intencion narrativa (intro/briefing/warning/close), con variedad entre escenas

@@ -2354,7 +2354,12 @@ document.addEventListener("keydown", async (event) => {
     if (event.code === "Space") {
         event.preventDefault();
 
-        if (playerInstance.currentSegment?.advance_on_space) {
+        const shouldAdvance =
+            playerInstance.currentSegment?.advance_on_space ||
+            (playerInstance.currentSegment?.type === "transition" &&
+                playerInstance.currentSegment?.variant === "intro-brief");
+
+        if (shouldAdvance) {
             await playerInstance.advanceSegment();
             return;
         }
@@ -2384,7 +2389,12 @@ document.addEventListener("click", async (event) => {
         return;
     }
 
-    if (!playerInstance.currentSegment?.advance_on_space) {
+    const shouldAdvance =
+        playerInstance.currentSegment?.advance_on_space ||
+        (playerInstance.currentSegment?.type === "transition" &&
+            playerInstance.currentSegment?.variant === "intro-brief");
+
+    if (!shouldAdvance) {
         return;
     }
 

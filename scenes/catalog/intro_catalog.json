@@ -2,7 +2,7 @@
   "version": 1,
   "template": "scenes/templates/intro/scene_intro_template.json",
   "media_catalog": "scenes/catalog/media_catalog.json",
-  "default_output_root": "scenes/source/intropuzzles",
+  "default_output_root": "scenes/source/intros/intropuzzles",
   "entries": [
     {
       "output_scene_id": "scene_intro_simulacro_v2",

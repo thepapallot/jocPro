@@ -3,6 +3,9 @@
     ? window.TEST_ACTIVE_PUZZLE_ORDER.map((id) => String(id))
     : [];
   const puzzleAliases = window.TEST_PUZZLE_ALIASES || {};
+  const tutorialPuzzleId = String(window.TEST_PUZZLE_TUTORIAL ?? "").trim();
+  const finalPuzzleId = String(window.TEST_PUZZLE_FINAL ?? "").trim();
+  const finalPuzzleMqttId = finalPuzzleId || "6";
   const sceneHealthConfigs = [
     { id: "scene_intro_game", label: "Intro General", href: "/player/?scene=scene_intro_game" },
     { id: "scene_intro_sumas", label: "Puzzle 1 Intro", href: "/player/?scene=scene_intro_sumas" },
@@ -423,27 +426,53 @@
         "Al completar las 10 cajas, el puzzle se marca como superado."
       ].join("\n")
     },
+    "12": {
+      label: "Puzzle 12",
+      route: "/puzzle/12",
+      startRoute: "/start_puzzle/12",
+      restartRoute: "/restart_puzzle/12",
+      help: "Formato MQTT: P12,box,buttons. buttons es una cadena de 6 digitos (0/1).",
+      fields: [
+        { id: "box", label: "Caja", type: "number", min: 1, max: 10, value: 1 },
+        { id: "buttons", label: "Botones (6 bits)", type: "text", value: "110010", fullWidth: true }
+      ],
+      build(values) {
+        return `P12,${values.box},${values.buttons}`;
+      },
+      examples: [
+        { label: "Caja 1 · 110010", payload: "P12,1,110010" },
+        { label: "Caja 7 · 001101", payload: "P12,7,001101" }
+      ],
+      reference: [
+        "El backend suma los 6 botones activos de todas las cajas enviadas.",
+        "Cada caja reporta su estado con: P12,box,buttons",
+        "buttons debe tener 6 digitos binarios (ej: 110010).",
+        "",
+        "Si el total coincide con el objetivo de ronda/GIF,",
+        "debe mantenerse estable 5 segundos para validar la ronda."
+      ].join("\n")
+    },
     "-1": {
       label: "Puzzle final",
       route: "/puzzle/final",
       startRoute: "/start_puzzle_final",
       restartRoute: "/start_puzzle_final",
-      help: "Formato MQTT: P6,boxNumber. Usa las rutas de compatibilidad del final, pero el payload real es el de puzzle 6.",
+      help: `Formato MQTT: P${finalPuzzleMqttId},boxNumber. Usa las rutas de compatibilidad del final, pero el payload real es el de puzzle ${finalPuzzleMqttId}.`,
       fields: [
         { id: "box", label: "Terminal", type: "number", min: 0, max: 9, value: 4 }
       ],
       build(values) {
-        return `P6,${values.box}`;
+        return `P${finalPuzzleMqttId},${values.box}`;
       },
       examples: [
-        { label: "Falla terminal 4", payload: "P6,4" },
-        { label: "Falla terminal 8", payload: "P6,8" }
+        { label: "Falla terminal 4", payload: `P${finalPuzzleMqttId},4` },
+        { label: "Falla terminal 8", payload: `P${finalPuzzleMqttId},8` }
       ],
       reference: [
         "Puzzle final por compatibilidad:",
         "La pantalla final usa /puzzle/final y /start_puzzle_final.",
-        "El backend real arranca el puzzle 6.",
-        "El mensaje P6,box simula un terminal que ha fallado y reinicia la ventana."
+        `El backend real arranca el puzzle ${finalPuzzleMqttId}.`,
+        `El mensaje P${finalPuzzleMqttId},box simula un terminal que ha fallado y reinicia la ventana.`
       ].join("\n")
     }
   };
@@ -492,12 +521,36 @@
   }
 
   function getVisiblePuzzleIds() {
-    if (activePuzzleOrder.length > 0) {
-      return activePuzzleOrder.map((id) => String(id));
-    }
-    return Object.keys(puzzleConfigs)
+    const allConfigIds = Object.keys(puzzleConfigs)
       .filter((id) => id !== "-1")
       .sort((a, b) => Number(a) - Number(b));
+
+    const configuredIds = [];
+
+    if (tutorialPuzzleId && allConfigIds.includes(tutorialPuzzleId)) {
+      configuredIds.push(tutorialPuzzleId);
+    }
+
+    activePuzzleOrder
+      .map((id) => String(id))
+      .forEach((id) => {
+        if (id !== "-1" && allConfigIds.includes(id)) {
+          configuredIds.push(id);
+        }
+      });
+
+    if (finalPuzzleId && allConfigIds.includes(finalPuzzleId)) {
+      configuredIds.push(finalPuzzleId);
+    }
+
+    const orderedIds = configuredIds.filter((id, index, list) => list.indexOf(id) === index);
+
+    if (orderedIds.length === 0) {
+      return allConfigIds;
+    }
+
+    const missingIds = allConfigIds.filter((id) => !orderedIds.includes(id));
+    return [...orderedIds, ...missingIds];
   }
 
   function switchTab(tabId) {

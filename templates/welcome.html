@@ -110,9 +110,7 @@
                     overlayAudio.currentTime = 0;
                     overlayAudio.loop = false;
                 } catch {}
-                const next = {{ url_for('play_video_tutorial')|tojson }};
-                const target = `{{ url_for('scene_player') }}?scene=scene_intro_game&next=${encodeURIComponent(next)}`;
-                window.location.replace(target);
+                window.location.replace({{ url_for('play_video_intro')|tojson }});
             }
         }
         onAdvance._done = false;

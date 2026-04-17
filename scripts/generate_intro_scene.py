@@ -1129,7 +1129,7 @@ def main():
     template_path = (repo_root / (args.template or catalog["template"]))
     template = load_json(template_path)
 
-    output_root = repo_root / (args.output_root or catalog.get("default_output_root", "scenes/source/intropuzzles"))
+    output_root = repo_root / (args.output_root or catalog.get("default_output_root", "scenes/source/intros/intropuzzles"))
     media_catalog_path = repo_root / catalog.get("media_catalog", "scenes/catalog/media_catalog.json")
     media_catalog = load_json(media_catalog_path) if media_catalog_path.exists() else {}
 
