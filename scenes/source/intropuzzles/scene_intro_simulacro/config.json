@@ -115,50 +115,31 @@
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0.0,
+          "at": 1.78,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
-              },
               {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
                 "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               }
             ]
           }
         },
         {
-          "at": 1.78,
+          "at": 8.98,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
-            "assets": [
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
-              },
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
-              }
-            ]
-          }
-        },
-        {
-          "at": 5.78,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",

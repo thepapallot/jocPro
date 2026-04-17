@@ -123,8 +123,8 @@
                 "alt": "Numbers strip 1 to 6"
               },
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/puzzle3/intro/question_board.jpg",
+                "alt": "Question board"
               }
             ]
           }
@@ -150,11 +150,11 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/puzzle3/intro/question_board.jpg",
-                "alt": "Question board"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
               },
               {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
@@ -164,8 +164,8 @@
           }
         },
         {
-          "at": 2.379,
-          "sfx": "token",
+          "at": 3.899,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -184,15 +184,83 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 11.18,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              }
+            ]
+          }
+        },
+        {
+          "at": 16.579,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              }
+            ]
+          }
+        },
+        {
+          "at": 22.38,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
                 "alt": "Numbers strip 1 to 6"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/puzzle3/intro/question_board.jpg",
+                "alt": "Question board"
+              }
+            ]
+          }
+        },
+        {
+          "at": 27.7,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Operation error"
+              },
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Timeout"
               }
             ]
           }

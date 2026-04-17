@@ -104,12 +104,12 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
-              },
-              {
                 "src": "/static/images/puzzle8/alpha.svg",
                 "alt": "Alpha"
+              },
+              {
+                "src": "/static/images/puzzle8/sigma.svg",
+                "alt": "Sigma"
               }
             ]
           }
@@ -135,15 +135,15 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
-              {
-                "src": "/static/images/puzzle8/sigma.svg",
-                "alt": "Sigma"
-              },
               {
                 "src": "/static/images/puzzle8/pi.svg",
                 "alt": "Pi"
+              },
+              {
+                "src": "/static/images/puzzle8/omega.svg",
+                "alt": "Omega"
               }
             ]
           }
@@ -154,15 +154,15 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/puzzle8/omega.svg",
-                "alt": "Omega"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/puzzle8/mu.svg",
-                "alt": "Mu"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
@@ -173,15 +173,53 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              },
+              {
+                "src": "/static/images/puzzle8/mu.svg",
+                "alt": "Mu"
+              }
+            ]
+          }
+        },
+        {
+          "at": 17.18,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Restart button"
+              },
               {
                 "src": "/static/images/puzzle8/lambda.svg",
                 "alt": "Lambda"
-              },
+              }
+            ]
+          }
+        },
+        {
+          "at": 29.18,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
               {
                 "src": "/static/images/puzzle8/gamma.svg",
                 "alt": "Gamma"
+              },
+              {
+                "src": "/static/images/puzzle8/epsilon.svg",
+                "alt": "Epsilon"
               }
             ]
           }

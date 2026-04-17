@@ -141,11 +141,11 @@
         },
         {
           "at": 4.18,
-          "sfx": "token",
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
@@ -160,19 +160,87 @@
         },
         {
           "at": 8.18,
-          "sfx": "objective",
+          "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
                 "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 13.18,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar off"
               },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 18.18,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Operation error"
+              },
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Timeout"
+              }
+            ]
+          }
+        },
+        {
+          "at": 24.82,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Restart button"
+              }
+            ]
+          }
+        },
+        {
+          "at": 30.14,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
               {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
                 "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar off"
               }
             ]
           }

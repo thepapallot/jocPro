@@ -104,8 +104,8 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Scanner bar on"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               },
               {
                 "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
@@ -135,11 +135,11 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
               },
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
@@ -150,11 +150,11 @@
         },
         {
           "at": 4.219,
-          "sfx": "token",
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
@@ -169,19 +169,91 @@
         },
         {
           "at": 9.3,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 13.619,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 18.539,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
                 "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
+              }
+            ]
+          }
+        },
+        {
+          "at": 23.38,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 28.979,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Timeout"
+              },
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Restart button"
               }
             ]
           }

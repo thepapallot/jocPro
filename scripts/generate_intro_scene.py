@@ -210,6 +210,10 @@ def canonical_scene_id(entry: dict):
     return source
 
 
+def is_sumas_scene(scene_id: str) -> bool:
+    return scene_id == "scene_intro_sumas"
+
+
 def resolve_audio_src(entry: dict, scene_id: str):
     explicit = (entry.get("audio_src") or "").strip()
     if explicit:
@@ -317,6 +321,26 @@ def subtitle_has_warning_cue(text: str):
     return any(cue in normalized for cue in WARNING_TEXT_CUES)
 
 
+def _candidate_puzzle_scope(candidate: dict, puzzle_tag: str):
+    puzzles = {str(v).lower() for v in candidate.get("puzzles", []) if isinstance(v, (str, int))}
+    if puzzle_tag and puzzle_tag in puzzles:
+        return "puzzle"
+    if "shared" in puzzles:
+        return "shared"
+    return "other"
+
+
+def _extract_mentioned_concepts(subtitle_text: str):
+    text = normalize_text(subtitle_text)
+    concepts = []
+    for concept, keywords in CONCEPT_KEYWORDS.items():
+        if not keywords:
+            continue
+        if any(keyword in text for keyword in keywords):
+            concepts.append(concept)
+    return concepts
+
+
 def discover_puzzle_assets(repo_root: Path, puzzle_tag: str, existing_paths: set[str]):
     if not puzzle_tag:
         return []
@@ -420,6 +444,7 @@ def pick_assets_for_subtitle(
     used_paths: set[str],
     max_assets: int = 2,
     allow_warning: bool | None = None,
+    concept_first_use: dict | None = None,
 ):
     if allow_warning is None:
         allow_warning = subtitle_has_warning_cue(subtitle_text)
@@ -429,6 +454,7 @@ def pick_assets_for_subtitle(
         key=lambda c: (score_asset_for_subtitle(c, subtitle_text, puzzle_tag), c.get("src", "")),
         reverse=True,
     )
+
     def _pick(ignore_used: bool, allow_warning_items: bool):
         picked = []
         for item in ranked:
@@ -444,16 +470,82 @@ def pick_assets_for_subtitle(
                 break
         return picked
 
+    # First mention of a concept: force puzzle-linked image first; if absent, use shared bank.
+    seed_assets = []
+    seed_paths = set()
+    mentioned_concepts = _extract_mentioned_concepts(subtitle_text)
+    if concept_first_use is not None and mentioned_concepts:
+        for concept in mentioned_concepts:
+            if concept_first_use.get(concept):
+                continue
+
+            chosen = None
+            for scope in ("puzzle", "shared"):
+                for item in ranked:
+                    src = item.get("src")
+                    if not src or src in seed_paths:
+                        continue
+                    if item.get("concept") != concept:
+                        continue
+                    if not allow_warning and is_warning_candidate(item):
+                        continue
+                    if _candidate_puzzle_scope(item, puzzle_tag) != scope:
+                        continue
+                    if src in used_paths:
+                        continue
+                    chosen = item
+                    break
+                if chosen:
+                    break
+
+            if not chosen:
+                for scope in ("puzzle", "shared"):
+                    for item in ranked:
+                        src = item.get("src")
+                        if not src or src in seed_paths:
+                            continue
+                        if item.get("concept") != concept:
+                            continue
+                        if not allow_warning and is_warning_candidate(item):
+                            continue
+                        if _candidate_puzzle_scope(item, puzzle_tag) != scope:
+                            continue
+                        chosen = item
+                        break
+                    if chosen:
+                        break
+
+            if not chosen:
+                continue
+
+            seed_assets.append({"src": chosen["src"], "alt": chosen.get("alt") or path_to_alt(chosen["src"])})
+            seed_paths.add(chosen["src"])
+            concept_first_use[concept] = True
+            if len(seed_assets) >= max_assets:
+                break
+
+    def _merge_with_seed(items):
+        merged = list(seed_assets)
+        existing = {item["src"] for item in merged}
+        for item in items:
+            if item["src"] in existing:
+                continue
+            merged.append(item)
+            existing.add(item["src"])
+            if len(merged) >= max_assets:
+                break
+        return merged[:max_assets]
+
     # 1) Try best non-used candidates respecting warning policy.
-    selected = _pick(ignore_used=False, allow_warning_items=allow_warning)
+    selected = _merge_with_seed(_pick(ignore_used=False, allow_warning_items=allow_warning))
     # 2) If nothing, allow reuse but keep same warning policy.
     if not selected:
-        selected = _pick(ignore_used=True, allow_warning_items=allow_warning)
+        selected = _merge_with_seed(_pick(ignore_used=True, allow_warning_items=allow_warning))
     # 3) Last resort: allow warnings only when warnings are explicitly allowed.
     if not selected and allow_warning:
-        selected = _pick(ignore_used=False, allow_warning_items=True)
+        selected = _merge_with_seed(_pick(ignore_used=False, allow_warning_items=True))
         if not selected:
-            selected = _pick(ignore_used=True, allow_warning_items=True)
+            selected = _merge_with_seed(_pick(ignore_used=True, allow_warning_items=True))
 
     if selected:
         for item in selected:
@@ -869,6 +961,7 @@ def build_scene(
     scene = copy.deepcopy(template)
 
     scene_id = canonical_scene_id(entry)
+    allow_equals_visual = is_sumas_scene(scene_id)
     resolved_game_title, resolved_headline = resolve_intro_titles(entry, defaults, between_briefs, scene_id)
     audio_src = resolve_audio_src(entry, scene_id)
     subtitles = resolve_subtitles(entry, repo_root, scene_id)
@@ -903,6 +996,7 @@ def build_scene(
     puzzle_tag = SCENE_TO_PUZZLE_TAG.get(scene_id, "")
     asset_candidates = build_asset_candidates(scene_id, image_semantics, repo_root)
     used_paths = set()
+    concept_first_use = {}
 
     timeline = timeline_with_starts(scene)
     segment2 = next((item for item in timeline if item[0] == 1), None)
@@ -917,7 +1011,21 @@ def build_scene(
         _, start4, dur4, _ = segment4
         points4 = collect_subtitle_points(subtitles, start4, start4 + dur4)
 
-    objective_hint = points2[0]["text"] if points2 else (resolved_headline or "objetivo")
+    objective_points_with_objects = [p for p in points2 if _extract_mentioned_concepts(p.get("text", ""))]
+    objective_hint = (
+        objective_points_with_objects[0]["text"]
+        if objective_points_with_objects
+        else (points2[0]["text"] if points2 else (resolved_headline or "objetivo"))
+    )
+    objective_assets_at = (
+        objective_points_with_objects[0]["at"]
+        if objective_points_with_objects
+        else (
+            points2[0]["at"]
+            if points2
+            else float(scene["segments"][1].get("duration", 0) or 0) * 0.45
+        )
+    )
     objective_assets = pick_assets_for_subtitle(
         objective_hint,
         asset_candidates,
@@ -925,6 +1033,7 @@ def build_scene(
         used_paths,
         max_assets=2,
         allow_warning=False,
+        concept_first_use=concept_first_use,
     )
 
     # Objective block: large text + subtitle-matched assets.
@@ -940,7 +1049,7 @@ def build_scene(
             "at": round(
                 max(
                     2.4,
-                    points2[0]["at"] if points2 else float(scene["segments"][1].get("duration", 0) or 0) * 0.45,
+                    objective_assets_at,
                 ),
                 3,
             ),
@@ -950,7 +1059,7 @@ def build_scene(
         },
     ]
 
-    # Visual block only (no big middle text): map subtitle mentions to puzzle assets.
+    # Visual block only (no big middle text): switch icons at subtitle timestamps.
     visual_duration = float(scene["segments"][3].get("duration", 0) or 0)
     default_points = [
         {"at": 0.0, "text": resolved_headline or "objetivo"},
@@ -959,64 +1068,42 @@ def build_scene(
     ]
     phase_points = []
     if points4:
-        # Pick up to 3 representative subtitle points in this visual segment.
-        sampled = [points4[0]]
-        for point in points4[1:]:
-            if len(sampled) >= 3:
-                break
-            if abs(point["at"] - sampled[-1]["at"]) >= 1.6:
-                sampled.append(point)
-        while len(sampled) < 3:
-            sampled.append(default_points[len(sampled)])
-        phase_points = sampled[:3]
-    else:
+        for point in points4:
+            concepts = _extract_mentioned_concepts(point.get("text", ""))
+            if not concepts:
+                continue
+            if phase_points and abs(float(point["at"]) - float(phase_points[-1]["at"])) < 0.6:
+                continue
+            phase_points.append(point)
+    if not phase_points:
         phase_points = default_points
 
-    visual_assets = [
-        pick_assets_for_subtitle(
-            phase_points[0]["text"],
+    scene["segments"][3]["variant"] = "immersive-strip"
+    visual_phases = []
+    for index, point in enumerate(phase_points):
+        assets = pick_assets_for_subtitle(
+            point["text"],
             asset_candidates,
             puzzle_tag,
             used_paths,
             max_assets=2,
-            allow_warning=False,
-        ),
-        pick_assets_for_subtitle(phase_points[1]["text"], asset_candidates, puzzle_tag, used_paths, max_assets=2),
-        pick_assets_for_subtitle(phase_points[2]["text"], asset_candidates, puzzle_tag, used_paths, max_assets=2),
-    ]
-    scene["segments"][3]["variant"] = "immersive-strip"
-    scene["segments"][3]["phases"] = [
-        {
-            "at": round(max(0.0, float(phase_points[0]["at"])), 3),
-            "sfx": "objective",
-            "variant": "immersive-strip",
-            "top": {
+            allow_warning=subtitle_has_warning_cue(point["text"]),
+            concept_first_use=concept_first_use,
+        )
+        min_at = 0.0 if index == 0 else visual_phases[-1]["at"] + 0.6
+        visual_phases.append(
+            {
+                "at": round(max(min_at, float(point["at"])), 3),
+                "sfx": pick_sfx_for_text(point["text"]),
                 "variant": "immersive-strip",
-                "show_equals": len(visual_assets[0]) == 2,
-                "assets": visual_assets[0],
-            },
-        },
-        {
-            "at": round(max(1.2, float(phase_points[1]["at"])), 3),
-            "sfx": "token",
-            "variant": "immersive-strip",
-            "top": {
-                "variant": "immersive-strip",
-                "show_equals": len(visual_assets[1]) == 2,
-                "assets": visual_assets[1],
-            },
-        },
-        {
-            "at": round(max(2.4, float(phase_points[2]["at"])), 3),
-            "sfx": "objective",
-            "variant": "immersive-strip",
-            "top": {
-                "variant": "immersive-strip",
-                "show_equals": len(visual_assets[2]) == 2,
-                "assets": visual_assets[2],
-            },
-        },
-    ]
+                "top": {
+                    "variant": "immersive-strip",
+                    "show_equals": allow_equals_visual and len(assets) == 2,
+                    "assets": assets,
+                },
+            }
+        )
+    scene["segments"][3]["phases"] = visual_phases
 
     # Assign character clips by narrative intent (intro/briefing/warning/close).
     apply_character_casting(scene, entry, defaults, role_to_clips, used_counts)

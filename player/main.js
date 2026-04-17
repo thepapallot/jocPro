@@ -1438,6 +1438,7 @@ class ScenePlayer {
         this.fullscreenPanelState = null;
         this.persistentStripState = null;
         this.audioContext = null;
+        this.masterAudioDisabled = false;
         this.audioEndedSceneTime = null;
         this.audioEndedPerfTime = 0;
         this.lastProgressSceneTime = 0;
@@ -1507,7 +1508,7 @@ class ScenePlayer {
     }
 
     hasMasterAudio() {
-        return Boolean(this.scene.audio?.src);
+        return Boolean(this.scene.audio?.src) && !this.masterAudioDisabled;
     }
 
     async init() {
@@ -1777,6 +1778,27 @@ class ScenePlayer {
     resetAudioFallback() {
         this.audioEndedSceneTime = null;
         this.audioEndedPerfTime = 0;
+    }
+
+    disableMasterAudio(reason = "audio_disabled") {
+        if (!this.scene.audio?.src || this.masterAudioDisabled) {
+            return;
+        }
+
+        const now = performance.now();
+        const sceneTime = elements.audio.currentTime || this.getSceneTime(now);
+        const nextSegmentElapsed = Math.max(0, Math.min(
+            this.currentSegment.durationSeconds,
+            sceneTime - this.currentSegment.timelineStart,
+        ));
+
+        this.masterAudioDisabled = true;
+        this.segmentElapsed = nextSegmentElapsed;
+        this.segmentStartedAt = this.playing ? now : 0;
+        this.resetAudioFallback();
+        elements.audio.pause();
+        this.recordProgress(sceneTime, now);
+        this.logEvent("audio_disabled", { reason, sceneTime });
     }
 
     primeProgressWatch(now = performance.now()) {
@@ -2109,7 +2131,7 @@ class ScenePlayer {
             ? this.getSceneTime()
             : segment.timelineStart + this.segmentElapsed;
 
-        if (this.scene.audio?.src && !preserveAudio) {
+        if (this.hasMasterAudio() && !preserveAudio) {
             this.resetAudioFallback();
             elements.audio.currentTime = sceneTime;
         }
@@ -2138,12 +2160,17 @@ class ScenePlayer {
             return;
         }
 
-        try {
-            if (this.scene.audio?.src && (!preserveAudio || elements.audio.paused)) {
+        if (this.hasMasterAudio() && (!preserveAudio || elements.audio.paused)) {
+            try {
                 await elements.audio.play();
                 this.logEvent("audio_play", { src: this.scene.audio.src, preserveAudio });
+            } catch (error) {
+                this.logEvent("audio_play_failed", { message: error?.message || String(error) });
+                this.disableMasterAudio("audio_play_failed");
             }
+        }
 
+        try {
             if (segment.type === "character") {
                 await elements.video.play();
                 this.logEvent("video_play", { src: segment.src });
@@ -2266,6 +2293,7 @@ class ScenePlayer {
 
     onAudioError() {
         this.logEvent("audio_error", { src: this.scene.audio?.src || "" });
+        this.disableMasterAudio("audio_error");
         this.attemptRecovery("audio_error");
     }
 

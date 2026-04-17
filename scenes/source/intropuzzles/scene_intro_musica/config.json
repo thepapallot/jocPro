@@ -97,19 +97,19 @@
           }
         },
         {
-          "at": 2.4,
+          "at": 3.88,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
-              },
-              {
                 "src": "/static/images/shared/gameplay/token_card.png",
                 "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
@@ -131,6 +131,21 @@
       "phases": [
         {
           "at": 0.0,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              }
+            ]
+          }
+        },
+        {
+          "at": 10.18,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -138,19 +153,19 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
               }
             ]
           }
         },
         {
-          "at": 2.18,
-          "sfx": "token",
+          "at": 20.18,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
@@ -164,12 +179,12 @@
           }
         },
         {
-          "at": 5.18,
+          "at": 25.18,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",

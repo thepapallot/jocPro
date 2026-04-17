@@ -135,7 +135,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
@@ -149,12 +149,31 @@
           }
         },
         {
-          "at": 2.78,
+          "at": 4.699,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/LaberintVermell.png",
+                "alt": "Laberintvermell"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 9.419,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
@@ -168,20 +187,39 @@
           }
         },
         {
-          "at": 4.699,
+          "at": 13.06,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
-              {
-                "src": "/static/images/puzzle2/LaberintVermell.png",
-                "alt": "Laberintvermell"
-              },
               {
                 "src": "/static/images/puzzle2/symbols/symbol_7.png",
                 "alt": "Symbol 7"
+              },
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_5.png",
+                "alt": "Symbol 5"
+              }
+            ]
+          }
+        },
+        {
+          "at": 18.1,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Operation error"
+              },
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_4.png",
+                "alt": "Symbol 4"
               }
             ]
           }
