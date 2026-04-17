@@ -44,8 +44,9 @@ mqtt_client.set_update_callback(push_state_update)
 def iter_scene_candidate_dirs(scene_id):
     return [
         BASE_DIR / "scenes" / scene_id,  # legacy root
-        BASE_DIR / "scenes" / "source" / "intropuzzles" / scene_id,
-        BASE_DIR / "scenes" / "source" / "intro_inicio" / scene_id,
+        BASE_DIR / "scenes" / "source" / "intros" / "intropuzzles" / scene_id,
+        BASE_DIR / "scenes" / "source" / "intros" / "intro_inicio" / scene_id,
+        BASE_DIR / "scenes" / "source" / "intros" / "intro" / scene_id,
         BASE_DIR / "scenes" / "source" / "transicion" / scene_id,
         BASE_DIR / "scenes" / "source" / "cierre" / scene_id,
     ]
@@ -133,8 +134,15 @@ def welcome():
 
 @app.route('/videoIntro')
 def play_video_intro():
-    next_url = url_for('play_video_tutorial')
-    target = f"{url_for('scene_player')}?scene=scene_intro_game&next={next_url}"
+    next_url = url_for('play_video_between_intro_game')
+    target = url_for('scene_player', scene='scene_intro_game', next=next_url)
+    return redirect(target)
+
+
+@app.route('/videoBetweenIntroGame')
+def play_video_between_intro_game():
+    tutorial_target = url_for('play_video_tutorial')
+    target = url_for('scene_player', scene='scene_tutorial', next=tutorial_target)
     return redirect(target)
 
 
@@ -339,7 +347,9 @@ def test_lab():
         'test.html',
         current_level=0,
         test_puzzle_order=PUZZLE_ORDER,
-        test_puzzle_aliases=PUZZLE_ALIASES
+        test_puzzle_aliases=PUZZLE_ALIASES,
+        test_puzzle_tutorial=PUZZLE_TUTORIAL,
+        test_puzzle_final=PUZZLE_FINAL
     )
 
 @app.route('/test/send', methods=['POST'])
