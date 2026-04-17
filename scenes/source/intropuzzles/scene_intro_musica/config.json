@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_intro_musica",
-  "description": "Intro v2 generada desde plantilla para scene_intro_musica_v2 (base legacy: scene_intro_musica).",
+  "description": "Intro generada para scene_intro_musica con flujo Cero + objetivo + bloques visuales.",
   "broadcast_title": "CÓDIGO SONORO",
   "ui_titles": {
     "top": "",
@@ -13,63 +13,63 @@
   "use_character_frame": true,
   "subtitles": [
     {
-      "start": 0,
-      "end": 5,
+      "start": 0.0,
+      "end": 5.0,
       "text": "Seguimos con la siguiente prueba, en la que vamos a evaluar vuestra percepción auditiva."
     },
     {
-      "start": 5,
-      "end": 8,
+      "start": 5.0,
+      "end": 8.0,
       "text": "Vuestro objetivo es ordenar los fragmentos de una canción."
     },
     {
-      "start": 8,
-      "end": 13,
+      "start": 8.0,
+      "end": 13.0,
       "text": "Para superar este nivel necesitaréis los tokens y los botones de los terminales."
     },
     {
-      "start": 13,
-      "end": 17,
+      "start": 13.0,
+      "end": 17.0,
       "text": "Al empezar la fase escucharéis un trozo de una canción."
     },
     {
-      "start": 17,
-      "end": 20,
+      "start": 17.0,
+      "end": 20.0,
       "text": "Después tendréis que reproducir ese mismo trozo de canción,"
     },
     {
-      "start": 20,
-      "end": 23,
+      "start": 20.0,
+      "end": 23.0,
       "text": "pasando los tokens por los terminales."
     },
     {
-      "start": 23,
-      "end": 26,
+      "start": 23.0,
+      "end": 26.0,
       "text": "Podréis escuchar los fragmentos las veces que necesitéis,"
     },
     {
-      "start": 26,
-      "end": 31,
+      "start": 26.0,
+      "end": 31.0,
       "text": "y, cuando creáis que habéis encontrado la secuencia musical correcta, la tendréis que registrar."
     },
     {
-      "start": 31,
-      "end": 36,
+      "start": 31.0,
+      "end": 36.0,
       "text": "Pulsando los botones de cualquier terminal podréis volver a escuchar la canción,"
     },
     {
-      "start": 36,
-      "end": 41,
+      "start": 36.0,
+      "end": 41.0,
       "text": "registrar una secuencia de fragmentos, borrar los fragmentos que ya hayáis registrado;"
     },
     {
-      "start": 41,
-      "end": 46,
+      "start": 41.0,
+      "end": 46.0,
       "text": "os dejaré la función de cada botón en la pantalla. Este nivel tiene dos fases,"
     },
     {
-      "start": 46,
-      "end": 52,
+      "start": 46.0,
+      "end": 52.0,
       "text": "así que no hay tiempo que perder. Escuchad atentamente, porque la canción se va a reproducir inmediatamente."
     }
   ],
@@ -79,16 +79,17 @@
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 4.12,
-      "duration": 5,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 8,
+      "duration": 12.999,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -96,7 +97,7 @@
           }
         },
         {
-          "at": 3,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -104,11 +105,11 @@
             "assets": [
               {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel con botones de colores del terminal"
+                "alt": "Buttons panel front"
               },
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "alt": "Token card"
               }
             ]
           }
@@ -117,38 +118,34 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
+      "src": "/static/videos/characters/cero_briefing_long_a.mp4",
       "clip_start": 0,
-      "clip_end": 5.041667,
-      "duration": 10,
+      "clip_end": 3.701,
+      "duration": 3.701,
       "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 27.226306,
+      "duration": 29.406306,
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0,
+          "at": 0.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel con botones de colores del terminal"
-              },
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
         },
         {
-          "at": 3.2,
+          "at": 2.18,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -157,17 +154,17 @@
             "assets": [
               {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel con botones de colores del terminal"
+                "alt": "Buttons panel front"
               },
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "alt": "Token card"
               }
             ]
           }
         },
         {
-          "at": 7.259,
+          "at": 5.18,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -176,11 +173,11 @@
             "assets": [
               {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel con botones de colores del terminal"
+                "alt": "Buttons panel front"
               },
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "alt": "Token card"
               }
             ]
           }
@@ -189,7 +186,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "src": "/static/videos/characters/cero_outro_close_a.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,

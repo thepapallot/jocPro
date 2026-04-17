@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_intro_memory",
-  "description": "Intro v2 generada desde plantilla para scene_intro_memory_v2 (base legacy: scene_intro_memory).",
+  "description": "Intro generada para scene_intro_memory con flujo Cero + objetivo + bloques visuales.",
   "broadcast_title": "MEMORIA FANTASMA",
   "ui_titles": {
     "top": "",
@@ -13,7 +13,7 @@
   "use_character_frame": true,
   "subtitles": [
     {
-      "start": 0,
+      "start": 0.0,
       "end": 4.879,
       "text": "Escuchadme atentamente. En este nivel pondremos a prueba vuestra memoria."
     },
@@ -34,42 +34,42 @@
     },
     {
       "start": 19.48,
-      "end": 25,
+      "end": 25.0,
       "text": "Estad atentos, porque desaparecerán. Y, en su lugar, veréis una letra griega de un color."
     },
     {
-      "start": 25,
-      "end": 31,
+      "start": 25.0,
+      "end": 31.0,
       "text": "Vosotros tendréis que coger vuestro token y llevarlo al terminal con la letra griega que haya aparecido."
     },
     {
-      "start": 31,
-      "end": 38,
+      "start": 31.0,
+      "end": 38.0,
       "text": "Una vez esté colocado, debéis pulsar el botón del mismo color que la letra griega que habéis visto en la pantalla."
     },
     {
-      "start": 38,
-      "end": 46,
+      "start": 38.0,
+      "end": 46.0,
       "text": "Debéis prestar mucha atención, porque si una sola persona se equivoca, la fase se reiniciará. Parece sencillo, ¿no?"
     },
     {
-      "start": 46,
-      "end": 48,
+      "start": 46.0,
+      "end": 48.0,
       "text": "Puede que lo sea al principio."
     },
     {
-      "start": 48,
-      "end": 50,
+      "start": 48.0,
+      "end": 50.0,
       "text": "Pero esta prueba tiene tres fases distintas,"
     },
     {
-      "start": 50,
-      "end": 53,
+      "start": 50.0,
+      "end": 53.0,
       "text": "cada una con más letras a recordar."
     },
     {
-      "start": 53,
-      "end": 55,
+      "start": 53.0,
+      "end": 55.0,
       "text": "Así que, buena suerte."
     }
   ],
@@ -79,16 +79,17 @@
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 4.12,
-      "duration": 4.879,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 11.081,
+      "duration": 12.999,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -96,23 +97,19 @@
           }
         },
         {
-          "at": 5.281,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/puzzle8/alpha.svg",
-                "alt": "Letra griega alfa"
-              },
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel de botones del terminal"
+                "alt": "Buttons panel front"
+              },
+              {
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Alpha"
               }
             ]
           }
@@ -121,7 +118,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_warning_gesture.mp4",
+      "src": "/static/videos/characters/cero_warning_long_a.mp4",
       "clip_start": 0,
       "clip_end": 3.701,
       "duration": 3.701,
@@ -129,11 +126,11 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 33.503107,
+      "duration": 32.344107,
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0,
+          "at": 0.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -141,22 +138,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/puzzle8/alpha.svg",
-                "alt": "Letra griega alfa"
+                "src": "/static/images/puzzle8/sigma.svg",
+                "alt": "Sigma"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel de botones del terminal"
+                "src": "/static/images/puzzle8/pi.svg",
+                "alt": "Pi"
               }
             ]
           }
         },
         {
-          "at": 3.2,
+          "at": 4.18,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -164,22 +157,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/puzzle8/alpha.svg",
-                "alt": "Letra griega alfa"
+                "src": "/static/images/puzzle8/omega.svg",
+                "alt": "Omega"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel de botones del terminal"
+                "src": "/static/images/puzzle8/mu.svg",
+                "alt": "Mu"
               }
             ]
           }
         },
         {
-          "at": 7.259,
+          "at": 10.18,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -187,16 +176,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/puzzle8/alpha.svg",
-                "alt": "Letra griega alfa"
+                "src": "/static/images/puzzle8/lambda.svg",
+                "alt": "Lambda"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel de botones del terminal"
+                "src": "/static/images/puzzle8/gamma.svg",
+                "alt": "Gamma"
               }
             ]
           }
@@ -205,7 +190,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "src": "/static/videos/characters/cero_close_short_a.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,

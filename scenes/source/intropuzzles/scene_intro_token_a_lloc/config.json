@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_intro_token_a_lloc",
-  "description": "Intro v2 generada desde plantilla para scene_intro_token_a_lloc_v2 (base legacy: scene_intro_token_a_lloc).",
+  "description": "Intro generada para scene_intro_token_a_lloc con flujo Cero + objetivo + bloques visuales.",
   "broadcast_title": "ARQUITECTOS DEL ORDEN",
   "ui_titles": {
     "top": "",
@@ -13,7 +13,7 @@
   "use_character_frame": true,
   "subtitles": [
     {
-      "start": 0,
+      "start": 0.0,
       "end": 4.919,
       "text": "Atención. En este nivel evaluaremos vuestra capacidad de razonamiento."
     },
@@ -54,16 +54,17 @@
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 4.12,
-      "duration": 4.919,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 9.481,
+      "duration": 12.999,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -71,19 +72,19 @@
           }
         },
         {
-          "at": 5.18,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal en perspectiva sobre fondo blanco"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
@@ -92,7 +93,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_emphasis_forward.mp4",
+      "src": "/static/videos/characters/cero_warning_gesture.mp4",
       "clip_start": 0,
       "clip_end": 3.701,
       "duration": 3.701,
@@ -100,11 +101,11 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 17.375306,
+      "duration": 14.656306,
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0,
+          "at": 0.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -112,18 +113,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal en perspectiva sobre fondo blanco"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
         },
         {
-          "at": 3.2,
+          "at": 3.699,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -131,18 +132,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal en perspectiva sobre fondo blanco"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
         },
         {
-          "at": 7.259,
+          "at": 9.48,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -150,12 +151,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal en perspectiva sobre fondo blanco"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
@@ -164,7 +165,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_outro_close_a.mp4",
+      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,

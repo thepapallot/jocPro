@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_intro_trivial",
-  "description": "Intro v2 generada desde plantilla para scene_intro_trivial_v2 (base legacy: scene_intro_trivial).",
+  "description": "Intro generada para scene_intro_trivial con flujo Cero + objetivo + bloques visuales.",
   "broadcast_title": "MENTE COLMENA",
   "ui_titles": {
     "top": "",
@@ -13,7 +13,7 @@
   "use_character_frame": true,
   "subtitles": [
     {
-      "start": 0,
+      "start": 0.0,
       "end": 2.08,
       "text": "Prestad atención, porque en esta prueba"
     },
@@ -64,11 +64,11 @@
     },
     {
       "start": 26.6,
-      "end": 32,
+      "end": 32.0,
       "text": "En cada uno de los terminales que tenéis enfrente hay seis números, cada uno de un color."
     },
     {
-      "start": 32,
+      "start": 32.0,
       "end": 37.399,
       "text": "Deberéis buscar el número de la respuesta correcta y apretar el botón que sea del mismo color."
     },
@@ -94,16 +94,17 @@
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 4.12,
-      "duration": 5.08,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 9.279,
+      "duration": 12.999,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -111,19 +112,19 @@
           }
         },
         {
-          "at": 4.32,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel frontal con los seis botones arcade"
+                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+                "alt": "Numbers strip 1 to 6"
               },
               {
-                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
-                "alt": "Tira numerica de colores del 1 al 6"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
               }
             ]
           }
@@ -132,7 +133,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_explanation_long_a.mp4",
+      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
       "clip_start": 0,
       "clip_end": 3.701,
       "duration": 3.701,
@@ -140,11 +141,11 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 32.166306,
+      "duration": 29.406306,
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0,
+          "at": 0.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -152,37 +153,33 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel frontal con los seis botones arcade"
+                "src": "/static/images/puzzle3/intro/question_board.jpg",
+                "alt": "Question board"
               },
               {
-                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
-                "alt": "Tira numerica de colores del 1 al 6"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
         },
         {
-          "at": 3.2,
+          "at": 2.379,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel frontal con los seis botones arcade"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
-                "alt": "Tira numerica de colores del 1 al 6"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               }
             ]
           }
         },
         {
-          "at": 7.259,
+          "at": 5.78,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -190,12 +187,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel frontal con los seis botones arcade"
+                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+                "alt": "Numbers strip 1 to 6"
               },
               {
-                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
-                "alt": "Tira numerica de colores del 1 al 6"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
@@ -204,7 +201,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_close_short_a.mp4",
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,

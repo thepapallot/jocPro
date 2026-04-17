@@ -1,99 +1,173 @@
 {
   "scene_id": "scene_intro_simulacro",
-  "description": "Base de produccion para la intro de la prueba 11 (simulacro inicial): tareas individuales para familiarizarse con tokens y terminales.",
+  "description": "Intro generada para scene_intro_simulacro con flujo Cero + objetivo + bloques visuales.",
+  "broadcast_title": "SIMULACRO INICIAL",
   "ui_titles": {
-    "top": "OBJETIVO",
-    "left": "ELEMENTOS",
-    "right": "DINAMICA"
+    "top": "",
+    "left": "",
+    "right": ""
   },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_11.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0.0,
+      "end": 4.6,
+      "text": "Esta prueba es un simulacro inicial para familiarizaros con el flujo del juego."
+    },
+    {
+      "start": 4.6,
+      "end": 8.6,
+      "text": "El objetivo es completar tareas básicas usando tokens y terminales."
+    },
+    {
+      "start": 8.6,
+      "end": 11.6,
+      "text": "Aquí importa más la precisión que la velocidad."
+    },
+    {
+      "start": 11.6,
+      "end": 15.6,
+      "text": "La dinámica será individual: pasa una persona cada vez."
+    },
+    {
+      "start": 15.6,
+      "end": 18.6,
+      "text": "Cada jugador tendrá una tarea única que completar."
+    },
+    {
+      "start": 18.6,
+      "end": 22.6,
+      "text": "El resto del equipo observa, coordina y valida el paso."
+    },
+    {
+      "start": 22.6,
+      "end": 26.6,
+      "text": "Leed la instrucción antes de actuar en el terminal."
+    },
+    {
+      "start": 26.6,
+      "end": 29.8,
+      "text": "Confirmad el resultado antes de cambiar de jugador."
+    },
+    {
+      "start": 29.8,
+      "end": 32.4,
+      "text": "Usad los tokens solo cuando corresponda y mantened la coordinación."
+    }
+  ],
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.9,
-      "duration": 4.6,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 11,
-      "variant": "objective",
+      "duration": 12.999,
+      "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
           "sfx": "objective",
-          "variant": "mission",
+          "variant": "immersive-strip",
           "top": {
-            "variant": "mission",
-            "title": "OBJETIVO",
-            "text": "COMPLETAR EL SIMULACRO INICIAL PARA ENTENDER EL FLUJO DEL JUEGO."
+            "variant": "immersive-strip",
+            "text": "Familiarizarse con tokens y terminales"
           }
         },
         {
-          "at": 3.4,
-          "sfx": "token",
-          "variant": "objective",
-          "left": {
-            "variant": "objective",
-            "title": "ELEMENTOS",
+          "at": 2.4,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "alt": "Token card"
               },
               {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 11.259,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0.0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
         },
         {
-          "at": 6.5,
-          "sfx": "pulse",
-          "variant": "objective",
-          "right": {
-            "variant": "objective",
-            "title": "DINAMICA",
-            "steps": [
-              "PASA UNA PERSONA CADA VEZ.",
-              "CADA JUGADOR TIENE UNA TAREA UNICA.",
-              "EL RESTO DEL EQUIPO OBSERVA Y COORDINA."
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "type": "character",
-      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
-      "clip_start": 0.2,
-      "clip_end": 3.2,
-      "duration": 3,
-      "label": "bloque_estable"
-    },
-    {
-      "type": "fullscreen_ui",
-      "duration": 8,
-      "variant": "warning",
-      "phases": [
-        {
-          "at": 0,
-          "sfx": "warning",
-          "variant": "warning",
+          "at": 1.78,
+          "sfx": "token",
+          "variant": "immersive-strip",
           "top": {
-            "variant": "warning",
-            "title": "CLAVE",
-            "text": "PRIMERO PRECISION, DESPUES VELOCIDAD."
-          },
-          "right": {
-            "variant": "warning",
-            "title": "DINAMICA",
-            "steps": [
-              "LEED LA TAREA ANTES DE ACTUAR.",
-              "CONFIRMAD EL PASO ANTES DE CAMBIAR DE JUGADOR.",
-              "USAD LOS TOKENS SOLO CUANDO TOQUE."
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 5.78,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
             ]
           }
         }
@@ -101,10 +175,10 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_neutral_b.mp4",
-      "clip_start": 0.4,
-      "clip_end": 3.2,
-      "duration": 2.8,
+      "src": "/static/videos/characters/cero_close_short_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
       "label": "cierre_suave"
     },
     {

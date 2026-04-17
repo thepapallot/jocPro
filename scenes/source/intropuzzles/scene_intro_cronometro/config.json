@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_intro_cronometro",
-  "description": "Intro v2 generada desde plantilla para scene_intro_cronometro_v2 (base legacy: scene_intro_cronometro).",
+  "description": "Intro generada para scene_intro_cronometro con flujo Cero + objetivo + bloques visuales.",
   "broadcast_title": "PULSO DE TIEMPO",
   "ui_titles": {
     "top": "",
@@ -13,7 +13,7 @@
   "use_character_frame": true,
   "subtitles": [
     {
-      "start": 0,
+      "start": 0.0,
       "end": 4.12,
       "text": "Empieza el nivel en el que pondremos a prueba vuestra percepción temporal."
     },
@@ -34,26 +34,26 @@
     },
     {
       "start": 20.48,
-      "end": 25,
+      "end": 25.0,
       "text": "Cuando la fase empiece, las luces de los terminales se encenderán aleatoriamente."
     },
     {
-      "start": 25,
-      "end": 29,
+      "start": 25.0,
+      "end": 29.0,
       "text": "Esta será la señal de que deberéis empezar a contar el tiempo indicado."
     },
     {
-      "start": 29,
-      "end": 34,
+      "start": 29.0,
+      "end": 34.0,
       "text": "Cuando consideréis que han pasado los segundos, deberéis pasar el token por el terminal."
     },
     {
-      "start": 34,
-      "end": 39,
+      "start": 34.0,
+      "end": 39.0,
       "text": "Si el tiempo que habéis contado no coincide exactamente con lo indicado en la pantalla,"
     },
     {
-      "start": 39,
+      "start": 39.0,
       "end": 45.64,
       "text": "los segundos contados de más o de menos se sumarán al total de error común de todos los terminales. Si el total"
     },
@@ -79,11 +79,12 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 10.239,
+      "duration": 12.999,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -91,19 +92,19 @@
           }
         },
         {
-          "at": 5.6,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar off"
               },
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Tira LED del terminal"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               }
             ]
           }
@@ -112,38 +113,34 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
       "clip_start": 0,
-      "clip_end": 5.041667,
-      "duration": 5.041667,
+      "clip_end": 3.701,
+      "duration": 3.701,
       "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 34.789507,
+      "duration": 35.316261,
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0,
+          "at": 0.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": true,
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Tira LED del terminal"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
         },
         {
-          "at": 4.52,
+          "at": 4.18,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -151,18 +148,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar off"
               },
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Tira LED del terminal"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               }
             ]
           }
         },
         {
-          "at": 8.52,
+          "at": 8.18,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -171,11 +168,11 @@
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Tira LED del terminal"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
@@ -186,8 +183,8 @@
       "type": "character",
       "src": "/static/videos/characters/cero_warning_gesture.mp4",
       "clip_start": 0,
-      "clip_end": 5.0,
-      "duration": 5,
+      "clip_end": 3.169,
+      "duration": 3.169,
       "label": "cierre_suave"
     },
     {
@@ -204,7 +201,7 @@
     },
     {
       "type": "transition",
-      "duration": 1.115087,
+      "duration": 1,
       "variant": "countdown",
       "label": "1"
     }

@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_intro_laberinto",
-  "description": "Intro v2 generada desde plantilla para scene_intro_laberinto_v2 (base legacy: scene_intro_laberinto).",
+  "description": "Intro generada para scene_intro_laberinto con flujo Cero + objetivo + bloques visuales.",
   "broadcast_title": "NÚCLEO DEL LABERINTO",
   "ui_titles": {
     "top": "",
@@ -13,7 +13,7 @@
   "use_character_frame": true,
   "subtitles": [
     {
-      "start": 0,
+      "start": 0.0,
       "end": 3.859,
       "text": "En este nivel vamos a evaluar vuestra flexibilidad cognitiva."
     },
@@ -50,22 +50,27 @@
     {
       "start": 25.519,
       "end": 30.239,
-      "text": "En algún momento sonará una alarma y el laberinto se volverá de color rojo."
+      "text": "En algún momento sonará una alarma y el laberinto se volverá de color rojo. Cuando eso"
     },
     {
       "start": 30.239,
       "end": 33.88,
-      "text": "Cuando eso pase, deberéis pasar el token por el terminal con el símbolo contrario"
+      "text": "pase, deberéis pasar el token por el terminal con el símbolo contrario al que"
     },
     {
       "start": 33.88,
       "end": 38.92,
-      "text": "al que aparezca en el laberinto. Estad atentos, porque en cualquier momento el laberinto puede volver"
+      "text": "aparezca en el laberinto. Estad atentos, porque en cualquier momento el laberinto puede volver"
     },
     {
       "start": 38.92,
+      "end": 44.96,
+      "text": "a su forma original. Id con cuidado: un solo error y tendréis que empezar vuestro recorrido"
+    },
+    {
+      "start": 44.96,
       "end": 45.399,
-      "text": "a su forma original. Id con cuidado: un solo error y tendréis que empezar vuestro recorrido de nuevo."
+      "text": "de nuevo."
     }
   ],
   "segments": [
@@ -74,16 +79,17 @@
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 4.12,
-      "duration": 3.859,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 7.5,
+      "duration": 12.999,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -91,19 +97,19 @@
           }
         },
         {
-          "at": 3.261,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/puzzle2/symbols/symbol_6.png",
-                "alt": "Simbolo del puzzle 2"
+                "src": "/static/images/puzzle2/Laberint.png",
+                "alt": "Laberint"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Icono de token"
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Symbol 6"
               }
             ]
           }
@@ -112,7 +118,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "src": "/static/videos/characters/cero_explanation_long_a.mp4",
       "clip_start": 0,
       "clip_end": 3.701,
       "duration": 3.701,
@@ -120,11 +126,11 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 28.560644,
+      "duration": 23.427644,
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0,
+          "at": 0.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -132,18 +138,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/puzzle2/symbols/symbol_6.png",
-                "alt": "Simbolo del puzzle 2"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Icono de token"
+                "src": "/static/images/puzzle2/symbols/symbol_9.png",
+                "alt": "Symbol 9"
               }
             ]
           }
         },
         {
-          "at": 3.2,
+          "at": 2.78,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -151,18 +157,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/puzzle2/symbols/symbol_6.png",
-                "alt": "Simbolo del puzzle 2"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Icono de token"
+                "src": "/static/images/puzzle2/symbols/symbol_8.png",
+                "alt": "Symbol 8"
               }
             ]
           }
         },
         {
-          "at": 7.259,
+          "at": 4.699,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -170,12 +176,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/puzzle2/symbols/symbol_6.png",
-                "alt": "Simbolo del puzzle 2"
+                "src": "/static/images/puzzle2/LaberintVermell.png",
+                "alt": "Laberintvermell"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Icono de token"
+                "src": "/static/images/puzzle2/symbols/symbol_7.png",
+                "alt": "Symbol 7"
               }
             ]
           }
@@ -184,7 +190,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_gesture_medium_a.mp4",
+      "src": "/static/videos/characters/cero_emphasis_forward.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,
@@ -192,19 +198,19 @@
     },
     {
       "type": "transition",
-      "duration": 1.209,
+      "duration": 1,
       "variant": "countdown",
       "label": "3"
     },
     {
       "type": "transition",
-      "duration": 1.209,
+      "duration": 1,
       "variant": "countdown",
       "label": "2"
     },
     {
       "type": "transition",
-      "duration": 1.209,
+      "duration": 1,
       "variant": "countdown",
       "label": "1"
     }

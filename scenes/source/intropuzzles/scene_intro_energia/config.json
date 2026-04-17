@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_intro_energia",
-  "description": "Intro v2 generada desde plantilla para scene_intro_energia_v2 (base legacy: scene_intro_energia).",
+  "description": "Intro generada para scene_intro_energia con flujo Cero + objetivo + bloques visuales.",
   "broadcast_title": "CARGA CRÍTICA",
   "ui_titles": {
     "top": "",
@@ -13,17 +13,17 @@
   "use_character_frame": true,
   "subtitles": [
     {
-      "start": 0,
+      "start": 0.0,
       "end": 4.599,
       "text": "En este nivel, las habilidades evaluadas serán la anticipación y la planificación."
     },
     {
       "start": 4.599,
-      "end": 12,
+      "end": 12.0,
       "text": "El objetivo del nivel es sencillo: conseguir que las luces de los terminales no se apaguen antes de que la cuenta atrás llegue a cero."
     },
     {
-      "start": 12,
+      "start": 12.0,
       "end": 16.199,
       "text": "Para conseguirlo utilizaréis los tokens y las luces de los terminales."
     },
@@ -79,16 +79,17 @@
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 4.12,
-      "duration": 4.599,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 11.6,
+      "duration": 12.999,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -96,19 +97,91 @@
           }
         },
         {
-          "at": 7.401,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
               },
               {
                 "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Tira LED del terminal"
+                "alt": "Scanner bar off"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_gesture_medium_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 30.858029,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0.0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 4.219,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar off"
+              }
+            ]
+          }
+        },
+        {
+          "at": 9.3,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
@@ -119,80 +192,8 @@
       "type": "character",
       "src": "/static/videos/characters/cero_emphasis_forward.mp4",
       "clip_start": 0,
-      "clip_end": 3.701,
-      "duration": 3.701,
-      "label": "bloque_estable"
-    },
-    {
-      "type": "fullscreen_ui",
-      "duration": 29.866029,
-      "variant": "immersive-strip",
-      "phases": [
-        {
-          "at": 0,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": true,
-            "assets": [
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Tira LED del terminal"
-              }
-            ]
-          }
-        },
-        {
-          "at": 3.2,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": true,
-            "assets": [
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Tira LED encendida"
-              }
-            ]
-          }
-        },
-        {
-          "at": 7.259,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": true,
-            "assets": [
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Tira LED encendida"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "type": "character",
-      "src": "/static/videos/characters/cero_warning_long_a.mp4",
-      "clip_start": 0,
-      "clip_end": 5.081,
-      "duration": 5.081,
+      "clip_end": 3.169,
+      "duration": 3.169,
       "label": "cierre_suave"
     },
     {

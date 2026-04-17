@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_intro_segments",
-  "description": "Intro v2 generada desde plantilla para scene_intro_segments_v2 (base legacy: scene_intro_segments).",
+  "description": "Intro generada para scene_intro_segments con flujo Cero + objetivo + bloques visuales.",
   "broadcast_title": "PATRÓN MAESTRO",
   "ui_titles": {
     "top": "",
@@ -13,7 +13,7 @@
   "use_character_frame": true,
   "subtitles": [
     {
-      "start": 0,
+      "start": 0.0,
       "end": 4.719,
       "text": "Seguimos con una prueba en la que evaluaremos vuestra simbolización e interpretación."
     },
@@ -39,13 +39,18 @@
     },
     {
       "start": 24.44,
+      "end": 25.0,
+      "text": "Cuando pongáis"
+    },
+    {
+      "start": 25.0,
       "end": 29.399,
-      "text": "Cuando pongáis un token encima de un terminal y apretéis el botón negro, el botón rojo o el botón verde,"
+      "text": "un token encima de un terminal y apretéis el botón negro, el botón rojo o el botón"
     },
     {
       "start": 29.399,
       "end": 34.6,
-      "text": "se encenderán luces en los terminales. Cada token hace que se enciendan las luces"
+      "text": "verde, se encenderán luces en los terminales. Cada token hace que se enciendan las luces"
     },
     {
       "start": 34.6,
@@ -54,8 +59,13 @@
     },
     {
       "start": 39.24,
+      "end": 45.88,
+      "text": "el mismo patrón de colores que en la pantalla. Daos prisa: si la cuenta atrás llega a cero, se reiniciará la"
+    },
+    {
+      "start": 45.88,
       "end": 46.24,
-      "text": "el mismo patrón de colores que en la pantalla. Daos prisa: si la cuenta atrás llega a cero, se reiniciará la fase."
+      "text": "fase."
     }
   ],
   "segments": [
@@ -64,16 +74,17 @@
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
       "clip_end": 4.12,
-      "duration": 4.719,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 8.441,
+      "duration": 12.999,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -81,23 +92,19 @@
           }
         },
         {
-          "at": 4.441,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
               },
               {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel frontal de botones del terminal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Barra de luces del terminal"
+                "alt": "Buttons panel front"
               }
             ]
           }
@@ -114,11 +121,11 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 25.513977,
+      "duration": 23.427644,
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0,
+          "at": 0.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -126,22 +133,18 @@
             "show_equals": true,
             "assets": [
               {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel frontal de botones del terminal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Barra de luces del terminal"
+                "alt": "Token card"
               }
             ]
           }
         },
         {
-          "at": 3.2,
+          "at": 3.62,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -149,22 +152,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
               },
               {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel frontal de botones del terminal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Barra de luces del terminal"
+                "alt": "Buttons panel front"
               }
             ]
           }
         },
         {
-          "at": 7.259,
+          "at": 8.579,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -172,16 +171,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token piramidal"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Panel frontal de botones del terminal"
-              },
-              {
                 "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Barra de luces del terminal"
+                "alt": "Scanner bar on"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               }
             ]
           }
@@ -192,8 +187,8 @@
       "type": "character",
       "src": "/static/videos/characters/cero_neutral_close_a.mp4",
       "clip_start": 0,
-      "clip_end": 5.041667,
-      "duration": 5.041667,
+      "clip_end": 3.169,
+      "duration": 3.169,
       "label": "cierre_suave"
     },
     {
