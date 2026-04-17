@@ -99,12 +99,12 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira LED"
               },
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Scanner bar on"
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones de colores"
               }
             ]
           }
@@ -133,12 +133,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira LED"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones de colores"
               }
             ]
           }
@@ -152,12 +152,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
+                "alt": "Apretar boton"
               },
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones de colores"
               }
             ]
           }
@@ -171,12 +171,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Scanner bar on"
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira LED"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones de colores"
               }
             ]
           }
@@ -190,12 +190,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
-              },
-              {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
                 "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/termial con token.png",
+                "alt": "Terminal con token"
               }
             ]
           }

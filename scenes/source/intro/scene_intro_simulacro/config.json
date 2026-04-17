@@ -39,12 +39,12 @@
             "title": "ELEMENTOS",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base NFC con token"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "src": "/static/images/shared/nuevos iconos/termial con token.png",
+                "alt": "Terminal con token"
               }
             ]
           }

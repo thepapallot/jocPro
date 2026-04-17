@@ -1,0 +1,39 @@
+1
+00:00:00,000 --> 00:00:04,000
+En esta prueba pondremos a prueba vuestra capacidad de asociación.
+
+2
+00:00:04,000 --> 00:00:08,500
+En la pantalla aparecerán distintas operaciones que deberéis resolver.
+
+3
+00:00:08,500 --> 00:00:13,500
+Para hacerlo, tendréis que sumar el número de vuestro token con el número del terminal.
+
+4
+00:00:13,500 --> 00:00:17,800
+Cuando la combinación sea correcta, la operación quedará completada.
+
+5
+00:00:17,800 --> 00:00:22,000
+Necesitaréis superar dos fases para avanzar.
+
+6
+00:00:22,000 --> 00:00:26,500
+Pero cuidado... un solo error reiniciará la fase actual.
+
+7
+00:00:26,500 --> 00:00:30,500
+También ocurrirá si resolvéis una operación ya completada...
+
+8
+00:00:30,500 --> 00:00:34,000
+o si el tiempo llega a su fin.
+
+9
+00:00:34,000 --> 00:00:37,500
+Pensad juntos. Actuad juntos.
+
+10
+00:00:37,500 --> 00:00:40,000
+Solo así avanzaréis.
