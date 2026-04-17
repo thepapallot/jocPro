@@ -6,7 +6,7 @@
 - Keep frontend puzzle logic in paired files: `templates/puzzleN.html`, `static/js/puzzleN.js`, `static/css/puzzleN.css`.
 - Preserve current naming patterns:
   - Python modules and files: snake_case
-  - Puzzle files: `puzzle1.py` ... `puzzle9.py`, `puzzleFinal.py`
+  - Puzzle files: `puzzle1.py` ... `puzzle12.py`
   - MQTT payload format: comma-separated values (`P{id},...`)
 
 ## Architecture
@@ -14,7 +14,8 @@
 - `app.py` owns routing, view rendering, and SSE fan-out queues.
 - `mqtt/client.py` owns broker connectivity (`localhost:1883`), topic subscription (`TO_FLASK`), and dispatch to puzzle handlers.
 - Puzzle classes inherit `BasePuzzle` in `mqtt/puzzles/base.py` and should implement `reset`, `handle_message`, `get_state`, and `stop` consistently.
-- Puzzle order and feature switches live in `config.py` (`PUZZLE_ORDER`, `PROVA_FINAL`).
+- Puzzle order lives in `config.py` (`PUZZLE_ORDER`).
+- Tutorial and final selectors live in `config.py` (`PUZZLE_TUTORIAL`, `PUZZLE_FINAL`) and stay outside `PUZZLE_ORDER`.
 
 ## Build And Test
 - Python dependencies:

@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Puzzle Final{% endblock %}
-
-{% block level_title %}FASE FINAL{% endblock %}
+{% block title %}Puzzle 12{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzleFinal.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle12.css') }}">
 {% endblock %}
 
 {% block top_right %}
@@ -36,11 +34,11 @@
             <div id="final-viewport-wrap">
                 <div id="final-viewport">
                     <img id="fase-gif" src="" alt="Secuencia final" style="display:none;">
-                    <img id="wrong-img" src="{{ url_for('static', filename='images/puzzleFinal/wrong.png') }}" alt="wrong" style="display:none;">
-                    <img id="good-img" src="{{ url_for('static', filename='images/puzzleFinal/good.png') }}" alt="good" style="display:none;">
+                    <img id="wrong-img" src="{{ url_for('static', filename='images/puzzle12/wrong.png') }}" alt="wrong" style="display:none;">
+                    <img id="good-img" src="{{ url_for('static', filename='images/puzzle12/good.png') }}" alt="good" style="display:none;">
 
                     <div id="wait-screen">
-                        <img id="wait-img" src="{{ url_for('static', filename='images/puzzleFinal/wait.png') }}" alt="wait">
+                        <img id="wait-img" src="{{ url_for('static', filename='images/puzzle12/wait.png') }}" alt="wait">
                         <div id="countdown-number"></div>
                     </div>
                 </div>
@@ -54,5 +52,5 @@
 <script>
 window.PUZZLE_FINAL_OUTRO_URL = "{{ url_for('scene_player') }}?scene=scene_outro_game&next={{ url_for('final_loop') | urlencode }}";
 </script>
-<script src="{{ url_for('static', filename='js/puzzleFinal.js') }}"></script>
+<script src="{{ url_for('static', filename='js/puzzle12.js') }}"></script>
 {% endblock %}

@@ -66,7 +66,6 @@
         const currentIndex = nextPuzzleIndexStr ? parseInt(nextPuzzleIndexStr, 10) : null;
         const nextPuzzleIndex = (currentIndex === null || Number.isNaN(currentIndex)) ? null : (currentIndex + 1);
         const isFinal = {{ 'true' if final else 'false' }};
-        const provaFinal = {{ 'true' if prova_final else 'false' }};
         console.log("Current puzzle index:", currentIndex);
         console.log("Next puzzle index:", nextPuzzleIndex);
 
@@ -121,11 +120,7 @@
             if (nextPuzzleIndex === null || Number.isNaN(nextPuzzleIndex)) {
                 window.location.href = "{{ url_for('welcome') }}?redirect_flag=start";
             } else if (isFinal) {
-                if (provaFinal) {
-                    window.location.href = "{{ url_for('play_joc_final') }}";
-                } else {
-                    window.location.href = "{{ url_for('final') }}";
-                }
+                window.location.href = "{{ url_for('play_joc_final') }}";
             } else {
                 // Go directly to the next puzzle intro flow and avoid an extra click in welcome.
                 window.location.href = "{{ url_for('play_video_puzzles', idx_puzzle_id=0)|replace('0', '__IDX__')|safe }}".replace('__IDX__', String(nextPuzzleIndex));

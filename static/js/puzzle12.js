@@ -77,11 +77,11 @@
 
     function getGifUrl(streakId, giffIndex) {
         if (streakId !== 4) {
-            return `/static/images/puzzleFinal/imatges/fase${streakId}_${giffIndex}.gif`;
+            return `/static/images/puzzle12/imatges/fase${streakId}_${giffIndex}.gif`;
         }
 
         if (streakId === 4) {
-            return `/static/images/puzzleFinal/imatges/fase4_1.gif`;
+            return `/static/images/puzzle12/imatges/fase4_1.gif`;
         }
     }
 
@@ -176,7 +176,7 @@
     }
 
     function handleUpdate(d) {
-        if (!d || d.puzzle_id !== -1) return;
+        if (!d || d.puzzle_id !== 12) return;
 
         console.log("Received update:", d);
 
@@ -252,9 +252,8 @@
     function initSSE() {
         const es = new EventSource("/state_stream");
         es.onopen = () => {
-            fetch("/start_puzzle_final", { method: "POST" })
-                //.then(() => startStreak(0))
-                .catch(err => console.warn("Failed to start puzzle final:", err));
+            fetch("/start_puzzle/12", { method: "POST" })
+                .catch(err => console.warn("Failed to start puzzle 12:", err));
         };
         es.onmessage = (evt) => {
             try {handleUpdate(JSON.parse(evt.data));} catch (e) { console.warn("Bad SSE data", e);}
@@ -262,16 +261,16 @@
     }
 
     function installDebugHelpers() {
-        window.puzzleFinalDebug = {
+        window.puzzle12Debug = {
             push(payload) {
-                handleUpdate({ puzzle_id: -1, ...payload });
+                handleUpdate({ puzzle_id: 12, ...payload });
             },
             start(round = 1, gif = 1, duration = 30) {
                 this.round(round, gif, duration);
             },
             round(round = 1, gif = 1, duration = 30) {
                 handleUpdate({
-                    puzzle_id: -1,
+                    puzzle_id: 12,
                     startRound: true,
                     round,
                     total_rounds: 4,
@@ -285,13 +284,13 @@
                 setStatus('active', `Ronda ${round} en curs`, 'Vista parcial de la fase activa sense reiniciar temporitzadors.', 'Activa');
             },
             success() {
-                handleUpdate({ puzzle_id: -1, streak_solved: true });
+                handleUpdate({ puzzle_id: 12, streak_solved: true });
             },
             failure() {
                 this.error();
             },
             solved() {
-                handleUpdate({ puzzle_id: -1, puzzle_solved: true });
+                handleUpdate({ puzzle_id: 12, puzzle_solved: true });
             },
             error() {
                 clearInterval(timerInterval);
