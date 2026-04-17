@@ -1,0 +1,277 @@
+{
+  "version": 1,
+  "description": "Catalogo semantico de imagenes para orientar la seleccion visual en intros y escenas.",
+  "how_to_use": {
+    "goal": "Explicar que representa cada imagen y en que contexto encaja.",
+    "fields": {
+      "path": "Ruta /static/... de la imagen.",
+      "concept": "Concepto visual principal (token, terminal, error, laberinto, etc).",
+      "best_for": "Situaciones donde conviene usarla.",
+      "avoid_for": "Situaciones donde no deberia usarse.",
+      "puzzles": "IDs de puzzle relacionados (1..10) o ['shared'].",
+      "notes": "Detalles opcionales de uso."
+    }
+  },
+  "images": [
+    {
+      "path": "/static/images/shared/gameplay/token_card.png",
+      "concept": "token",
+      "best_for": [
+        "acciones de pasar token",
+        "elemento comun de interaccion",
+        "introduccion de mecanicas basadas en token"
+      ],
+      "avoid_for": [
+        "explicar errores especificos sin mencionar token"
+      ],
+      "puzzles": [
+        "shared",
+        1,
+        2,
+        5,
+        6,
+        8,
+        9,
+        10
+      ],
+      "notes": "Recurso transversal. Suele combinar bien con terminal o panel.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/gameplay/token_card.png",
+      "preview_url": "http://localhost:5000/static/images/shared/gameplay/token_card.png"
+    },
+    {
+      "path": "/static/images/shared/gameplay/terminal_box.png",
+      "concept": "terminal",
+      "best_for": [
+        "mecanicas de lectura/escritura en terminal",
+        "puzzles de calculo o colocacion"
+      ],
+      "avoid_for": [
+        "explicaciones centradas en botones de color"
+      ],
+      "puzzles": [
+        "shared",
+        1,
+        3,
+        9
+      ],
+      "notes": "Visual base de terminal frontal.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/gameplay/terminal_box.png",
+      "preview_url": "http://localhost:5000/static/images/shared/gameplay/terminal_box.png"
+    },
+    {
+      "path": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+      "concept": "panel_botones",
+      "best_for": [
+        "responder opciones",
+        "interaccion por botones",
+        "secuencias de entrada"
+      ],
+      "avoid_for": [
+        "escenas solo de tiempo sin interaccion de botones"
+      ],
+      "puzzles": [
+        3,
+        4,
+        8,
+        10
+      ],
+      "notes": "Muy util para trivial, musica, memoria y segmentos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/terminal_3d/buttons_panel_front.png",
+      "preview_url": "http://localhost:5000/static/images/shared/terminal_3d/buttons_panel_front.png"
+    },
+    {
+      "path": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+      "concept": "numeracion_terminal",
+      "best_for": [
+        "preguntas con opciones numeradas",
+        "referencia a posiciones numericas"
+      ],
+      "avoid_for": [
+        "puzzles sin seleccion por numero"
+      ],
+      "puzzles": [
+        3
+      ],
+      "notes": "Asociado a trivial.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+      "preview_url": "http://localhost:5000/static/images/shared/terminal_3d/numbers_strip_1_to_6.png"
+    },
+    {
+      "path": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+      "concept": "barra_luz_apagada",
+      "best_for": [
+        "espera de señal",
+        "estado previo a activacion",
+        "arranque de conteo"
+      ],
+      "avoid_for": [
+        "fase de confirmacion ya activa"
+      ],
+      "puzzles": [
+        5,
+        6
+      ],
+      "notes": "En cronometro suele representar inicio/sin señal.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/terminal_3d/scanner_bar_off.png",
+      "preview_url": "http://localhost:5000/static/images/shared/terminal_3d/scanner_bar_off.png"
+    },
+    {
+      "path": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+      "concept": "barra_luz_encendida",
+      "best_for": [
+        "senal activa",
+        "fase en curso",
+        "confirmacion visual de activacion"
+      ],
+      "avoid_for": [
+        "explicar estado inicial en reposo"
+      ],
+      "puzzles": [
+        6,
+        10
+      ],
+      "notes": "Complementaria de scanner_bar_off.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/terminal_3d/scanner_bar_on.png",
+      "preview_url": "http://localhost:5000/static/images/shared/terminal_3d/scanner_bar_on.png"
+    },
+    {
+      "path": "/static/images/shared/warnings/operation_error.png",
+      "concept": "error_operacion",
+      "best_for": [
+        "bloque de penalizaciones",
+        "explicacion de fallo de fase"
+      ],
+      "avoid_for": [
+        "bloques de objetivo principal"
+      ],
+      "puzzles": [
+        "shared",
+        1
+      ],
+      "notes": "Usar junto a restart_button para reforzar consecuencia.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/warnings/operation_error.png",
+      "preview_url": "http://localhost:5000/static/images/shared/warnings/operation_error.png"
+    },
+    {
+      "path": "/static/images/shared/warnings/restart_button.png",
+      "concept": "reinicio",
+      "best_for": [
+        "se reinicia fase",
+        "limite superado"
+      ],
+      "avoid_for": [
+        "fases de tutorial sin riesgo"
+      ],
+      "puzzles": [
+        "shared",
+        1
+      ],
+      "notes": "Es icono de consecuencia, no de mecanica principal.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/warnings/restart_button.png",
+      "preview_url": "http://localhost:5000/static/images/shared/warnings/restart_button.png"
+    },
+    {
+      "path": "/static/images/shared/warnings/repeated_operation.png",
+      "concept": "operacion_repetida",
+      "best_for": [
+        "error por repeticion"
+      ],
+      "avoid_for": [
+        "puzzles sin operaciones repetibles"
+      ],
+      "puzzles": [
+        1
+      ],
+      "notes": "Relacionado con calculo.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/warnings/repeated_operation.png",
+      "preview_url": "http://localhost:5000/static/images/shared/warnings/repeated_operation.png"
+    },
+    {
+      "path": "/static/images/shared/warnings/timeout.png",
+      "concept": "tiempo_agotado",
+      "best_for": [
+        "limites temporales",
+        "error por tardanza"
+      ],
+      "avoid_for": [
+        "puzzles sin cronometraje estricto"
+      ],
+      "puzzles": [
+        "shared",
+        1,
+        5
+      ],
+      "notes": "Mejor en fases de riesgo/cierre.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/warnings/timeout.png",
+      "preview_url": "http://localhost:5000/static/images/shared/warnings/timeout.png"
+    },
+    {
+      "path": "/static/images/puzzle2/Laberint.png",
+      "concept": "laberinto_base",
+      "best_for": [
+        "objetivo del puzzle 2",
+        "navegacion al centro"
+      ],
+      "avoid_for": [
+        "puzzles no espaciales"
+      ],
+      "puzzles": [
+        2
+      ],
+      "notes": "Recurso principal del laberinto.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/puzzle2/Laberint.png",
+      "preview_url": "http://localhost:5000/static/images/puzzle2/Laberint.png"
+    },
+    {
+      "path": "/static/images/puzzle2/LaberintVermell.png",
+      "concept": "laberinto_alarma",
+      "best_for": [
+        "estado de peligro",
+        "fallo o advertencia en laberinto"
+      ],
+      "avoid_for": [
+        "introduccion tranquila de reglas"
+      ],
+      "puzzles": [
+        2
+      ],
+      "notes": "Version alerta del laberinto.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/puzzle2/LaberintVermell.png",
+      "preview_url": "http://localhost:5000/static/images/puzzle2/LaberintVermell.png"
+    },
+    {
+      "path": "/static/images/puzzle2/symbols/symbol_6.png",
+      "concept": "simbolo_laberinto",
+      "best_for": [
+        "reglas de simbolos opuestos",
+        "identificacion de nodos"
+      ],
+      "avoid_for": [
+        "puzzles sin simbologia de maze"
+      ],
+      "puzzles": [
+        2
+      ],
+      "notes": "Puede variarse por otros symbol_X segun necesidad.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/puzzle2/symbols/symbol_6.png",
+      "preview_url": "http://localhost:5000/static/images/puzzle2/symbols/symbol_6.png"
+    },
+    {
+      "path": "/static/images/puzzle8/alpha.svg",
+      "concept": "simbolo_griego",
+      "best_for": [
+        "memoria de letras griegas",
+        "asociacion simbolo-color"
+      ],
+      "avoid_for": [
+        "puzzles no basados en memoria simbolica"
+      ],
+      "puzzles": [
+        8
+      ],
+      "notes": "Si se requiere variedad, alternar con beta/gamma/.../omega.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/puzzle8/alpha.svg",
+      "preview_url": "http://localhost:5000/static/images/puzzle8/alpha.svg"
+    }
+  ]
+}

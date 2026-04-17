@@ -1,7 +1,7 @@
 {
-  "scene_id": "scene_intro_musica_v2",
+  "scene_id": "scene_intro_musica",
   "description": "Intro v2 generada desde plantilla para scene_intro_musica_v2 (base legacy: scene_intro_musica).",
-  "broadcast_title": "Código Sonoro",
+  "broadcast_title": "CÓDIGO SONORO",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -76,9 +76,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.7,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
       "duration": 5,
       "label": "intro_estable"
     },
@@ -92,7 +92,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "CÓDIGO SONORO"
+            "text": "Ordenar los fragmentos de la canción"
           }
         },
         {
@@ -103,12 +103,12 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel con botones de colores del terminal"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               }
             ]
           }
@@ -117,15 +117,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.001,
+      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.041667,
       "duration": 10,
       "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 8,
+      "duration": 27.226306,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -137,12 +137,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Error en operacion"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel con botones de colores del terminal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               }
             ]
           }
@@ -156,12 +156,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/repeated_operation.png",
-                "alt": "Operacion repetida"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel con botones de colores del terminal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               }
             ]
           }
@@ -175,12 +175,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Tiempo agotado"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel con botones de colores del terminal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               }
             ]
           }
@@ -189,15 +189,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_long_b.mp4",
-      "clip_start": 0.3,
-      "clip_end": 3.469,
-      "duration": 17.353333,
+      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
       "label": "cierre_suave"
     },
     {
       "type": "transition",
-      "duration": 5.041667,
+      "duration": 1,
       "variant": "countdown",
       "label": "3"
     },

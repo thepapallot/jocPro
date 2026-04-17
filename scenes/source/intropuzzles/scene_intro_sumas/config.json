@@ -1,7 +1,7 @@
 {
-  "scene_id": "scene_intro_sumas_cover_v2",
-  "description": "Intro v2 generada desde plantilla para scene_intro_sumas_cover_v2 (base legacy: scene_intro_sumas_cover).",
-  "broadcast_title": "Cálculo Extremo",
+  "scene_id": "scene_intro_sumas",
+  "description": "Intro v2 generada desde plantilla para scene_intro_sumas_v2 (base legacy: scene_intro_sumas).",
+  "broadcast_title": "CÁLCULO EXTREMO",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -61,9 +61,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.7,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
       "duration": 4.4,
       "label": "intro_estable"
     },
@@ -77,7 +77,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "COMPLETAD LAS OPERACIONES"
+            "text": "Resolver las sumas"
           }
         },
         {
@@ -88,12 +88,12 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Icono de caja"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
               }
             ]
           }
@@ -102,9 +102,9 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.001,
+      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
       "duration": 3.701,
       "label": "bloque_estable"
     },
@@ -122,18 +122,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Error en operacion"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Icono de caja"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
               }
             ]
           }
         },
         {
-          "at": 3.2,
+          "at": 0,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -141,18 +141,18 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/repeated_operation.png",
-                "alt": "Operacion repetida"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Icono de caja"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
               }
             ]
           }
         },
         {
-          "at": 7.259,
+          "at": 3.2,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -160,12 +160,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Tiempo agotado"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Icono de caja"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
               }
             ]
           }
@@ -174,9 +174,9 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_long_b.mp4",
-      "clip_start": 0.3,
-      "clip_end": 3.469,
+      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
       "duration": 3.169,
       "label": "cierre_suave"
     },

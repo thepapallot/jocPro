@@ -1,7 +1,7 @@
 {
-  "scene_id": "scene_intro_segments_v2",
+  "scene_id": "scene_intro_segments",
   "description": "Intro v2 generada desde plantilla para scene_intro_segments_v2 (base legacy: scene_intro_segments).",
-  "broadcast_title": "Patrón Maestro",
+  "broadcast_title": "PATRÓN MAESTRO",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -61,9 +61,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.7,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
       "duration": 4.719,
       "label": "intro_estable"
     },
@@ -77,7 +77,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "PATRÓN MAESTRO"
+            "text": "Replicar los patrones de colores"
           }
         },
         {
@@ -89,11 +89,15 @@
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel frontal de botones del terminal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Barra de luces del terminal"
               }
             ]
           }
@@ -102,15 +106,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.001,
-      "duration": 10.759,
+      "src": "/static/videos/characters/cero_gesture_medium_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
       "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 8.241,
+      "duration": 25.513977,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -122,12 +126,16 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Error en operacion"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel frontal de botones del terminal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Barra de luces del terminal"
               }
             ]
           }
@@ -141,12 +149,16 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/repeated_operation.png",
-                "alt": "Operacion repetida"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel frontal de botones del terminal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Barra de luces del terminal"
               }
             ]
           }
@@ -160,12 +172,16 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Tiempo agotado"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel frontal de botones del terminal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Barra de luces del terminal"
               }
             ]
           }
@@ -174,15 +190,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_long_b.mp4",
-      "clip_start": 0.3,
-      "clip_end": 3.469,
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.041667,
       "duration": 5.041667,
       "label": "cierre_suave"
     },
     {
       "type": "transition",
-      "duration": 10.214977,
+      "duration": 1,
       "variant": "countdown",
       "label": "3"
     },

@@ -1,13 +1,19 @@
 {
   "scene_id": "scene_between_puzzles",
-  "description": "Transicion entre pruebas: piramide 10s y portada siguiente prueba.",
+  "description": "Transicion entre pruebas: clip de piramide y portada siguiente prueba.",
   "segments": [
     {
       "type": "transition",
-      "duration": 10.081996,
-      "video": "/static/videos/Video_inicial.mp4",
+      "duration": 5.44,
+      "video": "/static/videos/recursos_varios/gm_pyramid_wide_a.mp4",
       "clip_start": 0,
-      "clip_end": 5.040998
+      "clip_end": 5.44
+    },
+    {
+      "type": "transition",
+      "duration": 5,
+      "variant": "between-title",
+      "label": "SIGUIENTE PRUEBA:"
     },
     {
       "type": "transition",
@@ -20,13 +26,13 @@
     }
   ],
   "brief_by_scene": {
-    "scene_intro_sumas": {
+    "scene_intro_simulacro": {
       "kicker": "SIGUIENTE PRUEBA",
-      "title": "CÁLCULO EXTREMO",
-      "objective": "Resolver las sumas",
-      "evaluation": "Asociacion"
+      "title": "SIMULACRO INICIAL",
+      "objective": "Familiarizarse con tokens y terminales",
+      "evaluation": "Adaptacion y coordinacion"
     },
-    "scene_intro_sumas_cover": {
+    "scene_intro_sumas": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "CÁLCULO EXTREMO",
       "objective": "Resolver las sumas",

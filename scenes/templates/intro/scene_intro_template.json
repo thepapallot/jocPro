@@ -15,10 +15,10 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.7,
-      "duration": 4.4,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
+      "duration": 4.12,
       "label": "intro_estable"
     },
     {

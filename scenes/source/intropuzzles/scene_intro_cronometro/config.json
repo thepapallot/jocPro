@@ -1,7 +1,7 @@
 {
-  "scene_id": "scene_intro_cronometro_v2",
+  "scene_id": "scene_intro_cronometro",
   "description": "Intro v2 generada desde plantilla para scene_intro_cronometro_v2 (base legacy: scene_intro_cronometro).",
-  "broadcast_title": "Pulso de Tiempo",
+  "broadcast_title": "PULSO DE TIEMPO",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -71,9 +71,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.7,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
       "duration": 4.12,
       "label": "intro_estable"
     },
@@ -87,7 +87,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "PULSO DE TIEMPO"
+            "text": "Contar los segundos exactos"
           }
         },
         {
@@ -99,11 +99,11 @@
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Tira LED del terminal"
               }
             ]
           }
@@ -113,14 +113,14 @@
     {
       "type": "character",
       "src": "/static/videos/characters/cero_briefing_short_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.001,
+      "clip_start": 0,
+      "clip_end": 5.041667,
       "duration": 5.041667,
       "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 14.599333,
+      "duration": 34.789507,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -132,12 +132,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Error en operacion"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Tira LED del terminal"
               }
             ]
           }
@@ -151,12 +151,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/repeated_operation.png",
-                "alt": "Operacion repetida"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Tira LED del terminal"
               }
             ]
           }
@@ -170,12 +170,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Tiempo agotado"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Tira LED del terminal"
               }
             ]
           }
@@ -184,21 +184,21 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_long_b.mp4",
-      "clip_start": 0.3,
-      "clip_end": 3.469,
+      "src": "/static/videos/characters/cero_warning_gesture.mp4",
+      "clip_start": 0,
+      "clip_end": 5.0,
       "duration": 5,
       "label": "cierre_suave"
     },
     {
       "type": "transition",
-      "duration": 14.918333,
+      "duration": 1,
       "variant": "countdown",
       "label": "3"
     },
     {
       "type": "transition",
-      "duration": 5.041667,
+      "duration": 1,
       "variant": "countdown",
       "label": "2"
     },

@@ -1,7 +1,7 @@
 {
-  "scene_id": "scene_intro_energia_v2",
+  "scene_id": "scene_intro_energia",
   "description": "Intro v2 generada desde plantilla para scene_intro_energia_v2 (base legacy: scene_intro_energia).",
-  "broadcast_title": "Carga Crítica",
+  "broadcast_title": "CARGA CRÍTICA",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -76,9 +76,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.7,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
       "duration": 4.599,
       "label": "intro_estable"
     },
@@ -92,7 +92,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "CARGA CRÍTICA"
+            "text": "Mantener las luces encendidas"
           }
         },
         {
@@ -104,11 +104,11 @@
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Tira LED del terminal"
               }
             ]
           }
@@ -117,15 +117,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.001,
-      "duration": 4.601,
+      "src": "/static/videos/characters/cero_emphasis_forward.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
       "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 4.239,
+      "duration": 29.866029,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -137,12 +137,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Error en operacion"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Tira LED del terminal"
               }
             ]
           }
@@ -156,12 +156,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/repeated_operation.png",
-                "alt": "Operacion repetida"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Tira LED encendida"
               }
             ]
           }
@@ -175,12 +175,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Tiempo agotado"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Tira LED encendida"
               }
             ]
           }
@@ -189,27 +189,27 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_long_b.mp4",
-      "clip_start": 0.3,
-      "clip_end": 3.469,
+      "src": "/static/videos/characters/cero_warning_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.081,
       "duration": 5.081,
       "label": "cierre_suave"
     },
     {
       "type": "transition",
-      "duration": 14.08,
+      "duration": 1,
       "variant": "countdown",
       "label": "3"
     },
     {
       "type": "transition",
-      "duration": 9.959,
+      "duration": 1,
       "variant": "countdown",
       "label": "2"
     },
     {
       "type": "transition",
-      "duration": 0.688029,
+      "duration": 1,
       "variant": "countdown",
       "label": "1"
     }

@@ -1,7 +1,7 @@
 {
-  "scene_id": "scene_intro_laberinto_cover",
-  "description": "Cover de trabajo para puzzle 2 (laberinto), con tiempos sincronizados al audio y bloques centrados.",
-  "broadcast_title": "Núcleo del Laberinto",
+  "scene_id": "scene_intro_laberinto",
+  "description": "Intro v2 generada desde plantilla para scene_intro_laberinto_v2 (base legacy: scene_intro_laberinto).",
+  "broadcast_title": "NÚCLEO DEL LABERINTO",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -71,15 +71,15 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_neutral_b.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.159,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
       "duration": 3.859,
-      "label": "intro_laberinto_cover"
+      "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 41.54,
+      "duration": 7.5,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -87,7 +87,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "LLEGAR AL CENTRO DEL LABERINTO."
+            "text": "Llegar al centro del laberinto"
           }
         },
         {
@@ -99,82 +99,11 @@
             "assets": [
               {
                 "src": "/static/images/puzzle2/symbols/symbol_6.png",
-                "alt": "Símbolo del laberinto"
+                "alt": "Simbolo del puzzle 2"
               },
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
-              }
-            ]
-          }
-        },
-        {
-          "at": 7.5,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "assets": [
-              {
-                "src": "/static/images/puzzle2/Laberint.png",
-                "alt": "Laberinto"
-              }
-            ]
-          }
-        },
-        {
-          "at": 21.66,
-          "sfx": "warning",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": true,
-            "assets": [
-              {
-                "src": "/static/images/puzzle2/LaberintVermell.png",
-                "alt": "Laberinto rojo"
-              },
-              {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Botón reset"
-              }
-            ]
-          }
-        },
-        {
-          "at": 26.38,
-          "sfx": "warning",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": true,
-            "assets": [
-              {
-                "src": "/static/images/puzzle2/symbols/symbol_6.png",
-                "alt": "Símbolo mostrado"
-              },
-              {
-                "src": "/static/images/puzzle2/symbols/symbol_9.png",
-                "alt": "Símbolo contrario"
-              }
-            ]
-          }
-        },
-        {
-          "at": 35.061,
-          "sfx": "warning",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": true,
-            "assets": [
-              {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Error"
-              },
-              {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Botón reset"
+                "alt": "Icono de token"
               }
             ]
           }
@@ -182,20 +111,100 @@
       ]
     },
     {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 28.560644,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Simbolo del puzzle 2"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.2,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Simbolo del puzzle 2"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
+              }
+            ]
+          }
+        },
+        {
+          "at": 7.259,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Simbolo del puzzle 2"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Icono de token"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_gesture_medium_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
+      "label": "cierre_suave"
+    },
+    {
       "type": "transition",
-      "duration": 1,
+      "duration": 1.209,
       "variant": "countdown",
       "label": "3"
     },
     {
       "type": "transition",
-      "duration": 1,
+      "duration": 1.209,
       "variant": "countdown",
       "label": "2"
     },
     {
       "type": "transition",
-      "duration": 1,
+      "duration": 1.209,
       "variant": "countdown",
       "label": "1"
     }

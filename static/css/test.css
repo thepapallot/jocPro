@@ -822,6 +822,11 @@ textarea[readonly] {
     font-size: 0.92rem;
 }
 
+.sim-note-success {
+    color: #0c6b47;
+    font-weight: 700;
+}
+
 .sim-toolbar,
 .sim-grid,
 .sim-palette,

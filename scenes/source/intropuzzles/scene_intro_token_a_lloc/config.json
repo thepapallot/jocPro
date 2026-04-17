@@ -1,7 +1,7 @@
 {
-  "scene_id": "scene_intro_token_a_lloc_v2",
+  "scene_id": "scene_intro_token_a_lloc",
   "description": "Intro v2 generada desde plantilla para scene_intro_token_a_lloc_v2 (base legacy: scene_intro_token_a_lloc).",
-  "broadcast_title": "Arquitectos del Orden",
+  "broadcast_title": "ARQUITECTOS DEL ORDEN",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -51,9 +51,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.7,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
       "duration": 4.919,
       "label": "intro_estable"
     },
@@ -67,7 +67,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "ARQUITECTOS DEL ORDEN"
+            "text": "Colocar los diez tokens correctamente"
           }
         },
         {
@@ -78,12 +78,12 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal en perspectiva sobre fondo blanco"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               }
             ]
           }
@@ -92,15 +92,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.001,
-      "duration": 10,
+      "src": "/static/videos/characters/cero_emphasis_forward.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
       "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 4.419,
+      "duration": 17.375306,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -112,12 +112,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Error en operacion"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal en perspectiva sobre fondo blanco"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               }
             ]
           }
@@ -131,12 +131,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/repeated_operation.png",
-                "alt": "Operacion repetida"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal en perspectiva sobre fondo blanco"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               }
             ]
           }
@@ -150,12 +150,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Tiempo agotado"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal en perspectiva sobre fondo blanco"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
               }
             ]
           }
@@ -164,10 +164,10 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_long_b.mp4",
-      "clip_start": 0.3,
-      "clip_end": 3.469,
-      "duration": 9.826306,
+      "src": "/static/videos/characters/cero_outro_close_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
       "label": "cierre_suave"
     },
     {

@@ -1,7 +1,7 @@
 {
-  "scene_id": "scene_intro_memory_v2",
+  "scene_id": "scene_intro_memory",
   "description": "Intro v2 generada desde plantilla para scene_intro_memory_v2 (base legacy: scene_intro_memory).",
-  "broadcast_title": "Memoria Fantasma",
+  "broadcast_title": "MEMORIA FANTASMA",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -76,9 +76,9 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.7,
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
       "duration": 4.879,
       "label": "intro_estable"
     },
@@ -92,7 +92,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "MEMORIA FANTASMA"
+            "text": "Recordar letras y colores"
           }
         },
         {
@@ -103,12 +103,16 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Letra griega alfa"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel de botones del terminal"
               }
             ]
           }
@@ -117,15 +121,15 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
-      "clip_start": 0.3,
-      "clip_end": 4.001,
-      "duration": 3.52,
+      "src": "/static/videos/characters/cero_warning_gesture.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
       "label": "bloque_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 5.52,
+      "duration": 33.503107,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -137,12 +141,16 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Error en operacion"
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Letra griega alfa"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel de botones del terminal"
               }
             ]
           }
@@ -156,12 +164,16 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/repeated_operation.png",
-                "alt": "Operacion repetida"
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Letra griega alfa"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel de botones del terminal"
               }
             ]
           }
@@ -175,12 +187,16 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Tiempo agotado"
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Letra griega alfa"
               },
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Boton de reinicio"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel de botones del terminal"
               }
             ]
           }
@@ -189,21 +205,21 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_intro_long_b.mp4",
-      "clip_start": 0.3,
-      "clip_end": 3.469,
-      "duration": 13,
+      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
       "label": "cierre_suave"
     },
     {
       "type": "transition",
-      "duration": 8,
+      "duration": 1,
       "variant": "countdown",
       "label": "3"
     },
     {
       "type": "transition",
-      "duration": 10.333107,
+      "duration": 1,
       "variant": "countdown",
       "label": "2"
     },

@@ -66,8 +66,8 @@ Archivos clave a actualizar:
 - `static/js/test.js`
 - `scenes/catalog/intro_catalog.json`
 - `scenes/templates/intro/puzzle_intro_template.json`
-- `scenes/source/intro/*.json`
-- `scenes/source/outro/*.json`
+- `scenes/source/intropuzzles/*.json`
+- `scenes/source/cierre/*.json`
 
 Nota: `scenes/generated/intro/*.json` no debe editarse a mano.
 

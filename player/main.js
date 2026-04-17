@@ -5,8 +5,8 @@ const STALL_THRESHOLD_MS = 2500;
 const STALL_RECOVERY_COOLDOWN_MS = 1800;
 let briefContentCatalog = {};
 const SCENE_OVERLAY_TITLES = {
+    scene_intro_simulacro: "Simulacro Inicial",
     scene_intro_sumas: "Cálculo Extremo",
-    scene_intro_sumas_cover: "Cálculo Extremo",
     scene_intro_laberinto: "Núcleo del Laberinto",
     scene_intro_trivial: "Mente Colmena",
     scene_intro_musica: "Código Sonoro",
@@ -15,7 +15,6 @@ const SCENE_OVERLAY_TITLES = {
     scene_intro_memory: "Memoria Fantasma",
     scene_intro_token_a_lloc: "Arquitectos del Orden",
     scene_intro_segments: "Patrón Maestro",
-    scene_intro_sumas0: "Patrón Maestro",
 };
 
 const elements = {
@@ -69,6 +68,7 @@ function resolveIntroBriefOverrides() {
         objective: params.get("brief_objective"),
         evaluation: params.get("brief_evaluation"),
         cta: params.get("brief_cta"),
+        betweenTitle: params.get("between_title"),
     };
 }
 
@@ -797,13 +797,16 @@ function TransitionScreen(segment) {
         return screen;
     }
 
-    const labelInsideMedia = Boolean(segment.image && segment.label && segment.variant === "maze");
+    const transitionLabel = segment.variant === "between-title"
+        ? (introBriefOverrides.betweenTitle ?? segment.label)
+        : segment.label;
+    const labelInsideMedia = Boolean(segment.image && transitionLabel && segment.variant === "maze");
 
     if (segment.video) {
         const media = createElement("div", "transition-screen__media");
         if (labelInsideMedia) {
             media.appendChild(
-                createElement("div", "transition-screen__media-label", segment.label),
+                createElement("div", "transition-screen__media-label", transitionLabel),
             );
         }
 
@@ -815,7 +818,7 @@ function TransitionScreen(segment) {
         const media = createElement("div", "transition-screen__media");
         if (labelInsideMedia) {
             media.appendChild(
-                createElement("div", "transition-screen__media-label", segment.label),
+                createElement("div", "transition-screen__media-label", transitionLabel),
             );
         }
         const image = document.createElement("img");
@@ -826,8 +829,8 @@ function TransitionScreen(segment) {
         screen.appendChild(media);
     }
 
-    if (segment.label && !labelInsideMedia) {
-        screen.appendChild(createElement("div", "transition-screen__label", segment.label));
+    if (transitionLabel && !labelInsideMedia) {
+        screen.appendChild(createElement("div", "transition-screen__label", transitionLabel));
     }
     return screen;
 }
@@ -1972,6 +1975,8 @@ class ScenePlayer {
             return;
         }
 
+        const previousSegment = this.currentSegment;
+
         if (this.playing) {
             this.captureSegmentElapsed();
         }
@@ -1984,13 +1989,14 @@ class ScenePlayer {
         }
 
         const nextSegment = this.segments[nextIndex];
+        const crossfadeTransition = previousSegment?.type === "transition" && nextSegment?.type === "transition";
         const shouldAutoplay = autoplay && !nextSegment?.advance_on_space;
         this.playing = shouldAutoplay;
         this.currentSegmentIndex = nextIndex;
         this.segmentElapsed = 0;
         this.segmentStartedAt = shouldAutoplay ? performance.now() : 0;
         this.primeProgressWatch(this.segmentStartedAt || performance.now());
-        this.renderSegment();
+        this.renderSegment({ crossfadeTransition });
         this.updateStatus();
         await this.syncMedia(shouldAutoplay, { preserveAudio });
 
@@ -1999,7 +2005,7 @@ class ScenePlayer {
         }
     }
 
-    renderSegment() {
+    renderSegment({ crossfadeTransition = false } = {}) {
         const segment = this.currentSegment;
         const keepCharacterFrame = Boolean(this.scene?.use_character_frame);
         this.activePhaseKey = "";
@@ -2008,10 +2014,13 @@ class ScenePlayer {
         this.fullscreenPanelState = null;
 
         elements.uiLayer.innerHTML = "";
-        elements.transitionLayer.innerHTML = "";
         elements.uiLayer.classList.remove("layer-visible");
-        elements.transitionLayer.classList.remove("layer-visible");
         elements.video.classList.remove("scene-video--hidden", "scene-video--reveal");
+
+        if (!(crossfadeTransition && segment.type === "transition")) {
+            elements.transitionLayer.innerHTML = "";
+            elements.transitionLayer.classList.remove("layer-visible");
+        }
         elements.playerRoot?.classList.remove("player-root--character-feed");
         if (!keepCharacterFrame) {
             elements.playerRoot?.classList.remove("player-root--broadcast");
@@ -2054,7 +2063,22 @@ class ScenePlayer {
 
         if (segment.type === "transition") {
             elements.transitionLayer.classList.remove("hidden");
-            elements.transitionLayer.appendChild(TransitionScreen(segment));
+            const nextScreen = TransitionScreen(segment);
+            if (crossfadeTransition) {
+                const previousScreen = elements.transitionLayer.querySelector(".transition-screen");
+                if (previousScreen) {
+                    previousScreen.classList.add("transition-screen--crossfade-out");
+                }
+                nextScreen.classList.add("transition-screen--crossfade-in");
+                elements.transitionLayer.appendChild(nextScreen);
+                window.setTimeout(() => {
+                    if (previousScreen?.isConnected) {
+                        previousScreen.remove();
+                    }
+                }, 340);
+            } else {
+                elements.transitionLayer.appendChild(nextScreen);
+            }
             if (segment.variant === "countdown") {
                 this.playUiSfx("countdown");
             }
@@ -2321,6 +2345,23 @@ document.addEventListener("keydown", async (event) => {
         event.preventDefault();
         await playerInstance.skipSegment();
     }
+});
+
+document.addEventListener("click", async (event) => {
+    if (!playerInstance) {
+        return;
+    }
+
+    if (event.button !== 0) {
+        return;
+    }
+
+    if (!playerInstance.currentSegment?.advance_on_space) {
+        return;
+    }
+
+    event.preventDefault();
+    await playerInstance.advanceSegment();
 });
 
 elements.bootOverlay.addEventListener("click", async () => {
