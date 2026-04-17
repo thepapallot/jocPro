@@ -127,7 +127,8 @@
                     window.location.href = "{{ url_for('final') }}";
                 }
             } else {
-                window.location.href = "{{ url_for('play_video_puzzles', idx_puzzle_id=0)|replace('0', '__IDX__')|safe }}".replace('__IDX__', String(nextPuzzleIndex)) + "?from_outro=1";
+                // Go directly to the next puzzle intro flow and avoid an extra click in welcome.
+                window.location.href = "{{ url_for('play_video_puzzles', idx_puzzle_id=0)|replace('0', '__IDX__')|safe }}".replace('__IDX__', String(nextPuzzleIndex));
             }
         };
 

@@ -1,0 +1,256 @@
+{
+  "scene_id": "scene_intro_laberinto",
+  "description": "Intro generada para scene_intro_laberinto con flujo Cero + objetivo + bloques visuales.",
+  "broadcast_title": "NÚCLEO DEL LABERINTO",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_02.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0.0,
+      "end": 3.859,
+      "text": "En este nivel vamos a evaluar vuestra flexibilidad cognitiva."
+    },
+    {
+      "start": 3.859,
+      "end": 7.12,
+      "text": "Vuestro objetivo va a ser llegar al centro del laberinto."
+    },
+    {
+      "start": 7.12,
+      "end": 11.359,
+      "text": "Lo lograréis usando vuestros tokens y estos símbolos de los terminales."
+    },
+    {
+      "start": 11.359,
+      "end": 14.439,
+      "text": "En la pantalla aparecerá un laberinto lleno de símbolos."
+    },
+    {
+      "start": 14.439,
+      "end": 18.679,
+      "text": "Para resolverlo, deberéis empezar por la entrada que tenga el número de vuestro token,"
+    },
+    {
+      "start": 18.679,
+      "end": 23.6,
+      "text": "e ir pasándolo por los terminales que tengan los símbolos que os encontraréis por el camino."
+    },
+    {
+      "start": 23.6,
+      "end": 25.519,
+      "text": "Pero eso no es todo."
+    },
+    {
+      "start": 25.519,
+      "end": 30.239,
+      "text": "En algún momento sonará una alarma y el laberinto se volverá de color rojo. Cuando eso"
+    },
+    {
+      "start": 30.239,
+      "end": 33.88,
+      "text": "pase, deberéis pasar el token por el terminal con el símbolo contrario al que"
+    },
+    {
+      "start": 33.88,
+      "end": 38.92,
+      "text": "aparezca en el laberinto. Estad atentos, porque en cualquier momento el laberinto puede volver"
+    },
+    {
+      "start": 38.92,
+      "end": 44.96,
+      "text": "a su forma original. Id con cuidado: un solo error y tendréis que empezar vuestro recorrido"
+    },
+    {
+      "start": 44.96,
+      "end": 45.399,
+      "text": "de nuevo."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
+      "duration": 4.12,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 12.999,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "Llegar al centro del laberinto"
+          }
+        },
+        {
+          "at": 2.4,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/Laberint.png",
+                "alt": "Laberint"
+              },
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Symbol 6"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_explanation_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 23.427644,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0.0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_9.png",
+                "alt": "Symbol 9"
+              }
+            ]
+          }
+        },
+        {
+          "at": 4.699,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/LaberintVermell.png",
+                "alt": "Laberintvermell"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 9.419,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_8.png",
+                "alt": "Symbol 8"
+              }
+            ]
+          }
+        },
+        {
+          "at": 13.06,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_7.png",
+                "alt": "Symbol 7"
+              },
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_5.png",
+                "alt": "Symbol 5"
+              }
+            ]
+          }
+        },
+        {
+          "at": 18.1,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Operation error"
+              },
+              {
+                "src": "/static/images/puzzle2/symbols/symbol_4.png",
+                "alt": "Symbol 4"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_emphasis_forward.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

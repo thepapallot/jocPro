@@ -1,0 +1,240 @@
+{
+  "scene_id": "scene_intro_musica",
+  "description": "Base de produccion para la intro del puzzle 4, ajustada al audio y subtitulos oficiales.",
+  "ui_titles": {
+    "top": "OBJETIVO",
+    "left": "ELEMENTOS",
+    "right": "ATENCIÓN"
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_04.wav"
+  },
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 5,
+      "text": "Seguimos con la siguiente prueba, en la que vamos a evaluar vuestra percepción auditiva."
+    },
+    {
+      "start": 5,
+      "end": 8,
+      "text": "Vuestro objetivo es ordenar los fragmentos de una canción."
+    },
+    {
+      "start": 8,
+      "end": 13,
+      "text": "Para superar este nivel necesitaréis los tokens y los botones de los terminales."
+    },
+    {
+      "start": 13,
+      "end": 17,
+      "text": "Al empezar la fase escucharéis un trozo de una canción."
+    },
+    {
+      "start": 17,
+      "end": 20,
+      "text": "Después tendréis que reproducir ese mismo trozo de canción,"
+    },
+    {
+      "start": 20,
+      "end": 23,
+      "text": "pasando los tokens por los terminales."
+    },
+    {
+      "start": 23,
+      "end": 26,
+      "text": "Podréis escuchar los fragmentos las veces que necesitéis,"
+    },
+    {
+      "start": 26,
+      "end": 31,
+      "text": "y, cuando creáis que habéis encontrado la secuencia musical correcta, la tendréis que registrar."
+    },
+    {
+      "start": 31,
+      "end": 36,
+      "text": "Pulsando los botones de cualquier terminal podréis volver a escuchar la canción,"
+    },
+    {
+      "start": 36,
+      "end": 41,
+      "text": "registrar una secuencia de fragmentos, borrar los fragmentos que ya hayáis registrado;"
+    },
+    {
+      "start": 41,
+      "end": 46,
+      "text": "os dejaré la función de cada botón en la pantalla. Este nivel tiene dos fases,"
+    },
+    {
+      "start": 46,
+      "end": 52,
+      "text": "así que no hay tiempo que perder. Escuchad atentamente, porque la canción se va a reproducir inmediatamente."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_warning_stable_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5,
+      "duration": 5,
+      "label": "intro_puzzle4"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 8,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "top": {
+            "text": "ORDENAR LOS FRAGMENTOS DE UNA CANCIÓN."
+          }
+        },
+        {
+          "at": 3,
+          "sfx": "token",
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel con botones de colores del terminal"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_explanation_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 10,
+      "duration": 10,
+      "label": "explicacion_puzzle4_a"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 8,
+      "variant": "objective",
+      "phases": [
+        {
+          "at": 0,
+          "top": {
+            "text": "ORDENAR LOS FRAGMENTOS DE UNA CANCIÓN."
+          },
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel con botones de colores del terminal"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              }
+            ]
+          },
+          "right": {
+            "variant": "warning",
+            "text": "ESCUCHA Y REPRODUCE.",
+            "assets": [
+              {
+                "swatchClass": "button-blue",
+                "label": "AZUL",
+                "text": "ESCUCHAR LA CANCIÓN."
+              },
+              {
+                "swatchClass": "button-green",
+                "label": "VERDE",
+                "text": "REGISTRAR."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 17.353333,
+      "variant": "warning",
+      "phases": [
+        {
+          "at": 0,
+          "top": {
+            "text": "ORDENAR LOS FRAGMENTOS DE UNA CANCIÓN."
+          },
+          "left": {
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Panel con botones de colores del terminal"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token piramidal"
+              }
+            ]
+          },
+          "right": {
+            "variant": "warning",
+            "text": "FUNCIONES DE BOTÓN.",
+            "assets": [
+              {
+                "swatchClass": "button-blue",
+                "label": "AZUL",
+                "text": "ESCUCHAR LA CANCIÓN."
+              },
+              {
+                "swatchClass": "button-green",
+                "label": "VERDE",
+                "text": "REGISTRAR."
+              },
+              {
+                "swatchClass": "button-red",
+                "label": "ROJO",
+                "text": "DEJAR DE REGISTRAR."
+              },
+              {
+                "swatchClass": "button-white",
+                "label": "BLANCO",
+                "text": "RESETEAR."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.041667,
+      "duration": 5.041667,
+      "label": "cierre_puzzle4"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

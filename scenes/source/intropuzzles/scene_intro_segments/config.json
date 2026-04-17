@@ -1,0 +1,251 @@
+{
+  "scene_id": "scene_intro_segments",
+  "description": "Intro generada para scene_intro_segments con flujo Cero + objetivo + bloques visuales.",
+  "broadcast_title": "PATRÓN MAESTRO",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_10.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0.0,
+      "end": 4.719,
+      "text": "Seguimos con una prueba en la que evaluaremos vuestra simbolización e interpretación."
+    },
+    {
+      "start": 4.719,
+      "end": 8.4,
+      "text": "El objetivo de este nivel será replicar en las luces de los terminales"
+    },
+    {
+      "start": 8.4,
+      "end": 13.16,
+      "text": "los patrones de colores que aparecerán en la pantalla antes de que se agote el tiempo."
+    },
+    {
+      "start": 13.16,
+      "end": 18.64,
+      "text": "Para hacerlo necesitaréis los tokens, los botones y las luces de los terminales."
+    },
+    {
+      "start": 18.64,
+      "end": 24.44,
+      "text": "En la pantalla veréis diez patrones de colores, cada uno representando las luces de uno de los terminales."
+    },
+    {
+      "start": 24.44,
+      "end": 25.0,
+      "text": "Cuando pongáis"
+    },
+    {
+      "start": 25.0,
+      "end": 29.399,
+      "text": "un token encima de un terminal y apretéis el botón negro, el botón rojo o el botón"
+    },
+    {
+      "start": 29.399,
+      "end": 34.6,
+      "text": "verde, se encenderán luces en los terminales. Cada token hace que se enciendan las luces"
+    },
+    {
+      "start": 34.6,
+      "end": 39.24,
+      "text": "de forma distinta, así que deberéis trabajar juntos para que en cada terminal aparezca"
+    },
+    {
+      "start": 39.24,
+      "end": 45.88,
+      "text": "el mismo patrón de colores que en la pantalla. Daos prisa: si la cuenta atrás llega a cero, se reiniciará la"
+    },
+    {
+      "start": 45.88,
+      "end": 46.24,
+      "text": "fase."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
+      "duration": 4.12,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 12.999,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "Replicar los patrones de colores"
+          }
+        },
+        {
+          "at": 2.4,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_gesture_medium_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 23.427644,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0.0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 4.18,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              }
+            ]
+          }
+        },
+        {
+          "at": 8.579,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 13.78,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 18.42,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/restart_button.png",
+                "alt": "Restart button"
+              },
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Timeout"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

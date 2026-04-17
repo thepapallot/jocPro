@@ -1,0 +1,297 @@
+{
+  "scene_id": "scene_intro_trivial",
+  "description": "Intro generada para scene_intro_trivial con flujo Cero + objetivo + bloques visuales.",
+  "broadcast_title": "MENTE COLMENA",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_03.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0.0,
+      "end": 2.08,
+      "text": "Prestad atención, porque en esta prueba"
+    },
+    {
+      "start": 2.08,
+      "end": 5.08,
+      "text": "evaluaremos vuestro conocimiento colectivo."
+    },
+    {
+      "start": 5.08,
+      "end": 6.48,
+      "text": "Para superar este nivel,"
+    },
+    {
+      "start": 6.48,
+      "end": 9.4,
+      "text": "tendréis que responder diez preguntas correctamente"
+    },
+    {
+      "start": 9.4,
+      "end": 14.359,
+      "text": "y, para hacerlo, utilizaréis los botones y los números de colores de los terminales."
+    },
+    {
+      "start": 14.359,
+      "end": 18.359,
+      "text": "En la pantalla aparecerá una pregunta y seis posibles respuestas."
+    },
+    {
+      "start": 18.359,
+      "end": 20.559,
+      "text": "Entre todos tendréis que poneros de acuerdo"
+    },
+    {
+      "start": 20.559,
+      "end": 23.199,
+      "text": "y decidir cuál es la respuesta correcta."
+    },
+    {
+      "start": 23.199,
+      "end": 24.719,
+      "text": "Cuando la hayáis escogido,"
+    },
+    {
+      "start": 24.719,
+      "end": 26.6,
+      "text": "quedaos con el número de la respuesta."
+    },
+    {
+      "start": 26.6,
+      "end": 32.0,
+      "text": "En cada uno de los terminales que tenéis enfrente hay seis números, cada uno de un color."
+    },
+    {
+      "start": 32.0,
+      "end": 37.399,
+      "text": "Deberéis buscar el número de la respuesta correcta y apretar el botón que sea del mismo color."
+    },
+    {
+      "start": 37.399,
+      "end": 43.2,
+      "text": "Cuando se haya pulsado un botón en todos los terminales, se revelará si la respuesta era correcta o no."
+    },
+    {
+      "start": 43.2,
+      "end": 48.52,
+      "text": "Para pasar de nivel, deberéis contestar varias preguntas seguidas correctamente, así que"
+    },
+    {
+      "start": 48.52,
+      "end": 52.28,
+      "text": "cuidado: si hay un solo error, la racha de respuestas se romperá."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
+      "duration": 4.12,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 12.999,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "Responder diez preguntas correctamente"
+          }
+        },
+        {
+          "at": 2.4,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+                "alt": "Numbers strip 1 to 6"
+              },
+              {
+                "src": "/static/images/puzzle3/intro/question_board.jpg",
+                "alt": "Question board"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 29.406306,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0.0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.899,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 5.78,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 11.18,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              }
+            ]
+          }
+        },
+        {
+          "at": 16.579,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              }
+            ]
+          }
+        },
+        {
+          "at": 22.38,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+                "alt": "Numbers strip 1 to 6"
+              },
+              {
+                "src": "/static/images/puzzle3/intro/question_board.jpg",
+                "alt": "Question board"
+              }
+            ]
+          }
+        },
+        {
+          "at": 27.7,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/operation_error.png",
+                "alt": "Operation error"
+              },
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Timeout"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

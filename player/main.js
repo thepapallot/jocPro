@@ -4,6 +4,18 @@ const SAFE_NEXT_GRACE_SECONDS = 0.45;
 const STALL_THRESHOLD_MS = 2500;
 const STALL_RECOVERY_COOLDOWN_MS = 1800;
 let briefContentCatalog = {};
+const SCENE_OVERLAY_TITLES = {
+    scene_intro_simulacro: "Simulacro Inicial",
+    scene_intro_sumas: "Cálculo Extremo",
+    scene_intro_laberinto: "Núcleo del Laberinto",
+    scene_intro_trivial: "Mente Colmena",
+    scene_intro_musica: "Código Sonoro",
+    scene_intro_cronometro: "Pulso de Tiempo",
+    scene_intro_energia: "Carga Crítica",
+    scene_intro_memory: "Memoria Fantasma",
+    scene_intro_token_a_lloc: "Arquitectos del Orden",
+    scene_intro_segments: "Patrón Maestro",
+};
 
 const elements = {
     playerRoot: document.getElementById("player-root"),
@@ -56,6 +68,7 @@ function resolveIntroBriefOverrides() {
         objective: params.get("brief_objective"),
         evaluation: params.get("brief_evaluation"),
         cta: params.get("brief_cta"),
+        betweenTitle: params.get("between_title"),
     };
 }
 
@@ -113,53 +126,63 @@ function StepsList(steps = []) {
     return list;
 }
 
-function AssetsGrid(assets = []) {
+function getAssetItemKey(asset = {}) {
+    return JSON.stringify({
+        src: asset.src || "",
+        label: asset.label || "",
+        text: asset.text || "",
+    });
+}
+
+function AssetCard(asset = {}) {
+    const card = createElement("article", "asset-card");
+    card.dataset.itemKey = getAssetItemKey(asset);
+    const hasCopy = Boolean(asset.label || asset.text);
+    if (!hasCopy) {
+        card.classList.add("asset-card--icon-only");
+    }
+    const media = createElement("div", "asset-card__media");
+    if (asset.swatchClass) {
+        const swatch = createElement("span", `asset-card__swatch ${asset.swatchClass}`);
+        swatch.setAttribute("aria-hidden", "true");
+        media.appendChild(swatch);
+    } else {
+        const image = document.createElement("img");
+        image.className = "asset-card__image";
+        image.src = asset.src || "";
+        image.alt = asset.alt || asset.label || "";
+        media.appendChild(image);
+    }
+
+    card.appendChild(media);
+
+    if (hasCopy) {
+        const body = createElement("div", "asset-card__body");
+        if (asset.label) {
+            body.appendChild(createElement("strong", "asset-card__label", asset.label));
+        }
+        if (asset.text) {
+            body.appendChild(createElement("span", "asset-card__text", asset.text));
+        }
+
+        card.appendChild(body);
+    }
+
+    return card;
+}
+
+function AssetsGrid(assets = [], { showEquals = false } = {}) {
     const grid = createElement("div", "asset-grid");
     const iconOnly = assets.every((asset) => !asset.label && !asset.text);
 
     if (iconOnly) {
         grid.classList.add("asset-grid--icons");
         grid.classList.add(`asset-grid--icons-${assets.length}`);
+        grid.classList.toggle("asset-grid--with-equals", Boolean(showEquals && assets.length === 2));
     }
 
     assets.forEach((asset) => {
-        const card = createElement("article", "asset-card");
-        card.dataset.itemKey = JSON.stringify({
-            src: asset.src || "",
-            label: asset.label || "",
-            text: asset.text || "",
-        });
-        const hasCopy = Boolean(asset.label || asset.text);
-        if (!hasCopy) {
-            card.classList.add("asset-card--icon-only");
-        }
-        const media = createElement("div", "asset-card__media");
-        if (asset.swatchClass) {
-            const swatch = createElement("span", `asset-card__swatch ${asset.swatchClass}`);
-            swatch.setAttribute("aria-hidden", "true");
-            media.appendChild(swatch);
-        } else {
-            const image = document.createElement("img");
-            image.className = "asset-card__image";
-            image.src = asset.src || "";
-            image.alt = asset.alt || asset.label || "";
-            media.appendChild(image);
-        }
-
-        card.appendChild(media);
-
-        if (hasCopy) {
-            const body = createElement("div", "asset-card__body");
-            if (asset.label) {
-                body.appendChild(createElement("strong", "asset-card__label", asset.label));
-            }
-            if (asset.text) {
-                body.appendChild(createElement("span", "asset-card__text", asset.text));
-            }
-
-            card.appendChild(body);
-        }
-        grid.appendChild(card);
+        grid.appendChild(AssetCard(asset));
     });
 
     return grid;
@@ -201,29 +224,99 @@ function updatePersistentStripAssets(row, assets = []) {
     });
 }
 
-function PersistentElementsStrip({ title = "", objective = "", assetsTitle = "" } = {}) {
+function createPersistentStripTextBlock({ key = "", label = "", value = "", valueClass = "" } = {}) {
+    const block = createElement("section", "persistent-elements-strip__block persistent-elements-strip__block--pending");
+    block.dataset.blockKey = key;
+    if (label) {
+        block.appendChild(createElement("p", "persistent-elements-strip__block-label", label));
+    }
+    if (value) {
+        const className = valueClass
+            ? `persistent-elements-strip__block-value ${valueClass}`
+            : "persistent-elements-strip__block-value";
+        block.appendChild(createElement("p", className, value));
+    }
+    return block;
+}
+
+function updatePersistentStripBlockVisibility(state, sceneTimeSeconds = 0) {
+    if (!state?.blocks) {
+        return;
+    }
+
+    Object.entries(state.blocks).forEach(([key, block]) => {
+        if (!block) {
+            return;
+        }
+
+        const revealAt = Number(state.revealAt?.[key] ?? 0);
+        const shouldShow = sceneTimeSeconds >= revealAt;
+        block.classList.toggle("persistent-elements-strip__block--visible", shouldShow);
+        block.classList.toggle("persistent-elements-strip__block--pending", !shouldShow);
+    });
+}
+
+function PersistentElementsStrip({
+    kicker = "",
+    title = "",
+    objective = "",
+    assetsTitle = "",
+    warning = "",
+    warningLabel = "ATENCION",
+    revealAt = {},
+} = {}) {
     const strip = createElement("div", "persistent-elements-strip__inner");
-    const info = createElement("div", "persistent-elements-strip__info");
-    const assets = createElement("div", "persistent-elements-strip__assets");
+    const summaryBlock = createElement("section", "persistent-elements-strip__block persistent-elements-strip__block--pending");
+    summaryBlock.dataset.blockKey = "summary";
+    summaryBlock.appendChild(createElement("p", "persistent-elements-strip__block-label", "NIVEL"));
+    if (kicker) {
+        summaryBlock.appendChild(createElement("p", "persistent-elements-strip__kicker", kicker));
+    }
+    if (title) {
+        summaryBlock.appendChild(createElement("p", "persistent-elements-strip__title", title));
+    }
+    const objectiveBlock = createPersistentStripTextBlock({
+        key: "objective",
+        label: "OBJETIVO",
+        value: objective,
+        valueClass: "persistent-elements-strip__objective",
+    });
+    const assetsBlock = createElement("section", "persistent-elements-strip__block persistent-elements-strip__block--pending");
+    assetsBlock.dataset.blockKey = "assets";
+    const warningBlock = createPersistentStripTextBlock({
+        key: "warning",
+        label: warningLabel,
+        value: warning,
+        valueClass: "persistent-elements-strip__warning",
+    });
     const row = createElement("div", "persistent-elements-strip__row");
 
-    if (title) {
-        info.appendChild(createElement("h3", "persistent-elements-strip__title", title));
-    }
-
-    if (objective) {
-        info.appendChild(createElement("p", "persistent-elements-strip__objective", objective));
-    }
-
     if (assetsTitle) {
-        assets.appendChild(createElement("p", "persistent-elements-strip__assets-title", assetsTitle));
+        assetsBlock.appendChild(createElement("p", "persistent-elements-strip__assets-title", assetsTitle));
     }
+    assetsBlock.appendChild(row);
 
-    assets.appendChild(row);
-    strip.appendChild(info);
-    strip.appendChild(assets);
+    strip.appendChild(summaryBlock);
+    strip.appendChild(objectiveBlock);
+    strip.appendChild(assetsBlock);
+    strip.appendChild(warningBlock);
 
-    return { strip, row };
+    return {
+        strip,
+        row,
+        revealAt: {
+            summary: Number(revealAt.summary ?? revealAt.kicker ?? revealAt.title ?? 0),
+            objective: Number(revealAt.objective ?? 0),
+            assets: Number(revealAt.assets ?? 0),
+            warning: Number(revealAt.warning ?? revealAt.attention ?? 0),
+        },
+        blocks: {
+            summary: summaryBlock,
+            objective: objectiveBlock,
+            assets: assetsBlock,
+            warning: warningBlock,
+        },
+    };
 }
 
 function zoneHasContent(zone) {
@@ -536,8 +629,9 @@ function updateZoneSlot(card, zone, { animate = false } = {}) {
 
     const currentAssets = card.querySelector(".asset-grid");
     if (hasAssets) {
+        const shouldShowEquals = Boolean(zone.show_equals && zone.assets.length === 2);
         if (!currentAssets) {
-            const nextGrid = AssetsGrid(zone.assets);
+            const nextGrid = AssetsGrid(zone.assets, { showEquals: shouldShowEquals });
             card.appendChild(nextGrid);
             didReplaceWholeZone = true;
             if (animate) {
@@ -546,16 +640,24 @@ function updateZoneSlot(card, zone, { animate = false } = {}) {
         } else {
             const currentItems = Array.from(currentAssets.querySelectorAll(".asset-card"));
             const currentKeys = currentItems.map((item) => item.dataset.itemKey || "");
-            const nextKeys = zone.assets.map((asset) => JSON.stringify({
-                src: asset.src || "",
-                label: asset.label || "",
-                text: asset.text || "",
-            }));
+            const nextKeys = zone.assets.map((asset) => getAssetItemKey(asset));
             const prefixMatches = currentKeys.every((key, index) => key === nextKeys[index]);
             updateAssetGridClasses(currentAssets, zone.assets);
+            currentAssets.classList.toggle("asset-grid--with-equals", shouldShowEquals);
 
-            if (!prefixMatches || currentKeys.length > nextKeys.length) {
-                const nextGrid = AssetsGrid(zone.assets);
+            if (currentKeys.length === nextKeys.length) {
+                zone.assets.forEach((asset, index) => {
+                    if (currentKeys[index] === nextKeys[index]) {
+                        return;
+                    }
+                    const nextCard = AssetCard(asset);
+                    if (animate) {
+                        nextCard.classList.add("asset-card--enter");
+                    }
+                    currentItems[index]?.replaceWith(nextCard);
+                });
+            } else if (!prefixMatches || currentKeys.length > nextKeys.length) {
+                const nextGrid = AssetsGrid(zone.assets, { showEquals: shouldShowEquals });
                 currentAssets.replaceWith(nextGrid);
                 didReplaceWholeZone = true;
                 if (animate) {
@@ -695,13 +797,16 @@ function TransitionScreen(segment) {
         return screen;
     }
 
-    const labelInsideMedia = Boolean(segment.image && segment.label && segment.variant === "maze");
+    const transitionLabel = segment.variant === "between-title"
+        ? (introBriefOverrides.betweenTitle ?? segment.label)
+        : segment.label;
+    const labelInsideMedia = Boolean(segment.image && transitionLabel && segment.variant === "maze");
 
     if (segment.video) {
         const media = createElement("div", "transition-screen__media");
         if (labelInsideMedia) {
             media.appendChild(
-                createElement("div", "transition-screen__media-label", segment.label),
+                createElement("div", "transition-screen__media-label", transitionLabel),
             );
         }
 
@@ -713,7 +818,7 @@ function TransitionScreen(segment) {
         const media = createElement("div", "transition-screen__media");
         if (labelInsideMedia) {
             media.appendChild(
-                createElement("div", "transition-screen__media-label", segment.label),
+                createElement("div", "transition-screen__media-label", transitionLabel),
             );
         }
         const image = document.createElement("img");
@@ -724,8 +829,8 @@ function TransitionScreen(segment) {
         screen.appendChild(media);
     }
 
-    if (segment.label && !labelInsideMedia) {
-        screen.appendChild(createElement("div", "transition-screen__label", segment.label));
+    if (transitionLabel && !labelInsideMedia) {
+        screen.appendChild(createElement("div", "transition-screen__label", transitionLabel));
     }
     return screen;
 }
@@ -824,7 +929,7 @@ function Puzzle6TokenMap(segment) {
     const media = createElement("div", "transition-screen__media transition-screen__media--puzzle6-token-map");
     const panel = createElement("div", "p6-map-panel");
     const grid = createElement("div", "p6-map-grid");
-    const tokenSrc = segment.token_src || "/static/images/puzzle1/tarjeta.png";
+    const tokenSrc = segment.token_src || "/static/images/shared/gameplay/token_card.png";
     const tokens = Array.isArray(segment.tokens) ? segment.tokens : [];
 
     tokens.forEach((token) => {
@@ -904,7 +1009,7 @@ function Puzzle9BoardTransition(segment) {
     const media = createElement("div", "transition-screen__media transition-screen__media--puzzle9-board");
     const board = createElement("div", "p9-map-board");
     const orbit = createElement("div", "p9-map-orbit");
-    const tokenSrc = segment.token_src || "/static/images/puzzle1/tarjeta.png";
+    const tokenSrc = segment.token_src || "/static/images/shared/gameplay/token_card.png";
     const toneByIndex = ["tone-cyan", "tone-violet"];
 
     (segment.clues || []).forEach((clue, index) => {
@@ -1072,11 +1177,11 @@ function GameMasterTerminalTransition(segment) {
     const copy = createElement("div", "gm-copy-block");
 
     terminal.className = "gm-terminal-wrap__terminal";
-    terminal.src = segment.terminal_src || "/static/images/shared/terminal_3d/terminal_box_perspective_hero_white.png";
+    terminal.src = segment.terminal_src || "/static/images/shared/gameplay/terminal_box.png";
     terminal.alt = segment.terminal_alt || "Terminal";
 
     token.className = "gm-terminal-wrap__token";
-    token.src = segment.token_src || "/static/images/shared/terminal_3d/token_pyramid_neon.png";
+    token.src = segment.token_src || "/static/images/shared/gameplay/token_card.png";
     token.alt = segment.token_alt || "Token";
 
     terminalWrap.appendChild(terminal);
@@ -1269,7 +1374,16 @@ function attachSegmentVideoLoop(video, segment) {
     });
 }
 
-function applyBroadcastOverlay(segment) {
+function getOverlayTitle(scene, segment) {
+    return (
+        segment?.broadcast?.title ||
+        scene?.broadcast_title ||
+        SCENE_OVERLAY_TITLES[scene?.scene_id] ||
+        ""
+    );
+}
+
+function applyBroadcastOverlay(scene, segment) {
     if (!elements.broadcastOverlay) {
         return;
     }
@@ -1277,6 +1391,7 @@ function applyBroadcastOverlay(segment) {
     const leftBrand = elements.broadcastOverlay.querySelector(".broadcast-overlay__brand--left");
     const rightBrand = elements.broadcastOverlay.querySelector(".broadcast-overlay__brand--right");
     const eyebrow = elements.broadcastOverlay.querySelector(".broadcast-overlay__eyebrow");
+    const subtitle = elements.broadcastOverlay.querySelector(".broadcast-overlay__subtitle");
     const logo = elements.broadcastOverlayLogo;
     const broadcast = segment.broadcast || {};
 
@@ -1284,8 +1399,14 @@ function applyBroadcastOverlay(segment) {
     rightBrand?.classList.remove("hidden");
 
     if (eyebrow) {
-        eyebrow.textContent = broadcast.eyebrow || "Organización ADN";
-        eyebrow.classList.toggle("hidden", broadcast.show_eyebrow === false);
+        const overlayTitle = getOverlayTitle(scene, segment);
+        eyebrow.textContent = overlayTitle;
+        eyebrow.classList.toggle("hidden", !overlayTitle || broadcast.show_eyebrow === false);
+    }
+
+    if (subtitle) {
+        subtitle.textContent = "";
+        subtitle.classList.add("hidden");
     }
 
     if (logo) {
@@ -1317,6 +1438,7 @@ class ScenePlayer {
         this.fullscreenPanelState = null;
         this.persistentStripState = null;
         this.audioContext = null;
+        this.masterAudioDisabled = false;
         this.audioEndedSceneTime = null;
         this.audioEndedPerfTime = 0;
         this.lastProgressSceneTime = 0;
@@ -1386,7 +1508,7 @@ class ScenePlayer {
     }
 
     hasMasterAudio() {
-        return Boolean(this.scene.audio?.src);
+        return Boolean(this.scene.audio?.src) && !this.masterAudioDisabled;
     }
 
     async init() {
@@ -1408,6 +1530,12 @@ class ScenePlayer {
         if (this.segments.length === 0) {
             throw new Error("La escena no te segments.");
         }
+
+        if (elements.playerRoot) {
+            elements.playerRoot.dataset.sceneId = this.scene?.scene_id || "";
+        }
+
+        elements.playerRoot?.classList.toggle("player-root--unified-frame", Boolean(this.scene?.use_character_frame));
 
         this.setupPersistentElementsStrip();
 
@@ -1434,8 +1562,12 @@ class ScenePlayer {
         }
 
         const title = stripConfig.title || "";
+        const kicker = stripConfig.kicker || "";
         const objective = stripConfig.objective || "";
-        const assetsTitle = stripConfig.assets_title || "";
+        const assetsTitle = stripConfig.assets_title || "ELEMENTOS";
+        const warning = stripConfig.warning || stripConfig.attention || "";
+        const warningLabel = stripConfig.warning_label || "ATENCION";
+        const revealAt = stripConfig.reveal_at || {};
 
         elements.playerRoot?.classList.remove("player-root--persistent-strip");
         elements.persistentElementsStrip.classList.add("hidden");
@@ -1443,9 +1575,13 @@ class ScenePlayer {
         this.persistentStripState = null;
 
         const strip = PersistentElementsStrip({
+            kicker,
             title,
             objective,
             assetsTitle,
+            warning,
+            warningLabel,
+            revealAt,
         });
 
         this.persistentStripState = strip;
@@ -1453,7 +1589,7 @@ class ScenePlayer {
         elements.playerRoot?.classList.add("player-root--subtitle-up");
         elements.persistentElementsStrip.appendChild(strip.strip);
         elements.persistentElementsStrip.classList.remove("hidden");
-        this.updatePersistentElementsStrip(0);
+        this.updatePersistentElementsStrip(0, 0);
     }
 
     resolvePersistentStripAssets(elapsedSeconds = 0) {
@@ -1466,11 +1602,12 @@ class ScenePlayer {
         return assets.filter((asset) => asset && asset.src);
     }
 
-    updatePersistentElementsStrip(elapsedSeconds = 0) {
+    updatePersistentElementsStrip(elapsedSeconds = 0, sceneTimeSeconds = this.getSceneTime()) {
         if (!this.persistentStripState?.row) {
             return;
         }
 
+        updatePersistentStripBlockVisibility(this.persistentStripState, sceneTimeSeconds);
         const assets = this.resolvePersistentStripAssets(elapsedSeconds);
         updatePersistentStripAssets(this.persistentStripState.row, assets);
     }
@@ -1554,6 +1691,15 @@ class ScenePlayer {
                 waveA: "triangle",
                 waveB: "sine",
             };
+        } else if (type === "countdown") {
+            config = {
+                aFreq: [980, 980],
+                bFreq: [1470, 1470],
+                duration: 0.12,
+                gain: 0.038,
+                waveA: "square",
+                waveB: "triangle",
+            };
         }
 
         oscA.type = config.waveA;
@@ -1632,6 +1778,27 @@ class ScenePlayer {
     resetAudioFallback() {
         this.audioEndedSceneTime = null;
         this.audioEndedPerfTime = 0;
+    }
+
+    disableMasterAudio(reason = "audio_disabled") {
+        if (!this.scene.audio?.src || this.masterAudioDisabled) {
+            return;
+        }
+
+        const now = performance.now();
+        const sceneTime = elements.audio.currentTime || this.getSceneTime(now);
+        const nextSegmentElapsed = Math.max(0, Math.min(
+            this.currentSegment.durationSeconds,
+            sceneTime - this.currentSegment.timelineStart,
+        ));
+
+        this.masterAudioDisabled = true;
+        this.segmentElapsed = nextSegmentElapsed;
+        this.segmentStartedAt = this.playing ? now : 0;
+        this.resetAudioFallback();
+        elements.audio.pause();
+        this.recordProgress(sceneTime, now);
+        this.logEvent("audio_disabled", { reason, sceneTime });
     }
 
     primeProgressWatch(now = performance.now()) {
@@ -1830,6 +1997,8 @@ class ScenePlayer {
             return;
         }
 
+        const previousSegment = this.currentSegment;
+
         if (this.playing) {
             this.captureSegmentElapsed();
         }
@@ -1842,13 +2011,14 @@ class ScenePlayer {
         }
 
         const nextSegment = this.segments[nextIndex];
+        const crossfadeTransition = previousSegment?.type === "transition" && nextSegment?.type === "transition";
         const shouldAutoplay = autoplay && !nextSegment?.advance_on_space;
         this.playing = shouldAutoplay;
         this.currentSegmentIndex = nextIndex;
         this.segmentElapsed = 0;
         this.segmentStartedAt = shouldAutoplay ? performance.now() : 0;
         this.primeProgressWatch(this.segmentStartedAt || performance.now());
-        this.renderSegment();
+        this.renderSegment({ crossfadeTransition });
         this.updateStatus();
         await this.syncMedia(shouldAutoplay, { preserveAudio });
 
@@ -1857,30 +2027,42 @@ class ScenePlayer {
         }
     }
 
-    renderSegment() {
+    renderSegment({ crossfadeTransition = false } = {}) {
         const segment = this.currentSegment;
+        const keepCharacterFrame = Boolean(this.scene?.use_character_frame);
         this.activePhaseKey = "";
         this.activePhaseIndex = -1;
         this.activeSubtitleKey = "";
         this.fullscreenPanelState = null;
 
         elements.uiLayer.innerHTML = "";
-        elements.transitionLayer.innerHTML = "";
         elements.uiLayer.classList.remove("layer-visible");
-        elements.transitionLayer.classList.remove("layer-visible");
         elements.video.classList.remove("scene-video--hidden", "scene-video--reveal");
-        elements.playerRoot?.classList.remove("player-root--broadcast", "player-root--character-feed");
+
+        if (!(crossfadeTransition && segment.type === "transition")) {
+            elements.transitionLayer.innerHTML = "";
+            elements.transitionLayer.classList.remove("layer-visible");
+        }
+        elements.playerRoot?.classList.remove("player-root--character-feed");
+        if (!keepCharacterFrame) {
+            elements.playerRoot?.classList.remove("player-root--broadcast");
+        }
         if (!elements.playerRoot?.classList.contains("player-root--persistent-strip")) {
             elements.playerRoot?.classList.remove("player-root--subtitle-up");
         }
-        elements.broadcastOverlay?.classList.add("hidden");
-        this.updatePersistentElementsStrip(this.segmentElapsed);
+        if (!keepCharacterFrame) {
+            elements.broadcastOverlay?.classList.add("hidden");
+        } else {
+            elements.playerRoot?.classList.add("player-root--broadcast");
+            elements.broadcastOverlay?.classList.remove("hidden");
+        }
+        this.updatePersistentElementsStrip(this.segmentElapsed, this.getSceneTime());
 
         if (segment.type === "character") {
             elements.playerRoot?.classList.add("player-root--broadcast");
             elements.playerRoot?.classList.add("player-root--character-feed");
             elements.broadcastOverlay?.classList.remove("hidden");
-            applyBroadcastOverlay(segment);
+            applyBroadcastOverlay(this.scene, segment);
             void elements.video.offsetWidth;
             elements.video.classList.add("scene-video--reveal");
             return;
@@ -1903,7 +2085,25 @@ class ScenePlayer {
 
         if (segment.type === "transition") {
             elements.transitionLayer.classList.remove("hidden");
-            elements.transitionLayer.appendChild(TransitionScreen(segment));
+            const nextScreen = TransitionScreen(segment);
+            if (crossfadeTransition) {
+                const previousScreen = elements.transitionLayer.querySelector(".transition-screen");
+                if (previousScreen) {
+                    previousScreen.classList.add("transition-screen--crossfade-out");
+                }
+                nextScreen.classList.add("transition-screen--crossfade-in");
+                elements.transitionLayer.appendChild(nextScreen);
+                window.setTimeout(() => {
+                    if (previousScreen?.isConnected) {
+                        previousScreen.remove();
+                    }
+                }, 340);
+            } else {
+                elements.transitionLayer.appendChild(nextScreen);
+            }
+            if (segment.variant === "countdown") {
+                this.playUiSfx("countdown");
+            }
             requestAnimationFrame(() => elements.transitionLayer.classList.add("layer-visible"));
         }
     }
@@ -1931,7 +2131,7 @@ class ScenePlayer {
             ? this.getSceneTime()
             : segment.timelineStart + this.segmentElapsed;
 
-        if (this.scene.audio?.src && !preserveAudio) {
+        if (this.hasMasterAudio() && !preserveAudio) {
             this.resetAudioFallback();
             elements.audio.currentTime = sceneTime;
         }
@@ -1960,12 +2160,17 @@ class ScenePlayer {
             return;
         }
 
-        try {
-            if (this.scene.audio?.src && (!preserveAudio || elements.audio.paused)) {
+        if (this.hasMasterAudio() && (!preserveAudio || elements.audio.paused)) {
+            try {
                 await elements.audio.play();
                 this.logEvent("audio_play", { src: this.scene.audio.src, preserveAudio });
+            } catch (error) {
+                this.logEvent("audio_play_failed", { message: error?.message || String(error) });
+                this.disableMasterAudio("audio_play_failed");
             }
+        }
 
+        try {
             if (segment.type === "character") {
                 await elements.video.play();
                 this.logEvent("video_play", { src: segment.src });
@@ -2006,6 +2211,7 @@ class ScenePlayer {
         }
 
         this.updateSubtitleOverlay();
+        this.updatePersistentElementsStrip(elapsed, sceneTime);
 
         if (this.currentSegment.type === "fullscreen_ui") {
             const phaseKey = this.getPhaseKey(this.currentSegment, elapsed);
@@ -2013,7 +2219,6 @@ class ScenePlayer {
                 if (this.fullscreenPanelState) {
                     updateFullscreenPanel(this.fullscreenPanelState, this.segments, this.currentSegmentIndex, elapsed);
                 }
-                this.updatePersistentElementsStrip(elapsed);
                 this.activePhaseKey = phaseKey;
                 this.playPhaseSfx(this.currentSegment, elapsed);
             }
@@ -2088,6 +2293,7 @@ class ScenePlayer {
 
     onAudioError() {
         this.logEvent("audio_error", { src: this.scene.audio?.src || "" });
+        this.disableMasterAudio("audio_error");
         this.attemptRecovery("audio_error");
     }
 
@@ -2167,6 +2373,23 @@ document.addEventListener("keydown", async (event) => {
         event.preventDefault();
         await playerInstance.skipSegment();
     }
+});
+
+document.addEventListener("click", async (event) => {
+    if (!playerInstance) {
+        return;
+    }
+
+    if (event.button !== 0) {
+        return;
+    }
+
+    if (!playerInstance.currentSegment?.advance_on_space) {
+        return;
+    }
+
+    event.preventDefault();
+    await playerInstance.advanceSegment();
 });
 
 elements.bootOverlay.addEventListener("click", async () => {

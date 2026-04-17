@@ -1,0 +1,229 @@
+{
+  "scene_id": "scene_intro_musica",
+  "description": "Intro generada para scene_intro_musica con flujo Cero + objetivo + bloques visuales.",
+  "broadcast_title": "CÓDIGO SONORO",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_04.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0.0,
+      "end": 5.0,
+      "text": "Seguimos con la siguiente prueba, en la que vamos a evaluar vuestra percepción auditiva."
+    },
+    {
+      "start": 5.0,
+      "end": 8.0,
+      "text": "Vuestro objetivo es ordenar los fragmentos de una canción."
+    },
+    {
+      "start": 8.0,
+      "end": 13.0,
+      "text": "Para superar este nivel necesitaréis los tokens y los botones de los terminales."
+    },
+    {
+      "start": 13.0,
+      "end": 17.0,
+      "text": "Al empezar la fase escucharéis un trozo de una canción."
+    },
+    {
+      "start": 17.0,
+      "end": 20.0,
+      "text": "Después tendréis que reproducir ese mismo trozo de canción,"
+    },
+    {
+      "start": 20.0,
+      "end": 23.0,
+      "text": "pasando los tokens por los terminales."
+    },
+    {
+      "start": 23.0,
+      "end": 26.0,
+      "text": "Podréis escuchar los fragmentos las veces que necesitéis,"
+    },
+    {
+      "start": 26.0,
+      "end": 31.0,
+      "text": "y, cuando creáis que habéis encontrado la secuencia musical correcta, la tendréis que registrar."
+    },
+    {
+      "start": 31.0,
+      "end": 36.0,
+      "text": "Pulsando los botones de cualquier terminal podréis volver a escuchar la canción,"
+    },
+    {
+      "start": 36.0,
+      "end": 41.0,
+      "text": "registrar una secuencia de fragmentos, borrar los fragmentos que ya hayáis registrado;"
+    },
+    {
+      "start": 41.0,
+      "end": 46.0,
+      "text": "os dejaré la función de cada botón en la pantalla. Este nivel tiene dos fases,"
+    },
+    {
+      "start": 46.0,
+      "end": 52.0,
+      "text": "así que no hay tiempo que perder. Escuchad atentamente, porque la canción se va a reproducir inmediatamente."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
+      "duration": 4.12,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 12.999,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "Ordenar los fragmentos de la canción"
+          }
+        },
+        {
+          "at": 3.88,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 29.406306,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0.0,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              }
+            ]
+          }
+        },
+        {
+          "at": 10.18,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              }
+            ]
+          }
+        },
+        {
+          "at": 20.18,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        },
+        {
+          "at": 25.18,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_outro_close_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}

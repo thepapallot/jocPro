@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "template": "scenes/templates/intro/scene_intro_template.json",
+  "media_catalog": "scenes/catalog/media_catalog.json",
+  "default_output_root": "scenes/source/intropuzzles",
+  "entries": [
+    {
+      "output_scene_id": "scene_intro_simulacro_v2",
+      "legacy_scene_id": "scene_intro_simulacro",
+      "game_title": "Simulacro Inicial",
+      "headline": "SIMULACRO INICIAL",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "briefing",
+        "cierre_suave": "close"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_sumas_v2",
+      "legacy_scene_id": "scene_intro_sumas",
+      "game_title": "Cálculo Extremo",
+      "headline": "COMPLETAD LAS OPERACIONES",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "briefing",
+        "cierre_suave": "close"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_laberinto_v2",
+      "legacy_scene_id": "scene_intro_laberinto",
+      "game_title": "Núcleo del Laberinto",
+      "headline": "NÚCLEO DEL LABERINTO",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "briefing",
+        "cierre_suave": "warning"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_trivial_v2",
+      "legacy_scene_id": "scene_intro_trivial",
+      "game_title": "Mente Colmena",
+      "headline": "MENTE COLMENA",
+      "character_intents": {
+        "intro_estable": "briefing",
+        "bloque_estable": "briefing",
+        "cierre_suave": "close"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_musica_v2",
+      "legacy_scene_id": "scene_intro_musica",
+      "game_title": "Código Sonoro",
+      "headline": "CÓDIGO SONORO",
+      "character_intents": {
+        "intro_estable": "warning",
+        "bloque_estable": "briefing",
+        "cierre_suave": "close"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_cronometro_v2",
+      "legacy_scene_id": "scene_intro_cronometro",
+      "game_title": "Pulso de Tiempo",
+      "headline": "PULSO DE TIEMPO",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "briefing",
+        "cierre_suave": "warning"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_energia_v2",
+      "legacy_scene_id": "scene_intro_energia",
+      "game_title": "Carga Crítica",
+      "headline": "CARGA CRÍTICA",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "warning",
+        "cierre_suave": "warning"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_memory_v2",
+      "legacy_scene_id": "scene_intro_memory",
+      "game_title": "Memoria Fantasma",
+      "headline": "MEMORIA FANTASMA",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "warning",
+        "cierre_suave": "close"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_token_a_lloc_v2",
+      "legacy_scene_id": "scene_intro_token_a_lloc",
+      "game_title": "Arquitectos del Orden",
+      "headline": "ARQUITECTOS DEL ORDEN",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "warning",
+        "cierre_suave": "close"
+      }
+    },
+    {
+      "output_scene_id": "scene_intro_segments_v2",
+      "legacy_scene_id": "scene_intro_segments",
+      "game_title": "Patrón Maestro",
+      "headline": "PATRÓN MAESTRO",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "warning",
+        "cierre_suave": "close"
+      }
+    }
+  ],
+  "defaults": {
+    "sync_timing_with_legacy": true,
+    "auto_fullscreen_from_subtitles": false,
+    "use_between_brief": true,
+    "between_brief_path": "scenes/source/transicion/scene_between_puzzles/config.json",
+    "image_semantics_path": "scenes/catalog/image_semantics.json",
+    "lock_opening_character": true,
+    "lock_closing_character": false,
+    "character_intents": {
+      "intro_estable": "intro",
+      "bloque_estable": "briefing",
+      "cierre_suave": "close"
+    },
+    "intro_assets": [
+      {
+        "src": "/static/images/shared/gameplay/token_card.png",
+        "alt": "Token"
+      },
+      {
+        "src": "/static/images/shared/gameplay/terminal_box.png",
+        "alt": "Terminal"
+      }
+    ],
+    "warning_asset_pairs": [
+      [
+        {
+          "src": "/static/images/shared/warnings/operation_error.png",
+          "alt": "Error en operacion"
+        },
+        {
+          "src": "/static/images/shared/warnings/restart_button.png",
+          "alt": "Boton de reinicio"
+        }
+      ],
+      [
+        {
+          "src": "/static/images/shared/warnings/repeated_operation.png",
+          "alt": "Operacion repetida"
+        },
+        {
+          "src": "/static/images/shared/warnings/restart_button.png",
+          "alt": "Boton de reinicio"
+        }
+      ],
+      [
+        {
+          "src": "/static/images/shared/warnings/timeout.png",
+          "alt": "Tiempo agotado"
+        },
+        {
+          "src": "/static/images/shared/warnings/restart_button.png",
+          "alt": "Boton de reinicio"
+        }
+      ]
+    ]
+  }
+}

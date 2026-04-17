@@ -1,0 +1,565 @@
+{
+  "repo_root": "/home/agusti/Documentos/repositori/piramide/jocPro",
+  "videos_total": 71,
+  "videos_by_bucket": {
+    "characters": 21,
+    "old_videos": 15,
+    "recursos_varios": 14,
+    "ExplicacionsJocs": 10,
+    "JocsSuperats": 10,
+    "Video_inicial.mp4": 1
+  },
+  "videos_by_subfolder": {
+    "old_videos/IntrosJocs": 10,
+    "old_videos/final": 2,
+    "old_videos/test_assets": 2,
+    "ExplicacionsJocs/explicacioPuzzle1.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle10.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle2.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle3.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle4.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle5.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle6.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle7.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle8.mp4": 1,
+    "ExplicacionsJocs/explicacioPuzzle9.mp4": 1,
+    "JocsSuperats/JocSuperat1.mp4": 1,
+    "JocsSuperats/JocSuperat10.mp4": 1,
+    "JocsSuperats/JocSuperat2.mp4": 1,
+    "JocsSuperats/JocSuperat3.mp4": 1,
+    "JocsSuperats/JocSuperat4.mp4": 1,
+    "JocsSuperats/JocSuperat5.mp4": 1,
+    "JocsSuperats/JocSuperat6.mp4": 1,
+    "JocsSuperats/JocSuperat7.mp4": 1,
+    "JocsSuperats/JocSuperat8.mp4": 1,
+    "JocsSuperats/JocSuperat9.mp4": 1,
+    "characters/cero_bridge_neutral_a.mp4": 1,
+    "characters/cero_briefing_long_a.mp4": 1,
+    "characters/cero_briefing_short_a.mp4": 1,
+    "characters/cero_briefing_short_alt.mp4": 1,
+    "characters/cero_briefing_short_tilt.mp4": 1,
+    "characters/cero_close_short_a.mp4": 1,
+    "characters/cero_emphasis_forward.mp4": 1,
+    "characters/cero_emphasis_long_a.mp4": 1,
+    "characters/cero_explanation_long_a.mp4": 1,
+    "characters/cero_explanation_short_a.mp4": 1,
+    "characters/cero_gesture_medium_a.mp4": 1,
+    "characters/cero_intro_long_a.mp4": 1,
+    "characters/cero_intro_long_b.mp4": 1,
+    "characters/cero_intro_neutral_b.mp4": 1,
+    "characters/cero_neutral_close_a.mp4": 1,
+    "characters/cero_neutral_intro_a.mp4": 1,
+    "characters/cero_outro_close_a.mp4": 1,
+    "characters/cero_warning_gesture.mp4": 1,
+    "characters/cero_warning_long_a.mp4": 1,
+    "characters/cero_warning_notice_a.mp4": 1,
+    "characters/cero_warning_stable_a.mp4": 1,
+    "old_videos/legacy_intro": 1,
+    "recursos_varios/city_wireframe.mp4": 1,
+    "recursos_varios/gm_abstract_transition_a.mp4": 1,
+    "recursos_varios/gm_network_grid_a.mp4": 1,
+    "recursos_varios/gm_network_patterns.mp4": 1,
+    "recursos_varios/gm_pyramid_construction_a.mp4": 1,
+    "recursos_varios/gm_pyramid_construction_b.mp4": 1,
+    "recursos_varios/gm_pyramid_establishing_a.mp4": 1,
+    "recursos_varios/gm_pyramid_legacy_a.mp4": 1,
+    "recursos_varios/gm_pyramid_precision_a.mp4": 1,
+    "recursos_varios/gm_pyramid_wide_a.mp4": 1,
+    "recursos_varios/gm_selection_group_scan.mp4": 1,
+    "recursos_varios/network_core.mp4": 1,
+    "recursos_varios/pyramid_bricks.mp4": 1,
+    "recursos_varios/pyramid_outline.mp4": 1
+  },
+  "top_referenced_video_urls": [
+    {
+      "url": "/static/videos/characters/cero_neutral_close_a.mp4",
+      "count": 16
+    },
+    {
+      "url": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "count": 15
+    },
+    {
+      "url": "/static/videos/characters/cero_intro_long_b.mp4",
+      "count": 15
+    },
+    {
+      "url": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "count": 5
+    },
+    {
+      "url": "/static/videos/characters/cero_outro_close_a.mp4",
+      "count": 5
+    },
+    {
+      "url": "/static/videos/characters/cero_intro_neutral_b.mp4",
+      "count": 4
+    },
+    {
+      "url": "/static/videos/characters/cero_explanation_short_a.mp4",
+      "count": 4
+    },
+    {
+      "url": "/static/videos/characters/cero_briefing_long_a.mp4",
+      "count": 4
+    },
+    {
+      "url": "/static/videos/characters/cero_warning_notice_a.mp4",
+      "count": 3
+    },
+    {
+      "url": "/static/videos/characters/cero_warning_stable_a.mp4",
+      "count": 3
+    },
+    {
+      "url": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/characters/cero_close_short_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/characters/cero_bridge_neutral_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/characters/cero_warning_long_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/characters/cero_emphasis_long_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/characters/cero_intro_long_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/characters/cero_explanation_long_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_selection_group_scan.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_abstract_transition_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_pyramid_wide_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_network_grid_a.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/recursos_varios/city_wireframe.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/recursos_varios/pyramid_bricks.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/recursos_varios/pyramid_outline.mp4",
+      "count": 2
+    },
+    {
+      "url": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/characters/cero_emphasis_forward.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/characters/cero_warning_gesture.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/characters/cero_gesture_medium_a.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_network_patterns.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_pyramid_establishing_a.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_pyramid_legacy_a.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_pyramid_precision_a.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_pyramid_construction_a.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/recursos_varios/gm_pyramid_construction_b.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/recursos_varios/network_core.mp4",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/characters/archive/legacy/",
+      "count": 1
+    },
+    {
+      "url": "/static/videos/Video_inicial.mp4",
+      "count": 1
+    }
+  ],
+  "dynamic_or_prefix_references": [
+    {
+      "url": "/static/videos/characters/archive/legacy/",
+      "count": 1
+    }
+  ],
+  "missing_video_references": [],
+  "references_by_file": [
+    {
+      "file": "player/README.md",
+      "references": [
+        "/static/videos/characters/cero_neutral_intro_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/catalog/media_catalog.json",
+      "references": [
+        "/static/videos/characters/cero_briefing_short_tilt.mp4",
+        "/static/videos/characters/cero_briefing_short_alt.mp4",
+        "/static/videos/characters/cero_emphasis_forward.mp4",
+        "/static/videos/characters/cero_warning_gesture.mp4",
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_neutral_intro_a.mp4",
+        "/static/videos/characters/cero_close_short_a.mp4",
+        "/static/videos/characters/cero_bridge_neutral_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_neutral_b.mp4",
+        "/static/videos/characters/cero_warning_notice_a.mp4",
+        "/static/videos/characters/cero_gesture_medium_a.mp4",
+        "/static/videos/characters/cero_warning_long_a.mp4",
+        "/static/videos/characters/cero_explanation_short_a.mp4",
+        "/static/videos/characters/cero_outro_close_a.mp4",
+        "/static/videos/characters/cero_emphasis_long_a.mp4",
+        "/static/videos/characters/cero_intro_long_a.mp4",
+        "/static/videos/characters/cero_warning_stable_a.mp4",
+        "/static/videos/characters/cero_explanation_long_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4",
+        "/static/videos/characters/cero_briefing_long_a.mp4",
+        "/static/videos/recursos_varios/gm_selection_group_scan.mp4",
+        "/static/videos/recursos_varios/gm_network_patterns.mp4",
+        "/static/videos/recursos_varios/gm_pyramid_establishing_a.mp4",
+        "/static/videos/recursos_varios/gm_abstract_transition_a.mp4",
+        "/static/videos/recursos_varios/gm_pyramid_legacy_a.mp4",
+        "/static/videos/recursos_varios/gm_pyramid_precision_a.mp4",
+        "/static/videos/recursos_varios/gm_pyramid_construction_a.mp4",
+        "/static/videos/recursos_varios/gm_pyramid_construction_b.mp4",
+        "/static/videos/recursos_varios/gm_pyramid_wide_a.mp4",
+        "/static/videos/recursos_varios/gm_network_grid_a.mp4",
+        "/static/videos/recursos_varios/city_wireframe.mp4",
+        "/static/videos/recursos_varios/network_core.mp4",
+        "/static/videos/recursos_varios/pyramid_bricks.mp4",
+        "/static/videos/recursos_varios/pyramid_outline.mp4",
+        "/static/videos/characters/archive/legacy/"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_cronometro_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_energia_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_laberinto_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_memory_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_musica_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_segments_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_sumas_cover_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_sumas_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_token_a_lloc_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_trivial_v2/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/between/scene_between_puzzles/config.json",
+      "references": [
+        "/static/videos/Video_inicial.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_cronometro/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_intro_a.mp4",
+        "/static/videos/characters/cero_explanation_short_a.mp4",
+        "/static/videos/characters/cero_warning_notice_a.mp4",
+        "/static/videos/characters/cero_outro_close_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_energia/config.json",
+      "references": [
+        "/static/videos/characters/cero_intro_long_b.mp4",
+        "/static/videos/characters/cero_emphasis_long_a.mp4",
+        "/static/videos/characters/cero_close_short_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_game/config.json",
+      "references": [
+        "/static/videos/characters/cero_briefing_long_a.mp4",
+        "/static/videos/recursos_varios/city_wireframe.mp4",
+        "/static/videos/recursos_varios/gm_abstract_transition_a.mp4",
+        "/static/videos/recursos_varios/gm_network_grid_a.mp4",
+        "/static/videos/recursos_varios/gm_pyramid_wide_a.mp4",
+        "/static/videos/recursos_varios/gm_selection_group_scan.mp4",
+        "/static/videos/characters/cero_briefing_short_alt.mp4",
+        "/static/videos/characters/cero_briefing_long_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_laberinto/config.json",
+      "references": [
+        "/static/videos/characters/cero_intro_neutral_b.mp4",
+        "/static/videos/characters/cero_briefing_long_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_laberinto_cover/config.json",
+      "references": [
+        "/static/videos/characters/cero_intro_neutral_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_memory/config.json",
+      "references": [
+        "/static/videos/characters/cero_intro_neutral_b.mp4",
+        "/static/videos/characters/cero_warning_long_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_musica/config.json",
+      "references": [
+        "/static/videos/characters/cero_warning_stable_a.mp4",
+        "/static/videos/characters/cero_explanation_long_a.mp4",
+        "/static/videos/characters/cero_bridge_neutral_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_segments/config.json",
+      "references": [
+        "/static/videos/characters/cero_intro_long_a.mp4",
+        "/static/videos/characters/cero_warning_stable_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_sumas/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_sumas_cover/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_token_a_lloc/config.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_intro_a.mp4",
+        "/static/videos/characters/cero_warning_notice_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_trivial/config.json",
+      "references": [
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_neutral_close_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/outro/scene_outro_game/config.json",
+      "references": [
+        "/static/videos/characters/cero_outro_close_a.mp4",
+        "/static/videos/recursos_varios/pyramid_bricks.mp4",
+        "/static/videos/characters/cero_outro_close_a.mp4",
+        "/static/videos/recursos_varios/pyramid_outline.mp4",
+        "/static/videos/characters/cero_outro_close_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/source/outro/scene_video_final/config.json",
+      "references": [
+        "/static/videos/characters/cero_explanation_short_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/templates/intro/puzzle_intro_template.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_intro_a.mp4",
+        "/static/videos/characters/cero_explanation_short_a.mp4",
+        "/static/videos/characters/cero_neutral_close_a.mp4"
+      ]
+    },
+    {
+      "file": "scenes/templates/intro/scene_intro_template.json",
+      "references": [
+        "/static/videos/characters/cero_neutral_close_a.mp4",
+        "/static/videos/characters/cero_briefing_short_a.mp4",
+        "/static/videos/characters/cero_intro_long_b.mp4"
+      ]
+    }
+  ],
+  "all_video_files": [
+    "static/videos/ExplicacionsJocs/explicacioPuzzle1.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle10.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle2.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle3.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle4.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle5.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle6.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle7.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle8.mp4",
+    "static/videos/ExplicacionsJocs/explicacioPuzzle9.mp4",
+    "static/videos/JocsSuperats/JocSuperat1.mp4",
+    "static/videos/JocsSuperats/JocSuperat10.mp4",
+    "static/videos/JocsSuperats/JocSuperat2.mp4",
+    "static/videos/JocsSuperats/JocSuperat3.mp4",
+    "static/videos/JocsSuperats/JocSuperat4.mp4",
+    "static/videos/JocsSuperats/JocSuperat5.mp4",
+    "static/videos/JocsSuperats/JocSuperat6.mp4",
+    "static/videos/JocsSuperats/JocSuperat7.mp4",
+    "static/videos/JocsSuperats/JocSuperat8.mp4",
+    "static/videos/JocsSuperats/JocSuperat9.mp4",
+    "static/videos/Video_inicial.mp4",
+    "static/videos/characters/cero_bridge_neutral_a.mp4",
+    "static/videos/characters/cero_briefing_long_a.mp4",
+    "static/videos/characters/cero_briefing_short_a.mp4",
+    "static/videos/characters/cero_briefing_short_alt.mp4",
+    "static/videos/characters/cero_briefing_short_tilt.mp4",
+    "static/videos/characters/cero_close_short_a.mp4",
+    "static/videos/characters/cero_emphasis_forward.mp4",
+    "static/videos/characters/cero_emphasis_long_a.mp4",
+    "static/videos/characters/cero_explanation_long_a.mp4",
+    "static/videos/characters/cero_explanation_short_a.mp4",
+    "static/videos/characters/cero_gesture_medium_a.mp4",
+    "static/videos/characters/cero_intro_long_a.mp4",
+    "static/videos/characters/cero_intro_long_b.mp4",
+    "static/videos/characters/cero_intro_neutral_b.mp4",
+    "static/videos/characters/cero_neutral_close_a.mp4",
+    "static/videos/characters/cero_neutral_intro_a.mp4",
+    "static/videos/characters/cero_outro_close_a.mp4",
+    "static/videos/characters/cero_warning_gesture.mp4",
+    "static/videos/characters/cero_warning_long_a.mp4",
+    "static/videos/characters/cero_warning_notice_a.mp4",
+    "static/videos/characters/cero_warning_stable_a.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc1.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc10.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc2.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc3.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc4.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc5.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc6.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc7.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc8.mp4",
+    "static/videos/old_videos/IntrosJocs/IntroJoc9.mp4",
+    "static/videos/old_videos/final/end.mp4",
+    "static/videos/old_videos/final/joc_final.mp4",
+    "static/videos/old_videos/legacy_intro/IntroESP.mp4",
+    "static/videos/old_videos/test_assets/videotestcaixa.gif",
+    "static/videos/old_videos/test_assets/videotestcaixa.mp4",
+    "static/videos/recursos_varios/city_wireframe.mp4",
+    "static/videos/recursos_varios/gm_abstract_transition_a.mp4",
+    "static/videos/recursos_varios/gm_network_grid_a.mp4",
+    "static/videos/recursos_varios/gm_network_patterns.mp4",
+    "static/videos/recursos_varios/gm_pyramid_construction_a.mp4",
+    "static/videos/recursos_varios/gm_pyramid_construction_b.mp4",
+    "static/videos/recursos_varios/gm_pyramid_establishing_a.mp4",
+    "static/videos/recursos_varios/gm_pyramid_legacy_a.mp4",
+    "static/videos/recursos_varios/gm_pyramid_precision_a.mp4",
+    "static/videos/recursos_varios/gm_pyramid_wide_a.mp4",
+    "static/videos/recursos_varios/gm_selection_group_scan.mp4",
+    "static/videos/recursos_varios/network_core.mp4",
+    "static/videos/recursos_varios/pyramid_bricks.mp4",
+    "static/videos/recursos_varios/pyramid_outline.mp4"
+  ]
+}

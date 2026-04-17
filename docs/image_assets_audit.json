@@ -1,0 +1,678 @@
+{
+  "repo_root": "/home/agusti/Documentos/repositori/piramide/jocPro",
+  "images_total": 114,
+  "images_by_bucket": {
+    "old_pics": 52,
+    "shared": 22,
+    "puzzleFinal": 16,
+    "puzzle2": 12,
+    "puzzle8": 10,
+    "piramidetrans.png": 1,
+    "puzzle3": 1
+  },
+  "images_by_subfolder": {
+    "old_pics/puzzle7": 22,
+    "puzzleFinal/imatges": 16,
+    "shared/terminal_3d": 15,
+    "puzzle2/symbols": 10,
+    "old_pics/puzzle2": 6,
+    "old_pics/puzzle3": 6,
+    "old_pics/puzzle4": 5,
+    "old_pics/puzzle9": 5,
+    "shared/warnings": 4,
+    "old_pics/puzzle1": 3,
+    "old_pics/puzzleFinal": 3,
+    "old_pics/puzzle6": 2,
+    "shared/gameplay": 2,
+    "puzzle2/Laberint.png": 1,
+    "puzzle2/LaberintVermell.png": 1,
+    "puzzle3/intro": 1,
+    "puzzle8/alpha.svg": 1,
+    "puzzle8/beta.svg": 1,
+    "puzzle8/delta.svg": 1,
+    "puzzle8/epsilon.svg": 1,
+    "puzzle8/gamma.svg": 1,
+    "puzzle8/lambda.svg": 1,
+    "puzzle8/mu.svg": 1,
+    "puzzle8/omega.svg": 1,
+    "puzzle8/pi.svg": 1,
+    "puzzle8/sigma.svg": 1,
+    "shared/branding": 1
+  },
+  "top_referenced_image_urls": [
+    {
+      "url": "/static/images/shared/gameplay/token_card.png",
+      "count": 49
+    },
+    {
+      "url": "/static/images/shared/warnings/restart_button.png",
+      "count": 38
+    },
+    {
+      "url": "/static/images/shared/gameplay/terminal_box.png",
+      "count": 24
+    },
+    {
+      "url": "/static/images/shared/warnings/operation_error.png",
+      "count": 13
+    },
+    {
+      "url": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+      "count": 13
+    },
+    {
+      "url": "/static/images/shared/warnings/repeated_operation.png",
+      "count": 12
+    },
+    {
+      "url": "/static/images/shared/warnings/timeout.png",
+      "count": 12
+    },
+    {
+      "url": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+      "count": 6
+    },
+    {
+      "url": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+      "count": 4
+    },
+    {
+      "url": "/static/images/puzzle2/symbols/symbol_6.png",
+      "count": 4
+    },
+    {
+      "url": "/static/images/puzzle8/alpha.svg",
+      "count": 4
+    },
+    {
+      "url": "/static/images/shared/branding/logo_adn.png",
+      "count": 3
+    },
+    {
+      "url": "/static/images/puzzle2/Laberint.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/puzzle8/${safeSymbol}.svg",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/warnings/",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/${item.symbol}.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle3/intro/question_board.jpg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle2/LaberintVermell.png",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle2/symbols/symbol_9.png",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/beta.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/delta.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/epsilon.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/gamma.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/lambda.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/mu.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/omega.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/pi.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/sigma.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle2/symbols/symbol_${index}.png",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzleFinal/imatges/fase${streakId}_${giffIndex}.gif",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzleFinal/imatges/fase4_1.gif",
+      "count": 1
+    }
+  ],
+  "dynamic_or_prefix_references": [
+    {
+      "url": "/static/images/puzzle8/${safeSymbol}.svg",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/warnings/",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle8/${item.symbol}.svg",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle2/symbols/symbol_${index}.png",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzleFinal/imatges/fase${streakId}_${giffIndex}.gif",
+      "count": 1
+    }
+  ],
+  "missing_image_references": [],
+  "references_by_file": [
+    {
+      "file": "player/README.md",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png"
+      ]
+    },
+    {
+      "file": "player/main.js",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/puzzle8/${item.symbol}.svg",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png"
+      ]
+    },
+    {
+      "file": "player/styles.css",
+      "references": [
+        "/static/images/shared/warnings/"
+      ]
+    },
+    {
+      "file": "scenes/catalog/intro_catalog.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_cronometro_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_energia_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_laberinto_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_memory_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_musica_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_segments_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_sumas_cover_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_sumas_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_token_a_lloc_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/generated/intro/scene_intro_trivial_v2/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_cronometro/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_energia/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_game/config.json",
+      "references": [
+        "/static/images/shared/branding/logo_adn.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_laberinto/config.json",
+      "references": [
+        "/static/images/puzzle2/symbols/symbol_6.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/puzzle2/Laberint.png",
+        "/static/images/puzzle2/symbols/symbol_6.png",
+        "/static/images/shared/gameplay/token_card.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_laberinto_cover/config.json",
+      "references": [
+        "/static/images/puzzle2/symbols/symbol_6.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/puzzle2/Laberint.png",
+        "/static/images/puzzle2/LaberintVermell.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/puzzle2/symbols/symbol_6.png",
+        "/static/images/puzzle2/symbols/symbol_9.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_memory/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_musica/config.json",
+      "references": [
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/gameplay/token_card.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_segments/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_sumas/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_sumas_cover/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/restart_button.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_token_a_lloc/config.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intro/scene_intro_trivial/config.json",
+      "references": [
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+        "/static/images/puzzle3/intro/question_board.jpg",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png"
+      ]
+    },
+    {
+      "file": "scenes/source/outro/scene_outro_game/config.json",
+      "references": [
+        "/static/images/shared/branding/logo_adn.png",
+        "/static/images/shared/branding/logo_adn.png"
+      ]
+    },
+    {
+      "file": "scenes/source/outro/scene_video_final/config.json",
+      "references": [
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png"
+      ]
+    },
+    {
+      "file": "scenes/templates/intro/puzzle_intro_template.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png"
+      ]
+    },
+    {
+      "file": "static/css/puzzle8.css",
+      "references": [
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/puzzle8/beta.svg",
+        "/static/images/puzzle8/delta.svg",
+        "/static/images/puzzle8/epsilon.svg",
+        "/static/images/puzzle8/gamma.svg",
+        "/static/images/puzzle8/lambda.svg",
+        "/static/images/puzzle8/mu.svg",
+        "/static/images/puzzle8/omega.svg",
+        "/static/images/puzzle8/pi.svg",
+        "/static/images/puzzle8/sigma.svg"
+      ]
+    },
+    {
+      "file": "static/js/puzzleFinal.js",
+      "references": [
+        "/static/images/puzzleFinal/imatges/fase${streakId}_${giffIndex}.gif",
+        "/static/images/puzzleFinal/imatges/fase4_1.gif"
+      ]
+    },
+    {
+      "file": "static/js/test.js",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/puzzle2/symbols/symbol_${index}.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/puzzle8/${safeSymbol}.svg",
+        "/static/images/puzzle8/${safeSymbol}.svg"
+      ]
+    }
+  ],
+  "all_image_files": [
+    "static/images/old_pics/puzzle1/P1fons.png",
+    "static/images/old_pics/puzzle1/caixaold.png",
+    "static/images/old_pics/puzzle1/tarjetaold.png",
+    "static/images/old_pics/puzzle2/P2fons.png",
+    "static/images/old_pics/puzzle2/intro/element_grid.png",
+    "static/images/old_pics/puzzle2/intro/element_token.png",
+    "static/images/old_pics/puzzle2/intro/maze_focus.png",
+    "static/images/old_pics/puzzle2/xxxLaberint.png",
+    "static/images/old_pics/puzzle2/xxxLaberintVermell.png",
+    "static/images/old_pics/puzzle3/intro/element_buttons.png",
+    "static/images/old_pics/puzzle3/intro/element_buttons_v2.png",
+    "static/images/old_pics/puzzle3/intro/element_numbers.png",
+    "static/images/old_pics/puzzle3/intro/element_numbers_v2.png",
+    "static/images/old_pics/puzzle3/intro/elements_panel.jpg",
+    "static/images/old_pics/puzzle3/intro/elements_panel.png",
+    "static/images/old_pics/puzzle4/P4fons.png",
+    "static/images/old_pics/puzzle4/intro/button_blue.png",
+    "static/images/old_pics/puzzle4/intro/button_green.png",
+    "static/images/old_pics/puzzle4/intro/button_red.png",
+    "static/images/old_pics/puzzle4/intro/button_white.png",
+    "static/images/old_pics/puzzle6/P6fons.png",
+    "static/images/old_pics/puzzle6/intro/token_color_map.png",
+    "static/images/old_pics/puzzle7/c0.png",
+    "static/images/old_pics/puzzle7/c0ok.png",
+    "static/images/old_pics/puzzle7/c1.png",
+    "static/images/old_pics/puzzle7/c1ok.png",
+    "static/images/old_pics/puzzle7/c2.png",
+    "static/images/old_pics/puzzle7/c2ok.png",
+    "static/images/old_pics/puzzle7/c3.png",
+    "static/images/old_pics/puzzle7/c3ok.png",
+    "static/images/old_pics/puzzle7/c4.png",
+    "static/images/old_pics/puzzle7/c4ok.png",
+    "static/images/old_pics/puzzle7/c5.png",
+    "static/images/old_pics/puzzle7/c5ok.png",
+    "static/images/old_pics/puzzle7/c6.png",
+    "static/images/old_pics/puzzle7/c6ok.png",
+    "static/images/old_pics/puzzle7/c7.png",
+    "static/images/old_pics/puzzle7/c7ok.png",
+    "static/images/old_pics/puzzle7/c8.png",
+    "static/images/old_pics/puzzle7/c8ok.png",
+    "static/images/old_pics/puzzle7/c9.png",
+    "static/images/old_pics/puzzle7/c9ok.png",
+    "static/images/old_pics/puzzle7/imatges caixes 3d.png",
+    "static/images/old_pics/puzzle7/ok.png",
+    "static/images/old_pics/puzzle9/P9fons.png",
+    "static/images/old_pics/puzzle9/good.png",
+    "static/images/old_pics/puzzle9/half.png",
+    "static/images/old_pics/puzzle9/start.png",
+    "static/images/old_pics/puzzle9/wrong.png",
+    "static/images/old_pics/puzzleFinal/good.png",
+    "static/images/old_pics/puzzleFinal/wait.png",
+    "static/images/old_pics/puzzleFinal/wrong.png",
+    "static/images/piramidetrans.png",
+    "static/images/puzzle2/Laberint.png",
+    "static/images/puzzle2/LaberintVermell.png",
+    "static/images/puzzle2/symbols/symbol_0.png",
+    "static/images/puzzle2/symbols/symbol_1.png",
+    "static/images/puzzle2/symbols/symbol_2.png",
+    "static/images/puzzle2/symbols/symbol_3.png",
+    "static/images/puzzle2/symbols/symbol_4.png",
+    "static/images/puzzle2/symbols/symbol_5.png",
+    "static/images/puzzle2/symbols/symbol_6.png",
+    "static/images/puzzle2/symbols/symbol_7.png",
+    "static/images/puzzle2/symbols/symbol_8.png",
+    "static/images/puzzle2/symbols/symbol_9.png",
+    "static/images/puzzle3/intro/question_board.jpg",
+    "static/images/puzzle8/alpha.svg",
+    "static/images/puzzle8/beta.svg",
+    "static/images/puzzle8/delta.svg",
+    "static/images/puzzle8/epsilon.svg",
+    "static/images/puzzle8/gamma.svg",
+    "static/images/puzzle8/lambda.svg",
+    "static/images/puzzle8/mu.svg",
+    "static/images/puzzle8/omega.svg",
+    "static/images/puzzle8/pi.svg",
+    "static/images/puzzle8/sigma.svg",
+    "static/images/puzzleFinal/imatges/fase1_1.gif",
+    "static/images/puzzleFinal/imatges/fase1_2.gif",
+    "static/images/puzzleFinal/imatges/fase1_3.gif",
+    "static/images/puzzleFinal/imatges/fase1_4.gif",
+    "static/images/puzzleFinal/imatges/fase1_5.gif",
+    "static/images/puzzleFinal/imatges/fase2_1.gif",
+    "static/images/puzzleFinal/imatges/fase2_2.gif",
+    "static/images/puzzleFinal/imatges/fase2_3.gif",
+    "static/images/puzzleFinal/imatges/fase2_4.gif",
+    "static/images/puzzleFinal/imatges/fase2_5.gif",
+    "static/images/puzzleFinal/imatges/fase3_1.gif",
+    "static/images/puzzleFinal/imatges/fase3_2.gif",
+    "static/images/puzzleFinal/imatges/fase3_3.gif",
+    "static/images/puzzleFinal/imatges/fase3_4.gif",
+    "static/images/puzzleFinal/imatges/fase3_5.gif",
+    "static/images/puzzleFinal/imatges/fase4_1.gif",
+    "static/images/shared/branding/logo_adn.png",
+    "static/images/shared/gameplay/terminal_box.png",
+    "static/images/shared/gameplay/token_card.png",
+    "static/images/shared/terminal_3d/buttons_panel_front.png",
+    "static/images/shared/terminal_3d/buttons_panel_perspective.png",
+    "static/images/shared/terminal_3d/display_plate_blank_dark.png",
+    "static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+    "static/images/shared/terminal_3d/scanner_bar_off.png",
+    "static/images/shared/terminal_3d/scanner_bar_on.png",
+    "static/images/shared/terminal_3d/scanner_bar_perspective.png",
+    "static/images/shared/terminal_3d/symbol_plate_alpha.png",
+    "static/images/shared/terminal_3d/symbol_plate_checkerboard.png",
+    "static/images/shared/terminal_3d/symbol_plate_o.png",
+    "static/images/shared/terminal_3d/symbol_plate_o_white.png",
+    "static/images/shared/terminal_3d/terminal_box_buttons_numbers_front.png",
+    "static/images/shared/terminal_3d/terminal_box_perspective_hero_white.png",
+    "static/images/shared/terminal_3d/token_pyramid_base_angled_14.png",
+    "static/images/shared/terminal_3d/token_square_plate_angled_14.png",
+    "static/images/shared/warnings/operation_error.png",
+    "static/images/shared/warnings/repeated_operation.png",
+    "static/images/shared/warnings/restart_button.png",
+    "static/images/shared/warnings/timeout.png"
+  ]
+}

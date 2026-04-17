@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:04,600
+Esta prueba es un simulacro inicial para familiarizaros con el flujo del juego.
+
+2
+00:00:04,600 --> 00:00:08,600
+El objetivo es completar tareas básicas usando tokens y terminales.
+
+3
+00:00:08,600 --> 00:00:11,600
+Aquí importa más la precisión que la velocidad.
+
+4
+00:00:11,600 --> 00:00:15,600
+La dinámica será individual: pasa una persona cada vez.
+
+5
+00:00:15,600 --> 00:00:18,600
+Cada jugador tendrá una tarea única que completar.
+
+6
+00:00:18,600 --> 00:00:22,600
+El resto del equipo observa, coordina y valida el paso.
+
+7
+00:00:22,600 --> 00:00:26,600
+Leed la instrucción antes de actuar en el terminal.
+
+8
+00:00:26,600 --> 00:00:29,800
+Confirmad el resultado antes de cambiar de jugador.
+
+9
+00:00:29,800 --> 00:00:32,400
+Usad los tokens solo cuando corresponda y mantened la coordinación.

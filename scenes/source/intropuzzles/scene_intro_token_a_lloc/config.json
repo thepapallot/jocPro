@@ -1,0 +1,174 @@
+{
+  "scene_id": "scene_intro_token_a_lloc",
+  "description": "Intro generada para scene_intro_token_a_lloc con flujo Cero + objetivo + bloques visuales.",
+  "broadcast_title": "ARQUITECTOS DEL ORDEN",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_09.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0.0,
+      "end": 4.919,
+      "text": "Atención. En este nivel evaluaremos vuestra capacidad de razonamiento."
+    },
+    {
+      "start": 4.919,
+      "end": 10.099,
+      "text": "El objetivo de este nivel será colocar correctamente los diez tokens en los diez terminales."
+    },
+    {
+      "start": 10.099,
+      "end": 14.4,
+      "text": "Para hacerlo necesitaréis los tokens, los símbolos de los terminales y puede que"
+    },
+    {
+      "start": 14.4,
+      "end": 19.48,
+      "text": "algún otro elemento. En la pantalla veréis unas afirmaciones sobre la posición de los tokens,"
+    },
+    {
+      "start": 19.48,
+      "end": 24.519,
+      "text": "los terminales y sus características. Con esta información tendréis que colocar los tokens de"
+    },
+    {
+      "start": 24.519,
+      "end": 30.3,
+      "text": "forma que se cumplan todas las afirmaciones de la pantalla. Así de sencillo. Aunque os habéis"
+    },
+    {
+      "start": 30.3,
+      "end": 34.719,
+      "text": "confiado, yo de vosotros pensaría bien dónde va cada token. Porque aunque los tengáis..."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
+      "duration": 4.12,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 12.999,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "Colocar los diez tokens correctamente"
+          }
+        },
+        {
+          "at": 2.4,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_warning_gesture.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 14.656306,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0.0,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 9.48,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1"
+    }
+  ]
+}
