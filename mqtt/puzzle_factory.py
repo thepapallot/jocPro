@@ -9,7 +9,8 @@ from .puzzles.puzzle8 import Puzzle8
 from .puzzles.puzzle9 import Puzzle9
 from .puzzles.puzzle10 import Puzzle10
 from .puzzles.puzzle11 import Puzzle11
-from .puzzles.puzzleFinal import PuzzleFinal
+from .puzzles.puzzle12 import Puzzle12
+from config import PUZZLE_FINAL, PUZZLE_TUTORIAL
 
 
 PUZZLE_CLASSES = {
@@ -23,17 +24,20 @@ PUZZLE_CLASSES = {
     8: Puzzle8,
     9: Puzzle9,
     10: Puzzle10,
-    11: Puzzle11
+    11: Puzzle11,
+    12: Puzzle12
 }
 
 def create_puzzles(mqtt_client, puzzle_order):
     """Create and register puzzles based on PUZZLE_ORDER"""
     puzzles = []
-    for puzzle_id in puzzle_order:
+    registered_ids = []
+    for puzzle_id in list(puzzle_order) + [PUZZLE_TUTORIAL, PUZZLE_FINAL]:
+        if puzzle_id in registered_ids:
+            continue
+        registered_ids.append(puzzle_id)
         if puzzle_id in PUZZLE_CLASSES:
             puzzle = PUZZLE_CLASSES[puzzle_id](mqtt_client)
             mqtt_client.register_puzzle(puzzle)
             puzzles.append(puzzle)
-    mqtt_client.register_puzzle(PuzzleFinal(mqtt_client))  # Register final puzzle with ID -1
-    puzzles.append(PuzzleFinal)
     return puzzles

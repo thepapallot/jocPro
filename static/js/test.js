@@ -428,29 +428,22 @@
       route: "/puzzle/final",
       startRoute: "/start_puzzle_final",
       restartRoute: "/start_puzzle_final",
-      help: "Formato MQTT: P-1,box_id,buttons_string. buttons_string es la secuencia detectada por el terminal.",
+      help: "Formato MQTT: P6,boxNumber. Usa las rutas de compatibilidad del final, pero el payload real es el de puzzle 6.",
       fields: [
-        { id: "box", label: "Terminal", type: "number", min: 0, max: 9, value: 0 },
-        { id: "buttons", label: "Botones", type: "text", value: "2413", fullWidth: true }
+        { id: "box", label: "Terminal", type: "number", min: 0, max: 9, value: 4 }
       ],
       build(values) {
-        return `P-1,${values.box},${values.buttons}`;
+        return `P6,${values.box}`;
       },
       examples: [
-        { label: "Terminal 0 / 2413", payload: "P-1,0,2413" },
-        { label: "Terminal 7 / 1234", payload: "P-1,7,1234" }
+        { label: "Falla terminal 4", payload: "P6,4" },
+        { label: "Falla terminal 8", payload: "P6,8" }
       ],
       reference: [
-        "Puzzle final:",
-        "Hay 4 rondas con GIF variable.",
-        "Ronda 1 -> 30s",
-        "Ronda 2 -> 45s",
-        "Ronda 3 -> 90s",
-        "Ronda 4 -> 90s",
-        "",
-        "La solucion depende del GIF actual (`num_giff`).",
-        "Los targets estan en mqtt/puzzles/puzzleFinal.py -> self.botons.",
-        "Si quieres, te puedo sacar luego una tabla legible round/giff -> objetivo."
+        "Puzzle final por compatibilidad:",
+        "La pantalla final usa /puzzle/final y /start_puzzle_final.",
+        "El backend real arranca el puzzle 6.",
+        "El mensaje P6,box simula un terminal que ha fallado y reinicia la ventana."
       ].join("\n")
     }
   };
@@ -842,7 +835,7 @@
       return;
     }
     if (puzzleId === "-1") {
-      renderPuzzleFinalSimulator();
+      renderFinalCompatSimulator();
       return;
     }
 
@@ -2207,163 +2200,34 @@
     });
   }
 
-  function renderPuzzleFinalSimulator() {
-    // Get current state
-    const currentStateData = {};
-    
-    // Build targets table HTML
-    let targetsTableHTML = `<table style="width: 100%; font-size: 0.85em; border-collapse: collapse;">
-      <thead><tr style="background: #2a2a2a; color: #fff;">
-        <th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">Ronda</th>
-        <th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">GIF</th>`;
-    for (let i = 1; i <= 6; i++) {
-      targetsTableHTML += `<th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">B${i}</th>`;
-    }
-    targetsTableHTML += `</tr></thead><tbody>`;
-    for (let round = 1; round <= 4; round++) {
-      for (let gif = 1; gif <= 5; gif++) {
-        const targets = finalPuzzleBotons[round - 1][gif - 1];
-        targetsTableHTML += `<tr><td style="padding: 0.5rem; border: 1px solid #444; text-align: center;">${round}</td>
-          <td style="padding: 0.5rem; border: 1px solid #444; text-align: center;">${gif}</td>`;
-        targets.forEach(btn => {
-          targetsTableHTML += `<td style="padding: 0.5rem; border: 1px solid #444; text-align: center; font-weight: bold;">${btn}</td>`;
-        });
-        targetsTableHTML += `</tr>`;
-      }
-    }
-    targetsTableHTML += `</tbody></table>`;
-
-    const boxButtons = Array.from({ length: 10 }, (_, index) => {
-      return `<button type="button" class="sim-box" data-sim-pf-box="${index + 1}">Terminal ${index + 1}</button>`;
+  function renderFinalCompatSimulator() {
+    const boxes = Array.from({ length: 10 }, (_, index) => {
+      return `<button type="button" class="sim-box" data-sim-pf-box="${index}">Terminal ${index}</button>`;
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Control del juego final. Usa "Resolver ronda" para enviar automáticamente el objetivo actual, o envía manualmente.</div>
-      <div class="inline-fields" style="margin-bottom: 1rem;">
-        <label>
-          <span class="field-label">Ronda</span>
-          <select id="sim-pf-round">
-            <option value="1">Ronda 1 (30s)</option>
-            <option value="2">Ronda 2 (45s)</option>
-            <option value="3">Ronda 3 (90s)</option>
-            <option value="4">Ronda 4 (90s)</option>
-          </select>
-        </label>
-        <label>
-          <span class="field-label">GIF</span>
-          <select id="sim-pf-gif">
-            <option value="1">GIF 1</option>
-            <option value="2">GIF 2</option>
-            <option value="3">GIF 3</option>
-            <option value="4">GIF 4</option>
-            <option value="5">GIF 5</option>
-          </select>
-        </label>
+      <div class="sim-note">La ruta final sigue existiendo por compatibilidad, pero ahora arranca el puzzle 6. Pulsa un terminal para simular un fallo de energia.</div>
+      <div class="sim-actions" style="margin-bottom: 1rem;">
+        <button type="button" class="sim-button" data-sim-open-final>Open /puzzle/final</button>
       </div>
-      <div style="padding: 1rem; background: #f5f5f5; border-radius: 4px; margin-bottom: 1rem; font-family: monospace; text-align: center;">
-        <div style="color: #666; margin-bottom: 0.5rem;">Objetivo actual</div>
-        <div id="sim-pf-target-display" style="font-size: 1.3em; font-weight: bold; letter-spacing: 0.5em; color: #333;">-- -- -- -- -- --</div>
-      </div>
-      <div class="action-row" style="margin-bottom: 1rem;">
-        <button type="button" class="sim-button primary-action" data-sim-pf-solve-round>Resolver ronda</button>
-      </div>
-      <div class="field-label">Objetivos por ronda/GIF</div>
-      <div style="overflow-x: auto; max-height: 300px; overflow-y: auto; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 4px;">
-        ${targetsTableHTML}
-      </div>
-      <div class="field-label">Terminales</div>
-      <div class="sim-grid box-grid">${boxButtons}</div>
-      <div class="field-label" style="margin-top: 1rem;">Envío manual</div>
-      <div class="inline-fields">
-        <label><span class="field-label">Terminal</span><input id="sim-pf-box-manual" type="number" min="1" max="10" value="1" style="width: 80px;"></label>
-        <label><span class="field-label">Botones</span><input id="sim-pf-buttons" type="text" maxlength="6" value="000000" style="width: 100px;"></label>
-      </div>
-      <div class="action-row">
-        <button type="button" class="sim-button" data-sim-pf-send-manual>Enviar manual</button>
-      </div>
+      <div class="sim-grid box-grid">${boxes}</div>
     `;
 
-    const updateDisplay = () => {
-      const round = Number(document.getElementById("sim-pf-round").value);
-      const gif = Number(document.getElementById("sim-pf-gif").value);
-      const targets = finalPuzzleBotons[round - 1][gif - 1];
-      const display = document.getElementById("sim-pf-target-display");
-      if (display) {
-        display.textContent = targets.join(" ");
-      }
-      document.getElementById("sim-pf-buttons").value = targets.join("");
-    };
-
-    // Event listeners
-    document.getElementById("sim-pf-round").addEventListener("change", updateDisplay);
-    document.getElementById("sim-pf-gif").addEventListener("change", updateDisplay);
-
-    const solveRoundBtn = els.simContent.querySelector("[data-sim-pf-solve-round]");
-    if (solveRoundBtn) {
-      solveRoundBtn.addEventListener("click", async () => {
-        try {
-          const response = await fetch("/current_state");
-          const state = await response.json();
-          if (String(state.puzzle_id) !== "-1") {
-            setStatus("Puzzle final · no activo");
-            return;
-          }
-          const target = Array.isArray(state.target) ? state.target : [];
-          if (!target.length) {
-            setStatus("Puzzle final · sin target disponible");
-            return;
-          }
-
-          const box = 1;
-          const buttons = target.join("");
-          const payload = `P-1,${box},${buttons}`;
-          els.simContent.querySelector("#sim-pf-buttons").value = buttons;
-          await sendPayloads([payload]);
-          appendLog({
-            local: true,
-            payload,
-            simulated: "puzzleFinal_solve_round",
-            round: state.round,
-            num_giff: state.num_giff,
-            target
-          });
-        } catch (error) {
-          setStatus(`Puzzle final · ${error.message || "error"}`);
-        }
-      });
-    }
-
-    const sendManualBtn = els.simContent.querySelector("[data-sim-pf-send-manual]");
-    if (sendManualBtn) {
-      sendManualBtn.addEventListener("click", async () => {
-        try {
-          const box = document.getElementById("sim-pf-box-manual").value;
-          const buttons = document.getElementById("sim-pf-buttons").value.trim();
-          if (!buttons || buttons.length !== 6) {
-            setStatus("Botones debe ser exactamente 6 dígitos");
-            return;
-          }
-          const payload = `P-1,${box},${buttons}`;
-          await sendPayloads([payload]);
-          appendLog({ local: true, payload, simulated: "puzzleFinal_manual" });
-        } catch (error) {
-          setStatus(`Puzzle final · ${error.message || "error"}`);
-        }
+    const openButton = els.simContent.querySelector("[data-sim-open-final]");
+    if (openButton) {
+      openButton.addEventListener("click", () => {
+        window.open("/puzzle/final", "_blank", "noopener");
       });
     }
 
     els.simContent.querySelectorAll("[data-sim-pf-box]").forEach((button) => {
       button.addEventListener("click", async () => {
         const box = button.dataset.simPfBox;
-        const buttons = els.simContent.querySelector("#sim-pf-buttons").value.trim();
-        const payload = `P-1,${box},${buttons}`;
+        const payload = `P6,${box}`;
         await sendPayloads([payload]);
-        appendLog({ local: true, payload, simulated: "puzzleFinal" });
+        appendLog({ local: true, payload, simulated: "finalCompat" });
       });
     });
-
-    // Update display on init
-    updateDisplay();
   }
 
   function collectValues() {
@@ -2381,7 +2245,7 @@
 
   function getMessagePresets() {
     const puzzleId = els.puzzleSelect.value;
-    const startPayload = puzzleId === "-1" ? "P-1Start" : `P${puzzleId}Start`;
+    const startPayload = puzzleId === "-1" ? "P6Start" : `P${puzzleId}Start`;
 
     const presetsByPuzzle = {
       "1": [
@@ -2427,13 +2291,8 @@
         { label: "End", payload: "P9End" }
       ],
       "-1": [
-        { label: "Start", payload: "P-1Start" },
-        { label: "Color 1", payload: "P-1Color1" },
-        { label: "Color 2", payload: "P-1Color2" },
-        { label: "Color 3", payload: "P-1Color3" },
-        { label: "Color 4", payload: "P-1Color4" },
-        { label: "Color 5", payload: "P-1Color5" },
-        { label: "End", payload: "P-1End" }
+        { label: "Start", payload: "P6Start" },
+        { label: "End", payload: "P6End" }
       ]
     };
 

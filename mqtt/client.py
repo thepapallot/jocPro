@@ -43,18 +43,12 @@ class MQTTClient:
             
     def start_puzzle(self, puzzle_id):
         with self.lock:
-            if puzzle_id == -1:  # Special case for final puzzle
-                self.stop_current_puzzle()
-                self.current_puzzle_id = -1    
-                self.puzzles[-1].reset()
-                self.send_message("FROM_FLASK", f"P-1Start")
-            else:
-                if puzzle_id not in self.puzzles:
-                    return
-                self.stop_current_puzzle()
-                self.current_puzzle_id = puzzle_id
-                self.puzzles[puzzle_id].reset()
-                self.send_message("FROM_FLASK", f"P{puzzle_id}Start")
+            if puzzle_id not in self.puzzles:
+                return
+            self.stop_current_puzzle()
+            self.current_puzzle_id = puzzle_id
+            self.puzzles[puzzle_id].reset()
+            self.send_message("FROM_FLASK", f"P{puzzle_id}Start")
             
     def stop_current_puzzle(self):
         if self.current_puzzle_id and self.current_puzzle_id in self.puzzles:

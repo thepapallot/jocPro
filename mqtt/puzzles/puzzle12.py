@@ -3,9 +3,9 @@ import threading
 import random
 import time
 
-class PuzzleFinal(BasePuzzle):
+class Puzzle12(BasePuzzle):
     def __init__(self, mqtt_client):
-        super().__init__(puzzle_id=-1, mqtt_client=mqtt_client)
+        super().__init__(puzzle_id=12, mqtt_client=mqtt_client)
         
         self.lock = threading.Lock()
         self.solved = False
@@ -31,7 +31,7 @@ class PuzzleFinal(BasePuzzle):
                         #((0,4,4,4,4,2),(0,3,6,5,2,2),(0,5,3,2,3,5),(0,3,5,6,2,2),(0,2,2,4,8,2)))
 
     def reset(self):
-        print("Starting Final Puzzle")
+        print("Starting Puzzle 12")
         with self.lock:
             self.current_streak = 1
             self.current_giff = self.get_giff()
@@ -46,7 +46,7 @@ class PuzzleFinal(BasePuzzle):
             })
 
     def handle_message(self, parts):
-        # parts = ['P-1', '<box_id>', '<buttons_string>']
+        # parts = ['P12', '<box_id>', '<buttons_string>']
         if len(parts) < 3:
             return
         try:

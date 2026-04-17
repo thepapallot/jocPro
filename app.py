@@ -2,7 +2,7 @@ from pathlib import Path
 
 from flask import Flask, render_template, redirect, url_for, request, Response, jsonify, stream_with_context, send_from_directory, abort
 from mqtt import MQTTClient, create_puzzles
-from config import PUZZLE_ORDER, PUZZLE_ALIASES, PROVA_FINAL  # Import config from config.py
+from config import PUZZLE_ORDER, PUZZLE_ALIASES, PUZZLE_FINAL, PUZZLE_TUTORIAL
 import queue
 import json
 import threading
@@ -11,6 +11,7 @@ app = Flask(__name__)
 BASE_DIR = Path(__file__).resolve().parent #Directori base del projecte jocPro/
 
 mqtt_client = MQTTClient(app, puzzle_order=PUZZLE_ORDER)
+SPECIAL_PUZZLE_IDS = {PUZZLE_TUTORIAL, PUZZLE_FINAL}
 
 LEGACY_ALIAS_TO_SCENE = {
     "simulacro": "scene_intro_simulacro",
@@ -77,6 +78,37 @@ def resolve_intro_scene_for_puzzle(puzzle_id):
 
     return None
 
+
+def is_playable_puzzle_id(puzzle_id):
+    return puzzle_id in PUZZLE_ORDER or puzzle_id in SPECIAL_PUZZLE_IDS
+
+
+def get_sequence_index(puzzle_id):
+    if puzzle_id == PUZZLE_TUTORIAL:
+        return 0
+    if puzzle_id in PUZZLE_ORDER:
+        return PUZZLE_ORDER.index(puzzle_id) + 1
+    if puzzle_id == PUZZLE_FINAL:
+        return len(PUZZLE_ORDER) + 1
+    return None
+
+
+def get_display_level(puzzle_id):
+    if puzzle_id == PUZZLE_TUTORIAL:
+        return "TUTORIAL"
+    if puzzle_id == PUZZLE_FINAL:
+        return "FINAL"
+    sequence_index = get_sequence_index(puzzle_id)
+    return sequence_index if sequence_index is not None else 1
+
+
+def build_puzzle_intro_target(puzzle_id):
+    next_url = url_for('puzzle', puzzle_id=puzzle_id)
+    scene_id = resolve_intro_scene_for_puzzle(puzzle_id)
+    if not scene_id:
+        return next_url
+    return f"{url_for('scene_player')}?scene={scene_id}&next={next_url}"
+
 # Routes
 @app.route('/')
 def welcome():
@@ -101,9 +133,16 @@ def welcome():
 
 @app.route('/videoIntro')
 def play_video_intro():
-    next_url = url_for('welcome', redirect_flag='puzzle1')
+    next_url = url_for('play_video_tutorial')
     target = f"{url_for('scene_player')}?scene=scene_intro_game&next={next_url}"
     return redirect(target)
+
+
+@app.route('/videoTutorial', methods=['GET', 'POST'])
+def play_video_tutorial():
+    if not is_playable_puzzle_id(PUZZLE_TUTORIAL):
+        return redirect(url_for('welcome'))
+    return redirect(build_puzzle_intro_target(PUZZLE_TUTORIAL))
 
 @app.route('/videoPuzzles/<int:idx_puzzle_id>', methods=['GET','POST'])
 def play_video_puzzles(idx_puzzle_id): 
@@ -114,11 +153,7 @@ def play_video_puzzles(idx_puzzle_id):
     if puzzle_id is None:
         return redirect(url_for('welcome'))
 
-    next_url = url_for('puzzle', puzzle_id=puzzle_id)
-    scene_id = resolve_intro_scene_for_puzzle(puzzle_id)
-    next_target = next_url
-    if scene_id:
-        next_target = f"{url_for('scene_player')}?scene={scene_id}&next={next_url}"
+    next_target = build_puzzle_intro_target(puzzle_id)
 
     between_kwargs = {
         "scene": "scene_between_puzzles",
@@ -159,9 +194,8 @@ def puzzle_superat(puzzle_id):
 
     return render_template(
         'videoSuperat.html',
-        idx_puzzle_id=idx+1,
-        final=final,
-        prova_final=PROVA_FINAL
+        idx_puzzle_id=idx + 1 if idx is not None else None,
+        final=final
     )
 
 @app.route('/videoJocFinal', methods=['GET','POST'])
@@ -202,26 +236,26 @@ def final_loop():
 def puzzle_final():
     print("STARTING PUZZLE FINAL")
     mqtt_client.stop_current_puzzle()
-    #mqtt_client.send_message("FROM_FLASK", f"PFinalStart")
-    mqtt_client.set_current_sequence_index(-1)
-    return render_template(f'puzzleFinal.html', current_level=-1)
+    mqtt_client.set_current_sequence_index(get_sequence_index(PUZZLE_FINAL) or len(PUZZLE_ORDER) + 1)
+    return render_template(f'puzzle{PUZZLE_FINAL}.html', current_level='FINAL')
 
 @app.route('/puzzle/<int:puzzle_id>', methods=['GET', 'POST'])
 def puzzle(puzzle_id):
     print("STARTING PUZZLE", puzzle_id)
     
-    # Ensure puzzle_id is in configured order
-    if puzzle_id not in PUZZLE_ORDER:
+    if not is_playable_puzzle_id(puzzle_id):
         return "Invalid puzzle", 404
     
     mqtt_client.stop_current_puzzle()
     
-    puzzle_index = PUZZLE_ORDER.index(puzzle_id) + 1  # 1-based sequence position
-    mqtt_client.set_current_sequence_index(puzzle_index)
-    #mqtt_client.send_message("FROM_FLASK", f"P{puzzle_id}Start")
+    puzzle_index = get_sequence_index(puzzle_id)
+    mqtt_client.set_current_sequence_index(puzzle_index or 0)
 
-    next_puzzle_id = puzzle_index + 1 if puzzle_index < len(PUZZLE_ORDER) else None
-    display_level = max(1, mqtt_client.current_puzzle_index - 1)
+    next_puzzle_id = None
+    if puzzle_id in PUZZLE_ORDER:
+        next_puzzle_id = puzzle_index + 1 if puzzle_index < len(PUZZLE_ORDER) else None
+
+    display_level = get_display_level(puzzle_id)
     return render_template(f'puzzle{puzzle_id}.html', current_level=display_level, next_puzzle_id=next_puzzle_id)
 
 @app.route('/puzzle4_sample_finished', methods=['POST'])
@@ -233,8 +267,7 @@ def puzzle4_sample_finished():
 #To start the puzzle from frontend
 @app.route('/start_puzzle/<int:puzzle_id>', methods=['POST'])
 def start_puzzle_route(puzzle_id):
-    # Validate puzzle_id in configured order
-    if puzzle_id not in PUZZLE_ORDER:
+    if not is_playable_puzzle_id(puzzle_id):
         print("Invalid puzzle_id:", puzzle_id)
         return jsonify({"error": "invalid puzzle"}), 404
     # Prevent restarting if already current
@@ -247,13 +280,12 @@ def start_puzzle_route(puzzle_id):
 
 @app.route('/start_puzzle_final', methods=['POST'])
 def start_puzzle_final():
-    #mqtt_client.send_message("FROM_FLASK", f"PFinalStart")
-    mqtt_client.start_puzzle(-1)
-    return jsonify({"status": "started", "puzzle_id": "final"}), 200
+    mqtt_client.start_puzzle(PUZZLE_FINAL)
+    return jsonify({"status": "started", "puzzle_id": PUZZLE_FINAL}), 200
 
 @app.route('/restart_puzzle/<int:puzzle_id>', methods=['POST'])
 def restart_puzzle_route(puzzle_id):
-    if puzzle_id not in PUZZLE_ORDER:
+    if not is_playable_puzzle_id(puzzle_id):
         return jsonify({"error": "invalid puzzle"}), 404
     # Stop whatever is running, then start requested puzzle
     mqtt_client.stop_current_puzzle()
