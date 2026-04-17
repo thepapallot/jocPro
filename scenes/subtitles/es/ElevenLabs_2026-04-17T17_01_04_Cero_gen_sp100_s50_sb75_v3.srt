@@ -1,10 +1,10 @@
 1
 00:00:00,000 --> 00:00:01,700
-Prestad atención.
+Prestaza atención.
 
 2
 00:00:01,700 --> 00:00:04,900
-Hoy evaluaremos vuestro conocimiento colectivo.
+Oye valoremos vuestro conocimiento colectivo.
 
 3
 00:00:04,900 --> 00:00:08,700
@@ -12,11 +12,11 @@ Para superar esta prueba, tendréis que acertar 10 preguntas.
 
 4
 00:00:08,700 --> 00:00:10,800
-En la pantalla aparecerá una pregunta,
+En la pantalla pareceré una pregunta,
 
 5
 00:00:10,800 --> 00:00:13,200
-y 6 posibles respuestas.
+y 6 posibles en respuestas.
 
 6
 00:00:13,200 --> 00:00:16,900
@@ -24,7 +24,7 @@ Entre todos, tendréis que decidir cuál es la correcta.
 
 7
 00:00:16,900 --> 00:00:20,200
-Cuando la hayáis elegido, recordad bien su número.
+Cuando la ya hice lejido, recordad bien su número.
 
 8
 00:00:20,200 --> 00:00:24,700
@@ -32,20 +32,21 @@ En cada terminal veréis seis números, cada uno con un color distinto.
 
 9
 00:00:24,700 --> 00:00:29,400
-Buscad el número correcto y pulsad el botón de ese mismo color.
+Busca del número correcto y pulsad el botón de ese mismo color.
 
 10
 00:00:29,500 --> 00:00:32,800
-Cuando todos hayáis pulsado, veréis el resultado.
+Cuando todos ya he expulsado, veréis el resultado.
 
 11
 00:00:32,800 --> 00:00:36,800
-Para avanzar, tendréis que encadenar varias respuestas correctas.
+Para avanzar, tendréis que encadenar varias en respuestas correctas.
 
 12
 00:00:36,800 --> 00:00:40,400
-Pero cuidado, un solo error romperá la racha.
+Pero cuidado, un solo error romper a la racha.
 
 13
-00:00:40,400 --> 00:00:42,919
+00:00:40,400 --> 00:00:43,400
 Pensad juntos y decidid rápido.
+
