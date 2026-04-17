@@ -320,8 +320,12 @@
             "title": "ELEMENTOS",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Icono de terminal"
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base NFC con token"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/termial con token.png",
+                "alt": "Terminal con token"
               }
             ]
           }
@@ -334,12 +338,12 @@
             "title": "ELEMENTOS",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Icono de terminal"
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base NFC con token"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Icono de token"
+                "src": "/static/images/shared/nuevos iconos/termial con token.png",
+                "alt": "Terminal con token"
               }
             ]
           }
@@ -352,12 +356,12 @@
             "title": "ACTIVACIÓN",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Icono de terminal"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Icono de token"
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base NFC con token"
               }
             ]
           },

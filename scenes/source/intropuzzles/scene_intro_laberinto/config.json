@@ -138,12 +138,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/nuevos iconos/flecha.png",
+                "alt": "Flecha"
               },
               {
-                "src": "/static/images/puzzle2/symbols/symbol_9.png",
-                "alt": "Symbol 9"
+                "src": "/static/images/shared/nuevos iconos/base nfc.png",
+                "alt": "Base NFC"
               }
             ]
           }
@@ -157,12 +157,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/puzzle2/LaberintVermell.png",
-                "alt": "Laberintvermell"
+                "src": "/static/images/shared/nuevos iconos/flecha.png",
+                "alt": "Flecha"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/base nfc.png",
+                "alt": "Base NFC"
               }
             ]
           }
@@ -176,12 +176,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/flecha.png",
+                "alt": "Flecha"
               },
               {
-                "src": "/static/images/puzzle2/symbols/symbol_8.png",
-                "alt": "Symbol 8"
+                "src": "/static/images/shared/nuevos iconos/base nfc.png",
+                "alt": "Base NFC"
               }
             ]
           }

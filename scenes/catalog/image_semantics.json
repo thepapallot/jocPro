@@ -59,6 +59,52 @@
       "preview_url": "http://localhost:5000/static/images/shared/gameplay/terminal_box.png"
     },
     {
+      "path": "/static/images/shared/nuevos iconos/base nfc con token.png",
+      "concept": "token_complementario",
+      "best_for": [
+        "variar visual de token en intros",
+        "refuerzo estetico en bloques de apoyo",
+        "complementar escenas que ya usan token_card"
+      ],
+      "avoid_for": [
+        "sustituir en bloque el token base en todas las escenas"
+      ],
+      "puzzles": [
+        "shared",
+        1,
+        2,
+        5,
+        6,
+        8,
+        9,
+        10
+      ],
+      "notes": "Variante complementaria. Mantener token_card como referencia principal.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/base nfc con token.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/base nfc con token.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/termial con token.png",
+      "concept": "terminal_complementario",
+      "best_for": [
+        "apoyar bloques de terminal con estilo alternativo",
+        "introducciones visuales complementarias",
+        "momentos de enfasis en UI"
+      ],
+      "avoid_for": [
+        "reemplazo global del terminal_box base"
+      ],
+      "puzzles": [
+        "shared",
+        1,
+        3,
+        9
+      ],
+      "notes": "Variante complementaria. Mantener terminal_box como visual principal.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/termial con token.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/termial con token.png"
+    },
+    {
       "path": "/static/images/shared/terminal_3d/buttons_panel_front.png",
       "concept": "panel_botones",
       "best_for": [
@@ -272,6 +318,406 @@
       "notes": "Si se requiere variedad, alternar con beta/gamma/.../omega.",
       "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/puzzle8/alpha.svg",
       "preview_url": "http://localhost:5000/static/images/puzzle8/alpha.svg"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/alerta.png",
+      "concept": "alerta",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/alerta.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/alerta.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/apretar boton.png",
+      "concept": "accion_boton",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/apretar boton.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/apretar boton.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/base nfc.png",
+      "concept": "base_nfc",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/base nfc.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/base nfc.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/botones colores.png",
+      "concept": "botones_colores",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/botones colores.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/botones colores.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/checklist.png",
+      "concept": "checklist",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/checklist.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/checklist.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/decision_rapida.png",
+      "concept": "decision_rapida",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/decision_rapida.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/decision_rapida.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/equipo_consenso.png",
+      "concept": "equipo_consenso",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/equipo_consenso.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/equipo_consenso.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/error atencion.png",
+      "concept": "error_atencion",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/error atencion.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/error atencion.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/flecha.png",
+      "concept": "direccion",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/flecha.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/flecha.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/letra griega.png",
+      "concept": "letra_griega",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/letra griega.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/letra griega.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/memoria.png",
+      "concept": "memoria",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/memoria.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/memoria.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/panel numeros.png",
+      "concept": "panel_numeros",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/panel numeros.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/panel numeros.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/pregunta.png",
+      "concept": "pregunta",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/pregunta.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/pregunta.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/progreso_objetivo.png",
+      "concept": "progreso_objetivo",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/progreso_objetivo.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/progreso_objetivo.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/racha_aciertos.png",
+      "concept": "racha_aciertos",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/racha_aciertos.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/racha_aciertos.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/reloj tiempo.png",
+      "concept": "tiempo",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/reloj tiempo.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/reloj tiempo.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/repetir.png",
+      "concept": "repeticion",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/repetir.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/repetir.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/reset.png",
+      "concept": "reinicio",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/reset.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/reset.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/respuesta_correcta.png",
+      "concept": "respuesta_correcta",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/respuesta_correcta.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/respuesta_correcta.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/respuesta_incorrecta.png",
+      "concept": "respuesta_incorrecta",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/respuesta_incorrecta.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/respuesta_incorrecta.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/resultado_pantalla.png",
+      "concept": "resultado_pantalla",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/resultado_pantalla.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/resultado_pantalla.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/temporizador.png",
+      "concept": "temporizador",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/temporizador.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/temporizador.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/tira led.png",
+      "concept": "luces_led",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/tira led.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/tira led.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/veredicto_error.png",
+      "concept": "veredicto_error",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/veredicto_error.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/veredicto_error.png"
+    },
+    {
+      "path": "/static/images/shared/nuevos iconos/veredicto_ok.png",
+      "concept": "veredicto_ok",
+      "best_for": [
+        "apoyo visual contextual en intros"
+      ],
+      "avoid_for": [
+        "sustituir automaticamente recursos base sin contexto"
+      ],
+      "puzzles": [
+        "shared"
+      ],
+      "notes": "Icono complementario añadido para nuevo flujo de subtitulos.",
+      "preview_file": "/home/agusti/Documentos/repositori/piramide/jocPro/static/images/shared/nuevos iconos/veredicto_ok.png",
+      "preview_url": "http://localhost:5000/static/images/shared/nuevos iconos/veredicto_ok.png"
     }
   ]
 }

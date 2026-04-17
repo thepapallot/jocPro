@@ -1,0 +1,144 @@
+{
+  "srt_file": "scenes/subtitles/es/intro_puzzle_03.es.srt",
+  "language": "es",
+  "rules": {
+    "keep_total_duration": true,
+    "timestamp_format": "HH:MM:SS,mmm",
+    "max_chars_per_line": 42,
+    "max_lines_per_caption": 2
+  },
+  "captions": [
+    {
+      "index": 1,
+      "start": "00:00:00,000",
+      "end": "00:00:03,800",
+      "text": "Prestad atención.\nPonemos a prueba al equipo.",
+      "visual_intent": "Introducción del reto y foco en inteligencia colectiva.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/alerta.png",
+        "/static/images/shared/nuevos iconos/equipo_consenso.png"
+      ],
+      "reason": "Alerta capta atención inicial y equipo_consenso comunica prueba grupal."
+    },
+    {
+      "index": 2,
+      "start": "00:00:03,800",
+      "end": "00:00:08,200",
+      "text": "Para superarla,\nacertad diez preguntas.",
+      "visual_intent": "Mostrar objetivo principal de la prueba.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/checklist.png",
+        "/static/images/shared/nuevos iconos/pregunta.png"
+      ],
+      "reason": "Checklist representa meta a completar y pregunta refuerza el tipo de reto."
+    },
+    {
+      "index": 3,
+      "start": "00:00:08,200",
+      "end": "00:00:12,800",
+      "text": "Veréis una pregunta\ny seis respuestas.",
+      "visual_intent": "Pantalla central mostrando pregunta con opciones múltiples.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/pregunta.png",
+        "/static/images/shared/nuevos iconos/panel numeros.png"
+      ],
+      "reason": "Pregunta + panel_numeros comunica pregunta con opciones numeradas."
+    },
+    {
+      "index": 4,
+      "start": "00:00:12,800",
+      "end": "00:00:16,800",
+      "text": "Entre todos,\ndecidid la correcta.",
+      "visual_intent": "Jugadores debatiendo y eligiendo una opción.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/equipo_consenso.png",
+        "/static/images/shared/nuevos iconos/respuesta_correcta.png"
+      ],
+      "reason": "Equipo_consenso representa acuerdo y respuesta_correcta refuerza el objetivo."
+    },
+    {
+      "index": 5,
+      "start": "00:00:16,800",
+      "end": "00:00:20,800",
+      "text": "Elegid una opción\ny recordad su número.",
+      "visual_intent": "Fijar número asociado a la respuesta elegida.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/panel numeros.png",
+        "/static/images/shared/nuevos iconos/memoria.png"
+      ],
+      "reason": "Panel_numeros destaca el dato clave y memoria indica retenerlo."
+    },
+    {
+      "index": 6,
+      "start": "00:00:20,800",
+      "end": "00:00:26,000",
+      "text": "Cada terminal muestra\nseis números de color.",
+      "visual_intent": "Vista de terminal con números coloreados.",
+      "assets": [
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/nuevos iconos/panel numeros.png"
+      ],
+      "reason": "Terminal_box muestra el dispositivo real y panel_numeros la referencia visual."
+    },
+    {
+      "index": 7,
+      "start": "00:00:26,000",
+      "end": "00:00:31,000",
+      "text": "Buscad el número correcto\ny pulsad su color.",
+      "visual_intent": "Acción directa sobre terminal para responder.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/apretar boton.png",
+        "/static/images/shared/nuevos iconos/botones colores.png"
+      ],
+      "reason": "La acción es pulsar botón por color, por eso prioriza iconos de botones."
+    },
+    {
+      "index": 8,
+      "start": "00:00:31,000",
+      "end": "00:00:36,000",
+      "text": "Cuando todos pulsen,\nveréis el resultado.",
+      "visual_intent": "Todos los terminales activados y resolución global.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/resultado_pantalla.png",
+        "/static/images/shared/nuevos iconos/veredicto_ok.png"
+      ],
+      "reason": "Resultado_pantalla muestra la resolución y veredicto_ok el estado final."
+    },
+    {
+      "index": 9,
+      "start": "00:00:36,000",
+      "end": "00:00:40,800",
+      "text": "Para avanzar,\nencadenad aciertos.",
+      "visual_intent": "Mostrar progreso mediante racha positiva.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/progreso_objetivo.png",
+        "/static/images/shared/nuevos iconos/racha_aciertos.png"
+      ],
+      "reason": "Progreso + racha representan claramente la mecánica de avance."
+    },
+    {
+      "index": 10,
+      "start": "00:00:40,800",
+      "end": "00:00:45,500",
+      "text": "Pero cuidado...\nUn error rompe la racha.",
+      "visual_intent": "Advertencia de penalización por fallo.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/alerta.png",
+        "/static/images/shared/nuevos iconos/veredicto_error.png"
+      ],
+      "reason": "Alerta genera tensión y veredicto_error comunica la pérdida de racha."
+    },
+    {
+      "index": 11,
+      "start": "00:00:45,500",
+      "end": "00:00:48,500",
+      "text": "Pensad juntos.\nDecidid rápido.",
+      "visual_intent": "Cierre motivacional con coordinación y velocidad.",
+      "assets": [
+        "/static/images/shared/nuevos iconos/equipo_consenso.png",
+        "/static/images/shared/nuevos iconos/temporizador.png"
+      ],
+      "reason": "Equipo_consenso refuerza cooperación y temporizador la urgencia final."
+    }
+  ]
+}

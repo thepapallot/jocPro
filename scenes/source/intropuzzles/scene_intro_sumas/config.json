@@ -89,12 +89,12 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/panel numeros.png",
+                "alt": "Panel de numeros"
               },
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/nuevos iconos/flecha.png",
+                "alt": "Flecha"
               }
             ]
           }

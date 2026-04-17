@@ -99,12 +99,12 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar off"
+                "src": "/static/images/shared/nuevos iconos/panel numeros.png",
+                "alt": "Panel de numeros"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/flecha.png",
+                "alt": "Flecha"
               }
             ]
           }
@@ -133,8 +133,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira LED"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones de colores"
               }
             ]
           }
@@ -148,12 +152,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar off"
+                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
+                "alt": "Reloj de tiempo"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira LED"
               }
             ]
           }
@@ -167,8 +171,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
+                "alt": "Reloj de tiempo"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira LED"
               }
             ]
           }
@@ -182,12 +190,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar off"
+                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
+                "alt": "Reloj de tiempo"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira LED"
               }
             ]
           }
@@ -235,12 +243,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira LED"
               },
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar off"
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones de colores"
               }
             ]
           }
