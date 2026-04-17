@@ -230,12 +230,19 @@ body.p2-solved #p2-status-copy {
         0 0 18px rgba(255, 92, 111, 0.14);
 }
 
+#p2-error-counter.is-critical {
+    color: #ff4a4a;
+    text-shadow:
+        0 0 10px rgba(211, 47, 47, 0.42),
+        0 0 18px rgba(211, 47, 47, 0.2);
+}
+
 #p2-error-list {
     position: relative;
     z-index: 1;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 6px;
+    gap: 5px;
     align-self: stretch;
     min-height: 0;
 }
@@ -244,10 +251,10 @@ body.p2-solved #p2-status-copy {
     display: grid;
     grid-template-columns: 14px minmax(0, 1fr);
     align-items: center;
-    gap: 6px;
-    padding: 3px 5px;
+    gap: 5px;
+    padding: 2px 4px;
     border: 1px solid rgba(69, 230, 255, 0.16);
-    border-radius: 12px;
+    border-radius: 10px;
     background: linear-gradient(90deg, rgba(69, 230, 255, 0.08), rgba(69, 230, 255, 0.02));
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
@@ -1146,14 +1153,15 @@ body.alarm-mode #p2-maze-frame {
 
     #p2-error-list {
         grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 6px;
+        gap: 5px;
     }
 
     .error-row {
         grid-template-columns: 12px minmax(0, 1fr);
         justify-items: stretch;
         gap: 4px;
-        padding: 3px 4px;
+        padding: 2px 3px;
+        border-radius: 9px;
     }
 
     .error-arrow {

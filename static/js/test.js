@@ -18,16 +18,43 @@
     { id: "scene_outro_game", label: "Outro Final", href: "/player/?scene=scene_outro_game" }
   ];
   const puzzle11Steps = [
-    "El token 5 pasa por el terminal 6 y pulsa el boton verde.",
-    "El token 10 pasa por el terminal 2 y despues por el 5.",
-    "El token 13 pasa 3 veces por el terminal 2.",
-    "El token 14 pasa por el terminal 1 y pulsa rojo, verde y amarillo.",
-    "El token 17 pasa por terminal 1, despues 2 y despues 3.",
-    "El token 18 pasa por el terminal 9 y pulsa el boton negro dos veces.",
-    "El token 20 pasa por el terminal que tiene el simbolo 3 en raya azul.",
-    "El token 22 pasa por terminal 3, despues terminal 4 y alli pulsa amarillo.",
-    "El token 31 pasa por el terminal 7 dos veces y despues pulsa rojo.",
-    "El token 35 pasa por el terminal que tiene el simbolo pi."
+    "El token 5 debe pasar por el terminal 6 y apretar el botón verde",
+    "El token 10 debe pasar por el terminal 2 y seguidamente por el terminal 5",
+    "El token 13 debe pasar 3 veces por el terminal 2",
+    "El token 14 debe pasar por el terminal 1 y apretar el botón rojo, luego el botón verde y luego el botón amarillo",
+    "El token 17 debe pasar por el terminal 1, luego por el terminal 2 y luego por el terminal 3",
+    "El token 18 debe pasar por el terminal 9 y apretar el botón negro dos veces",
+    "El token 20 se debe pasar por el terminal que tenga un símbolo con una sola onda y dos puntos",
+    "El token 22 debe pasar por el terminal 3, luego por el terminal 4 y allí apretar el botón amarillo",
+    "El token 31 debe pasar por el terminal 7 dos veces y luego apretar el botón rojo",
+    "El token 35 debe pasar por el terminal que tiene el símbolo \"pi\""
+  ];
+  // Mirrored from STEP_SEQUENCES in puzzle11.py — format: [box, token, color]
+  const puzzle11Sequences = [
+    [[6,0,-1],[6,-1,5]],
+    [[2,1,-1],[5,1,-1]],
+    [[2,2,-1],[2,2,-1],[2,2,-1]],
+    [[1,3,-1],[1,-1,1],[1,-1,5],[1,-1,2]],
+    [[1,4,-1],[2,4,-1],[3,4,-1]],
+    [[9,5,-1],[9,-1,4],[9,-1,4]],
+    [[0,6,-1]],
+    [[3,7,-1],[4,7,-1],[4,-1,2]],
+    [[7,8,-1],[7,8,-1],[7,-1,1]],
+    [[8,9,-1]]
+  ];
+  function p11StepPayloads(stepIndex) {
+    return (puzzle11Sequences[stepIndex] || []).map(([box, token, color]) => `P11,${box},${token},${color}`);
+  }
+  // Final puzzle button targets: botons[round_index][giff_index] = [b1, b2, b3, b4, b5, b6]
+  const finalPuzzleBotons = [
+    // Round 1
+    [[2,2,1,2,2,1], [2,1,2,1,2,2], [1,1,1,3,3,1], [2,1,3,2,1,1], [1,2,1,2,1,3]],
+    // Round 2
+    [[2,2,5,2,2,2], [2,3,4,2,3,1], [3,3,2,3,1,3], [1,1,3,4,4,2], [4,1,1,5,1,3]],
+    // Round 3
+    [[4,4,4,4,5,4], [4,3,5,2,6,5], [1,4,6,4,8,2], [6,2,2,8,4,3], [4,5,5,3,4,4]],
+    // Round 4
+    [[0,8,5,8,6,1], [0,4,10,7,6,1], [0,6,8,9,4,1], [0,4,8,8,7,1], [0,5,3,9,10,1]]
   ];
   const puzzleConfigs = {
     "11": {
@@ -35,24 +62,27 @@
       route: "/puzzle/11",
       startRoute: "/start_puzzle/11",
       restartRoute: "/restart_puzzle/11",
-      help: "Formato MQTT: P11,step_index. step_index va de 0 a 9 y debe llegar en orden.",
+      help: "Formato MQTT: P11,box,token,color. Envia todos los substeps del paso en orden.",
       fields: [
-        { id: "step", label: "Paso", type: "number", min: 0, max: 9, value: 0 }
+        { id: "box", label: "Box", type: "number", min: 0, max: 9, value: 6 },
+        { id: "token", label: "Token", type: "number", min: -1, max: 35, value: 0 },
+        { id: "color", label: "Color", type: "number", min: -1, max: 9, value: -1 }
       ],
       build(values) {
-        return `P11,${values.step}`;
+        return `P11,${values.box},${values.token},${values.color}`;
       },
       examples: [
-        { label: "Paso 1", payload: "P11,0" },
-        { label: "Paso 10", payload: "P11,9" }
+        { label: "Paso 1 substep 1", payload: "P11,6,0,-1" },
+        { label: "Paso 1 substep 2", payload: "P11,6,-1,5" }
       ],
       reference: [
-        "Secuencia tutorial fija de 10 pasos:",
-        ...puzzle11Steps.map((step, index) => `${index + 1}. ${step}`),
+        "Secuencia tutorial fija de 10 pasos (P11,box,token,color):",
+        ...puzzle11Steps.map((step, index) => {
+          const payloads = p11StepPayloads(index).join(" -> ");
+          return `${index + 1}. ${step}\n   ${payloads}`;
+        }),
         "",
-        "Solo avanza si el paso enviado coincide con current_step.",
-        "",
-        "Payload: P11,step_index"
+        "Solo avanza si el substep enviado coincide con el substep actual del paso."
       ].join("\n")
     },
     "1": {
@@ -558,6 +588,15 @@
       option.textContent = optionLabel;
       els.puzzleSelect.appendChild(option);
     });
+
+    // Add Final Puzzle at the end
+    const finalConfig = puzzleConfigs["-1"];
+    if (finalConfig) {
+      const option = document.createElement("option");
+      option.value = "-1";
+      option.textContent = finalConfig.label;
+      els.puzzleSelect.appendChild(option);
+    }
   }
 
   function renderShortcutButtons() {
@@ -1828,9 +1867,9 @@
               setStatus("Puzzle 11 · tutorial completado");
               return;
             }
-            const payload = `P11,${step}`;
-            await runToFlask([payload]);
-            appendLog({ local: true, payload, simulated: "puzzle11_next_step" });
+            const payloads = p11StepPayloads(step);
+            await runToFlask(payloads);
+            appendLog({ local: true, payloads, simulated: "puzzle11_next_step" });
             await syncPuzzle11State(true);
             renderUI();
           } catch (error) {
@@ -1852,7 +1891,7 @@
               setStatus("Puzzle 11 · tutorial completado");
               return;
             }
-            const payloads = Array.from({ length: puzzle11Steps.length - step }, (_, index) => `P11,${step + index}`);
+            const payloads = Array.from({ length: puzzle11Steps.length - step }, (_, index) => p11StepPayloads(step + index)).flat();
             await runToFlask(payloads);
             appendLog({ local: true, payloads, simulated: "puzzle11_solve_remaining" });
             await syncPuzzle11State(true);
@@ -1867,9 +1906,9 @@
         button.addEventListener("click", async () => {
           try {
             const step = Number(button.dataset.simP11SendStep);
-            const payload = `P11,${step}`;
-            await runToFlask([payload]);
-            appendLog({ local: true, payload, simulated: "puzzle11_manual_step" });
+            const payloads = p11StepPayloads(step);
+            await runToFlask(payloads);
+            appendLog({ local: true, payloads, simulated: "puzzle11_manual_step" });
             await syncPuzzle11State(true);
             renderUI();
           } catch (error) {
@@ -2168,20 +2207,95 @@
   }
 
   function renderPuzzleFinalSimulator() {
+    // Get current state
+    const currentStateData = {};
+    
+    // Build targets table HTML
+    let targetsTableHTML = `<table style="width: 100%; font-size: 0.85em; border-collapse: collapse;">
+      <thead><tr style="background: #2a2a2a; color: #fff;">
+        <th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">Ronda</th>
+        <th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">GIF</th>`;
+    for (let i = 1; i <= 6; i++) {
+      targetsTableHTML += `<th style="padding: 0.5rem; border: 1px solid #444; text-align: center;">B${i}</th>`;
+    }
+    targetsTableHTML += `</tr></thead><tbody>`;
+    for (let round = 1; round <= 4; round++) {
+      for (let gif = 1; gif <= 5; gif++) {
+        const targets = finalPuzzleBotons[round - 1][gif - 1];
+        targetsTableHTML += `<tr><td style="padding: 0.5rem; border: 1px solid #444; text-align: center;">${round}</td>
+          <td style="padding: 0.5rem; border: 1px solid #444; text-align: center;">${gif}</td>`;
+        targets.forEach(btn => {
+          targetsTableHTML += `<td style="padding: 0.5rem; border: 1px solid #444; text-align: center; font-weight: bold;">${btn}</td>`;
+        });
+        targetsTableHTML += `</tr>`;
+      }
+    }
+    targetsTableHTML += `</tbody></table>`;
+
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
       return `<button type="button" class="sim-box" data-sim-pf-box="${index + 1}">Terminal ${index + 1}</button>`;
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona un terminal y escribe el string de 6 botones detectados para la fase final, o resuelve la ronda actual con el objetivo activo.</div>
-      <div class="sim-grid answer-grid">
-        <label class="full-width"><span class="field-label">Botones</span><input id="sim-pf-buttons" type="text" value="2413"></label>
+      <div class="sim-note">Control del juego final. Usa "Resolver ronda" para enviar automáticamente el objetivo actual, o envía manualmente.</div>
+      <div class="inline-fields" style="margin-bottom: 1rem;">
+        <label>
+          <span class="field-label">Ronda</span>
+          <select id="sim-pf-round">
+            <option value="1">Ronda 1 (30s)</option>
+            <option value="2">Ronda 2 (45s)</option>
+            <option value="3">Ronda 3 (90s)</option>
+            <option value="4">Ronda 4 (90s)</option>
+          </select>
+        </label>
+        <label>
+          <span class="field-label">GIF</span>
+          <select id="sim-pf-gif">
+            <option value="1">GIF 1</option>
+            <option value="2">GIF 2</option>
+            <option value="3">GIF 3</option>
+            <option value="4">GIF 4</option>
+            <option value="5">GIF 5</option>
+          </select>
+        </label>
       </div>
-      <div class="action-row">
+      <div style="padding: 1rem; background: #f5f5f5; border-radius: 4px; margin-bottom: 1rem; font-family: monospace; text-align: center;">
+        <div style="color: #666; margin-bottom: 0.5rem;">Objetivo actual</div>
+        <div id="sim-pf-target-display" style="font-size: 1.3em; font-weight: bold; letter-spacing: 0.5em; color: #333;">-- -- -- -- -- --</div>
+      </div>
+      <div class="action-row" style="margin-bottom: 1rem;">
         <button type="button" class="sim-button primary-action" data-sim-pf-solve-round>Resolver ronda</button>
       </div>
+      <div class="field-label">Objetivos por ronda/GIF</div>
+      <div style="overflow-x: auto; max-height: 300px; overflow-y: auto; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 4px;">
+        ${targetsTableHTML}
+      </div>
+      <div class="field-label">Terminales</div>
       <div class="sim-grid box-grid">${boxButtons}</div>
+      <div class="field-label" style="margin-top: 1rem;">Envío manual</div>
+      <div class="inline-fields">
+        <label><span class="field-label">Terminal</span><input id="sim-pf-box-manual" type="number" min="1" max="10" value="1" style="width: 80px;"></label>
+        <label><span class="field-label">Botones</span><input id="sim-pf-buttons" type="text" maxlength="6" value="000000" style="width: 100px;"></label>
+      </div>
+      <div class="action-row">
+        <button type="button" class="sim-button" data-sim-pf-send-manual>Enviar manual</button>
+      </div>
     `;
+
+    const updateDisplay = () => {
+      const round = Number(document.getElementById("sim-pf-round").value);
+      const gif = Number(document.getElementById("sim-pf-gif").value);
+      const targets = finalPuzzleBotons[round - 1][gif - 1];
+      const display = document.getElementById("sim-pf-target-display");
+      if (display) {
+        display.textContent = targets.join(" ");
+      }
+      document.getElementById("sim-pf-buttons").value = targets.join("");
+    };
+
+    // Event listeners
+    document.getElementById("sim-pf-round").addEventListener("change", updateDisplay);
+    document.getElementById("sim-pf-gif").addEventListener("change", updateDisplay);
 
     const solveRoundBtn = els.simContent.querySelector("[data-sim-pf-solve-round]");
     if (solveRoundBtn) {
@@ -2218,6 +2332,25 @@
       });
     }
 
+    const sendManualBtn = els.simContent.querySelector("[data-sim-pf-send-manual]");
+    if (sendManualBtn) {
+      sendManualBtn.addEventListener("click", async () => {
+        try {
+          const box = document.getElementById("sim-pf-box-manual").value;
+          const buttons = document.getElementById("sim-pf-buttons").value.trim();
+          if (!buttons || buttons.length !== 6) {
+            setStatus("Botones debe ser exactamente 6 dígitos");
+            return;
+          }
+          const payload = `P-1,${box},${buttons}`;
+          await sendPayloads([payload]);
+          appendLog({ local: true, payload, simulated: "puzzleFinal_manual" });
+        } catch (error) {
+          setStatus(`Puzzle final · ${error.message || "error"}`);
+        }
+      });
+    }
+
     els.simContent.querySelectorAll("[data-sim-pf-box]").forEach((button) => {
       button.addEventListener("click", async () => {
         const box = button.dataset.simPfBox;
@@ -2227,6 +2360,9 @@
         appendLog({ local: true, payload, simulated: "puzzleFinal" });
       });
     });
+
+    // Update display on init
+    updateDisplay();
   }
 
   function collectValues() {
