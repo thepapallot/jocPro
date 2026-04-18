@@ -13,16 +13,16 @@
       "type": "transition",
       "duration": 5,
       "variant": "between-title",
-      "label": "SIGUIENTE PRUEBA:"
+      "label": "EMPEZAMOS:"
     },
     {
       "type": "transition",
       "duration": 9999,
       "variant": "intro-brief",
-      "title": "SIGUIENTE PRUEBA",
-      "objective": "Conocer el objetivo del siguiente reto.",
+      "title": "SIMULACRO INICIAL",
+      "objective": "Usar tokens, botones y terminales.",
       "advance_on_space": true,
-      "evaluation": "La habilidad principal se mostrara segun la prueba."
+      "evaluation": "Coordinacion"
     }
   ]
 }

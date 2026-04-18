@@ -9,25 +9,24 @@ Structure:
 
 Naming convention:
 
-- `intro_game_master.<lang>.srt`: general presentation intro of the game
-- `intro_puzzle_XX.<lang>.srt`: puzzle intro scene, with zero-padded number
-- `intro_final_puzzle.<lang>.srt`: intro for the final puzzle
-- `outro_game_final.<lang>.srt`: final ending/outro scene
+- `intro_inicial.<lang>.srt`: general presentation intro of the game
+- `intro_puzzle_XX_<alias>.<lang>.srt`: puzzle intro scene, with zero-padded number (including final puzzle)
+- `outro_final.<lang>.srt`: final ending/outro scene
 
 Current Spanish files imported from `/home/agusti/Descargas/srt_corregidos/`:
 
-- `intro_game_master.es.srt` from `intro.srt`
-- `intro_puzzle_01.es.srt` from `p1e.srt`
-- `intro_puzzle_02.es.srt` from `p2e.srt`
-- `intro_puzzle_03.es.srt` from `p3e.srt`
-- `intro_puzzle_04.es.srt` from `p4e.srt`
-- `intro_puzzle_05.es.srt` from `p5e.srt`
-- `intro_puzzle_06.es.srt` from `p6e.srt`
-- `intro_puzzle_08.es.srt` from `p8e.srt`
-- `intro_puzzle_09.es.srt` from `p9e.srt`
-- `intro_puzzle_10.es.srt` from `p10e.srt`
-- `intro_final_puzzle.es.srt` from `pfinale.srt`
-- `outro_game_final.es.srt` from `final.srt`
+- `intro_inicial.es.srt` from `intro.srt`
+- `intro_puzzle_01_sumas.es.srt` from `p1e.srt`
+- `intro_puzzle_02_laberinto.es.srt` from `p2e.srt`
+- `intro_puzzle_03_trivial.es.srt` from `p3e.srt`
+- `intro_puzzle_04_musica.es.srt` from `p4e.srt`
+- `intro_puzzle_05_cronometro.es.srt` from `p5e.srt`
+- `intro_puzzle_06_energia.es.srt` from `p6e.srt`
+- `intro_puzzle_08_memory.es.srt` from `p8e.srt`
+- `intro_puzzle_09_token_a_lloc.es.srt` from `p9e.srt`
+- `intro_puzzle_10_segments.es.srt` from `p10e.srt`
+- `intro_puzzle_12_apreta_botons.es.srt` from `pfinale.srt`
+- `outro_final.es.srt` from `final.srt`
 
 Notes:
 

@@ -2160,7 +2160,9 @@ class ScenePlayer {
             return;
         }
 
-        if (this.hasMasterAudio() && (!preserveAudio || elements.audio.paused)) {
+        // When master audio has already ended (e.g. during countdown tail),
+        // do not call play() again or it will restart from the beginning.
+        if (this.hasMasterAudio() && !elements.audio.ended && (!preserveAudio || elements.audio.paused)) {
             try {
                 await elements.audio.play();
                 this.logEvent("audio_play", { src: this.scene.audio.src, preserveAudio });

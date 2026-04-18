@@ -1,81 +1,56 @@
 {
   "scene_id": "scene_intro_trivial",
   "description": "Intro generada para scene_intro_trivial con flujo Cero + objetivo + bloques visuales.",
-  "broadcast_title": "MENTE COLMENA",
+  "broadcast_title": "Mente Colmena",
   "ui_titles": {
     "top": "",
     "left": "",
     "right": ""
   },
   "audio": {
-    "src": "/static/audios/scene/intro_puzzle_03_v2.mp3"
+    "src": "/static/audios/scene/intro_puzzle_03.wav"
   },
   "use_character_frame": true,
   "subtitles": [
     {
       "start": 0.0,
-      "end": 1.7,
-      "text": "Prestad atención."
+      "end": 5.08,
+      "text": "Veamos cuánto sabéis: 10 preguntas se interpondrán en vuestro camino."
     },
     {
-      "start": 1.7,
-      "end": 4.9,
-      "text": "Hoy evaluaremos vuestro conocimiento colectivo."
+      "start": 5.08,
+      "end": 9.56,
+      "text": "En pantalla aparecerá una pregunta y 6 posibles respuestas."
     },
     {
-      "start": 4.9,
-      "end": 8.7,
-      "text": "Para superar esta prueba, tendréis que acertar 10 preguntas."
+      "start": 9.56,
+      "end": 13.48,
+      "text": "Elegid entre todos la correcta y recordad su número."
     },
     {
-      "start": 8.7,
-      "end": 10.8,
-      "text": "En la pantalla aparecerá una pregunta,"
-    },
-    {
-      "start": 10.8,
-      "end": 13.2,
-      "text": "y 6 posibles respuestas."
-    },
-    {
-      "start": 13.2,
-      "end": 16.9,
-      "text": "Entre todos, tendréis que decidir cuál es la correcta."
-    },
-    {
-      "start": 16.9,
-      "end": 20.2,
-      "text": "Cuando la hayáis elegido, recordad bien su número."
-    },
-    {
-      "start": 20.2,
-      "end": 24.7,
+      "start": 13.48,
+      "end": 17.68,
       "text": "En cada terminal veréis seis números, cada uno con un color distinto."
     },
     {
-      "start": 24.7,
-      "end": 29.4,
-      "text": "Buscad el número correcto y pulsad el botón de ese mismo color."
+      "start": 17.68,
+      "end": 21.52,
+      "text": "Encontrad el número correcto y pulsad su color."
     },
     {
-      "start": 29.5,
-      "end": 32.8,
-      "text": "Cuando todos hayáis pulsado, veréis el resultado."
+      "start": 21.52,
+      "end": 24.92,
+      "text": "Cuando todos respondáis, veréis el resultado."
     },
     {
-      "start": 32.8,
-      "end": 36.8,
-      "text": "Para avanzar, tendréis que encadenar varias respuestas correctas."
+      "start": 24.92,
+      "end": 28.24,
+      "text": "Un solo error romperá vuestra racha."
     },
     {
-      "start": 36.8,
-      "end": 40.4,
-      "text": "Pero cuidado, un solo error romperá la racha."
-    },
-    {
-      "start": 40.4,
-      "end": 42.919,
-      "text": "Pensad juntos y decidid rápido."
+      "start": 28.24,
+      "end": 30.96,
+      "text": "Pensad rápido, pensad como uno solo."
     }
   ],
   "segments": [
@@ -93,109 +68,27 @@
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0.0,
+          "at": 0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
-            "text": "OBJETIVO: ACERTAR 10 PREGUNTAS",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/checklist.png",
-                "alt": "checklist"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/pregunta.png",
-                "alt": "pregunta"
-              }
-            ]
-          },
-          "left": {
-            "variant": "immersive-strip",
-            "title": "FLUJO",
-            "steps": [
-              "Escuchar pregunta",
-              "Comparar opciones",
-              "Acordar respuesta"
-            ]
-          },
-          "right": {
-            "variant": "immersive-strip",
-            "title": "FASE 1/3",
-            "text": "INICIO DEL RETO\nFOCO EN CONSENSO"
-          },
-          "subtitle": "Bloque 1: objetivo y reglas generales."
+            "text": "MENTE COLMENA"
+          }
         },
         {
-          "at": 4.6,
+          "at": 2.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
-            "text": "LEE LA PREGUNTA Y REVISA 6 OPCIONES",
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/pregunta.png",
-                "alt": "pregunta"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/panel numeros.png",
-                "alt": "panel numeros"
+                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+                "alt": "Numbers strip 1 to 6"
               }
             ]
-          },
-          "left": {
-            "variant": "immersive-strip",
-            "title": "FLUJO",
-            "steps": [
-              "Leer en pantalla",
-              "Descartar opciones",
-              "Elegir número final"
-            ]
-          },
-          "right": {
-            "variant": "immersive-strip",
-            "title": "FASE 2/3",
-            "text": "ANÁLISIS DE OPCIONES\nDECISIÓN COLECTIVA"
-          },
-          "subtitle": "Bloque 2: comprender pregunta y respuestas."
-        },
-        {
-          "at": 8.9,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "text": "DECIDID JUNTOS Y MEMORIZAD EL NÚMERO",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/equipo_consenso.png",
-                "alt": "equipo_consenso"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/respuesta_correcta.png",
-                "alt": "respuesta_correcta"
-              }
-            ]
-          },
-          "left": {
-            "variant": "immersive-strip",
-            "title": "FLUJO",
-            "steps": [
-              "Proponer respuesta",
-              "Validar en equipo",
-              "Recordar número"
-            ]
-          },
-          "right": {
-            "variant": "immersive-strip",
-            "title": "FASE 3/3",
-            "text": "ACUERDO FINAL\nPREPARA EJECUCIÓN"
-          },
-          "subtitle": "Bloque 3: acuerdo del equipo."
+          }
         }
       ]
     },
@@ -209,7 +102,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 15.930125,
+      "duration": 32.406306,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -219,138 +112,28 @@
           "top": {
             "variant": "immersive-strip",
             "show_equals": false,
-            "text": "LOCALIZA EL NÚMERO EN TU TERMINAL",
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "terminal_box"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/panel numeros.png",
-                "alt": "panel numeros"
+                "src": "/static/images/puzzle3/intro/question_board.jpg",
+                "alt": "Question board"
               }
             ]
-          },
-          "left": {
-            "variant": "immersive-strip",
-            "title": "FLUJO",
-            "steps": [
-              "Mirar terminal",
-              "Buscar número",
-              "Ver color asociado"
-            ]
-          },
-          "right": {
-            "variant": "immersive-strip",
-            "title": "EJECUCIÓN 1/4",
-            "text": "TERMINAL ACTIVO\nBÚSQUEDA DE NÚMERO"
-          },
-          "subtitle": "Ejecución: identificar número y color en terminal."
+          }
         },
         {
-          "at": 3.88,
-          "sfx": "objective",
+          "at": 4.1,
+          "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "show_equals": false,
-            "text": "PULSA EL BOTÓN DEL COLOR CORRECTO",
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
-                "alt": "apretar boton"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "botones colores"
+                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
+                "alt": "Buttons panel front"
               }
             ]
-          },
-          "left": {
-            "variant": "immersive-strip",
-            "title": "FLUJO",
-            "steps": [
-              "Confirmar número",
-              "Pulsar color",
-              "Esperar al resto"
-            ]
-          },
-          "right": {
-            "variant": "immersive-strip",
-            "title": "EJECUCIÓN 2/4",
-            "text": "ACCIÓN DIRECTA\nPULSACIÓN POR COLOR"
-          },
-          "subtitle": "Ejecución: pulsar color correcto en cada terminal."
-        },
-        {
-          "at": 8.68,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "text": "CUANDO TODOS PULSAN, HAY VEREDICTO",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/resultado_pantalla.png",
-                "alt": "resultado_pantalla"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/veredicto_ok.png",
-                "alt": "veredicto_ok"
-              }
-            ]
-          },
-          "left": {
-            "variant": "immersive-strip",
-            "title": "FLUJO",
-            "steps": [
-              "Todos confirman",
-              "Sistema evalúa",
-              "Ver resultado"
-            ]
-          },
-          "right": {
-            "variant": "immersive-strip",
-            "title": "EJECUCIÓN 3/4",
-            "text": "RESOLUCIÓN GLOBAL\nCORRECTO/INCORRECTO"
-          },
-          "subtitle": "Ejecución: veredicto tras la acción conjunta."
-        },
-        {
-          "at": 11.98,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "text": "ENCADENA ACIERTOS PARA AVANZAR",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/progreso_objetivo.png",
-                "alt": "progreso_objetivo"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/racha_aciertos.png",
-                "alt": "racha_aciertos"
-              }
-            ]
-          },
-          "left": {
-            "variant": "immersive-strip",
-            "title": "FLUJO",
-            "steps": [
-              "Mantener foco",
-              "Evitar fallos",
-              "Subir racha"
-            ]
-          },
-          "right": {
-            "variant": "immersive-strip",
-            "title": "EJECUCIÓN 4/4",
-            "text": "PROGRESO\nRACHA DE ACIERTOS"
-          },
-          "subtitle": "Ejecución: la racha correcta desbloquea avance."
+          }
         }
       ]
     },
@@ -366,19 +149,22 @@
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "3"
+      "label": "3",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "2"
+      "label": "2",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "1"
+      "label": "1",
+      "sfx": "countdown"
     }
   ]
 }

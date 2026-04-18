@@ -1,5 +1,5 @@
 {
-  "srt_file": "scenes/subtitles/es/intro_puzzle_03.es.srt",
+  "srt_file": "scenes/subtitles/es/intro_puzzle_03_trivial.es.srt",
   "language": "es",
   "rules": {
     "keep_total_duration": true,

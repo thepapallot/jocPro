@@ -1,0 +1,48 @@
+1
+00:00:00,000 --> 00:00:05,120
+Esta prueba no trata de fuerza, sino de lógica y coordinación.
+
+2
+00:00:05,120 --> 00:00:10,560
+Vuestro objetivo será completar los patrones de colores que aparecerán en la pantalla.
+
+3
+00:00:10,560 --> 00:00:16,040
+Veréis un patrón para cada terminal, formado por distintos segmentos de color.
+
+4
+00:00:16,040 --> 00:00:21,600
+Para conseguirlo, utilizaréis vuestros tokens y los botones de los terminales.
+
+5
+00:00:21,600 --> 00:00:28,000
+Cada token contiene tres colores ocultos. Para descubrirlos, colocad el token en cualquier terminal y pulsad
+los botones negro, rojo y verde.
+
+6
+00:00:28,080 --> 00:00:31,760
+Cada botón encenderá uno de los colores de ese token.
+
+7
+00:00:31,760 --> 00:00:35,440
+Y esos colores serán siempre los mismos, esté donde esté.
+
+8
+00:00:35,440 --> 00:00:40,080
+Tendréis que moveros entre terminales usando cada token donde más convenga.
+
+9
+00:00:40,080 --> 00:00:45,120
+Así completaréis los segmentos que faltan en cada patrón.
+
+10
+00:00:45,120 --> 00:00:49,120
+Descubrid, combinad y coordinaos rápido.
+
+11
+00:00:49,120 --> 00:00:53,360
+Si el tiempo llega a cero, la fase se reiniciará.
+
+12
+00:00:53,360 --> 00:00:57,280
+Entended el sistema y hacedlo vuestro.

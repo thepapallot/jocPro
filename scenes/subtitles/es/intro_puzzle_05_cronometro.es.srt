@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:03,960
+El tiempo parece sencillo, hasta que hay que medirlo.
+
+2
+00:00:03,960 --> 00:00:08,200
+Debéis contar exactamente los segundos que aparecerán en pantalla.
+
+3
+00:00:08,200 --> 00:00:13,680
+Para ello, solo necesitaréis vuestros tokens y las luces del terminal.
+
+4
+00:00:13,680 --> 00:00:18,720
+Esta prueba tiene dos fases y en cada una contaréis un tiempo distinto.
+
+5
+00:00:18,720 --> 00:00:23,080
+Cuando inicie la fase, las luces se encenderán de forma aleatoria.
+
+6
+00:00:23,080 --> 00:00:26,080
+Esa será la señal para comenzar a contar.
+
+7
+00:00:26,160 --> 00:00:31,160
+Cuando creáis que el tiempo ha terminado, pasad vuestro token por el terminal.
+
+8
+00:00:31,160 --> 00:00:35,640
+Cada segundo de más o de menos sumará error al equipo.
+
+9
+00:00:35,640 --> 00:00:40,080
+Si el error acumulado supera el límite, la fase se reiniciará.
+
+10
+00:00:40,080 --> 00:00:44,800
+Recordad: no todas las luces se activarán al mismo tiempo.
+
+11
+00:00:44,800 --> 00:00:46,800
+Contad bien.
