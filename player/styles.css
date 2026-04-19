@@ -784,6 +784,39 @@ body {
     box-shadow: none !important;
 }
 
+/* Memory intro: when showing token + terminal + buttons together, make them
+   larger and tighter so they occupy the full top panel. */
+.player-root[data-scene-id="scene_intro_memory"] .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-3 {
+    grid-template-columns: repeat(3, clamp(260px, 26vw, 520px)) !important;
+    gap: clamp(20px, 2.2vw, 44px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
+
+.player-root[data-scene-id="scene_intro_memory"] .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-3 .asset-card {
+    width: clamp(260px, 26vw, 520px) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_memory"] .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-3 .asset-card__media {
+    min-height: 100% !important;
+    height: 100% !important;
+}
+
+.player-root[data-scene-id="scene_intro_memory"] .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-3 .asset-card__image {
+    width: clamp(240px, 22vw, 460px) !important;
+    max-width: 100% !important;
+    max-height: min(72cqh, 820px) !important;
+}
+
 .player-root[data-scene-id^="scene_intro_"] .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-1 .asset-card__image {
     width: clamp(620px, 58vw, 1280px) !important;
     max-width: min(92vw, 1400px) !important;
@@ -2804,6 +2837,15 @@ body {
     height: 100%;
     align-content: stretch;
     grid-auto-rows: 1fr;
+}
+
+/* Energia intro uses only two token blocks in this transition; center them and
+   constrain width so both cards stay inside the panel frame on smaller screens. */
+.player-root[data-scene-id="scene_intro_energia"] .transition-screen--puzzle6-token-map .p6-map-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(920px, 100%);
+    margin-inline: auto;
+    justify-content: center;
 }
 
 .p6-map-card {

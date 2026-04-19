@@ -88,19 +88,24 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "PULSO DE TIEMPO"
+            "text": "CONTAR LOS SEGUNDOS"
           }
         },
         {
-          "at": 2.4,
-          "sfx": "pulse",
+          "at": 4.08,
+          "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar off"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
               }
             ]
           }
@@ -129,8 +134,8 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base nfc con token"
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira led"
               }
             ]
           }
@@ -144,8 +149,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/base nfc.png",
+                "alt": "Base nfc"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base nfc con token"
               }
             ]
           }
@@ -159,8 +168,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/reset.png",
-                "alt": "Reset"
+                "src": "/static/images/shared/nuevos iconos/error atencion.png",
+                "alt": "Error atencion"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/temporizador.png",
+                "alt": "Temporizador"
               }
             ]
           }
@@ -180,6 +193,21 @@
               {
                 "src": "/static/images/shared/nuevos iconos/reset.png",
                 "alt": "Reset"
+              }
+            ]
+          }
+        },
+        {
+          "at": 19.26,
+          "sfx": "pulse",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/tira led.png",
+                "alt": "Tira led"
               }
             ]
           }

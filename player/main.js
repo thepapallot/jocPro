@@ -131,6 +131,7 @@ function getAssetItemKey(asset = {}) {
         src: asset.src || "",
         label: asset.label || "",
         text: asset.text || "",
+        filter: asset.filter || "",
     });
 }
 
@@ -151,6 +152,9 @@ function AssetCard(asset = {}) {
         image.className = "asset-card__image";
         image.src = asset.src || "";
         image.alt = asset.alt || asset.label || "";
+        if (asset.filter) {
+            image.style.filter = asset.filter;
+        }
         media.appendChild(image);
     }
 

@@ -71,15 +71,15 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "src": "/static/videos/characters/cero_intro_long_a.mp4",
       "clip_start": 0,
-      "clip_end": 4.12,
-      "duration": 4.12,
+      "clip_end": 6.5,
+      "duration": 6.5,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 12.999,
+      "duration": 10.619,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -88,39 +88,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "CARGA CRÍTICA"
-          }
-        },
-        {
-          "at": 8.38,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/termial con token.png",
-                "alt": "Termial con token"
-              }
-            ]
-          }
-        },
-        {
-          "at": 9.38,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/termial con token.png",
-                "alt": "Termial con token"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar off"
-              }
-            ]
+            "text": "IMPEDIR QUE LAS LUCES SE APAGUEN"
           }
         }
       ]
@@ -134,27 +102,32 @@
       "label": "bloque_estable"
     },
     {
-      "type": "fullscreen_ui",
-      "duration": 34.055082,
-      "variant": "immersive-strip",
-      "phases": [
+      "type": "transition",
+      "duration": 3.6,
+      "variant": "puzzle6-token-map",
+      "token_src": "/static/images/shared/gameplay/token_card.png",
+      "tokens": [
         {
-          "at": 0.0,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
-              }
-            ]
-          }
+          "code": "5",
+          "color": "#ff2b2b"
         },
         {
-          "at": 6.18,
+          "code": "31",
+          "color": "#ffd84f"
+        }
+      ]
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 30.455082,
+      "variant": "immersive-strip",
+      "top": {
+        "variant": "immersive-strip",
+        "text": ""
+      },
+      "phases": [
+        {
+          "at": 2.58,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -164,27 +137,36 @@
               {
                 "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
                 "alt": "Scanner bar on"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base nfc con token"
               }
             ]
           }
         },
         {
-          "at": 13.18,
-          "sfx": "objective",
+          "at": 9.58,
+          "sfx": "pulse",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
+            "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on (cambio de color)",
+                "filter": "hue-rotate(145deg) saturate(1.45) brightness(1.08)"
               }
             ]
           }
         },
         {
-          "at": 23.18,
+          "at": 19.58,
           "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
@@ -192,8 +174,27 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar off"
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
+              }
+            ]
+          }
+        },
+        {
+          "at": 22.38,
+          "sfx": "pulse",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/temporizador.png",
+                "alt": "Temporizador"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
               }
             ]
           }
