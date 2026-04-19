@@ -132,6 +132,7 @@ function getAssetItemKey(asset = {}) {
         label: asset.label || "",
         text: asset.text || "",
         filter: asset.filter || "",
+        fx: asset.fx || "",
     });
 }
 
@@ -156,6 +157,17 @@ function AssetCard(asset = {}) {
             image.style.filter = asset.filter;
         }
         media.appendChild(image);
+
+        if (asset.fx === "scanner-sequence") {
+            media.classList.add("asset-card__media--scanner-sequence");
+            card.classList.add("asset-card--scanner-sequence");
+            const overlay = createElement("span", "asset-scanner-sequence");
+            overlay.setAttribute("aria-hidden", "true");
+            overlay.appendChild(createElement("span", "asset-scanner-sequence__segment asset-scanner-sequence__segment--top"));
+            overlay.appendChild(createElement("span", "asset-scanner-sequence__segment asset-scanner-sequence__segment--middle"));
+            overlay.appendChild(createElement("span", "asset-scanner-sequence__segment asset-scanner-sequence__segment--bottom"));
+            media.appendChild(overlay);
+        }
     }
 
     card.appendChild(media);
@@ -526,6 +538,7 @@ function mergeAccumulatedUiState(segments, currentSegmentIndex, elapsedSeconds =
 function createZoneSlot(slotName, zone) {
     const card = createElement("section", `zone-card zone-card--${slotName}`);
     card.dataset.variant = zone?.variant || "mission";
+    card.dataset.zoneLayout = zone?.layout || "";
     card.dataset.zoneKind = Array.isArray(zone?.assets) && zone.assets.length > 0
         ? "assets"
         : Array.isArray(zone?.steps) && zone.steps.length > 0
@@ -554,6 +567,7 @@ function updateZoneSlot(card, zone, { animate = false } = {}) {
     const previousKey = card.dataset.renderKey || "";
 
     card.dataset.variant = nextVariant;
+    card.dataset.zoneLayout = zone?.layout || "";
     card.dataset.zoneKind = nextKind;
 
     if (!zoneHasContent(zone)) {
@@ -1075,30 +1089,46 @@ function Puzzle9BoardTransition(segment) {
 function Puzzle10PatternsTransition(segment) {
     const media = createElement("div", "transition-screen__media transition-screen__media--puzzle10-patterns");
     const stage = createElement("div", "p10-map-stage");
-    const header = createElement("div", "p10-map-header");
-    const title = createElement("div", "p10-map-title", segment.title || "PATRONES OBJETIVO");
-    const kicker = createElement("div", "p10-map-kicker", segment.kicker || "PANTALLA CENTRAL");
     const grid = createElement("div", "p10-map-grid");
     const patterns = Array.isArray(segment.patterns) ? segment.patterns : [];
+    const totalCards = patterns.length > 0 ? patterns.length : 10;
+    grid.classList.add(`p10-map-grid--count-${Math.min(totalCards, 10)}`);
 
-    header.appendChild(kicker);
-    header.appendChild(title);
-    stage.appendChild(header);
+    if (segment.kicker || segment.title) {
+        const header = createElement("div", "p10-map-header");
+        if (segment.kicker) {
+            header.appendChild(createElement("div", "p10-map-kicker", segment.kicker));
+        }
+        if (segment.title) {
+            header.appendChild(createElement("div", "p10-map-title", segment.title));
+        }
+        stage.appendChild(header);
+    }
 
-    for (let index = 0; index < 10; index += 1) {
+    for (let index = 0; index < totalCards; index += 1) {
         const item = patterns[index] || {};
         const card = createElement("article", "p10-map-card");
         const boxLabel = createElement("div", "p10-map-card__box", String(item.box != null ? item.box : index));
         const frame = createElement("div", "p10-map-card__frame");
+        const screwTopLeft = createElement("div", "p10-map-screw p10-map-screw-top-left");
+        const screwTopRight = createElement("div", "p10-map-screw p10-map-screw-top-right");
+        const screwBottomLeft = createElement("div", "p10-map-screw p10-map-screw-bottom-left");
+        const screwBottomRight = createElement("div", "p10-map-screw p10-map-screw-bottom-right");
+        const inner = createElement("div", "p10-map-card__inner");
         const windowEl = createElement("div", "p10-map-card__window");
         const code = String(item.code || "000").padEnd(3, "0").slice(0, 3);
 
-        for (const digit of code) {
+        for (const digit of Array.from(code).reverse()) {
             const segmentEl = createElement("div", `p10-map-segment color-${digit}`);
             windowEl.appendChild(segmentEl);
         }
 
-        frame.appendChild(windowEl);
+        inner.appendChild(windowEl);
+        frame.appendChild(screwTopLeft);
+        frame.appendChild(screwTopRight);
+        frame.appendChild(screwBottomLeft);
+        frame.appendChild(screwBottomRight);
+        frame.appendChild(inner);
         card.appendChild(boxLabel);
         card.appendChild(frame);
         grid.appendChild(card);
