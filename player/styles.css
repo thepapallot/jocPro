@@ -892,6 +892,82 @@ body {
     max-height: min(78cqh, 920px) !important;
 }
 
+/* Segments intro: 3 terminals side-by-side with 2 smaller tokens over two boxes. */
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 {
+    grid-template-columns: repeat(3, clamp(260px, 24vw, 520px)) !important;
+    grid-template-rows: 1fr;
+    gap: clamp(14px, 1.4vw, 26px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: end !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card {
+    width: clamp(260px, 24vw, 520px) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card__body {
+    display: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card__media {
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card:nth-child(3) {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card:nth-child(-n+3) .asset-card__image {
+    width: clamp(240px, 22vw, 500px) !important;
+    max-width: 100% !important;
+    max-height: min(70cqh, 800px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card:nth-child(4) {
+    grid-column: 1;
+    grid-row: 1;
+    z-index: 4;
+    align-self: end;
+    transform: translate(-12%, -24%);
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card:nth-child(5) {
+    grid-column: 3;
+    grid-row: 1;
+    z-index: 4;
+    align-self: end;
+    transform: translate(-12%, -24%);
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 .asset-card:nth-child(n+4) .asset-card__image {
+    width: clamp(112px, 9vw, 210px) !important;
+    max-width: 100% !important;
+    max-height: min(24cqh, 280px) !important;
+    filter: drop-shadow(0 6px 18px rgba(64, 208, 255, 0.32)) !important;
+}
+
 .player-root[data-scene-id^="scene_intro_"] .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-1 .asset-card__image {
     width: clamp(620px, 58vw, 1280px) !important;
     max-width: min(92vw, 1400px) !important;
@@ -1556,11 +1632,13 @@ body {
         drop-shadow(0 0 18px rgba(255, 89, 214, 0.1));
 }
 
-.asset-card__media--scanner-sequence {
+.asset-card__media--scanner-sequence,
+.asset-card__media--scanner-static-3 {
     position: relative;
 }
 
-.asset-card__media--scanner-sequence .asset-card__image {
+.asset-card__media--scanner-sequence .asset-card__image,
+.asset-card__media--scanner-static-3 .asset-card__image {
     position: relative;
     z-index: 1;
     /* Disable global icon glow so only the LED strip appears lit. */
@@ -1615,6 +1693,21 @@ body {
     --led-delay: 0.9s;
 }
 
+.asset-scanner-sequence--static .asset-scanner-sequence__segment--top {
+    --led-a: rgba(255, 104, 128, 0.98);
+    --led-b: rgba(255, 46, 82, 1);
+}
+
+.asset-scanner-sequence--static .asset-scanner-sequence__segment--middle {
+    --led-a: rgba(116, 200, 255, 0.98);
+    --led-b: rgba(38, 151, 255, 1);
+}
+
+.asset-scanner-sequence--static .asset-scanner-sequence__segment--bottom {
+    --led-a: rgba(165, 255, 210, 0.98);
+    --led-b: rgba(36, 244, 140, 1);
+}
+
 .asset-scanner-sequence__segment::before {
     content: "";
     position: absolute;
@@ -1632,6 +1725,12 @@ body {
         0 0 18px color-mix(in srgb, var(--led-b) 30%, transparent);
     animation: scanner-sequence-led 1.35s ease-in-out infinite;
     animation-delay: var(--led-delay);
+}
+
+.asset-scanner-sequence--static .asset-scanner-sequence__segment::before {
+    opacity: 1;
+    animation: none;
+    filter: saturate(1.42) brightness(1.2);
 }
 
 @keyframes scanner-sequence-led {

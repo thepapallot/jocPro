@@ -38,7 +38,7 @@
       "text": "Cada token contiene tres colores ocultos. Para descubrirlos, colocad el token en cualquier terminal y pulsad los botones negro, rojo y verde."
     },
     {
-      "start": 28.08,
+      "start": 28.0,
       "end": 31.76,
       "text": "Cada botón encenderá uno de los colores de ese token."
     },
@@ -116,7 +116,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 40.74202,
+      "duration": 41.24202,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -164,7 +164,7 @@
           }
         },
         {
-          "at": 12.04,
+          "at": 11.96,
           "sfx": "pulse",
           "variant": "immersive-strip",
           "top": {
@@ -188,42 +188,56 @@
         },
         {
           "at": 15.72,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones colores"
-              }
-            ]
-          }
-        },
-        {
-          "at": 19.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "large-3",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               },
               {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
                 "alt": "Terminal box"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base nfc con token"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 19.4,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "layout": "terminals-3-tokens-2",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               }
             ]
           }
@@ -234,6 +248,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "large-3",
             "show_equals": false,
             "assets": [
               {
@@ -241,8 +256,13 @@
                 "alt": "Terminal y segmentos"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira led"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar (3 colores fija)",
+                "fx": "scanner-static-3"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
+                "alt": "Apretar boton"
               }
             ]
           }

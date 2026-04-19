@@ -158,10 +158,14 @@ function AssetCard(asset = {}) {
         }
         media.appendChild(image);
 
-        if (asset.fx === "scanner-sequence") {
-            media.classList.add("asset-card__media--scanner-sequence");
+        if (asset.fx === "scanner-sequence" || asset.fx === "scanner-static-3") {
+            const isStaticScanner = asset.fx === "scanner-static-3";
+            media.classList.add(isStaticScanner ? "asset-card__media--scanner-static-3" : "asset-card__media--scanner-sequence");
             card.classList.add("asset-card--scanner-sequence");
             const overlay = createElement("span", "asset-scanner-sequence");
+            if (isStaticScanner) {
+                overlay.classList.add("asset-scanner-sequence--static");
+            }
             overlay.setAttribute("aria-hidden", "true");
             overlay.appendChild(createElement("span", "asset-scanner-sequence__segment asset-scanner-sequence__segment--top"));
             overlay.appendChild(createElement("span", "asset-scanner-sequence__segment asset-scanner-sequence__segment--middle"));
