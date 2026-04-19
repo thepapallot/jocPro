@@ -104,6 +104,70 @@ PATH_HINTS_TO_CONCEPT = {
     "scan": "barra_luz_encendida",
 }
 
+PUZZLE_CONTEXT_TERMS = [
+    "token",
+    "terminal",
+    "button",
+    "boton",
+    "color",
+    "symbol",
+    "simbol",
+    "time",
+    "timer",
+    "countdown",
+    "round",
+    "sequence",
+    "memory",
+    "music",
+    "sound",
+    "laberint",
+    "maze",
+    "error",
+    "restart",
+]
+
+MIN_VISUAL_PHASE_GAP = 1.8
+
+CONCEPT_ASSET_PREFERENCES = {
+    "token": [
+        "/static/images/shared/nuevos iconos/base nfc.png",
+        "/static/images/shared/nuevos iconos/base nfc con token.png",
+        "/static/images/shared/gameplay/token_card.png",
+    ],
+    "terminal": [
+        "/static/images/shared/nuevos iconos/termial con token.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+    ],
+    "panel_botones": [
+        "/static/images/shared/nuevos iconos/botones colores.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+    ],
+    "numeracion_terminal": [
+        "/static/images/shared/nuevos iconos/panel numeros.png",
+        "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+    ],
+    "barra_luz_apagada": [
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/nuevos iconos/tira led.png",
+    ],
+    "barra_luz_encendida": [
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/nuevos iconos/tira led.png",
+    ],
+    "tiempo_agotado": [
+        "/static/images/shared/nuevos iconos/reloj tiempo.png",
+        "/static/images/shared/nuevos iconos/temporizador.png",
+    ],
+    "error_operacion": [
+        "/static/images/shared/nuevos iconos/error atencion.png",
+        "/static/images/shared/nuevos iconos/veredicto_error.png",
+    ],
+    "reinicio": [
+        "/static/images/shared/nuevos iconos/reset.png",
+        "/static/images/shared/nuevos iconos/repetir.png",
+    ],
+}
+
 
 def load_json(path: Path):
     with path.open("r", encoding="utf-8") as f:
@@ -115,19 +179,6 @@ def dump_json(path: Path, data):
     with path.open("w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
         f.write("\n")
-
-
-def load_between_briefs(repo_root: Path, catalog: dict):
-    defaults = catalog.get("defaults", {})
-    brief_path = defaults.get(
-        "between_brief_path",
-        "scenes/source/transicion/scene_between_puzzles/config.json",
-    )
-    path = (repo_root / brief_path).resolve()
-    if not path.exists():
-        return {}
-    data = load_json(path)
-    return data.get("brief_by_scene", {}) if isinstance(data, dict) else {}
 
 
 def load_image_semantics(repo_root: Path, catalog: dict):
@@ -176,24 +227,27 @@ def rank_assets_for_scene(assets, scene_id, image_semantics):
     return ranked
 
 
-def resolve_intro_titles(entry: dict, defaults: dict, between_briefs: dict, scene_id: str):
-    brief = between_briefs.get(scene_id, {}) if isinstance(between_briefs, dict) else {}
-    use_between = entry.get("use_between_brief", defaults.get("use_between_brief", False))
+def derive_headline_from_subtitles(subtitles):
+    lines = [((s.get("text") or "").strip()) for s in (subtitles or [])]
+    lines = [line for line in lines if line]
+    if not lines:
+        return ""
+    with_keywords = [line for line in lines if _extract_mentioned_concepts(line)]
+    seed = with_keywords[0] if with_keywords else lines[0]
+    seed = seed.rstrip(".:;!? ").strip()
+    if len(seed) > 84:
+        seed = seed[:84].rstrip()
+    return seed
 
-    entry_game_title = entry.get("game_title", "")
-    entry_headline = entry.get("headline", "")
-    brief_title = brief.get("title", "")
-    brief_objective = brief.get("objective", "")
 
-    if use_between:
-        game_title = brief_title or entry_game_title
-        # En la intro, el texto principal debe ser el objetivo (no el nombre de la prueba).
-        headline = brief_objective or entry_headline or brief_title
-    else:
-        game_title = entry_game_title or brief_title
-        headline = entry_headline or brief_objective or brief_title
+def resolve_intro_titles(entry: dict, scene_id: str, subtitles: list):
+    entry_game_title = (entry.get("game_title") or "").strip()
+    entry_headline = (entry.get("headline") or "").strip()
+    entry_objective = (entry.get("objective") or "").strip()
 
-    return game_title, headline
+    game_title = entry_game_title or scene_id.replace("scene_intro_", "").replace("_", " ").title()
+    headline = entry_objective or entry_headline or derive_headline_from_subtitles(subtitles)
+    return game_title, headline or game_title
 
 
 def canonical_scene_id(entry: dict):
@@ -201,8 +255,8 @@ def canonical_scene_id(entry: dict):
     if explicit:
         return explicit
     source = (
-        entry.get("legacy_scene_id")
-        or entry.get("output_scene_id")
+        entry.get("output_scene_id")
+        or entry.get("legacy_scene_id")
         or ""
     ).strip()
     if source.endswith("_v2"):
@@ -276,15 +330,47 @@ def resolve_subtitles(entry: dict, repo_root: Path, scene_id: str):
     puzzle_tag = SCENE_TO_PUZZLE_TAG.get(scene_id, "")
     if not puzzle_tag:
         return []
-    srt_path = repo_root / "scenes" / "subtitles" / "es" / f"intro_puzzle_{int(puzzle_tag):02d}.es.srt"
+    subtitles_dir = repo_root / "scenes" / "subtitles" / "es"
+    # Preferred format: intro_puzzle_XX_<alias>.es.srt
+    alias_matches = sorted(subtitles_dir.glob(f"intro_puzzle_{int(puzzle_tag):02d}_*.es.srt"))
+    if alias_matches:
+        return parse_srt_file(alias_matches[0])
+    # Legacy fallback: intro_puzzle_XX.es.srt
+    srt_path = subtitles_dir / f"intro_puzzle_{int(puzzle_tag):02d}.es.srt"
     return parse_srt_file(srt_path)
 
 
-def infer_duration_from_subtitles(subtitles):
-    if not subtitles:
-        return None
-    end = max((float(s.get("end", 0) or 0) for s in subtitles), default=0.0)
-    return end if end > 0 else None
+def normalize_subtitles_timeline(subtitles, max_duration=None):
+    normalized = []
+    for sub in subtitles or []:
+        if not isinstance(sub, dict):
+            continue
+        text = (sub.get("text") or "").strip()
+        start = sub.get("start")
+        end = sub.get("end")
+        if not isinstance(start, (int, float)) or not isinstance(end, (int, float)) or not text:
+            continue
+        start = max(0.0, float(start))
+        end = max(0.0, float(end))
+        if isinstance(max_duration, (int, float)) and max_duration > 0:
+            if start >= max_duration:
+                continue
+            end = min(end, float(max_duration))
+        if end - start < 0.05:
+            continue
+        normalized.append({"start": round(start, 3), "end": round(end, 3), "text": text})
+
+    normalized.sort(key=lambda s: (s["start"], s["end"]))
+    cleaned = []
+    for sub in normalized:
+        if cleaned and sub["start"] < cleaned[-1]["start"]:
+            sub["start"] = cleaned[-1]["start"]
+        if cleaned and sub["start"] < cleaned[-1]["end"] and cleaned[-1]["end"] - sub["start"] <= 0.25:
+            sub["start"] = round(cleaned[-1]["end"], 3)
+        if sub["end"] <= sub["start"]:
+            continue
+        cleaned.append(sub)
+    return cleaned
 
 
 def normalize_text(text: str):
@@ -341,6 +427,36 @@ def _extract_mentioned_concepts(subtitle_text: str):
     return concepts
 
 
+def load_puzzle_context(repo_root: Path, scene_id: str):
+    puzzle_tag = SCENE_TO_PUZZLE_TAG.get(scene_id, "")
+    if not puzzle_tag:
+        return {"puzzle_tag": "", "keywords": set(), "static_images": [], "audio_effects": []}
+
+    puzzle_file = repo_root / "mqtt" / "puzzles" / f"puzzle{int(puzzle_tag)}.py"
+    if not puzzle_file.exists():
+        return {"puzzle_tag": puzzle_tag, "keywords": set(), "static_images": [], "audio_effects": []}
+
+    raw = puzzle_file.read_text(encoding="utf-8")
+    normalized = normalize_text(raw)
+    static_refs = re.findall(r"['\"](/static/[^'\"]+)['\"]", raw)
+    static_images = []
+    audio_effects = []
+    for ref in static_refs:
+        ref_lower = ref.lower()
+        if ref_lower.startswith("/static/audios/effects/"):
+            audio_effects.append(ref)
+        elif ref_lower.endswith((".png", ".jpg", ".jpeg", ".svg", ".webp", ".gif")):
+            static_images.append(ref)
+
+    keywords = {term for term in PUZZLE_CONTEXT_TERMS if term in normalized}
+    return {
+        "puzzle_tag": puzzle_tag,
+        "keywords": keywords,
+        "static_images": sorted(set(static_images)),
+        "audio_effects": sorted(set(audio_effects)),
+    }
+
+
 def discover_puzzle_assets(repo_root: Path, puzzle_tag: str, existing_paths: set[str]):
     if not puzzle_tag:
         return []
@@ -374,7 +490,27 @@ def discover_puzzle_assets(repo_root: Path, puzzle_tag: str, existing_paths: set
     return found[:24]
 
 
-def build_asset_candidates(scene_id: str, image_semantics: dict, repo_root: Path):
+def discover_assets_from_puzzle_context(puzzle_context: dict, existing_paths: set[str]):
+    puzzle_tag = puzzle_context.get("puzzle_tag") or ""
+    keywords = sorted(puzzle_context.get("keywords") or set())
+    found = []
+    for ref in puzzle_context.get("static_images", []):
+        if ref in existing_paths:
+            continue
+        found.append(
+            {
+                "src": ref,
+                "alt": path_to_alt(ref),
+                "concept": infer_concept_from_path(ref),
+                "puzzles": [int(puzzle_tag)] if puzzle_tag else [],
+                "search_blob": normalize_text(" ".join([ref] + keywords)),
+            }
+        )
+        existing_paths.add(ref)
+    return found[:16]
+
+
+def build_asset_candidates(scene_id: str, image_semantics: dict, repo_root: Path, puzzle_context: dict):
     puzzle_tag = SCENE_TO_PUZZLE_TAG.get(scene_id, "")
     candidates = []
     existing_paths = set()
@@ -404,10 +540,11 @@ def build_asset_candidates(scene_id: str, image_semantics: dict, repo_root: Path
         existing_paths.add(src)
 
     candidates.extend(discover_puzzle_assets(repo_root, puzzle_tag, existing_paths))
+    candidates.extend(discover_assets_from_puzzle_context(puzzle_context, existing_paths))
     return candidates
 
 
-def score_asset_for_subtitle(candidate: dict, subtitle_text: str, puzzle_tag: str):
+def score_asset_for_subtitle(candidate: dict, subtitle_text: str, puzzle_tag: str, context_keywords: set[str] | None = None):
     text = normalize_text(subtitle_text)
     score = 0
     puzzles = {str(v).lower() for v in candidate.get("puzzles", []) if isinstance(v, (str, int))}
@@ -434,6 +571,23 @@ def score_asset_for_subtitle(candidate: dict, subtitle_text: str, puzzle_tag: st
     words = [w for w in re.findall(r"[a-z0-9]+", text) if len(w) >= 4]
     overlap = sum(1 for w in words if w in blob)
     score += min(overlap * 4, 20)
+
+    if context_keywords:
+        hits = [term for term in context_keywords if term in text]
+        if hits:
+            context_overlap = sum(1 for term in hits if term in blob)
+            score += min(context_overlap * 6, 18)
+
+    # Prefer curated "nuevos iconos" bank for intro readability.
+    src = (candidate.get("src") or "").lower()
+    if "/static/images/shared/nuevos iconos/" in src:
+        score += 12
+
+    preferred = CONCEPT_ASSET_PREFERENCES.get(concept, [])
+    if candidate.get("src") in preferred:
+        # earlier entries in the preference list are stronger
+        score += 24 - (preferred.index(candidate.get("src")) * 6)
+
     return score
 
 
@@ -445,13 +599,17 @@ def pick_assets_for_subtitle(
     max_assets: int = 2,
     allow_warning: bool | None = None,
     concept_first_use: dict | None = None,
+    context_keywords: set[str] | None = None,
 ):
     if allow_warning is None:
         allow_warning = subtitle_has_warning_cue(subtitle_text)
 
     ranked = sorted(
         candidates,
-        key=lambda c: (score_asset_for_subtitle(c, subtitle_text, puzzle_tag), c.get("src", "")),
+        key=lambda c: (
+            score_asset_for_subtitle(c, subtitle_text, puzzle_tag, context_keywords=context_keywords),
+            c.get("src", ""),
+        ),
         reverse=True,
     )
 
@@ -559,6 +717,47 @@ def pick_assets_for_subtitle(
     ][:max_assets]
 
 
+def pick_asset_for_concept(
+    concept: str,
+    subtitle_text: str,
+    candidates: list,
+    puzzle_tag: str,
+    used_paths: set[str],
+    context_keywords: set[str] | None = None,
+):
+    if not concept:
+        return None
+
+    concept_aliases = {
+        "error_operacion": {"error_operacion", "error_atencion", "veredicto_error", "respuesta_incorrecta"},
+        "reinicio": {"reinicio", "repeticion"},
+        "token": {"token", "token_complementario"},
+        "terminal": {"terminal", "terminal_complementario"},
+    }
+    accepted_concepts = concept_aliases.get(concept, {concept})
+    preferred_paths = set(CONCEPT_ASSET_PREFERENCES.get(concept, []))
+
+    ranked = sorted(
+        [
+            c for c in candidates
+            if (c.get("concept") in accepted_concepts or c.get("src") in preferred_paths)
+            and not is_warning_candidate(c)
+        ],
+        key=lambda c: (
+            _asset_semantic_rank(c.get("src"), puzzle_tag, {c.get("src"): {"puzzles": c.get("puzzles", [])}}),
+            -score_asset_for_subtitle(c, subtitle_text, puzzle_tag, context_keywords=context_keywords),
+            c.get("src", ""),
+        ),
+    )
+    for item in ranked:
+        src = item.get("src")
+        if not src or src in used_paths:
+            continue
+        used_paths.add(src)
+        return {"src": src, "alt": item.get("alt") or path_to_alt(src)}
+    return None
+
+
 def replace_tokens(node, mapping):
     if isinstance(node, dict):
         return {k: replace_tokens(v, mapping) for k, v in node.items()}
@@ -572,108 +771,19 @@ def replace_tokens(node, mapping):
     return node
 
 
-def _normalize_assets(raw_assets):
-    assets = []
-    for item in raw_assets or []:
-        if not isinstance(item, dict):
-            continue
-        src = item.get("src")
-        if not isinstance(src, str) or not src.strip():
-            continue
-        normalized = {"src": src}
-        alt = item.get("alt")
-        if isinstance(alt, str) and alt.strip():
-            normalized["alt"] = alt
-        assets.append(normalized)
-    return assets
-
-
-def infer_assets_from_legacy(legacy):
-    """
-    Infer intro/warning visual assets from the legacy scene fullscreen phases.
-    This keeps each v2 intro visually tied to its puzzle without hardcoding.
-    """
-    fullscreen_lists = []
-    for segment in legacy.get("segments", []):
-        if segment.get("type") != "fullscreen_ui":
-            continue
-        segment_lists = []
-        for phase in segment.get("phases", []):
-            merged_assets = []
-            for zone in ("top", "left", "right"):
-                zone_assets = _normalize_assets((phase.get(zone) or {}).get("assets"))
-                merged_assets.extend(zone_assets)
-            if merged_assets:
-                segment_lists.append(merged_assets)
-        if segment_lists:
-            fullscreen_lists.append(segment_lists)
-
-    if not fullscreen_lists:
-        return None, None
-
-    # Intro: use the richest list in the first fullscreen segment
-    # (usually the phase where all key elements are already visible).
-    intro_assets = max(fullscreen_lists[0], key=lambda items: len(items))
-
-    # Warnings: distinct lists from remaining fullscreen segments (or fallback to first).
-    warning_source = []
-    for segment_lists in fullscreen_lists[1:] or fullscreen_lists:
-        warning_source.extend(segment_lists)
-
-    distinct = []
-    seen = set()
-    for asset_list in warning_source:
-        key = tuple(a["src"] for a in asset_list)
-        if key in seen:
-            continue
-        seen.add(key)
-        distinct.append(asset_list)
-
-    warning_lists = distinct or [intro_assets]
-    while len(warning_lists) < 3:
-        warning_lists.append(warning_lists[-1])
-    warning_pairs = warning_lists[:3]
-    return intro_assets, warning_pairs
-
-
-def sync_segment_timing_from_legacy(scene, legacy):
-    """
-    Copy timing profile from legacy scene when possible:
-    - segment durations by index
-    - phase "at" times by index within fullscreen_ui segments
-    """
-    target_segments = scene.get("segments", [])
-    legacy_segments = legacy.get("segments", [])
-
-    for idx, segment in enumerate(target_segments):
-        if idx >= len(legacy_segments):
-            continue
-        legacy_segment = legacy_segments[idx]
-        if segment.get("type") != legacy_segment.get("type"):
-            continue
-
-        if isinstance(legacy_segment.get("duration"), (int, float)):
-            segment["duration"] = legacy_segment["duration"]
-
-        target_phases = segment.get("phases")
-        legacy_phases = legacy_segment.get("phases")
-        if not isinstance(target_phases, list) or not isinstance(legacy_phases, list):
-            continue
-
-        for pidx, phase in enumerate(target_phases):
-            if pidx >= len(legacy_phases):
-                continue
-            legacy_at = legacy_phases[pidx].get("at")
-            if isinstance(legacy_at, (int, float)):
-                phase["at"] = legacy_at
-
-
-def pick_sfx_for_text(text: str):
-    t = text.lower()
-    if any(k in t for k in ("error", "límite", "limite", "reinici", "agot", "fall")):
+def pick_sfx_for_text(text: str, puzzle_context: dict | None = None):
+    t = normalize_text(text)
+    if any(k in t for k in ("error", "limite", "reinici", "agot", "fall")):
         return "warning"
     if "token" in t:
         return "token"
+    if any(k in t for k in ("tiempo", "segundo", "cronometro", "cuenta", "ronda", "fase")):
+        return "pulse"
+    context_keywords = (puzzle_context or {}).get("keywords") or set()
+    if context_keywords.intersection({"timer", "time", "countdown", "round"}) and any(
+        k in t for k in ("inicio", "empieza", "fase", "ronda")
+    ):
+        return "pulse"
     return "objective"
 
 
@@ -712,85 +822,6 @@ def collect_subtitle_points(subtitles, start_abs, end_abs):
     return dedup
 
 
-def apply_subtitle_driven_fullscreen(scene, entry, defaults, resolved_headline=""):
-    enabled = entry.get(
-        "auto_fullscreen_from_subtitles",
-        defaults.get("auto_fullscreen_from_subtitles", False),
-    )
-    if not enabled:
-        return
-
-    subtitles = scene.get("subtitles", [])
-    headline = resolved_headline or entry.get("headline", "")
-
-    fullscreen_indices = [i for i, seg in enumerate(scene.get("segments", [])) if seg.get("type") == "fullscreen_ui"]
-    if not fullscreen_indices:
-        return
-
-    first_fullscreen = fullscreen_indices[0]
-    for idx, start_abs, duration, segment in timeline_with_starts(scene):
-        if segment.get("type") != "fullscreen_ui":
-            continue
-
-        end_abs = start_abs + duration
-        subtitle_points = collect_subtitle_points(subtitles, start_abs, end_abs)
-        phases = []
-
-        if idx == first_fullscreen:
-            phases.append(
-                {
-                    "at": 0,
-                    "sfx": "objective",
-                    "variant": "immersive-strip",
-                    "top": {"variant": "immersive-strip", "text": headline or "OBJETIVO"},
-                }
-            )
-            for point in subtitle_points:
-                if point["at"] < 1.2:
-                    continue
-                phases.append(
-                    {
-                        "at": round(point["at"], 3),
-                        "sfx": pick_sfx_for_text(point["text"]),
-                        "variant": "immersive-strip",
-                        "top": {"variant": "immersive-strip", "text": point["text"]},
-                    }
-                )
-        else:
-            if subtitle_points:
-                for point in subtitle_points:
-                    phases.append(
-                        {
-                            "at": round(point["at"], 3),
-                            "sfx": pick_sfx_for_text(point["text"]),
-                            "variant": "immersive-strip",
-                            "top": {"variant": "immersive-strip", "text": point["text"]},
-                        }
-                    )
-            else:
-                phases.append(
-                    {
-                        "at": 0,
-                        "sfx": "objective",
-                        "variant": "immersive-strip",
-                        "top": {"variant": "immersive-strip", "text": headline or "OBJETIVO"},
-                    }
-                )
-
-        if not phases:
-            phases = [
-                {
-                    "at": 0,
-                    "sfx": "objective",
-                    "variant": "immersive-strip",
-                    "top": {"variant": "immersive-strip", "text": headline or "OBJETIVO"},
-                }
-            ]
-
-        segment["variant"] = "immersive-strip"
-        segment["phases"] = phases
-
-
 def resolve_static_path(repo_root: Path, static_url: str):
     if not isinstance(static_url, str) or not static_url.startswith("/static/"):
         return None
@@ -807,28 +838,101 @@ def read_wav_duration_seconds(path: Path):
         return None
 
 
+def is_countdown_segment(segment: dict):
+    return (
+        isinstance(segment, dict)
+        and segment.get("type") == "transition"
+        and segment.get("variant") == "countdown"
+    )
+
+
+def split_precountdown_and_countdown(segments: list):
+    first_countdown_index = None
+    for idx, segment in enumerate(segments or []):
+        if is_countdown_segment(segment):
+            first_countdown_index = idx
+            break
+    if first_countdown_index is None:
+        return list(segments or []), []
+    return list(segments[:first_countdown_index]), list(segments[first_countdown_index:])
+
+
 def fit_scene_duration_to_audio(scene, repo_root: Path):
     audio_src = ((scene.get("audio") or {}).get("src") or "").strip()
     audio_path = resolve_static_path(repo_root, audio_src)
     audio_duration = read_wav_duration_seconds(audio_path) if audio_path else None
     if not isinstance(audio_duration, (int, float)) or audio_duration <= 0:
-        return
+        return None
 
     segments = scene.get("segments", [])
-    scene_duration = sum(float(s.get("duration", 0) or 0) for s in segments)
-    delta = float(audio_duration) - float(scene_duration)
-    if delta <= 0.05:
-        return
+    pre_segments, countdown_segments = split_precountdown_and_countdown(segments)
+    pre_duration = sum(float(s.get("duration", 0) or 0) for s in pre_segments)
+    delta = float(audio_duration) - float(pre_duration)
+    if abs(delta) <= 0.01:
+        return float(audio_duration)
 
-    fullscreen_indices = [i for i, s in enumerate(segments) if s.get("type") == "fullscreen_ui"]
-    if fullscreen_indices:
-        target = segments[fullscreen_indices[-1]]
-    else:
-        target = next((s for s in reversed(segments) if isinstance(s.get("duration"), (int, float))), None)
-    if target is None:
-        return
+    fullscreen_indices = [i for i, s in enumerate(pre_segments) if s.get("type") == "fullscreen_ui"]
+    adjustable_indices = fullscreen_indices or [
+        i for i, s in enumerate(pre_segments) if isinstance(s.get("duration"), (int, float))
+    ]
+    if not adjustable_indices:
+        return float(audio_duration)
 
-    target["duration"] = round(float(target.get("duration", 0) or 0) + delta, 6)
+    remaining = float(delta)
+
+    for idx in reversed(adjustable_indices):
+        if abs(remaining) <= 0.005:
+            break
+        segment = pre_segments[idx]
+        current = float(segment.get("duration", 0) or 0)
+        min_duration = 3.5 if segment.get("type") == "fullscreen_ui" else 1.0
+        if remaining > 0:
+            segment["duration"] = round(current + remaining, 6)
+            remaining = 0.0
+            break
+
+        max_reduction = max(0.0, current - min_duration)
+        reduction = min(max_reduction, -remaining)
+        segment["duration"] = round(current - reduction, 6)
+        remaining += reduction
+
+    if abs(remaining) > 0.005:
+        idx = adjustable_indices[-1]
+        segment = pre_segments[idx]
+        current = float(segment.get("duration", 0) or 0)
+        segment["duration"] = round(max(0.2, current + remaining), 6)
+
+    if countdown_segments:
+        scene["segments"] = pre_segments + countdown_segments
+
+    return float(audio_duration)
+
+
+def infer_asset_count(text: str, allow_equals_visual: bool):
+    if allow_equals_visual:
+        return 2
+    return 1
+
+
+def condense_phase_points(phase_points: list, visual_duration: float):
+    if not phase_points:
+        return []
+    safe_end = max(0.0, visual_duration - 0.2)
+    max_points = max(1, min(4, int(max(1.0, visual_duration) // 4)))
+
+    filtered = []
+    last_at = None
+    for point in phase_points:
+        at = float(point.get("at", 0) or 0)
+        if at > safe_end:
+            break
+        if last_at is not None and at - last_at < MIN_VISUAL_PHASE_GAP:
+            continue
+        filtered.append({"at": at, "text": point.get("text", "")})
+        last_at = at
+        if len(filtered) >= max_points:
+            break
+    return filtered or [{"at": 0.0, "text": (phase_points[0].get("text") or "objetivo")}]
 
 
 def _stable_hash(value: str) -> str:
@@ -955,16 +1059,16 @@ def build_scene(
     repo_root: Path,
     role_to_clips,
     used_counts,
-    between_briefs,
     image_semantics,
 ):
     scene = copy.deepcopy(template)
 
     scene_id = canonical_scene_id(entry)
     allow_equals_visual = is_sumas_scene(scene_id)
-    resolved_game_title, resolved_headline = resolve_intro_titles(entry, defaults, between_briefs, scene_id)
-    audio_src = resolve_audio_src(entry, scene_id)
     subtitles = resolve_subtitles(entry, repo_root, scene_id)
+    resolved_game_title, resolved_headline = resolve_intro_titles(entry, scene_id, subtitles)
+    audio_src = resolve_audio_src(entry, scene_id)
+    puzzle_context = load_puzzle_context(repo_root, scene_id)
 
     mapping = {
         "__SCENE_ID__": scene_id,
@@ -981,22 +1085,22 @@ def build_scene(
     # Subtitle overlay should always come from subtitles folder (or explicit override).
     scene["subtitles"] = subtitles
 
-    # If audio is missing, keep scene duration aligned to subtitle timeline.
-    subtitle_duration = infer_duration_from_subtitles(subtitles)
-    if subtitle_duration:
-        segments = scene.get("segments", [])
-        current_duration = sum(float(s.get("duration", 0) or 0) for s in segments)
-        delta = float(subtitle_duration) - current_duration
-        if delta > 0.05 and len(segments) > 3 and segments[3].get("type") == "fullscreen_ui":
-            segments[3]["duration"] = round(float(segments[3].get("duration", 0) or 0) + delta, 6)
-
-    # Ensure total scene duration reaches real audio length when WAV exists.
-    fit_scene_duration_to_audio(scene, repo_root)
+    # Audio defines the final intro length.
+    audio_duration = fit_scene_duration_to_audio(scene, repo_root)
+    require_audio_duration = entry.get(
+        "require_audio_duration",
+        defaults.get("require_audio_duration", True),
+    )
+    if require_audio_duration and not isinstance(audio_duration, (int, float)):
+        raise RuntimeError(f"{scene_id}: missing/invalid WAV audio for duration sync -> {audio_src}")
+    scene["subtitles"] = normalize_subtitles_timeline(scene["subtitles"], max_duration=audio_duration)
+    subtitles = scene["subtitles"]
 
     puzzle_tag = SCENE_TO_PUZZLE_TAG.get(scene_id, "")
-    asset_candidates = build_asset_candidates(scene_id, image_semantics, repo_root)
+    asset_candidates = build_asset_candidates(scene_id, image_semantics, repo_root, puzzle_context)
     used_paths = set()
     concept_first_use = {}
+    context_keywords = puzzle_context.get("keywords") or set()
 
     timeline = timeline_with_starts(scene)
     segment2 = next((item for item in timeline if item[0] == 1), None)
@@ -1026,45 +1130,97 @@ def build_scene(
             else float(scene["segments"][1].get("duration", 0) or 0) * 0.45
         )
     )
+    objective_concepts = _extract_mentioned_concepts(objective_hint)
+    temp_used_paths = set(used_paths)
     objective_assets = pick_assets_for_subtitle(
         objective_hint,
         asset_candidates,
         puzzle_tag,
-        used_paths,
-        max_assets=2,
+        temp_used_paths,
+        max_assets=infer_asset_count(objective_hint, allow_equals_visual=False),
         allow_warning=False,
         concept_first_use=concept_first_use,
+        context_keywords=context_keywords,
     )
 
     # Objective block: large text + subtitle-matched assets.
     scene["segments"][1]["variant"] = "immersive-strip"
-    scene["segments"][1]["phases"] = [
+    objective_phases = [
         {
             "at": 0,
             "sfx": "objective",
             "variant": "immersive-strip",
             "top": {"variant": "immersive-strip", "text": resolved_headline or "OBJETIVO"},
-        },
-        {
-            "at": round(
-                max(
-                    2.4,
-                    objective_assets_at,
-                ),
-                3,
-            ),
-            "sfx": "objective",
-            "variant": "immersive-strip",
-            "top": {"variant": "immersive-strip", "assets": objective_assets},
-        },
+        }
     ]
+    objective_phase_at = round(max(2.4, objective_assets_at), 3)
+    if len(objective_concepts) >= 2:
+        first_asset = pick_asset_for_concept(
+            objective_concepts[0],
+            objective_hint,
+            asset_candidates,
+            puzzle_tag,
+            used_paths,
+            context_keywords=context_keywords,
+        )
+        second_asset = pick_asset_for_concept(
+            objective_concepts[1],
+            objective_hint,
+            asset_candidates,
+            puzzle_tag,
+            used_paths,
+            context_keywords=context_keywords,
+        )
+        if first_asset and second_asset:
+            objective_phases.append(
+                {
+                    "at": objective_phase_at,
+                    "sfx": pick_sfx_for_text(objective_hint, puzzle_context),
+                    "variant": "immersive-strip",
+                    "top": {"variant": "immersive-strip", "assets": [first_asset]},
+                }
+            )
+            objective_phases.append(
+                {
+                    "at": round(objective_phase_at + 1.0, 3),
+                    "sfx": "objective",
+                    "variant": "immersive-strip",
+                    "top": {"variant": "immersive-strip", "assets": [first_asset, second_asset]},
+                }
+            )
+        else:
+            for asset in objective_assets:
+                if asset.get("src"):
+                    used_paths.add(asset["src"])
+            objective_phases.append(
+                {
+                    "at": objective_phase_at,
+                    "sfx": pick_sfx_for_text(objective_hint, puzzle_context),
+                    "variant": "immersive-strip",
+                    "top": {"variant": "immersive-strip", "assets": objective_assets},
+                }
+            )
+    else:
+        for asset in objective_assets:
+            if asset.get("src"):
+                used_paths.add(asset["src"])
+        objective_phases.append(
+            {
+                "at": objective_phase_at,
+                "sfx": pick_sfx_for_text(objective_hint, puzzle_context),
+                "variant": "immersive-strip",
+                "top": {"variant": "immersive-strip", "assets": objective_assets},
+            }
+        )
+    scene["segments"][1]["phases"] = objective_phases
 
     # Visual block only (no big middle text): switch icons at subtitle timestamps.
     visual_duration = float(scene["segments"][3].get("duration", 0) or 0)
+    visual_safe_end = max(0.0, visual_duration - 0.2)
     default_points = [
         {"at": 0.0, "text": resolved_headline or "objetivo"},
-        {"at": round(max(2.8, visual_duration * 0.33), 3), "text": "token terminal"},
-        {"at": round(max(5.6, visual_duration * 0.66), 3), "text": "botones luces"},
+        {"at": round(min(visual_safe_end, max(1.0, visual_duration * 0.33)), 3), "text": "token terminal"},
+        {"at": round(min(visual_safe_end, max(1.8, visual_duration * 0.66)), 3), "text": "botones luces"},
     ]
     phase_points = []
     if points4:
@@ -1077,6 +1233,7 @@ def build_scene(
             phase_points.append(point)
     if not phase_points:
         phase_points = default_points
+    phase_points = condense_phase_points(phase_points, visual_duration)
 
     scene["segments"][3]["variant"] = "immersive-strip"
     visual_phases = []
@@ -1086,15 +1243,25 @@ def build_scene(
             asset_candidates,
             puzzle_tag,
             used_paths,
-            max_assets=2,
+            max_assets=infer_asset_count(point["text"], allow_equals_visual=allow_equals_visual),
             allow_warning=subtitle_has_warning_cue(point["text"]),
             concept_first_use=concept_first_use,
+            context_keywords=context_keywords,
         )
-        min_at = 0.0 if index == 0 else visual_phases[-1]["at"] + 0.6
+
+        min_at = 0.0 if index == 0 else visual_phases[-1]["at"] + MIN_VISUAL_PHASE_GAP
+        at_value = round(max(min_at, float(point["at"])), 3)
+        if at_value > visual_safe_end:
+            if not visual_phases:
+                at_value = 0.0
+            elif visual_safe_end - visual_phases[-1]["at"] < 0.45:
+                break
+            else:
+                at_value = round(visual_safe_end, 3)
         visual_phases.append(
             {
-                "at": round(max(min_at, float(point["at"])), 3),
-                "sfx": pick_sfx_for_text(point["text"]),
+                "at": at_value,
+                "sfx": pick_sfx_for_text(point["text"], puzzle_context),
                 "variant": "immersive-strip",
                 "top": {
                     "variant": "immersive-strip",
@@ -1104,6 +1271,13 @@ def build_scene(
             }
         )
     scene["segments"][3]["phases"] = visual_phases
+
+    # Countdown has to start only after audio ends. We keep 3 transitions (3-2-1),
+    # 1 second each, and trigger a countdown pip on each number.
+    _, countdown_segments = split_precountdown_and_countdown(scene.get("segments", []))
+    for segment in countdown_segments:
+        if is_countdown_segment(segment):
+            segment["sfx"] = "countdown"
 
     # Assign character clips by narrative intent (intro/briefing/warning/close).
     apply_character_casting(scene, entry, defaults, role_to_clips, used_counts)
@@ -1135,7 +1309,6 @@ def main():
 
     defaults = catalog.get("defaults", {})
     entries = catalog.get("entries", [])
-    between_briefs = load_between_briefs(repo_root, catalog)
     image_semantics = load_image_semantics(repo_root, catalog)
     role_to_clips, used_counts = build_character_library(media_catalog)
 
@@ -1157,7 +1330,6 @@ def main():
           repo_root,
           role_to_clips,
           used_counts,
-          between_briefs,
           image_semantics,
       )
       dump_json(out_file, scene)

@@ -1,7 +1,7 @@
 {
   "scene_id": "scene_intro_cronometro",
   "description": "Intro generada para scene_intro_cronometro con flujo Cero + objetivo + bloques visuales.",
-  "broadcast_title": "PULSO DE TIEMPO",
+  "broadcast_title": "Pulso de Tiempo",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -14,58 +14,58 @@
   "subtitles": [
     {
       "start": 0.0,
-      "end": 4.12,
-      "text": "Empieza el nivel en el que pondremos a prueba vuestra percepción temporal."
+      "end": 3.96,
+      "text": "El tiempo parece sencillo, hasta que hay que medirlo."
     },
     {
-      "start": 4.12,
-      "end": 9.72,
-      "text": "El objetivo de este nivel es contar exactamente el número de segundos que se os indicará en la pantalla."
+      "start": 3.96,
+      "end": 8.2,
+      "text": "Debéis contar exactamente los segundos que aparecerán en pantalla."
     },
     {
-      "start": 9.72,
-      "end": 14.359,
-      "text": "Para hacerlo solo necesitaréis vuestros tokens y las luces de vuestro terminal."
+      "start": 8.2,
+      "end": 13.68,
+      "text": "Para ello, solo necesitaréis vuestros tokens y las luces del terminal."
     },
     {
-      "start": 14.359,
-      "end": 20.48,
-      "text": "Esta prueba consta de dos fases y, en cada una de ellas, deberéis contar un número de segundos distinto."
+      "start": 13.68,
+      "end": 18.72,
+      "text": "Esta prueba tiene dos fases y en cada una contaréis un tiempo distinto."
     },
     {
-      "start": 20.48,
-      "end": 25.0,
-      "text": "Cuando la fase empiece, las luces de los terminales se encenderán aleatoriamente."
+      "start": 18.72,
+      "end": 23.08,
+      "text": "Cuando inicie la fase, las luces se encenderán de forma aleatoria."
     },
     {
-      "start": 25.0,
-      "end": 29.0,
-      "text": "Esta será la señal de que deberéis empezar a contar el tiempo indicado."
+      "start": 23.08,
+      "end": 26.08,
+      "text": "Esa será la señal para comenzar a contar."
     },
     {
-      "start": 29.0,
-      "end": 34.0,
-      "text": "Cuando consideréis que han pasado los segundos, deberéis pasar el token por el terminal."
+      "start": 26.16,
+      "end": 31.16,
+      "text": "Cuando creáis que el tiempo ha terminado, pasad vuestro token por el terminal."
     },
     {
-      "start": 34.0,
-      "end": 39.0,
-      "text": "Si el tiempo que habéis contado no coincide exactamente con lo indicado en la pantalla,"
+      "start": 31.16,
+      "end": 35.64,
+      "text": "Cada segundo de más o de menos sumará error al equipo."
     },
     {
-      "start": 39.0,
-      "end": 45.64,
-      "text": "los segundos contados de más o de menos se sumarán al total de error común de todos los terminales. Si el total"
+      "start": 35.64,
+      "end": 40.08,
+      "text": "Si el error acumulado supera el límite, la fase se reiniciará."
     },
     {
-      "start": 45.64,
-      "end": 50.96,
-      "text": "de error acumulado es mayor que el límite permitido, se reiniciará la fase. Tened en cuenta"
+      "start": 40.08,
+      "end": 44.8,
+      "text": "Recordad: no todas las luces se activarán al mismo tiempo."
     },
     {
-      "start": 50.96,
-      "end": 55.96,
-      "text": "que la luz de cada terminal se encenderá en un momento distinto, así que yo, de vosotros..."
+      "start": 44.8,
+      "end": 46.106,
+      "text": "Contad bien."
     }
   ],
   "segments": [
@@ -88,23 +88,24 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "Contar los segundos exactos"
+            "text": "CONTAR LOS SEGUNDOS"
           }
         },
         {
-          "at": 2.4,
-          "sfx": "objective",
+          "at": 4.08,
+          "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/panel numeros.png",
-                "alt": "Panel de numeros"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/flecha.png",
-                "alt": "Flecha"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
               }
             ]
           }
@@ -121,12 +122,12 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 35.316261,
+      "duration": 22.117122,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0.0,
-          "sfx": "objective",
+          "sfx": "pulse",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -134,36 +135,13 @@
             "assets": [
               {
                 "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones de colores"
+                "alt": "Tira led"
               }
             ]
           }
         },
         {
-          "at": 4.18,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
-                "alt": "Reloj de tiempo"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
-              }
-            ]
-          }
-        },
-        {
-          "at": 8.18,
+          "at": 5.34,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -171,37 +149,18 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
-                "alt": "Reloj de tiempo"
+                "src": "/static/images/shared/nuevos iconos/base nfc.png",
+                "alt": "Base nfc"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base nfc con token"
               }
             ]
           }
         },
         {
-          "at": 13.18,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
-                "alt": "Reloj de tiempo"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
-              }
-            ]
-          }
-        },
-        {
-          "at": 18.18,
+          "at": 10.34,
           "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
@@ -209,34 +168,38 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Operation error"
+                "src": "/static/images/shared/nuevos iconos/error atencion.png",
+                "alt": "Error atencion"
               },
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Timeout"
+                "src": "/static/images/shared/nuevos iconos/temporizador.png",
+                "alt": "Temporizador"
               }
             ]
           }
         },
         {
-          "at": 24.82,
+          "at": 14.82,
           "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
+            "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Restart button"
+                "src": "/static/images/shared/nuevos iconos/error atencion.png",
+                "alt": "Error atencion"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
               }
             ]
           }
         },
         {
-          "at": 30.14,
-          "sfx": "objective",
+          "at": 19.26,
+          "sfx": "pulse",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -244,11 +207,7 @@
             "assets": [
               {
                 "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones de colores"
+                "alt": "Tira led"
               }
             ]
           }
@@ -267,19 +226,22 @@
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "3"
+      "label": "3",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "2"
+      "label": "2",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "1"
+      "label": "1",
+      "sfx": "countdown"
     }
   ]
 }

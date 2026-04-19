@@ -1,7 +1,7 @@
 {
   "scene_id": "scene_intro_energia",
   "description": "Intro generada para scene_intro_energia con flujo Cero + objetivo + bloques visuales.",
-  "broadcast_title": "CARGA CRÍTICA",
+  "broadcast_title": "Carga Crítica",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -14,77 +14,72 @@
   "subtitles": [
     {
       "start": 0.0,
-      "end": 4.599,
-      "text": "En este nivel, las habilidades evaluadas serán la anticipación y la planificación."
+      "end": 6.0,
+      "text": "Habéis llegado hasta aquí. Ante vosotros se alza la última prueba."
     },
     {
-      "start": 4.599,
-      "end": 12.0,
-      "text": "El objetivo del nivel es sencillo: conseguir que las luces de los terminales no se apaguen antes de que la cuenta atrás llegue a cero."
+      "start": 6.0,
+      "end": 12.5,
+      "text": "Ahora descubriremos si sois capaces de reaccionar, moveros y actuar como un solo equipo."
     },
     {
-      "start": 12.0,
-      "end": 16.199,
-      "text": "Para conseguirlo utilizaréis los tokens y las luces de los terminales."
+      "start": 12.5,
+      "end": 17.5,
+      "text": "Deberéis impedir que las luces de los terminales se apaguen durante un minuto completo."
     },
     {
-      "start": 16.199,
-      "end": 20.8,
-      "text": "Al empezar, en la pantalla veréis los números de vuestros tokens de diferentes colores."
+      "start": 17.5,
+      "end": 21.9,
+      "text": "Al comenzar, en la pantalla se asignará un color a cada uno de vuestros tokens."
     },
     {
-      "start": 20.8,
-      "end": 25.039,
-      "text": "Además, las luces de los terminales se encenderán aleatoriamente de un color."
+      "start": 21.9,
+      "end": 27.0,
+      "text": "Ese será vuestro color, y solo vosotros podréis responder cuando aparezca."
     },
     {
-      "start": 25.039,
-      "end": 30.12,
-      "text": "Estas luces poco a poco se irán apagando. Para evitar que la luz se apague del todo,"
+      "start": 27.0,
+      "end": 34.0,
+      "text": "Si un terminal se enciende con vuestro color, tendréis que correr hasta él y pasar vuestro token antes de que la luz desaparezca."
     },
     {
-      "start": 30.12,
-      "end": 34.439,
-      "text": "deberéis colocar un token encima del terminal, pero no uno cualquiera."
+      "start": 34.0,
+      "end": 39.0,
+      "text": "Cuando lo consigáis, el terminal cambiará inmediatamente a un nuevo color."
     },
     {
-      "start": 34.439,
-      "end": 39.359,
-      "text": "Debéis buscar en la pantalla un número que aparezca del mismo color que las luces del terminal"
+      "start": 39.0,
+      "end": 44.0,
+      "text": "Entonces comenzará una nueva carrera para otra persona del equipo."
     },
     {
-      "start": 39.359,
-      "end": 44.2,
-      "text": "y pasar el token con ese mismo número. Cada vez que un jugador coloque correctamente"
+      "start": 44.0,
+      "end": 48.0,
+      "text": "Si una sola luz se apaga por completo, habréis fallado."
     },
     {
-      "start": 44.2,
-      "end": 49.799,
-      "text": "un token en un terminal, las luces se encenderán de otro color. Para superar la fase tendréis"
+      "start": 48.0,
+      "end": 54.0,
+      "text": "Necesitaréis velocidad, atención constante y movimiento sin descanso."
     },
     {
-      "start": 49.799,
-      "end": 53.759,
-      "text": "que mantener las luces encendidas hasta que la cuenta atrás de la pantalla llegue a"
-    },
-    {
-      "start": 53.759,
-      "end": 54.159,
-      "text": "cero."
+      "start": 54.0,
+      "end": 58.044,
+      "text": "Resistid un minuto y la pirámide será vuestra."
     }
   ],
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "src": "/static/videos/characters/cero_intro_long_a.mp4",
       "clip_start": 0,
-      "clip_end": 4.12,
-      "duration": 4.12,
+      "clip_end": 6.5,
+      "duration": 6.5,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 12.999,
+      "duration": 10.619,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -93,25 +88,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "Mantener las luces encendidas"
-          }
-        },
-        {
-          "at": 2.4,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
-                "alt": "Reloj de tiempo"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
-              }
-            ]
+            "text": "IMPEDIR QUE LAS LUCES SE APAGUEN"
           }
         }
       ]
@@ -125,32 +102,33 @@
       "label": "bloque_estable"
     },
     {
-      "type": "fullscreen_ui",
-      "duration": 30.858029,
-      "variant": "immersive-strip",
-      "phases": [
+      "type": "transition",
+      "duration": 3.6,
+      "variant": "puzzle6-token-map",
+      "token_src": "/static/images/shared/gameplay/token_card.png",
+      "tokens": [
         {
-          "at": 0.0,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones de colores"
-              }
-            ]
-          }
+          "code": "5",
+          "color": "#ff2b2b"
         },
         {
-          "at": 4.219,
-          "sfx": "objective",
+          "code": "31",
+          "color": "#ffd84f"
+        }
+      ]
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 30.455082,
+      "variant": "immersive-strip",
+      "top": {
+        "variant": "immersive-strip",
+        "text": ""
+      },
+      "phases": [
+        {
+          "at": 2.58,
+          "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -161,103 +139,62 @@
                 "alt": "Scanner bar on"
               },
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar off"
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base nfc con token"
               }
             ]
           }
         },
         {
-          "at": 9.3,
-          "sfx": "token",
+          "at": 9.58,
+          "sfx": "pulse",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on (cambio de color)",
+                "filter": "hue-rotate(145deg) saturate(1.45) brightness(1.08)"
+              }
+            ]
+          }
+        },
+        {
+          "at": 19.58,
+          "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
-              },
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
               }
             ]
           }
         },
         {
-          "at": 13.619,
-          "sfx": "objective",
+          "at": 22.38,
+          "sfx": "pulse",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/panel numeros.png",
-                "alt": "Panel de numeros"
+                "src": "/static/images/shared/nuevos iconos/temporizador.png",
+                "alt": "Temporizador"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/flecha.png",
-                "alt": "Flecha"
-              }
-            ]
-          }
-        },
-        {
-          "at": 18.539,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/panel numeros.png",
-                "alt": "Panel de numeros"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/flecha.png",
-                "alt": "Flecha"
-              }
-            ]
-          }
-        },
-        {
-          "at": 23.38,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones de colores"
-              }
-            ]
-          }
-        },
-        {
-          "at": 28.979,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Timeout"
-              },
-              {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Restart button"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Scanner bar on"
               }
             ]
           }
@@ -276,19 +213,22 @@
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "3"
+      "label": "3",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "2"
+      "label": "2",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "1"
+      "label": "1",
+      "sfx": "countdown"
     }
   ]
 }

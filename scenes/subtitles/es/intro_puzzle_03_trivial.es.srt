@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:05,080
+Veamos cuánto sabéis: 10 preguntas se interpondrán en vuestro camino.
+
+2
+00:00:05,080 --> 00:00:09,560
+En pantalla aparecerá una pregunta y 6 posibles respuestas.
+
+3
+00:00:09,560 --> 00:00:13,480
+Elegid entre todos la correcta y recordad su número.
+
+4
+00:00:13,480 --> 00:00:17,680
+En cada terminal veréis seis números, cada uno con un color distinto.
+
+5
+00:00:17,680 --> 00:00:21,520
+Encontrad el número correcto y pulsad su color.
+
+6
+00:00:21,520 --> 00:00:24,920
+Cuando todos respondáis, veréis el resultado.
+
+7
+00:00:24,920 --> 00:00:28,240
+Un solo error romperá vuestra racha.
+
+8
+00:00:28,240 --> 00:00:30,960
+Pensad rápido, pensad como uno solo.

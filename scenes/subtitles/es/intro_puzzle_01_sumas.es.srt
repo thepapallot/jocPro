@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:04,400
+Lo siguiente pondrá a prueba vuestra capacidad de asociación.
+
+2
+00:00:04,400 --> 00:00:09,000
+En pantalla aparecerán distintas operaciones y deberéis completarlas.
+
+3
+00:00:09,000 --> 00:00:13,840
+Para hacerlo tendréis que sumar el número de vuestro token con el del terminal.
+
+4
+00:00:13,840 --> 00:00:18,440
+Cuando la combinación sea correcta, la operación quedará resuelta.
+
+5
+00:00:18,440 --> 00:00:21,560
+Necesitaréis superar dos fases para avanzar.
+
+6
+00:00:21,560 --> 00:00:24,640
+Un solo error reiniciará la fase.
+
+7
+00:00:24,640 --> 00:00:28,160
+También ocurrirá si repetís una operación ya resuelta.
+
+8
+00:00:28,160 --> 00:00:30,960
+O si el tiempo llega a cero.
+
+9
+00:00:30,960 --> 00:00:33,160
+Coordinaos bien, esa será la clave.

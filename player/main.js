@@ -131,6 +131,7 @@ function getAssetItemKey(asset = {}) {
         src: asset.src || "",
         label: asset.label || "",
         text: asset.text || "",
+        filter: asset.filter || "",
     });
 }
 
@@ -151,6 +152,9 @@ function AssetCard(asset = {}) {
         image.className = "asset-card__image";
         image.src = asset.src || "";
         image.alt = asset.alt || asset.label || "";
+        if (asset.filter) {
+            image.style.filter = asset.filter;
+        }
         media.appendChild(image);
     }
 
@@ -2160,7 +2164,9 @@ class ScenePlayer {
             return;
         }
 
-        if (this.hasMasterAudio() && (!preserveAudio || elements.audio.paused)) {
+        // When master audio has already ended (e.g. during countdown tail),
+        // do not call play() again or it will restart from the beginning.
+        if (this.hasMasterAudio() && !elements.audio.ended && (!preserveAudio || elements.audio.paused)) {
             try {
                 await elements.audio.play();
                 this.logEvent("audio_play", { src: this.scene.audio.src, preserveAudio });

@@ -1,7 +1,7 @@
 {
   "scene_id": "scene_intro_memory",
   "description": "Intro generada para scene_intro_memory con flujo Cero + objetivo + bloques visuales.",
-  "broadcast_title": "MEMORIA FANTASMA",
+  "broadcast_title": "Memoria Fantasma",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -14,63 +14,63 @@
   "subtitles": [
     {
       "start": 0.0,
-      "end": 4.879,
-      "text": "Escuchadme atentamente. En este nivel pondremos a prueba vuestra memoria."
+      "end": 3.7,
+      "text": "La mente falla cuando más se la necesita."
     },
     {
-      "start": 4.879,
-      "end": 10.16,
-      "text": "Vuestro objetivo será recordar las letras griegas y los colores que aparezcan en la pantalla."
+      "start": 3.7,
+      "end": 7.2,
+      "text": "Vuestro objetivo será recordar letras griegas y colores."
     },
     {
-      "start": 10.16,
-      "end": 15.96,
-      "text": "Para hacerlo usaréis vuestros tokens, las letras griegas de los terminales y los botones."
+      "start": 7.2,
+      "end": 12.2,
+      "text": "Para lograrlo usaréis vuestros tokens, los terminales y los botones."
     },
     {
-      "start": 15.96,
-      "end": 19.48,
-      "text": "Al empezar, en la pantalla veréis los números de vuestros tokens."
+      "start": 12.2,
+      "end": 15.9,
+      "text": "Al comenzar, veréis en pantalla los números de vuestros tokens."
     },
     {
-      "start": 19.48,
-      "end": 25.0,
-      "text": "Estad atentos, porque desaparecerán. Y, en su lugar, veréis una letra griega de un color."
+      "start": 15.9,
+      "end": 18.7,
+      "text": "Observad bien, porque desaparecerán."
     },
     {
-      "start": 25.0,
-      "end": 31.0,
-      "text": "Vosotros tendréis que coger vuestro token y llevarlo al terminal con la letra griega que haya aparecido."
+      "start": 18.7,
+      "end": 22.5,
+      "text": "Y en su lugar aparecerá una letra griega de un color determinado."
     },
     {
-      "start": 31.0,
-      "end": 38.0,
-      "text": "Una vez esté colocado, debéis pulsar el botón del mismo color que la letra griega que habéis visto en la pantalla."
+      "start": 22.5,
+      "end": 25.8,
+      "text": "Llevad vuestro token al terminal con esa misma letra."
     },
     {
-      "start": 38.0,
-      "end": 46.0,
-      "text": "Debéis prestar mucha atención, porque si una sola persona se equivoca, la fase se reiniciará. Parece sencillo, ¿no?"
+      "start": 25.8,
+      "end": 28.7,
+      "text": "Después pulsad el botón del mismo color."
     },
     {
-      "start": 46.0,
-      "end": 48.0,
-      "text": "Puede que lo sea al principio."
+      "start": 28.9,
+      "end": 33.3,
+      "text": "Si una sola persona se equivoca, la fase se reiniciará."
     },
     {
-      "start": 48.0,
-      "end": 50.0,
-      "text": "Pero esta prueba tiene tres fases distintas,"
+      "start": 33.3,
+      "end": 36.7,
+      "text": "Parece sencillo, solo al principio."
     },
     {
-      "start": 50.0,
-      "end": 53.0,
-      "text": "cada una con más letras a recordar."
+      "start": 36.7,
+      "end": 39.5,
+      "text": "Cada nueva fase exigirá recordar más."
     },
     {
-      "start": 53.0,
-      "end": 55.0,
-      "text": "Así que, buena suerte."
+      "start": 39.5,
+      "end": 40.281,
+      "text": "Buena suerte."
     }
   ],
   "segments": [
@@ -84,7 +84,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 12.999,
+      "duration": 9.299,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -93,26 +93,78 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "Recordar letras y colores"
+            "text": "RECORDAR LETRAS GRIEGAS Y COLORES"
           }
         },
         {
-          "at": 2.4,
+          "at": 3.4,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/puzzle8/alpha.svg",
-                "alt": "Alpha"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/puzzle8/sigma.svg",
-                "alt": "Sigma"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
               }
             ]
           }
+        }
+      ]
+    },
+    {
+      "type": "transition",
+      "duration": 3.7,
+      "variant": "puzzle8-grid",
+      "active_round": 1,
+      "grid_items": [
+        {
+          "type": "number",
+          "value": "5"
+        },
+        {
+          "type": "number",
+          "value": "31"
+        },
+        {
+          "type": "number",
+          "value": "13"
+        },
+        {
+          "type": "number",
+          "value": "14"
+        },
+        {
+          "type": "number",
+          "value": "20"
+        },
+        {
+          "type": "number",
+          "value": "22"
+        },
+        {
+          "type": "number",
+          "value": "17"
+        },
+        {
+          "type": "number",
+          "value": "10"
+        },
+        {
+          "type": "number",
+          "value": "18"
+        },
+        {
+          "type": "number",
+          "value": "35"
         }
       ]
     },
@@ -126,7 +178,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 32.344107,
+      "duration": 16.291816,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -138,18 +190,15 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/puzzle8/pi.svg",
-                "alt": "Pi"
-              },
-              {
-                "src": "/static/images/puzzle8/omega.svg",
-                "alt": "Omega"
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Letra griega roja",
+                "filter": "brightness(0) saturate(100%) invert(14%) sepia(99%) saturate(6804%) hue-rotate(355deg) brightness(98%) contrast(119%)"
               }
             ]
           }
         },
         {
-          "at": 4.18,
+          "at": 1.68,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
@@ -157,18 +206,22 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/letra griega.png",
-                "alt": "Letra griega"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones de colores"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/letra griega.png",
+                "alt": "Letra griega"
               }
             ]
           }
         },
         {
-          "at": 10.18,
+          "at": 4.98,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -176,37 +229,37 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
               },
               {
-                "src": "/static/images/puzzle8/mu.svg",
-                "alt": "Mu"
+                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
+                "alt": "Apretar boton"
               }
             ]
           }
         },
         {
-          "at": 17.18,
+          "at": 8.08,
           "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
+            "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/restart_button.png",
-                "alt": "Restart button"
+                "src": "/static/images/shared/nuevos iconos/error atencion.png",
+                "alt": "Error atencion"
               },
               {
-                "src": "/static/images/puzzle8/lambda.svg",
-                "alt": "Lambda"
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
               }
             ]
           }
         },
         {
-          "at": 29.18,
+          "at": 13.6,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -214,12 +267,56 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/puzzle8/gamma.svg",
-                "alt": "Gamma"
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Alpha",
+                "filter": "brightness(0) saturate(100%) invert(14%) sepia(99%) saturate(6804%) hue-rotate(355deg) brightness(98%) contrast(119%)"
+              }
+            ]
+          }
+        },
+        {
+          "at": 14.4,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Alpha",
+                "filter": "brightness(0) saturate(100%) invert(14%) sepia(99%) saturate(6804%) hue-rotate(355deg) brightness(98%) contrast(119%)"
               },
               {
-                "src": "/static/images/puzzle8/epsilon.svg",
-                "alt": "Epsilon"
+                "src": "/static/images/puzzle8/beta.svg",
+                "alt": "Beta",
+                "filter": "brightness(0) saturate(100%) invert(79%) sepia(62%) saturate(5277%) hue-rotate(160deg) brightness(98%) contrast(102%)"
+              }
+            ]
+          }
+        },
+        {
+          "at": 15.2,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/puzzle8/alpha.svg",
+                "alt": "Alpha",
+                "filter": "brightness(0) saturate(100%) invert(14%) sepia(99%) saturate(6804%) hue-rotate(355deg) brightness(98%) contrast(119%)"
+              },
+              {
+                "src": "/static/images/puzzle8/beta.svg",
+                "alt": "Beta",
+                "filter": "brightness(0) saturate(100%) invert(79%) sepia(62%) saturate(5277%) hue-rotate(160deg) brightness(98%) contrast(102%)"
+              },
+              {
+                "src": "/static/images/puzzle8/sigma.svg",
+                "alt": "Sigma",
+                "filter": "brightness(0) saturate(100%) invert(86%) sepia(65%) saturate(1125%) hue-rotate(357deg) brightness(102%) contrast(105%)"
               }
             ]
           }
@@ -228,7 +325,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_close_short_a.mp4",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,
@@ -238,19 +335,22 @@
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "3"
+      "label": "3",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "2"
+      "label": "2",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "1"
+      "label": "1",
+      "sfx": "countdown"
     }
   ]
 }

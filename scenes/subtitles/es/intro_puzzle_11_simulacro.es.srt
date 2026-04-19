@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:02,800
+La pirámide comienza aquí.
+
+2
+00:00:02,800 --> 00:00:06,800
+Este primer desafío servirá para comprender sus reglas.
+
+3
+00:00:06,800 --> 00:00:11,900
+Uno a uno deberéis completar tareas básicas usando tokens y terminales.
+
+4
+00:00:11,900 --> 00:00:16,000
+Aquí importará más la precisión que la velocidad.
+
+5
+00:00:16,000 --> 00:00:21,800
+Mientras uno actúa, el resto observa, coordina y aprende.
+
+6
+00:00:21,800 --> 00:00:26,300
+Concentración: esto solo acaba de empezar.

@@ -1,7 +1,7 @@
 {
   "scene_id": "scene_intro_musica",
   "description": "Intro generada para scene_intro_musica con flujo Cero + objetivo + bloques visuales.",
-  "broadcast_title": "CÓDIGO SONORO",
+  "broadcast_title": "Código Sonoro",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -14,63 +14,73 @@
   "subtitles": [
     {
       "start": 0.0,
-      "end": 5.0,
-      "text": "Seguimos con la siguiente prueba, en la que vamos a evaluar vuestra percepción auditiva."
+      "end": 4.16,
+      "text": "Escuchad con atención: no todo se resuelve con la vista."
     },
     {
-      "start": 5.0,
-      "end": 8.0,
-      "text": "Vuestro objetivo es ordenar los fragmentos de una canción."
+      "start": 4.16,
+      "end": 8.56,
+      "text": "Vuestro objetivo será reconstruir correctamente una secuencia musical."
     },
     {
-      "start": 8.0,
-      "end": 13.0,
-      "text": "Para superar este nivel necesitaréis los tokens y los botones de los terminales."
+      "start": 8.56,
+      "end": 13.24,
+      "text": "Para lograrlo, utilizaréis los tokens y los botones de los terminales."
     },
     {
-      "start": 13.0,
-      "end": 17.0,
-      "text": "Al empezar la fase escucharéis un trozo de una canción."
+      "start": 13.24,
+      "end": 17.24,
+      "text": "Al comenzar cada fase, escucharéis un fragmento de canción."
     },
     {
-      "start": 17.0,
-      "end": 20.0,
-      "text": "Después tendréis que reproducir ese mismo trozo de canción,"
+      "start": 17.24,
+      "end": 20.8,
+      "text": "Después deberéis reproducir ese mismo fragmento,"
     },
     {
-      "start": 20.0,
-      "end": 23.0,
+      "start": 20.8,
+      "end": 23.24,
       "text": "pasando los tokens por los terminales."
     },
     {
-      "start": 23.0,
-      "end": 26.0,
-      "text": "Podréis escuchar los fragmentos las veces que necesitéis,"
+      "start": 23.24,
+      "end": 26.96,
+      "text": "Podréis volver a escucharlo tantas veces como necesitéis."
     },
     {
-      "start": 26.0,
-      "end": 31.0,
-      "text": "y, cuando creáis que habéis encontrado la secuencia musical correcta, la tendréis que registrar."
+      "start": 26.96,
+      "end": 29.84,
+      "text": "Cuando creáis haber encontrado la secuencia correcta,"
     },
     {
-      "start": 31.0,
-      "end": 36.0,
-      "text": "Pulsando los botones de cualquier terminal podréis volver a escuchar la canción,"
+      "start": 29.84,
+      "end": 31.44,
+      "text": "tendréis que registrarla."
     },
     {
-      "start": 36.0,
-      "end": 41.0,
-      "text": "registrar una secuencia de fragmentos, borrar los fragmentos que ya hayáis registrado;"
+      "start": 31.44,
+      "end": 34.56,
+      "text": "Con los botones podréis escuchar, registrar"
     },
     {
-      "start": 41.0,
-      "end": 46.0,
-      "text": "os dejaré la función de cada botón en la pantalla. Este nivel tiene dos fases,"
+      "start": 34.56,
+      "end": 36.16,
+      "text": "o borrar una secuencia."
     },
     {
-      "start": 46.0,
-      "end": 52.0,
-      "text": "así que no hay tiempo que perder. Escuchad atentamente, porque la canción se va a reproducir inmediatamente."
+      "start": 36.16,
+      "end": 38.16,
+      "text": "Esta prueba tiene dos fases."
+    },
+    {
+      "start": 38.16,
+      "end": 39.52,
+      "text": "Afinad el oído."
+    },
+    {
+      "start": 39.52,
+      "end": 41.247,
+      "text": "La música comienza ya."
     }
   ],
   "segments": [
@@ -93,23 +103,37 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "Ordenar los fragmentos de la canción"
+            "text": "CÓDIGO SONORO"
           }
         },
         {
-          "at": 3.88,
+          "at": 4.44,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/base nfc.png",
+                "alt": "Base nfc"
+              }
+            ]
+          }
+        },
+        {
+          "at": 5.44,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
-                "alt": "Apretar boton"
+                "src": "/static/images/shared/nuevos iconos/base nfc.png",
+                "alt": "Base nfc"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones de colores"
+                "src": "/static/images/shared/nuevos iconos/termial con token.png",
+                "alt": "Termial con token"
               }
             ]
           }
@@ -126,7 +150,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 29.406306,
+      "duration": 17.258347,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -138,14 +162,14 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
         },
         {
-          "at": 10.18,
+          "at": 10.62,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -155,44 +179,6 @@
               {
                 "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
                 "alt": "Buttons panel front"
-              }
-            ]
-          }
-        },
-        {
-          "at": 20.18,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
-                "alt": "Apretar boton"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones de colores"
-              }
-            ]
-          }
-        },
-        {
-          "at": 25.18,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
-                "alt": "Reloj de tiempo"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira LED"
               }
             ]
           }
@@ -211,19 +197,22 @@
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "3"
+      "label": "3",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "2"
+      "label": "2",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "1"
+      "label": "1",
+      "sfx": "countdown"
     }
   ]
 }

@@ -1,0 +1,55 @@
+1
+00:00:00,000 --> 00:00:04,160
+Escuchad con atención: no todo se resuelve con la vista.
+
+2
+00:00:04,160 --> 00:00:08,560
+Vuestro objetivo será reconstruir correctamente una secuencia musical.
+
+3
+00:00:08,560 --> 00:00:13,240
+Para lograrlo, utilizaréis los tokens y los botones de los terminales.
+
+4
+00:00:13,240 --> 00:00:17,240
+Al comenzar cada fase, escucharéis un fragmento de canción.
+
+5
+00:00:17,240 --> 00:00:20,800
+Después deberéis reproducir ese mismo fragmento,
+
+6
+00:00:20,800 --> 00:00:23,240
+pasando los tokens por los terminales.
+
+7
+00:00:23,240 --> 00:00:26,960
+Podréis volver a escucharlo tantas veces como necesitéis.
+
+8
+00:00:26,960 --> 00:00:29,840
+Cuando creáis haber encontrado la secuencia correcta,
+
+9
+00:00:29,840 --> 00:00:31,440
+tendréis que registrarla.
+
+10
+00:00:31,440 --> 00:00:34,560
+Con los botones podréis escuchar, registrar
+
+11
+00:00:34,560 --> 00:00:36,160
+o borrar una secuencia.
+
+12
+00:00:36,160 --> 00:00:38,160
+Esta prueba tiene dos fases.
+
+13
+00:00:38,160 --> 00:00:39,520
+Afinad el oído.
+
+14
+00:00:39,520 --> 00:00:41,360
+La música comienza ya.

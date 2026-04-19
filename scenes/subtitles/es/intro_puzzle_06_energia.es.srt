@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:06,000
+Habéis llegado hasta aquí. Ante vosotros se alza la última prueba.
+
+2
+00:00:06,000 --> 00:00:12,500
+Ahora descubriremos si sois capaces de reaccionar, moveros y actuar como un solo equipo.
+
+3
+00:00:12,500 --> 00:00:17,500
+Deberéis impedir que las luces de los terminales se apaguen durante un minuto completo.
+
+4
+00:00:17,500 --> 00:00:21,900
+Al comenzar, en la pantalla se asignará un color a cada uno de vuestros tokens.
+
+5
+00:00:21,900 --> 00:00:27,000
+Ese será vuestro color, y solo vosotros podréis responder cuando aparezca.
+
+6
+00:00:27,000 --> 00:00:34,000
+Si un terminal se enciende con vuestro color, tendréis que correr hasta él y pasar vuestro token antes de que la luz desaparezca.
+
+7
+00:00:34,000 --> 00:00:39,000
+Cuando lo consigáis, el terminal cambiará inmediatamente a un nuevo color.
+
+8
+00:00:39,000 --> 00:00:44,000
+Entonces comenzará una nueva carrera para otra persona del equipo.
+
+9
+00:00:44,000 --> 00:00:48,000
+Si una sola luz se apaga por completo, habréis fallado.
+
+10
+00:00:48,000 --> 00:00:54,000
+Necesitaréis velocidad, atención constante y movimiento sin descanso.
+
+11
+00:00:54,000 --> 00:00:59,000
+Resistid un minuto y la pirámide será vuestra.

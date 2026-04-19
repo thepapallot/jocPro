@@ -1,7 +1,7 @@
 {
   "scene_id": "scene_intro_laberinto",
   "description": "Intro generada para scene_intro_laberinto con flujo Cero + objetivo + bloques visuales.",
-  "broadcast_title": "NÚCLEO DEL LABERINTO",
+  "broadcast_title": "Núcleo del Laberinto",
   "ui_titles": {
     "top": "",
     "left": "",
@@ -93,7 +93,7 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "Llegar al centro del laberinto"
+            "text": "NÚCLEO DEL LABERINTO"
           }
         },
         {
@@ -106,10 +106,6 @@
               {
                 "src": "/static/images/puzzle2/Laberint.png",
                 "alt": "Laberint"
-              },
-              {
-                "src": "/static/images/puzzle2/symbols/symbol_6.png",
-                "alt": "Symbol 6"
               }
             ]
           }
@@ -126,7 +122,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 23.427644,
+      "duration": 26.427644,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -138,12 +134,8 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/flecha.png",
-                "alt": "Flecha"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base NFC"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
@@ -157,12 +149,8 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/flecha.png",
-                "alt": "Flecha"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base NFC"
+                "src": "/static/images/puzzle2/LaberintVermell.png",
+                "alt": "Laberintvermell"
               }
             ]
           }
@@ -176,12 +164,8 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/flecha.png",
-                "alt": "Flecha"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base NFC"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               }
             ]
           }
@@ -195,31 +179,8 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/puzzle2/symbols/symbol_7.png",
-                "alt": "Symbol 7"
-              },
-              {
-                "src": "/static/images/puzzle2/symbols/symbol_5.png",
-                "alt": "Symbol 5"
-              }
-            ]
-          }
-        },
-        {
-          "at": 18.1,
-          "sfx": "warning",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/warnings/operation_error.png",
-                "alt": "Operation error"
-              },
-              {
-                "src": "/static/images/puzzle2/symbols/symbol_4.png",
-                "alt": "Symbol 4"
+                "src": "/static/images/puzzle2/symbols/symbol_6.png",
+                "alt": "Symbol 6"
               }
             ]
           }
@@ -238,19 +199,22 @@
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "3"
+      "label": "3",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "2"
+      "label": "2",
+      "sfx": "countdown"
     },
     {
       "type": "transition",
       "duration": 1,
       "variant": "countdown",
-      "label": "1"
+      "label": "1",
+      "sfx": "countdown"
     }
   ]
 }

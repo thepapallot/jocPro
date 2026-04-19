@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:03,700
+La mente falla cuando más se la necesita.
+
+2
+00:00:03,700 --> 00:00:07,200
+Vuestro objetivo será recordar letras griegas y colores.
+
+3
+00:00:07,200 --> 00:00:12,200
+Para lograrlo usaréis vuestros tokens, los terminales y los botones.
+
+4
+00:00:12,200 --> 00:00:15,900
+Al comenzar, veréis en pantalla los números de vuestros tokens.
+
+5
+00:00:15,900 --> 00:00:18,700
+Observad bien, porque desaparecerán.
+
+6
+00:00:18,700 --> 00:00:22,500
+Y en su lugar aparecerá una letra griega de un color determinado.
+
+7
+00:00:22,500 --> 00:00:25,800
+Llevad vuestro token al terminal con esa misma letra.
+
+8
+00:00:25,800 --> 00:00:28,700
+Después pulsad el botón del mismo color.
+
+9
+00:00:28,900 --> 00:00:33,300
+Si una sola persona se equivoca, la fase se reiniciará.
+
+10
+00:00:33,300 --> 00:00:36,700
+Parece sencillo, solo al principio.
+
+11
+00:00:36,700 --> 00:00:39,500
+Cada nueva fase exigirá recordar más.
+
+12
+00:00:39,500 --> 00:00:40,500
+Buena suerte.
