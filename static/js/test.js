@@ -17,6 +17,7 @@
     { id: "scene_intro_memory", label: "Puzzle 8 Intro", href: "/player/?scene=scene_intro_memory" },
     { id: "scene_intro_token_a_lloc", label: "Puzzle 9 Intro", href: "/player/?scene=scene_intro_token_a_lloc" },
     { id: "scene_intro_segments", label: "Puzzle 10 Intro", href: "/player/?scene=scene_intro_segments" },
+    { id: "scene_intro_simulacro", label: "Puzzle 11 Intro", href: "/player/?scene=scene_intro_simulacro" },
     { id: "scene_video_final", label: "Intro Final", href: "/player/?scene=scene_video_final" },
     { id: "scene_outro_game", label: "Outro Final", href: "/player/?scene=scene_outro_game" }
   ];

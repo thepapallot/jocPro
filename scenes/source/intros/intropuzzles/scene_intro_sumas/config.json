@@ -89,26 +89,26 @@
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base nfc"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
               }
             ]
           }
         },
         {
-          "at": 5.88,
+          "at": 9.72,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base nfc"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/termial con token.png",
-                "alt": "Termial con token"
+                "src": "/static/images/shared/nuevos iconos/respuesta_correcta.png",
+                "alt": "Respuesta correcta"
               }
             ]
           }
@@ -117,7 +117,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
       "clip_start": 0,
       "clip_end": 3.701,
       "duration": 3.701,
@@ -129,7 +129,7 @@
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0.74,
+          "at": 0,
           "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
@@ -148,6 +148,25 @@
           }
         },
         {
+          "at": 3.82,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/repetir.png",
+                "alt": "Repetir"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
+              }
+            ]
+          }
+        },
+        {
           "at": 7.34,
           "sfx": "pulse",
           "variant": "immersive-strip",
@@ -156,12 +175,12 @@
             "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base nfc con token"
+                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
+                "alt": "Reloj tiempo"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
               }
             ]
           }
@@ -170,7 +189,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "src": "/static/videos/characters/cero_close_short_a.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,

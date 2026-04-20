@@ -8,7 +8,7 @@
     "right": ""
   },
   "audio": {
-    "src": "/static/audios/scene/intro_puzzle_03.wav"
+    "src": "/static/audios/scene/intro_puzzle_03_v2.mp3"
   },
   "use_character_frame": true,
   "subtitles": [
@@ -49,7 +49,7 @@
     },
     {
       "start": 28.24,
-      "end": 30.96,
+      "end": 30.851,
       "text": "Pensad rápido, pensad como uno solo."
     }
   ],
@@ -58,13 +58,13 @@
       "type": "character",
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
-      "clip_end": 4.12,
-      "duration": 4.12,
+      "clip_end": 5.08,
+      "duration": 5.08,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 12.999,
+      "duration": 8.4,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -73,19 +73,23 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "MENTE COLMENA"
+            "text": "RESPONDER CORRECTAMENTE A LAS PREGUNTAS"
           }
         },
         {
-          "at": 2.4,
+          "at": 4.48,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
-                "alt": "Numbers strip 1 to 6"
+                "src": "/static/images/shared/nuevos iconos/pregunta.png",
+                "alt": "Pregunta"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/respuesta_correcta.png",
+                "alt": "Respuesta correcta"
               }
             ]
           }
@@ -93,20 +97,12 @@
       ]
     },
     {
-      "type": "character",
-      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
-      "clip_start": 0,
-      "clip_end": 3.701,
-      "duration": 3.701,
-      "label": "bloque_estable"
-    },
-    {
       "type": "fullscreen_ui",
-      "duration": 32.406306,
+      "duration": 4.2,
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0.0,
+          "at": 0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -114,23 +110,68 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/puzzle3/intro/question_board.jpg",
-                "alt": "Question board"
+                "src": "/static/images/shared/nuevos iconos/panel numeros.png",
+                "alt": "Panel numeros"
               }
             ]
           }
-        },
+        }
+      ]
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 10.56,
+      "variant": "immersive-strip",
+      "phases": [
         {
-          "at": 4.1,
-          "sfx": "warning",
+          "at": 0,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
+                "alt": "Apretar boton"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.84,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/equipo_consenso.png",
+                "alt": "Equipo consenso"
+              }
+            ]
+          }
+        },
+        {
+          "at": 7.24,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/error atencion.png",
+                "alt": "Error atencion"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
               }
             ]
           }
@@ -141,8 +182,8 @@
       "type": "character",
       "src": "/static/videos/characters/cero_briefing_short_a.mp4",
       "clip_start": 0,
-      "clip_end": 3.169,
-      "duration": 3.169,
+      "clip_end": 2.611,
+      "duration": 2.611,
       "label": "cierre_suave"
     },
     {

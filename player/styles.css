@@ -2138,8 +2138,8 @@ body {
 .player-root--subtitle-up .subtitle-overlay {
     bottom: 26px;
     width: min(1240px, 68%);
-    border-radius: 999px;
-    clip-path: none;
+    border-radius: 0;
+    clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%, 0 14px);
     border-color: rgba(116, 219, 255, 0.2);
     background:
         linear-gradient(180deg, rgba(9, 20, 32, 0.68), rgba(5, 12, 20, 0.76)),
