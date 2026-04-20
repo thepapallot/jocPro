@@ -3,6 +3,7 @@ const EPSILON = 0.12;
 const SAFE_NEXT_GRACE_SECONDS = 0.45;
 const STALL_THRESHOLD_MS = 2500;
 const STALL_RECOVERY_COOLDOWN_MS = 1800;
+const INTRO_BRIEF_TITLE_AUDIO_DELAY_MS = 2000;
 let briefContentCatalog = {};
 const SCENE_OVERLAY_TITLES = {
     scene_intro_simulacro: "Simulacro Inicial",
@@ -15,6 +16,7 @@ const SCENE_OVERLAY_TITLES = {
     scene_intro_memory: "Memoria Fantasma",
     scene_intro_token_a_lloc: "Arquitectos del Orden",
     scene_intro_segments: "Patrón Maestro",
+    scene_intro_apreta_botons: "Apreta Botons",
 };
 
 const elements = {
@@ -83,6 +85,17 @@ function getBriefContentForNextScene() {
     return entry && typeof entry === "object" ? entry : {};
 }
 
+function getIntroBriefTitleAudioForNextScene(segment) {
+    const briefContent = getBriefContentForNextScene();
+    return (
+        briefContent.title_audio_src ||
+        briefContent.title_audio ||
+        segment.title_audio_src ||
+        segment.title_audio ||
+        ""
+    );
+}
+
 function createElement(tag, className, text) {
     const node = document.createElement(tag);
     if (className) {
@@ -139,6 +152,9 @@ function getAssetItemKey(asset = {}) {
 function AssetCard(asset = {}) {
     const card = createElement("article", "asset-card");
     card.dataset.itemKey = getAssetItemKey(asset);
+    if (asset.frameless) {
+        card.classList.add("asset-card--frameless");
+    }
     const hasCopy = Boolean(asset.label || asset.text);
     if (!hasCopy) {
         card.classList.add("asset-card--icon-only");
@@ -1482,6 +1498,8 @@ class ScenePlayer {
         this.lastProgressSceneTime = 0;
         this.lastProgressPerfTime = 0;
         this.lastRecoveryPerfTime = 0;
+        this.introBriefAudioTimeoutId = null;
+        this.introBriefAudio = null;
         this.nextUrl = resolveNextUrl();
         this.onComplete = resolveOnComplete();
         this.completionHandled = false;
@@ -1778,8 +1796,68 @@ class ScenePlayer {
         this.playUiSfx(phase.sfx || segment.sfx || "pulse");
     }
 
+    clearIntroBriefTitleAudio({ stopPlayback = true } = {}) {
+        if (this.introBriefAudioTimeoutId != null) {
+            window.clearTimeout(this.introBriefAudioTimeoutId);
+            this.introBriefAudioTimeoutId = null;
+        }
+
+        if (stopPlayback && this.introBriefAudio) {
+            this.introBriefAudio.pause();
+            this.introBriefAudio.currentTime = 0;
+        }
+
+        this.introBriefAudio = null;
+    }
+
+    scheduleIntroBriefTitleAudio(segment, segmentIndex) {
+        const source = getIntroBriefTitleAudioForNextScene(segment);
+        if (!source) {
+            return;
+        }
+
+        this.introBriefAudioTimeoutId = window.setTimeout(() => {
+            this.introBriefAudioTimeoutId = null;
+
+            if (
+                this.currentSegmentIndex !== segmentIndex ||
+                this.currentSegment?.type !== "transition" ||
+                this.currentSegment?.variant !== "intro-brief"
+            ) {
+                return;
+            }
+
+            this.clearIntroBriefTitleAudio({ stopPlayback: true });
+
+            const src = source.includes("%") ? source : encodeURI(source);
+            const audio = new Audio(src);
+            audio.preload = "auto";
+            this.introBriefAudio = audio;
+            audio.addEventListener("ended", () => {
+                if (this.introBriefAudio === audio) {
+                    this.introBriefAudio = null;
+                }
+            }, { once: true });
+
+            audio.play()
+                .then(() => {
+                    this.logEvent("intro_brief_title_audio_play", { src });
+                })
+                .catch((error) => {
+                    this.logEvent("intro_brief_title_audio_failed", {
+                        src,
+                        message: error?.message || String(error),
+                    });
+                    if (this.introBriefAudio === audio) {
+                        this.introBriefAudio = null;
+                    }
+                });
+        }, INTRO_BRIEF_TITLE_AUDIO_DELAY_MS);
+    }
+
     destroy() {
         cancelAnimationFrame(this.rafId);
+        this.clearIntroBriefTitleAudio({ stopPlayback: true });
         elements.video.pause();
         elements.audio.pause();
         elements.video.removeEventListener("timeupdate", this.onVideoTimeUpdate);
@@ -2068,6 +2146,7 @@ class ScenePlayer {
     renderSegment({ crossfadeTransition = false } = {}) {
         const segment = this.currentSegment;
         const keepCharacterFrame = Boolean(this.scene?.use_character_frame);
+        this.clearIntroBriefTitleAudio({ stopPlayback: true });
         this.activePhaseKey = "";
         this.activePhaseIndex = -1;
         this.activeSubtitleKey = "";
@@ -2144,6 +2223,9 @@ class ScenePlayer {
             if (segment.variant === "countdown") {
                 this.playUiSfx("countdown");
             }
+            if (segment.variant === "intro-brief") {
+                this.scheduleIntroBriefTitleAudio(segment, this.currentSegmentIndex);
+            }
             requestAnimationFrame(() => elements.transitionLayer.classList.add("layer-visible"));
         }
     }
@@ -2161,21 +2243,55 @@ class ScenePlayer {
 
         const broadcast = this.currentSegment.broadcast || {};
         const eyebrow = elements.broadcastOverlay?.querySelector(".broadcast-overlay__eyebrow");
+        const leftBrand = elements.broadcastOverlay?.querySelector(".broadcast-overlay__brand--left");
+        const logo = elements.broadcastOverlayLogo;
+        let titleVisible = false;
+        let logoVisible = false;
         if (!eyebrow || !broadcast.title || broadcast.show_eyebrow === false) {
+            // Continue to evaluate logo visibility even if title is not used.
+        } else {
+            const showAt = Number(broadcast.title_show_at);
+            const showFor = Number(broadcast.title_show_for);
+            const hasTimedWindow = Number.isFinite(showAt) && Number.isFinite(showFor) && showFor > 0;
+
+            if (!hasTimedWindow) {
+                eyebrow.classList.remove("hidden");
+                titleVisible = true;
+            } else {
+                titleVisible = elapsedSeconds >= showAt && elapsedSeconds < showAt + showFor;
+                eyebrow.classList.toggle("hidden", !titleVisible);
+            }
+        }
+
+        if (!logo || !broadcast.logo_src) {
+            if (leftBrand) {
+                leftBrand.classList.toggle("hidden", !titleVisible);
+                leftBrand.classList.remove("broadcast-overlay__brand--logo-only");
+            }
             return;
         }
 
-        const showAt = Number(broadcast.title_show_at);
-        const showFor = Number(broadcast.title_show_for);
-        const hasTimedWindow = Number.isFinite(showAt) && Number.isFinite(showFor) && showFor > 0;
+        const logoShowAt = Number(broadcast.logo_show_at);
+        const logoShowFor = Number(broadcast.logo_show_for);
+        const hasLogoTimedWindow = Number.isFinite(logoShowAt) && Number.isFinite(logoShowFor) && logoShowFor > 0;
 
-        if (!hasTimedWindow) {
-            eyebrow.classList.remove("hidden");
+        if (!hasLogoTimedWindow) {
+            logo.classList.remove("hidden");
+            logoVisible = true;
+            if (leftBrand) {
+                leftBrand.classList.remove("hidden");
+                leftBrand.classList.toggle("broadcast-overlay__brand--logo-only", !titleVisible);
+            }
             return;
         }
 
-        const visible = elapsedSeconds >= showAt && elapsedSeconds < showAt + showFor;
-        eyebrow.classList.toggle("hidden", !visible);
+        logoVisible = elapsedSeconds >= logoShowAt && elapsedSeconds < logoShowAt + logoShowFor;
+        logo.classList.toggle("hidden", !logoVisible);
+
+        if (leftBrand) {
+            leftBrand.classList.toggle("hidden", !(titleVisible || logoVisible));
+            leftBrand.classList.toggle("broadcast-overlay__brand--logo-only", logoVisible && !titleVisible);
+        }
     }
 
     bindTransitionVideoAutoAdvance(screen, segment, segmentIndex) {

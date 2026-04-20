@@ -25,6 +25,7 @@ LEGACY_ALIAS_TO_SCENE = {
     "segments dificil": "scene_intro_segments",
     "memory": "scene_intro_memory",
     "token a lloc": "scene_intro_token_a_lloc",
+    "apreta botons": "scene_intro_apreta_botons",
 }
 
 # Create puzzles based on PUZZLE_ORDER

@@ -113,6 +113,17 @@
         "bloque_estable": "warning",
         "cierre_suave": "close"
       }
+    },
+    {
+      "output_scene_id": "scene_intro_apreta_botons_v2",
+      "legacy_scene_id": "scene_intro_apreta_botons",
+      "game_title": "Apreta Botons",
+      "headline": "APRETA BOTONS",
+      "character_intents": {
+        "intro_estable": "intro",
+        "bloque_estable": "warning",
+        "cierre_suave": "close"
+      }
     }
   ],
   "defaults": {

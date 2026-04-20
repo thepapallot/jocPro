@@ -1,23 +1,47 @@
 1
-00:00:00,000 --> 00:00:01,360
-Increíble.
+00:00:00,000 --> 00:00:03,400
+Sin comunicación, no llegaréis a ningún lado.
 
 2
-00:00:01,360 --> 00:00:03,359
-Hemos llegado a la última prueba.
+00:00:03,400 --> 00:00:08,200
+Vuestro objetivo será mantener pulsados los botones correctos durante 3 segundos.
 
 3
-00:00:03,359 --> 00:00:06,839
-Para superarla tendréis que trabajar en equipo más que nunca.
+00:00:08,200 --> 00:00:11,400
+Para lograrlo, solo utilizaréis los terminales.
 
 4
-00:00:06,839 --> 00:00:10,000
-Solo os diré que tendréis que usar los botones de los terminales
+00:00:11,400 --> 00:00:15,000
+En pantalla aparecerán muchas bolas de distintos colores.
 
 5
-00:00:10,000 --> 00:00:11,640
-y que, para superar las fases,
+00:00:15,000 --> 00:00:18,200
+Cada bola representa un botón de ese mismo color.
 
 6
-00:00:11,640 --> 00:00:20,699
-tendréis que mantener pulsados los botones correctos durante al menos cinco segundos. [Música]
+00:00:18,200 --> 00:00:21,800
+Tendréis que organizaros rápido y coordinaros entre todos.
+
+7
+00:00:21,800 --> 00:00:24,800
+Cuando todos los colores correctos estén pulsados,
+
+8
+00:00:24,800 --> 00:00:26,800
+comenzará la cuenta atrás.
+
+9
+00:00:26,800 --> 00:00:29,600
+Si alguien falla o se suelta antes de tiempo,
+
+10
+00:00:29,600 --> 00:00:31,400
+tendréis que empezar de nuevo.
+
+11
+00:00:31,400 --> 00:00:34,400
+Pensad rápido, coordinad posiciones,
+
+12
+00:00:34,400 --> 00:00:36,400
+y resistid juntos.

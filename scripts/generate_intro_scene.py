@@ -3,6 +3,7 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import re
 import unicodedata
 import wave
@@ -33,6 +34,7 @@ SCENE_TO_PUZZLE_TAG = {
     "scene_intro_memory": "8",
     "scene_intro_token_a_lloc": "9",
     "scene_intro_segments": "10",
+    "scene_intro_apreta_botons": "12",
 }
 
 CONCEPT_KEYWORDS = {
@@ -331,6 +333,116 @@ def parse_srt_file(path: Path):
         if isinstance(start, (int, float)) and isinstance(end, (int, float)) and text:
             subtitles.append({"start": round(start, 3), "end": round(end, 3), "text": text})
     return subtitles
+
+
+def format_srt_timestamp(seconds: float):
+    total_ms = max(0, int(round(float(seconds) * 1000)))
+    hh = total_ms // 3600000
+    total_ms %= 3600000
+    mm = total_ms // 60000
+    total_ms %= 60000
+    ss = total_ms // 1000
+    ms = total_ms % 1000
+    return f"{hh:02d}:{mm:02d}:{ss:02d},{ms:03d}"
+
+
+def derive_subtitle_alias(scene_id: str):
+    alias = (scene_id or "").strip()
+    if alias.startswith("scene_intro_"):
+        alias = alias[len("scene_intro_"):]
+    alias = alias.replace("-", "_").replace(" ", "_")
+    alias = re.sub(r"[^a-zA-Z0-9_]+", "", alias)
+    alias = alias.strip("_").lower()
+    return alias or "scene"
+
+
+def infer_subtitles_path(repo_root: Path, scene_id: str, lang: str):
+    puzzle_tag = SCENE_TO_PUZZLE_TAG.get(scene_id, "")
+    if not puzzle_tag:
+        return None
+    alias = derive_subtitle_alias(scene_id)
+    subtitles_file = f"intro_puzzle_{int(puzzle_tag):02d}_{alias}.{lang}.srt"
+    absolute = repo_root / "scenes" / "subtitles" / lang / subtitles_file
+    relative = absolute.relative_to(repo_root).as_posix()
+    return absolute, relative
+
+
+def transcribe_subtitles_for_entry(
+    entry: dict,
+    repo_root: Path,
+    scene_id: str,
+    whisper_model_name: str,
+    whisper_language: str,
+    whisper_device: str,
+    whisper_cache_dir: Path,
+    whisper_models: dict,
+    lang_code: str,
+):
+    if isinstance(entry.get("subtitles"), list):
+        return None
+
+    explicit_subtitles_path = (entry.get("subtitles_path") or "").strip()
+    if explicit_subtitles_path:
+        subtitles_abs_path = (repo_root / explicit_subtitles_path).resolve()
+        subtitles_rel_path = explicit_subtitles_path
+    else:
+        inferred = infer_subtitles_path(repo_root, scene_id, lang_code)
+        if not inferred:
+            return None
+        subtitles_abs_path, subtitles_rel_path = inferred
+
+    audio_src = resolve_audio_src(entry, scene_id)
+    audio_path = resolve_static_path(repo_root, audio_src)
+    if not audio_path or not audio_path.exists():
+        raise RuntimeError(f"{scene_id}: audio not found for subtitle transcription -> {audio_src}")
+
+    try:
+        import whisper
+    except ImportError as exc:
+        raise RuntimeError(
+            "openai-whisper is required for auto subtitle transcription. "
+            "Install it in your environment: pip install openai-whisper"
+        ) from exc
+
+    whisper_cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_key = f"{whisper_model_name}:{whisper_device}:{str(whisper_cache_dir)}"
+    model = whisper_models.get(cache_key)
+    if model is None:
+        model = whisper.load_model(
+            whisper_model_name,
+            device=whisper_device,
+            download_root=str(whisper_cache_dir),
+        )
+        whisper_models[cache_key] = model
+
+    result = model.transcribe(
+        str(audio_path),
+        language=whisper_language,
+        task="transcribe",
+        fp16=False,
+    )
+    segments = result.get("segments") or []
+    if not segments:
+        raise RuntimeError(f"{scene_id}: whisper produced no subtitle segments")
+
+    lines = []
+    for idx, segment in enumerate(segments, start=1):
+        start = float(segment.get("start", 0) or 0)
+        end = float(segment.get("end", 0) or 0)
+        text = (segment.get("text") or "").strip()
+        if not text or end <= start:
+            continue
+        lines.append(str(idx))
+        lines.append(f"{format_srt_timestamp(start)} --> {format_srt_timestamp(end)}")
+        lines.append(text)
+        lines.append("")
+
+    if not lines:
+        raise RuntimeError(f"{scene_id}: whisper segments were empty after normalization")
+
+    subtitles_abs_path.parent.mkdir(parents=True, exist_ok=True)
+    subtitles_abs_path.write_text("\n".join(lines).strip() + "\n", encoding="utf-8")
+    return subtitles_rel_path
 
 
 def resolve_subtitles(entry: dict, repo_root: Path, scene_id: str):
@@ -1466,6 +1578,21 @@ def main():
     parser.add_argument("--template", default=None, help="Optional template path override")
     parser.add_argument("--output-root", default=None, help="Optional output root override")
     parser.add_argument("--force", action="store_true", help="Overwrite existing generated configs")
+    parser.add_argument(
+        "--transcribe-subtitles",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Auto-generate subtitles from audio with openai-whisper for generated scenes (default: enabled)",
+    )
+    parser.add_argument("--whisper-model", default="tiny", help="Whisper model name (default: tiny)")
+    parser.add_argument("--whisper-language", default="es", help="Whisper language code (default: es)")
+    parser.add_argument("--whisper-device", default="cpu", help="Whisper device (default: cpu)")
+    parser.add_argument(
+        "--whisper-cache-dir",
+        default=None,
+        help="Whisper cache/model directory (default: .cache/whisper or WHISPER_CACHE_DIR env)",
+    )
+    parser.add_argument("--subtitles-lang", default="es", help="Subtitle language folder/extension (default: es)")
     args = parser.parse_args()
 
     repo_root = Path(__file__).resolve().parents[1]
@@ -1486,30 +1613,55 @@ def main():
 
     created = []
     skipped = []
+    transcribed = []
+    whisper_models = {}
+    default_cache_dir = os.environ.get("WHISPER_CACHE_DIR", ".cache/whisper")
+    whisper_cache_dir = (repo_root / (args.whisper_cache_dir or default_cache_dir)).resolve()
 
     for entry in entries:
-      scene_id = canonical_scene_id(entry)
-      out_file = output_root / scene_id / "config.json"
+        scene_id = canonical_scene_id(entry)
+        out_file = output_root / scene_id / "config.json"
 
-      if out_file.exists() and not args.force:
-          skipped.append(str(out_file))
-          continue
+        if out_file.exists() and not args.force:
+            skipped.append(str(out_file))
+            continue
 
-      scene = build_scene(
-          template,
-          entry,
-          defaults,
-          repo_root,
-          role_to_clips,
-          used_counts,
-          image_semantics,
-      )
-      dump_json(out_file, scene)
-      created.append(str(out_file))
+        entry_for_build = copy.deepcopy(entry)
+        if args.transcribe_subtitles:
+            subtitles_path = transcribe_subtitles_for_entry(
+                entry=entry_for_build,
+                repo_root=repo_root,
+                scene_id=scene_id,
+                whisper_model_name=args.whisper_model,
+                whisper_language=args.whisper_language,
+                whisper_device=args.whisper_device,
+                whisper_cache_dir=whisper_cache_dir,
+                whisper_models=whisper_models,
+                lang_code=args.subtitles_lang,
+            )
+            if subtitles_path:
+                entry_for_build["subtitles_path"] = subtitles_path
+                transcribed.append(str(repo_root / subtitles_path))
+
+        scene = build_scene(
+            template,
+            entry_for_build,
+            defaults,
+            repo_root,
+            role_to_clips,
+            used_counts,
+            image_semantics,
+        )
+        dump_json(out_file, scene)
+        created.append(str(out_file))
 
     print(f"Generated: {len(created)}")
     for path in created:
         print(f"  + {path}")
+    if transcribed:
+        print(f"Transcribed subtitles: {len(transcribed)}")
+        for path in transcribed:
+            print(f"  * {path}")
     if skipped:
         print(f"Skipped (exists): {len(skipped)}")
         for path in skipped:

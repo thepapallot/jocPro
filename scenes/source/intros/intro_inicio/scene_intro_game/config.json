@@ -147,7 +147,10 @@
       "broadcast": {
         "title": "CERO",
         "title_show_at": 4.0,
-        "title_show_for": 2.0
+        "title_show_for": 2.0,
+        "logo_src": "/static/images/shared/branding/logo_adn.png",
+        "logo_show_at": 6.0,
+        "logo_show_for": 1.8
       }
     },
     {
@@ -160,7 +163,7 @@
     {
       "type": "transition",
       "duration": 4.5,
-      "video": "/static/videos/recursos_varios/gm_pyramid_construction_b.mp4",
+      "video": "/static/videos/recursos_varios/gm_pyramid_construction_a.mp4",
       "clip_start": 0,
       "clip_end": 4.5
     },
@@ -216,9 +219,17 @@
     },
     {
       "type": "transition",
-      "duration": 8,
+      "duration": 4.199,
       "video": "/static/videos/recursos_varios/gm_pyramid_establishing_a.mp4",
       "clip_start": 0
+    },
+    {
+      "type": "character",
+      "duration": 3.801,
+      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
+      "clip_start": 0.6,
+      "clip_end": 4.401,
+      "label": "cero_refuerzo_medio"
     },
     {
       "type": "transition",
@@ -228,68 +239,63 @@
       "clip_end": 6.079
     },
     {
+      "type": "character",
+      "duration": 10.281,
+      "src": "/static/videos/characters/cero_explanation_long_a.mp4",
+      "clip_start": 1.2,
+      "clip_end": 11.481,
+      "label": "cero_serie_pruebas"
+    },
+    {
       "type": "fullscreen_ui",
-      "duration": 14.2,
+      "duration": 6.8,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "layout": "keywords-stack",
+            "steps": []
+          }
+        },
+        {
+          "at": 1.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/checklist.png",
-                "alt": "Checklist"
-              }
+            "layout": "keywords-stack",
+            "steps": [
+              "COORDINACIÓN"
             ]
           }
         },
         {
-          "at": 2.681,
+          "at": 2.5,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "SERIE DE PRUEBAS EN EQUIPO"
-          }
-        },
-        {
-          "at": 7.362,
-          "sfx": "pulse",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/decision_rapida.png",
-                "alt": "Decision rápida"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/progreso_objetivo.png",
-                "alt": "Progreso objetivo"
-              }
+            "layout": "keywords-stack",
+            "steps": [
+              "COORDINACIÓN",
+              "INGENIO"
             ]
           }
         },
         {
-          "at": 12.081,
+          "at": 3.2,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/equipo_consenso.png",
-                "alt": "Equipo consenso"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/checklist.png",
-                "alt": "Checklist"
-              }
+            "layout": "keywords-stack",
+            "steps": [
+              "COORDINACIÓN",
+              "INGENIO",
+              "CONFIANZA"
             ]
           }
         }
@@ -297,57 +303,35 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 15.121,
+      "duration": 12.24,
       "variant": "immersive-strip",
       "phases": [
         {
           "at": 0,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/checklist.png",
-                "alt": "Checklist"
-              }
-            ]
-          }
-        },
-        {
-          "at": 2.881,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/termial con token.png",
-                "alt": "Terminal con token"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base NFC con token"
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box",
+                "frameless": true
               }
             ]
           }
         },
         {
-          "at": 9.481,
+          "at": 3.9,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base NFC"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base NFC con token"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card",
+                "frameless": true
               }
             ]
           }
@@ -365,21 +349,17 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
             "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/termial con token.png",
-                "alt": "Terminal con token"
-              },
               {
                 "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base NFC con token"
+                "alt": "Base NFC con token",
+                "frameless": true
               }
             ]
           }
         },
         {
-          "at": 2.6,
+          "at": 6.2,
           "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
@@ -387,30 +367,8 @@
             "assets": [
               {
                 "src": "/static/images/shared/nuevos iconos/alerta.png",
-                "alt": "Alerta"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/error atencion.png",
-                "alt": "Error atención"
-              }
-            ]
-          }
-        },
-        {
-          "at": 7.7,
-          "sfx": "warning",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/alerta.png",
-                "alt": "Alerta"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/veredicto_error.png",
-                "alt": "Prohibido"
+                "alt": "Alerta",
+                "frameless": true
               }
             ]
           }
@@ -421,15 +379,11 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/nuevos iconos/equipo_consenso.png",
-                "alt": "Equipo consenso"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/checklist.png",
-                "alt": "Checklist"
+                "alt": "Equipo consenso",
+                "frameless": true
               }
             ]
           }
@@ -437,8 +391,16 @@
       ]
     },
     {
+      "type": "character",
+      "duration": 3,
+      "src": "/static/videos/characters/cero_outro_close_a.mp4",
+      "clip_start": 0.2,
+      "clip_end": 3.2,
+      "label": "cero_refuerzo_final"
+    },
+    {
       "type": "transition",
-      "duration": 9.847576,
+      "duration": 6.847576,
       "video": "/static/videos/recursos_varios/network_core.mp4",
       "clip_start": 0
     }
