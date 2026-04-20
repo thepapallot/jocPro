@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:04,400
+What comes next will test your ability to associate information.
+
+2
+00:00:04,400 --> 00:00:09,000
+Different operations will appear on screen, and you must complete them.
+
+3
+00:00:09,000 --> 00:00:13,840
+To do this, you will have to add the number on your token to the one on the terminal.
+
+4
+00:00:13,840 --> 00:00:18,440
+When the combination is correct, the operation will be solved.
+
+5
+00:00:18,440 --> 00:00:21,560
+You will need to clear two phases to advance.
+
+6
+00:00:21,560 --> 00:00:24,640
+A single mistake will reset the phase.
+
+7
+00:00:24,640 --> 00:00:28,160
+It will also reset if you repeat an operation that was already solved.
+
+8
+00:00:28,160 --> 00:00:30,960
+Or if the timer reaches zero.
+
+9
+00:00:30,960 --> 00:00:33,160
+Coordinate well, that will be the key.

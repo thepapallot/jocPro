@@ -21,6 +21,7 @@
       "variant": "intro-brief",
       "title": "SIMULACRO INICIAL",
       "objective": "Usar tokens, botones y terminales.",
+      "title_audio": "/static/audios/audios títols/simulacro_inicial.mp3",
       "advance_on_space": true,
       "evaluation": "Coordinacion"
     }

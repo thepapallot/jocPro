@@ -68,29 +68,11 @@
         },
         {
           "at": 2.68,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base nfc"
-              }
-            ]
-          }
-        },
-        {
-          "at": 3.68,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base nfc"
-              },
               {
                 "src": "/static/images/shared/nuevos iconos/termial con token.png",
                 "alt": "Termial con token"
@@ -132,7 +114,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_close_short_a.mp4",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,

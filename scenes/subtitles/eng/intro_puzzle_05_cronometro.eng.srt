@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:03,960
+Time seems simple, until you have to measure it.
+
+2
+00:00:03,960 --> 00:00:08,200
+You must count exactly the seconds that appear on screen.
+
+3
+00:00:08,200 --> 00:00:13,680
+For this, you will only need your tokens and the terminal lights.
+
+4
+00:00:13,680 --> 00:00:18,720
+This test has two phases, and in each one you will count a different interval.
+
+5
+00:00:18,720 --> 00:00:23,080
+When a phase starts, the lights will turn on randomly.
+
+6
+00:00:23,080 --> 00:00:26,080
+That will be the signal to start counting.
+
+7
+00:00:26,160 --> 00:00:31,160
+When you think the time is over, pass your token through the terminal.
+
+8
+00:00:31,160 --> 00:00:35,640
+Every second over or under will add error to the team.
+
+9
+00:00:35,640 --> 00:00:40,080
+If accumulated error exceeds the limit, the phase will reset.
+
+10
+00:00:40,080 --> 00:00:44,800
+Remember: not all lights will activate at the same time.
+
+11
+00:00:44,800 --> 00:00:46,800
+Count carefully.
