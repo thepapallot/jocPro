@@ -3,6 +3,7 @@ const EPSILON = 0.12;
 const SAFE_NEXT_GRACE_SECONDS = 0.45;
 const STALL_THRESHOLD_MS = 2500;
 const STALL_RECOVERY_COOLDOWN_MS = 1800;
+const INTRO_BRIEF_TITLE_AUDIO_DELAY_MS = 2000;
 let briefContentCatalog = {};
 const SCENE_OVERLAY_TITLES = {
     scene_intro_simulacro: "Simulacro Inicial",
@@ -82,6 +83,17 @@ function getBriefContentForNextScene() {
     }
     const entry = briefContentCatalog[nextSceneId];
     return entry && typeof entry === "object" ? entry : {};
+}
+
+function getIntroBriefTitleAudioForNextScene(segment) {
+    const briefContent = getBriefContentForNextScene();
+    return (
+        briefContent.title_audio_src ||
+        briefContent.title_audio ||
+        segment.title_audio_src ||
+        segment.title_audio ||
+        ""
+    );
 }
 
 function createElement(tag, className, text) {
@@ -1486,6 +1498,8 @@ class ScenePlayer {
         this.lastProgressSceneTime = 0;
         this.lastProgressPerfTime = 0;
         this.lastRecoveryPerfTime = 0;
+        this.introBriefAudioTimeoutId = null;
+        this.introBriefAudio = null;
         this.nextUrl = resolveNextUrl();
         this.onComplete = resolveOnComplete();
         this.completionHandled = false;
@@ -1782,8 +1796,68 @@ class ScenePlayer {
         this.playUiSfx(phase.sfx || segment.sfx || "pulse");
     }
 
+    clearIntroBriefTitleAudio({ stopPlayback = true } = {}) {
+        if (this.introBriefAudioTimeoutId != null) {
+            window.clearTimeout(this.introBriefAudioTimeoutId);
+            this.introBriefAudioTimeoutId = null;
+        }
+
+        if (stopPlayback && this.introBriefAudio) {
+            this.introBriefAudio.pause();
+            this.introBriefAudio.currentTime = 0;
+        }
+
+        this.introBriefAudio = null;
+    }
+
+    scheduleIntroBriefTitleAudio(segment, segmentIndex) {
+        const source = getIntroBriefTitleAudioForNextScene(segment);
+        if (!source) {
+            return;
+        }
+
+        this.introBriefAudioTimeoutId = window.setTimeout(() => {
+            this.introBriefAudioTimeoutId = null;
+
+            if (
+                this.currentSegmentIndex !== segmentIndex ||
+                this.currentSegment?.type !== "transition" ||
+                this.currentSegment?.variant !== "intro-brief"
+            ) {
+                return;
+            }
+
+            this.clearIntroBriefTitleAudio({ stopPlayback: true });
+
+            const src = source.includes("%") ? source : encodeURI(source);
+            const audio = new Audio(src);
+            audio.preload = "auto";
+            this.introBriefAudio = audio;
+            audio.addEventListener("ended", () => {
+                if (this.introBriefAudio === audio) {
+                    this.introBriefAudio = null;
+                }
+            }, { once: true });
+
+            audio.play()
+                .then(() => {
+                    this.logEvent("intro_brief_title_audio_play", { src });
+                })
+                .catch((error) => {
+                    this.logEvent("intro_brief_title_audio_failed", {
+                        src,
+                        message: error?.message || String(error),
+                    });
+                    if (this.introBriefAudio === audio) {
+                        this.introBriefAudio = null;
+                    }
+                });
+        }, INTRO_BRIEF_TITLE_AUDIO_DELAY_MS);
+    }
+
     destroy() {
         cancelAnimationFrame(this.rafId);
+        this.clearIntroBriefTitleAudio({ stopPlayback: true });
         elements.video.pause();
         elements.audio.pause();
         elements.video.removeEventListener("timeupdate", this.onVideoTimeUpdate);
@@ -2072,6 +2146,7 @@ class ScenePlayer {
     renderSegment({ crossfadeTransition = false } = {}) {
         const segment = this.currentSegment;
         const keepCharacterFrame = Boolean(this.scene?.use_character_frame);
+        this.clearIntroBriefTitleAudio({ stopPlayback: true });
         this.activePhaseKey = "";
         this.activePhaseIndex = -1;
         this.activeSubtitleKey = "";
@@ -2147,6 +2222,9 @@ class ScenePlayer {
             }
             if (segment.variant === "countdown") {
                 this.playUiSfx("countdown");
+            }
+            if (segment.variant === "intro-brief") {
+                this.scheduleIntroBriefTitleAudio(segment, this.currentSegmentIndex);
             }
             requestAnimationFrame(() => elements.transitionLayer.classList.add("layer-visible"));
         }

@@ -93,16 +93,20 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "APRETA BOTONS"
+            "text": "APRETAR LOS BOTONS CORRECTOS A LA VEZ"
           }
         },
         {
-          "at": 2.4,
-          "sfx": "pulse",
+          "at": 4.1,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal gameplay"
+              },
               {
                 "src": "/static/images/shared/nuevos iconos/botones colores.png",
                 "alt": "Botones colores"
@@ -111,8 +115,22 @@
           }
         },
         {
-          "at": 3.4,
+          "at": 7.28,
           "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/puzzle12/imatges/fase1_1.gif",
+                "alt": "Ejemplo visual del puzzle"
+              }
+            ]
+          }
+        },
+        {
+          "at": 10.88,
+          "sfx": "pulse",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
@@ -120,10 +138,6 @@
               {
                 "src": "/static/images/shared/nuevos iconos/botones colores.png",
                 "alt": "Botones colores"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
-                "alt": "Reloj tiempo"
               }
             ]
           }
@@ -144,7 +158,7 @@
       "variant": "immersive-strip",
       "phases": [
         {
-          "at": 0.98,
+          "at": 0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -152,8 +166,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
+                "alt": "Apretar boton"
               }
             ]
           }
@@ -167,8 +185,27 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/warnings/timeout.png",
-                "alt": "Timeout"
+                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
+                "alt": "Reloj tiempo"
+              }
+            ]
+          }
+        },
+        {
+          "at": 7.1,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": true,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/alerta.png",
+                "alt": "Alerta"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
               }
             ]
           }

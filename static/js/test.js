@@ -6,6 +6,20 @@
   const tutorialPuzzleId = String(window.TEST_PUZZLE_TUTORIAL ?? "").trim();
   const finalPuzzleId = String(window.TEST_PUZZLE_FINAL ?? "").trim();
   const finalPuzzleMqttId = finalPuzzleId || "6";
+  const aliasToScene = {
+    simulacro: "scene_intro_simulacro",
+    sumas: "scene_intro_sumas",
+    laberinto: "scene_intro_laberinto",
+    trivial: "scene_intro_trivial",
+    musica: "scene_intro_musica",
+    cronometro: "scene_intro_cronometro",
+    energia: "scene_intro_energia",
+    segments: "scene_intro_segments",
+    "segments dificil": "scene_intro_segments",
+    memory: "scene_intro_memory",
+    "token a lloc": "scene_intro_token_a_lloc",
+    "apreta botons": "scene_intro_apreta_botons"
+  };
   const sceneHealthConfigs = [
     { id: "scene_intro_game", label: "Intro General", href: "/player/?scene=scene_intro_game" },
     { id: "scene_intro_sumas", label: "Puzzle 1 Intro", href: "/player/?scene=scene_intro_sumas" },
@@ -18,6 +32,7 @@
     { id: "scene_intro_token_a_lloc", label: "Puzzle 9 Intro", href: "/player/?scene=scene_intro_token_a_lloc" },
     { id: "scene_intro_segments", label: "Puzzle 10 Intro", href: "/player/?scene=scene_intro_segments" },
     { id: "scene_intro_simulacro", label: "Puzzle 11 Intro", href: "/player/?scene=scene_intro_simulacro" },
+    { id: "scene_intro_apreta_botons", label: "Puzzle 12 Intro", href: "/player/?scene=scene_intro_apreta_botons" },
     { id: "scene_video_final", label: "Intro Final", href: "/player/?scene=scene_video_final" },
     { id: "scene_outro_game", label: "Outro Final", href: "/player/?scene=scene_outro_game" }
   ];
@@ -521,6 +536,44 @@
     return String(alias || "").trim();
   }
 
+  function formatAliasLabel(alias) {
+    const normalized = String(alias || "")
+      .trim()
+      .replace(/\s+/g, " ");
+    if (!normalized) {
+      return "";
+    }
+    return normalized.replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
+  function getPuzzleDisplayName(puzzleId) {
+    const aliasLabel = formatAliasLabel(getAliasForPuzzle(puzzleId));
+    if (aliasLabel) {
+      return aliasLabel;
+    }
+    const config = puzzleConfigs[String(puzzleId)];
+    return config?.label || `Puzzle ${puzzleId}`;
+  }
+
+  function normalizeAlias(alias) {
+    return String(alias || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+  }
+
+  function resolveIntroSceneForPuzzle(puzzleId) {
+    const alias = normalizeAlias(getAliasForPuzzle(puzzleId));
+    if (!alias) {
+      return "";
+    }
+    const mapped = aliasToScene[alias] || alias;
+    if (mapped.startsWith("scene_")) {
+      return mapped;
+    }
+    return `scene_intro_${mapped}`;
+  }
+
   function getVisiblePuzzleIds() {
     const allConfigIds = Object.keys(puzzleConfigs)
       .filter((id) => id !== "-1")
@@ -545,13 +598,19 @@
     }
 
     const orderedIds = configuredIds.filter((id, index, list) => list.indexOf(id) === index);
+    return orderedIds;
+  }
 
-    if (orderedIds.length === 0) {
-      return allConfigIds;
+  function shouldIncludeLegacyFinalShortcut(visibleIds) {
+    if (!puzzleConfigs["-1"]) {
+      return false;
     }
-
-    const missingIds = allConfigIds.filter((id) => !orderedIds.includes(id));
-    return [...orderedIds, ...missingIds];
+    // If final puzzle is already present as a real puzzle id (e.g. energia = 6),
+    // avoid duplicating the same target with the legacy "/puzzle/final" shortcut.
+    if (finalPuzzleId && visibleIds.includes(String(finalPuzzleId))) {
+      return false;
+    }
+    return true;
   }
 
   function switchTab(tabId) {
@@ -625,10 +684,7 @@
       const config = puzzleConfigs[id];
       if (!config) return;
 
-      const alias = getAliasForPuzzle(id);
-      const optionLabel = alias
-        ? `${id} · ${alias}`
-        : config.label;
+      const optionLabel = getPuzzleDisplayName(id);
 
       const option = document.createElement("option");
       option.value = id;
@@ -636,12 +692,11 @@
       els.puzzleSelect.appendChild(option);
     });
 
-    // Add Final Puzzle at the end
-    const finalConfig = puzzleConfigs["-1"];
-    if (finalConfig) {
+    // Add legacy final option only when it does not duplicate the configured final puzzle.
+    if (shouldIncludeLegacyFinalShortcut(visibleIds)) {
       const option = document.createElement("option");
       option.value = "-1";
-      option.textContent = finalConfig.label;
+      option.textContent = "Final";
       els.puzzleSelect.appendChild(option);
     }
   }
@@ -653,19 +708,17 @@
 
     const visibleIds = getVisiblePuzzleIds();
     const shortcutPuzzleIds = [...visibleIds];
-    if (puzzleConfigs["-1"]) {
+    if (shouldIncludeLegacyFinalShortcut(visibleIds)) {
       shortcutPuzzleIds.push("-1");
     }
 
-    els.puzzleShortcuts.innerHTML = shortcutPuzzleIds.map((id) => {
-      const alias = id === "-1"
-        ? "puzzle final"
-        : (getAliasForPuzzle(id) || "sin alias");
-      const label = id === "-1" ? "Puzzle final" : `Puzzle ${id}`;
+    els.puzzleShortcuts.innerHTML = shortcutPuzzleIds.map((id, index) => {
+      const label = id === "-1" ? "Final" : getPuzzleDisplayName(id);
+      const subtitle = id === "-1" ? "Puzzle final" : `Puzzle ${id}`;
       return `
         <button type="button" class="test-shortcut-btn" data-shortcut-puzzle="${escapeHtml(id)}">
-          <strong>${escapeHtml(label)}</strong>
-          <span>${escapeHtml(alias)}</span>
+          <strong>${escapeHtml(`${index + 1}. ${label}`)}</strong>
+          <span>${escapeHtml(subtitle)}</span>
         </button>
       `;
     }).join("");
@@ -686,25 +739,28 @@
     });
 
     const introRows = visibleIds.map((id, index) => {
-      const alias = getAliasForPuzzle(id) || "sin alias";
-      const configById = sceneHealthConfigs.find((scene) => scene.label === `Puzzle ${id} Intro`);
-      const href = configById ? configById.href : `/videoPuzzles/${index + 1}`;
+      const alias = getPuzzleDisplayName(id);
+      const introSceneId = resolveIntroSceneForPuzzle(id);
+      const href = introSceneId
+        ? `/player/?scene=${encodeURIComponent(introSceneId)}&next=${encodeURIComponent(`/puzzle/${id}`)}`
+        : `/videoPuzzles/${index + 1}`;
       return `
         <a class="test-shortcut-btn test-shortcut-btn--intro" href="${href}" target="_blank" rel="noopener">
-          <strong>Intro ${escapeHtml(id)}</strong>
-          <span>${escapeHtml(alias)}</span>
+          <strong>${escapeHtml(`${index + 1}. ${alias}`)}</strong>
+          <span>${escapeHtml(`Intro · Puzzle ${id}`)}</span>
         </a>
       `;
     }).join("");
 
+    const extraIntroStart = visibleIds.length;
     const extraIntros = `
       <a class="test-shortcut-btn test-shortcut-btn--intro" href="/player/?scene=scene_intro_game" target="_blank" rel="noopener">
-        <strong>Intro general</strong>
+        <strong>${escapeHtml(`${extraIntroStart + 1}. Intro general`)}</strong>
         <span>inicio</span>
       </a>
-      <a class="test-shortcut-btn test-shortcut-btn--intro" href="/player/?scene=scene_video_final" target="_blank" rel="noopener">
-        <strong>Intro final</strong>
-        <span>cierre</span>
+      <a class="test-shortcut-btn test-shortcut-btn--intro" href="/final" target="_blank" rel="noopener">
+        <strong>${escapeHtml(`${extraIntroStart + 2}. Video final`)}</strong>
+        <span>felicitacion</span>
       </a>
     `;
 

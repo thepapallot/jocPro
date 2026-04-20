@@ -30,13 +30,15 @@
       "kicker": "SIGUIENTE PRUEBA",
       "title": "SIMULACRO INICIAL",
       "objective": "Familiarizarse con tokens y terminales",
-      "evaluation": "Adaptacion y coordinacion"
+      "evaluation": "Adaptacion y coordinacion",
+      "title_audio": "/static/audios/audios títols/simulacro_inicial.mp3"
     },
     "scene_intro_sumas": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "CÁLCULO EXTREMO",
       "objective": "Resolver las sumas",
-      "evaluation": "Asociacion"
+      "evaluation": "Asociacion",
+      "title_audio": "/static/audios/audios títols/calculo_extremo.mp3"
     },
     "scene_intro_laberinto": {
       "kicker": "SIGUIENTE PRUEBA",
@@ -48,31 +50,43 @@
       "kicker": "SIGUIENTE PRUEBA",
       "title": "MENTE COLMENA",
       "objective": "Responder diez preguntas correctamente",
-      "evaluation": "Conocimiento colectivo"
+      "evaluation": "Conocimiento colectivo",
+      "title_audio": "/static/audios/audios títols/mente_colmena.mp3"
     },
     "scene_intro_musica": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "CÓDIGO SONORO",
       "objective": "Ordenar los fragmentos de la canción",
-      "evaluation": "Percepcion auditiva"
+      "evaluation": "Percepcion auditiva",
+      "title_audio": "/static/audios/audios títols/codigo_sonoro.mp3"
     },
     "scene_intro_cronometro": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "PULSO DE TIEMPO",
       "objective": "Contar los segundos exactos",
-      "evaluation": "Percepcion temporal"
+      "evaluation": "Percepcion temporal",
+      "title_audio": "/static/audios/audios títols/pulso_tiempo.mp3"
+    },
+    "scene_intro_apreta_botons": {
+      "kicker": "SIGUIENTE PRUEBA",
+      "title": "PRESION SINCRONIZADA",
+      "objective": "Mantener pulsados los botones correctos",
+      "evaluation": "Coordinacion en tiempo real",
+      "title_audio": "/static/audios/audios títols/presion_sincronizada.mp3"
     },
     "scene_intro_energia": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "CARGA CRÍTICA",
       "objective": "Mantener las luces encendidas",
-      "evaluation": "Anticipacion y planificacion"
+      "evaluation": "Anticipacion y planificacion",
+      "title_audio": "/static/audios/audios títols/carga_final.mp3"
     },
     "scene_intro_memory": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "MEMORIA FANTASMA",
       "objective": "Recordar letras y colores",
-      "evaluation": "Memoria"
+      "evaluation": "Memoria",
+      "title_audio": "/static/audios/audios títols/memoria_fantasma.mp3"
     },
     "scene_intro_token_a_lloc": {
       "kicker": "SIGUIENTE PRUEBA",
@@ -84,7 +98,8 @@
       "kicker": "SIGUIENTE PRUEBA",
       "title": "PATRÓN MAESTRO",
       "objective": "Replicar los patrones de colores",
-      "evaluation": "Simbolizacion e interpretacion"
+      "evaluation": "Simbolizacion e interpretacion",
+      "title_audio": "/static/audios/audios títols/patrón_maestro.mp3"
     }
   }
 }
