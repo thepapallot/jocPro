@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const redirectFlag = window.REDIRECT_FLAG;
     const idxStr = window.IDX_STR;
     const puzzleIdx = idxStr ? parseInt(idxStr, 10) : null;
+    const finalPuzzleId = window.FINAL_PUZZLE_ID;
 
     const overlayImg = document.getElementById('overlay');
     const overlayAudio = document.getElementById('overlay-audio');
@@ -20,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (redirectFlag === 'indexFinal') {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/videoJocFinal`;
+            form.action = `/videoPuzzles/${finalPuzzleId}`;
             document.body.appendChild(form);
             form.submit();
         } else if (redirectFlag && redirectFlag.startsWith('puzzle') && puzzleIdx !== null) {

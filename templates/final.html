@@ -6,7 +6,7 @@
 <body>
     <p>Redirigiendo al nuevo outro…</p>
     <script>
-        window.location.replace(`{{ url_for('scene_player') }}?scene=scene_outro_game&next=${encodeURIComponent({{ url_for('final_loop')|tojson }})}`);
+        window.location.replace(`{{ url_for('scene_player') }}?scene=scene_final&next=${encodeURIComponent({{ url_for('final_loop')|tojson }})}`);
     </script>
 </body>
 </html>

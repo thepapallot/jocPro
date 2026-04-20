@@ -155,7 +155,8 @@ def welcome():
     return render_template(
         'welcome.html',
         redirect_flag=redirect_flag,
-        idx=idx
+        idx=idx,
+        final_puzzle_id=PUZZLE_FINAL
     )
 
 @app.route('/videoIntro')
@@ -227,14 +228,9 @@ def puzzle_superat(puzzle_id):
     return render_template(
         'videoSuperat.html',
         idx_puzzle_id=idx + 1 if idx is not None else None,
-        final=final
+        final=final,
+        final_puzzle_id=PUZZLE_FINAL
     )
-
-@app.route('/videoJocFinal', methods=['GET','POST'])
-def play_joc_final(): 
-    next_url = url_for('puzzle_final')
-    target = build_scene_player_target("scene_video_final", next_url=next_url)
-    return redirect(target)
 
 
 ##### Scene Player: rutas aisladas para intros híbridas de frontend #####

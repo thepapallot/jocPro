@@ -16,6 +16,7 @@
     <script>
       window.REDIRECT_FLAG = "{{ redirect_flag }}";
       window.IDX_STR = "{{ idx }}";
+      window.FINAL_PUZZLE_ID = {{ final_puzzle_id|tojson }};
       window.PLAY_VIDEO_INTRO_URL = {{ url_for('play_video_intro')|tojson }};
     </script>
     <script src="{{ url_for('static', filename='js/welcome.js') }}"></script>

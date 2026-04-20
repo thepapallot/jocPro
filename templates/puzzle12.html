@@ -49,9 +49,6 @@
 <script>
     window.NEXT_PUZZLE_ID = {{ next_puzzle_id|tojson|safe }};
 </script>
-<script>
-window.PUZZLE_FINAL_OUTRO_URL = "{{ url_for('scene_player') }}?scene=scene_outro_game&next={{ url_for('final_loop') | urlencode }}";
-</script>
 <script src="{{ url_for('static', filename='js/puzzle12.js') }}"></script>
 {% endblock %}
 
