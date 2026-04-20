@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:06,000
+You have made it this far. Before you stands the final test.
+
+2
+00:00:06,000 --> 00:00:12,500
+Now we will discover whether you can react, move, and act as one team.
+
+3
+00:00:12,500 --> 00:00:17,500
+You must prevent the terminal lights from turning off for one full minute.
+
+4
+00:00:17,500 --> 00:00:21,900
+At the start, the screen will assign a color to each of your tokens.
+
+5
+00:00:21,900 --> 00:00:27,000
+That will be your color, and only you can respond when it appears.
+
+6
+00:00:27,000 --> 00:00:34,000
+If a terminal lights up in your color, you must run to it and pass your token before the light disappears.
+
+7
+00:00:34,000 --> 00:00:39,000
+When you do, the terminal will immediately switch to a new color.
+
+8
+00:00:39,000 --> 00:00:44,000
+Then a new sprint will begin for another person on the team.
+
+9
+00:00:44,000 --> 00:00:48,000
+If even one light goes out completely, you will fail.
+
+10
+00:00:48,000 --> 00:00:54,000
+You will need speed, constant focus, and nonstop movement.
+
+11
+00:00:54,000 --> 00:00:59,000
+Hold out for one minute and the pyramid will be yours.

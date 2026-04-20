@@ -5,7 +5,7 @@ This folder stores subtitle source files by language for intro and finale scenes
 Structure:
 
 - `es/`: Spanish source subtitles
-- `en/`: future English translations
+- `eng/`: English translations
 
 Naming convention:
 
@@ -31,4 +31,24 @@ Current Spanish files imported from `/home/agusti/Descargas/srt_corregidos/`:
 Notes:
 
 - Puzzle 7 subtitle file was not present in the provided batch.
-- These SRTs are stored as source assets for future translation and possible subtitle import automation.
+- These SRTs are stored as source assets for translation and possible subtitle import automation.
+
+## ES -> ENG maintenance workflow
+
+Spanish (`es/`) is the source of truth.
+
+When any file in `es/` changes:
+
+1. Update the corresponding file in `eng/`.
+2. Keep cue numbering and timestamps aligned with `es/`.
+3. Run:
+
+```bash
+bash scenes/subtitles/check_eng_sync.sh
+```
+
+The script checks:
+
+- Missing English files
+- Mismatch in cue count
+- Mismatch in timestamps (`-->` lines)

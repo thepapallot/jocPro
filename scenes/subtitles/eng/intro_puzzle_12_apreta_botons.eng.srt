@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:03,400
+Without communication, you will not get anywhere.
+
+2
+00:00:03,400 --> 00:00:08,200
+Your goal is to keep the correct buttons pressed for 3 seconds.
+
+3
+00:00:08,200 --> 00:00:11,400
+To do this, you will only use the terminals.
+
+4
+00:00:11,400 --> 00:00:15,000
+Many balls of different colors will appear on screen.
+
+5
+00:00:15,000 --> 00:00:18,200
+Each ball represents a button of that same color.
+
+6
+00:00:18,200 --> 00:00:21,800
+You must organize quickly and coordinate as a team.
+
+7
+00:00:21,800 --> 00:00:24,800
+When all the correct colors are pressed,
+
+8
+00:00:24,800 --> 00:00:26,800
+the countdown will begin.
+
+9
+00:00:26,800 --> 00:00:29,600
+If someone fails or lets go too early,
+
+10
+00:00:29,600 --> 00:00:31,400
+you will have to start again.
+
+11
+00:00:31,400 --> 00:00:34,400
+Think fast, coordinate positions,
+
+12
+00:00:34,400 --> 00:00:36,400
+and hold together.

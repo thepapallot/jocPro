@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:04,919
+Attention. In this level we will evaluate your reasoning ability.
+
+2
+00:00:04,919 --> 00:00:10,099
+The goal of this level is to correctly place the ten tokens on the ten terminals.
+
+3
+00:00:10,099 --> 00:00:14,400
+To do this, you will need the tokens, the terminal symbols, and perhaps
+
+4
+00:00:14,400 --> 00:00:19,480
+some other element. On screen you will see statements about the token positions,
+
+5
+00:00:19,480 --> 00:00:24,519
+the terminals, and their characteristics. Using this information, you must place the tokens so
+
+6
+00:00:24,519 --> 00:00:30,300
+that all the statements on screen are satisfied. Simple as that. Even though you are feeling
+
+7
+00:00:30,300 --> 00:00:34,719
+confident, if I were you I would think carefully about where each token goes. Because even if you have them...

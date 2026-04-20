@@ -1,0 +1,48 @@
+1
+00:00:00,000 --> 00:00:05,120
+This challenge is not about strength, but about logic and coordination.
+
+2
+00:00:05,120 --> 00:00:10,560
+Your goal will be to complete the color patterns shown on screen.
+
+3
+00:00:10,560 --> 00:00:16,040
+You will see one pattern for each terminal, made up of different color segments.
+
+4
+00:00:16,040 --> 00:00:21,600
+To achieve this, you will use your tokens and the terminal buttons.
+
+5
+00:00:21,600 --> 00:00:28,000
+Each token contains three hidden colors. To discover them, place the token on any terminal and press
+the black, red, and green buttons.
+
+6
+00:00:28,080 --> 00:00:31,760
+Each button will light up one of that token's colors.
+
+7
+00:00:31,760 --> 00:00:35,440
+And those colors will always be the same, no matter where it is.
+
+8
+00:00:35,440 --> 00:00:40,080
+You will need to move between terminals, using each token where it is most useful.
+
+9
+00:00:40,080 --> 00:00:45,120
+That is how you will complete the missing segments in each pattern.
+
+10
+00:00:45,120 --> 00:00:49,120
+Discover, combine, and coordinate quickly.
+
+11
+00:00:49,120 --> 00:00:53,360
+If time reaches zero, the phase will reset.
+
+12
+00:00:53,360 --> 00:00:57,280
+Understand the system and make it yours.
