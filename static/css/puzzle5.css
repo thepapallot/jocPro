@@ -257,7 +257,7 @@ body::after {
 .rail-meta {
     margin-left: auto;
     color: rgba(234, 252, 255, 0.52);
-    font-size: 0.68rem;
+    font-size: 1rem;
     font-weight: 700;
 }
 
@@ -549,7 +549,7 @@ body::after {
     place-items: center;
     width: min(100%, 192px);
     aspect-ratio: 1;
-    margin: 14px 0 6px;
+    margin: 6px 0 6px;
 }
 
 .time-ring,
@@ -663,7 +663,7 @@ body::after {
 
 .error-label {
     color: rgba(234, 252, 255, 0.58);
-    font-size: 0.82rem;
+    font-size: 1.18rem;
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
