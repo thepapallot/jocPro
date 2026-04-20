@@ -26,6 +26,7 @@
 
     let statusEl = null;
     let streakEl = null;
+    let progressSectionEl = null;
     let solved = false;
     let showingCompletion = false;
     let flashingActive = false;
@@ -110,6 +111,11 @@
         if (streak >= 2 && streak2Container) {
             streak2Container.classList.add('is-complete');
         }
+    }
+
+    function setSampleWaveActive(active) {
+        if (!progressSectionEl) return;
+        progressSectionEl.classList.toggle('sample-active', !!active);
     }
 
     function updateProgressBoxes(streak, playedSequence) {
@@ -255,6 +261,10 @@
         console.log('[P4] handleUpdate called with:', d);
         if (!d || d.puzzle_id !== 4) return;
 
+        if (typeof d.playing_sample === 'boolean') {
+            setSampleWaveActive(d.playing_sample);
+        }
+
         if (Array.isArray(d.played_sequence) && d.played_sequence.length === 0 && (d.current_progress === 0 || d.current_progress === undefined)) {
             stopFlashing();
         }
@@ -304,6 +314,7 @@
         if (d.puzzle_solved && !solved) {
             solved = true;
             showingCompletion = false;
+            setSampleWaveActive(false);
             samplePlaybackToken += 1;
             currentSampleUrl = null;
             clearFeedbackTimer();
@@ -466,9 +477,11 @@
     document.addEventListener('DOMContentLoaded', () => {
         statusEl = document.getElementById('status-text');
         streakEl = document.getElementById('streak');
+        progressSectionEl = document.getElementById('progress-section');
 
         //installDebugHelpers();
         setStatus('Preparando muestra', 'listening');
+        setSampleWaveActive(false);
         updateProgressBoxes(-1, []);
         updateRoundHud(0, 2);
         initSSE();

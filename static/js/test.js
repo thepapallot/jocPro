@@ -1937,7 +1937,7 @@
           · Pas: <strong>${solved ? "10/10" : `${Math.min(currentStep + 1, 10)}/10`}</strong>
           · Resolt: <strong>${solved ? "si" : "no"}</strong>
         </div>
-        ${solved ? '<div class="sim-note sim-note-success">✓ ¡Pirámide activada y fase de energía completada!</div>' : ""}
+        ${solved ? '<div class="sim-note sim-note-success">✓ ¡Pirámide activada y simulación completada!</div>' : ""}
         <div class="sim-note">Fase actual: ${escapeHtml(nextCopy)}</div>
         <div class="sim-actions">
           <button type="button" class="sim-button" data-sim-p11-refresh>Actualizar</button>

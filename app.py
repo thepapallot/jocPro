@@ -174,11 +174,6 @@ def play_video_puzzles(puzzle_id):
         "brief_progress": f"{idx_puzzle_id}/{len(PUZZLE_ORDER)}" if idx_puzzle_id else "",
     }
 
-    # First transition (before puzzle 11): custom messaging.
-    if idx_puzzle_id == 1:
-        between_kwargs["brief_kicker"] = "INICIANDO PROCESO"
-        between_kwargs["between_title"] = "INICIANDO PROCESO"
-
     target = url_for('scene_player', **between_kwargs)
     return redirect(target)
 

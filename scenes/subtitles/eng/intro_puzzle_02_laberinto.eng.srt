@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:03,859
+In this level we will evaluate your cognitive flexibility.
+
+2
+00:00:03,859 --> 00:00:07,120
+Your goal will be to reach the center of the maze.
+
+3
+00:00:07,120 --> 00:00:11,359
+You will do it using your tokens and these terminal symbols.
+
+4
+00:00:11,359 --> 00:00:14,439
+On screen, a maze full of symbols will appear.
+
+5
+00:00:14,439 --> 00:00:18,679
+To solve it, you must start at the entrance that matches your token number,
+
+6
+00:00:18,679 --> 00:00:23,600
+and pass it through terminals showing the symbols you find along the path.
+
+7
+00:00:23,600 --> 00:00:25,519
+But that is not all.
+
+8
+00:00:25,519 --> 00:00:30,239
+At some point, an alarm will sound and the maze will turn red. When that
+
+9
+00:00:30,239 --> 00:00:33,880
+happens, you must pass the token through the terminal with the opposite symbol to the one
+
+10
+00:00:33,880 --> 00:00:38,920
+shown in the maze. Stay alert, because at any moment the maze can return
+
+11
+00:00:38,920 --> 00:00:44,960
+to its original form. Be careful: one single mistake and you will have to start your route
+
+12
+00:00:44,960 --> 00:00:45,399
+again.

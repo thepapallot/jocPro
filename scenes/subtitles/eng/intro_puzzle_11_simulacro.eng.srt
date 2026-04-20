@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:02,800
+The pyramid begins here.
+
+2
+00:00:02,800 --> 00:00:06,800
+This first challenge will help you understand its rules.
+
+3
+00:00:06,800 --> 00:00:11,900
+One by one, you must complete basic tasks using tokens and terminals.
+
+4
+00:00:11,900 --> 00:00:16,000
+Here, precision will matter more than speed.
+
+5
+00:00:16,000 --> 00:00:21,800
+While one person acts, the rest observe, coordinate, and learn.
+
+6
+00:00:21,800 --> 00:00:26,300
+Focus: this is only the beginning.

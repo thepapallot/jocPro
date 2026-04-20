@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:03,700
+The mind fails when you need it most.
+
+2
+00:00:03,700 --> 00:00:07,200
+Your goal will be to remember Greek letters and colors.
+
+3
+00:00:07,200 --> 00:00:12,200
+To do that, you will use your tokens, the terminals, and the buttons.
+
+4
+00:00:12,200 --> 00:00:15,900
+At the start, you will see your token numbers on screen.
+
+5
+00:00:15,900 --> 00:00:18,700
+Look carefully, because they will disappear.
+
+6
+00:00:18,700 --> 00:00:22,500
+And in their place, a Greek letter in a specific color will appear.
+
+7
+00:00:22,500 --> 00:00:25,800
+Take your token to the terminal with that same letter.
+
+8
+00:00:25,800 --> 00:00:28,700
+Then press the button of the same color.
+
+9
+00:00:28,900 --> 00:00:33,300
+If even one person makes a mistake, the phase will reset.
+
+10
+00:00:33,300 --> 00:00:36,700
+It seems simple, only at first.
+
+11
+00:00:36,700 --> 00:00:39,500
+Each new phase will demand more memory.
+
+12
+00:00:39,500 --> 00:00:40,500
+Good luck.

@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:05,080
+Let's see how much you know: 10 questions will stand in your way.
+
+2
+00:00:05,080 --> 00:00:09,560
+A question and 6 possible answers will appear on screen.
+
+3
+00:00:09,560 --> 00:00:13,480
+Choose the correct one together and remember its number.
+
+4
+00:00:13,480 --> 00:00:17,680
+At each terminal, you will see six numbers, each in a different color.
+
+5
+00:00:17,680 --> 00:00:21,520
+Find the correct number and press its color.
+
+6
+00:00:21,520 --> 00:00:24,920
+When all of you answer, you will see the result.
+
+7
+00:00:24,920 --> 00:00:28,240
+A single mistake will break your streak.
+
+8
+00:00:28,240 --> 00:00:30,960
+Think fast, think as one.
