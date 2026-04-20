@@ -25,9 +25,6 @@
             <div class="final-level" data-round-card="3">
                 <span class="final-level-value">3</span>
             </div>
-            <div class="final-level" data-round-card="4">
-                <span class="final-level-value">4</span>
-            </div>
         </div>
 
         <div id="final-main">
@@ -58,7 +55,8 @@ window.PUZZLE_FINAL_OUTRO_URL = "{{ url_for('scene_player') }}?scene=scene_outro
 <script src="{{ url_for('static', filename='js/puzzle12.js') }}"></script>
 {% endblock %}
 
-<!-- Solved banner -->
+{% block after_body %}
 <div id="p12-solved-banner" class="p12-solved-banner hidden">
-        <div class="p12-solved-text">Puzle completat!</div>
+    <div class="p12-solved-text">Nivel completado!</div>
 </div>
+{% endblock %}

@@ -12,12 +12,11 @@ class Puzzle12(BasePuzzle):
         self.processing_wrong_result = False
         self.current_giff = 0
         self.current_streak = 0
-        self.streaks = 4
+        self.streaks = 3
         self.counters = [
             { "id": 1, "duration": 30, "num_giff": 5 },
             { "id": 2, "duration": 45, "num_giff": 5 },
-            { "id": 3, "duration": 90, "num_giff": 5 },
-            { "id": 4, "duration": 90, "num_giff": 5 }
+            { "id": 3, "duration": 90, "num_giff": 5 }
         ]
         # box_states[box_id] = list of 6 ints (0/1), box_id 1-based
         self.box_states = {}
@@ -26,8 +25,7 @@ class Puzzle12(BasePuzzle):
         #negre,verd,vermell,groc,blau,blanc
         self.botons = (((2,2,1,2,2,1),(2,1,2,1,2,2),(1,1,1,3,3,1),(2,1,3,2,1,1),(1,2,1,2,1,3)),
                         ((2,2,5,2,2,2),(2,3,4,2,3,1),(3,3,2,3,1,3),(1,1,3,4,4,2),(4,1,1,5,1,3)),
-                        ((4,4,4,4,5,4),(4,3,5,2,6,5),(1,4,6,4,8,2),(6,2,2,8,4,3),(4,5,5,3,4,4)),
-                        ((0,7,3,6,4,0),(0,3,8,5,4,0),(0,5,6,7,2,0),(0,3,6,6,5,0),(0,4,1,7,8,0)))
+                        ((4,4,4,4,5,4),(4,3,5,2,6,5),(1,4,6,4,8,2),(6,2,2,8,4,3),(4,5,5,3,4,4)))
                         #((0,4,4,4,4,2),(0,3,6,5,2,2),(0,5,3,2,3,5),(0,3,5,6,2,2),(0,2,2,4,8,2)))
 
     def reset(self):
@@ -80,9 +78,9 @@ class Puzzle12(BasePuzzle):
             if totals == target:
                 # Start 5-second confirmation timer if not already running
                 if self._solve_timer is None:
-                    self._solve_timer = threading.Timer(5.0, self._confirm_solved)
+                    self._solve_timer = threading.Timer(3.0, self._confirm_solved)
                     self._solve_timer.start()
-                    print("Correct! Starting 5s confirmation timer.")
+                    print("Correct! Starting 3s confirmation timer.")
             else:
                 # Cancel confirmation timer if state no longer matches
                 if self._solve_timer is not None:
