@@ -1,0 +1,208 @@
+{
+  "scene_id": "scene_intro_apreta_botons",
+  "description": "Intro generada para scene_intro_apreta_botons con flujo Cero + objetivo + bloques visuales.",
+  "broadcast_title": "Apreta Botons",
+  "ui_titles": {
+    "top": "",
+    "left": "",
+    "right": ""
+  },
+  "audio": {
+    "src": "/static/audios/scene/intro_puzzle_12.wav"
+  },
+  "use_character_frame": true,
+  "subtitles": [
+    {
+      "start": 0.0,
+      "end": 3.4,
+      "text": "Sin comunicación, no llegaréis a ningún lado."
+    },
+    {
+      "start": 3.4,
+      "end": 8.2,
+      "text": "Vuestro objetivo será mantener pulsados los botones correctos durante 3 segundos."
+    },
+    {
+      "start": 8.2,
+      "end": 11.4,
+      "text": "Para lograrlo, solo utilizaréis los terminales."
+    },
+    {
+      "start": 11.4,
+      "end": 15.0,
+      "text": "En pantalla aparecerán muchas bolas de distintos colores."
+    },
+    {
+      "start": 15.0,
+      "end": 18.2,
+      "text": "Cada bola representa un botón de ese mismo color."
+    },
+    {
+      "start": 18.2,
+      "end": 21.8,
+      "text": "Tendréis que organizaros rápido y coordinaros entre todos."
+    },
+    {
+      "start": 21.8,
+      "end": 24.8,
+      "text": "Cuando todos los colores correctos estén pulsados,"
+    },
+    {
+      "start": 24.8,
+      "end": 26.8,
+      "text": "comenzará la cuenta atrás."
+    },
+    {
+      "start": 26.8,
+      "end": 29.6,
+      "text": "Si alguien falla o se suelta antes de tiempo,"
+    },
+    {
+      "start": 29.6,
+      "end": 31.4,
+      "text": "tendréis que empezar de nuevo."
+    },
+    {
+      "start": 31.4,
+      "end": 34.4,
+      "text": "Pensad rápido, coordinad posiciones,"
+    },
+    {
+      "start": 34.4,
+      "end": 35.788,
+      "text": "y resistid juntos."
+    }
+  ],
+  "segments": [
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+      "clip_start": 0,
+      "clip_end": 4.12,
+      "duration": 4.12,
+      "label": "intro_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 12.999,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "APRETA BOTONS"
+          }
+        },
+        {
+          "at": 2.4,
+          "sfx": "pulse",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.4,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
+                "alt": "Reloj tiempo"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_gesture_medium_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3.701,
+      "duration": 3.701,
+      "label": "bloque_estable"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 11.798755,
+      "variant": "immersive-strip",
+      "phases": [
+        {
+          "at": 0.98,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.98,
+          "sfx": "pulse",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/warnings/timeout.png",
+                "alt": "Timeout"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "clip_start": 0,
+      "clip_end": 3.169,
+      "duration": 3.169,
+      "label": "cierre_suave"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "3",
+      "sfx": "countdown"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "2",
+      "sfx": "countdown"
+    },
+    {
+      "type": "transition",
+      "duration": 1,
+      "variant": "countdown",
+      "label": "1",
+      "sfx": "countdown"
+    }
+  ]
+}

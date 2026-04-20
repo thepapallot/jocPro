@@ -15,6 +15,7 @@ const SCENE_OVERLAY_TITLES = {
     scene_intro_memory: "Memoria Fantasma",
     scene_intro_token_a_lloc: "Arquitectos del Orden",
     scene_intro_segments: "Patrón Maestro",
+    scene_intro_apreta_botons: "Apreta Botons",
 };
 
 const elements = {
@@ -139,6 +140,9 @@ function getAssetItemKey(asset = {}) {
 function AssetCard(asset = {}) {
     const card = createElement("article", "asset-card");
     card.dataset.itemKey = getAssetItemKey(asset);
+    if (asset.frameless) {
+        card.classList.add("asset-card--frameless");
+    }
     const hasCopy = Boolean(asset.label || asset.text);
     if (!hasCopy) {
         card.classList.add("asset-card--icon-only");
@@ -2161,21 +2165,55 @@ class ScenePlayer {
 
         const broadcast = this.currentSegment.broadcast || {};
         const eyebrow = elements.broadcastOverlay?.querySelector(".broadcast-overlay__eyebrow");
+        const leftBrand = elements.broadcastOverlay?.querySelector(".broadcast-overlay__brand--left");
+        const logo = elements.broadcastOverlayLogo;
+        let titleVisible = false;
+        let logoVisible = false;
         if (!eyebrow || !broadcast.title || broadcast.show_eyebrow === false) {
+            // Continue to evaluate logo visibility even if title is not used.
+        } else {
+            const showAt = Number(broadcast.title_show_at);
+            const showFor = Number(broadcast.title_show_for);
+            const hasTimedWindow = Number.isFinite(showAt) && Number.isFinite(showFor) && showFor > 0;
+
+            if (!hasTimedWindow) {
+                eyebrow.classList.remove("hidden");
+                titleVisible = true;
+            } else {
+                titleVisible = elapsedSeconds >= showAt && elapsedSeconds < showAt + showFor;
+                eyebrow.classList.toggle("hidden", !titleVisible);
+            }
+        }
+
+        if (!logo || !broadcast.logo_src) {
+            if (leftBrand) {
+                leftBrand.classList.toggle("hidden", !titleVisible);
+                leftBrand.classList.remove("broadcast-overlay__brand--logo-only");
+            }
             return;
         }
 
-        const showAt = Number(broadcast.title_show_at);
-        const showFor = Number(broadcast.title_show_for);
-        const hasTimedWindow = Number.isFinite(showAt) && Number.isFinite(showFor) && showFor > 0;
+        const logoShowAt = Number(broadcast.logo_show_at);
+        const logoShowFor = Number(broadcast.logo_show_for);
+        const hasLogoTimedWindow = Number.isFinite(logoShowAt) && Number.isFinite(logoShowFor) && logoShowFor > 0;
 
-        if (!hasTimedWindow) {
-            eyebrow.classList.remove("hidden");
+        if (!hasLogoTimedWindow) {
+            logo.classList.remove("hidden");
+            logoVisible = true;
+            if (leftBrand) {
+                leftBrand.classList.remove("hidden");
+                leftBrand.classList.toggle("broadcast-overlay__brand--logo-only", !titleVisible);
+            }
             return;
         }
 
-        const visible = elapsedSeconds >= showAt && elapsedSeconds < showAt + showFor;
-        eyebrow.classList.toggle("hidden", !visible);
+        logoVisible = elapsedSeconds >= logoShowAt && elapsedSeconds < logoShowAt + logoShowFor;
+        logo.classList.toggle("hidden", !logoVisible);
+
+        if (leftBrand) {
+            leftBrand.classList.toggle("hidden", !(titleVisible || logoVisible));
+            leftBrand.classList.toggle("broadcast-overlay__brand--logo-only", logoVisible && !titleVisible);
+        }
     }
 
     bindTransitionVideoAutoAdvance(screen, segment, segmentIndex) {

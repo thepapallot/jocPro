@@ -274,24 +274,46 @@ body {
 /* Intro game: show "CERO" as a prominent centered title over the opening video. */
 .player-root[data-scene-id="scene_intro_game"].player-root--character-feed .broadcast-overlay__brand--left {
     left: 50%;
-    top: 62%;
+    top: 63%;
     transform: translate(-50%, -50%);
     width: auto;
     justify-items: center;
     align-items: center;
-    background: transparent;
-    border: none;
-    padding: 0;
-    clip-path: none;
+    min-width: clamp(460px, 38cqw, 980px);
+    padding: clamp(18px, 1.8cqw, 30px) clamp(28px, 3.2cqw, 56px);
+    background:
+        linear-gradient(180deg, rgba(6, 16, 30, 0.76), rgba(4, 10, 20, 0.72)),
+        radial-gradient(circle at 20% 0, rgba(87, 222, 245, 0.18), transparent 42%),
+        radial-gradient(circle at 80% 0, rgba(255, 79, 214, 0.14), transparent 44%);
+    border: 1px solid rgba(116, 219, 255, 0.44);
+    border-radius: 18px;
+    clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px), 0 20px);
+    box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.42),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .player-root[data-scene-id="scene_intro_game"].player-root--character-feed .broadcast-overlay__eyebrow {
-    font-size: clamp(2.6rem, 5.2cqw, 5.8rem);
-    letter-spacing: 0.34em;
+    font-size: clamp(3.2rem, 6.6cqw, 8.2rem);
+    letter-spacing: 0.42em;
     color: rgba(239, 249, 255, 0.95);
     text-shadow:
-        0 0 24px rgba(87, 222, 245, 0.28),
-        0 0 54px rgba(87, 222, 245, 0.18);
+        0 0 30px rgba(87, 222, 245, 0.36),
+        0 0 66px rgba(87, 222, 245, 0.24);
+}
+
+.player-root[data-scene-id="scene_intro_game"].player-root--character-feed .broadcast-overlay__logo {
+    width: clamp(250px, 20cqw, 360px);
+    max-width: 100%;
+    margin-inline: auto;
+    filter:
+        drop-shadow(0 0 18px rgba(69, 230, 255, 0.3))
+        drop-shadow(0 0 28px rgba(255, 79, 214, 0.22));
+}
+
+.player-root[data-scene-id="scene_intro_game"].player-root--character-feed .broadcast-overlay__brand--left.broadcast-overlay__brand--logo-only {
+    min-width: clamp(360px, 30cqw, 560px);
+    padding: clamp(14px, 1.3cqw, 22px) clamp(20px, 2cqw, 32px);
 }
 
 .scene-video,
@@ -805,6 +827,41 @@ body {
     border: none !important;
     background: transparent !important;
     box-shadow: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_game"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="keywords-stack"] {
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.player-root[data-scene-id="scene_intro_game"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="keywords-stack"] .steps-list {
+    display: grid !important;
+    width: min(78%, 980px) !important;
+    gap: clamp(10px, 1.2cqw, 18px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_game"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="keywords-stack"] .steps-list__item {
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+    text-align: center !important;
+    border: none !important;
+    background: transparent !important;
+    clip-path: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_game"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="keywords-stack"] .steps-list__index {
+    display: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_game"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="keywords-stack"] .steps-list__text {
+    font-size: clamp(2.3rem, 4.6cqw, 4.6rem) !important;
+    line-height: 1.02 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    text-shadow:
+        0 0 20px rgba(87, 222, 245, 0.18),
+        0 0 34px rgba(255, 79, 214, 0.12) !important;
 }
 
 /* Memory intro: when showing token + terminal + buttons together, make them
@@ -1772,6 +1829,20 @@ body {
     background:
         radial-gradient(circle at center, rgba(87, 222, 245, 0.18), transparent 66%),
         rgba(255, 255, 255, 0.01);
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card--frameless {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    clip-path: none !important;
+    padding: 0 !important;
+}
+
+.ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-card--frameless .asset-card__media {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 
 .asset-card--icon-only .asset-card__image {

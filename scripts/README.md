@@ -23,6 +23,7 @@ Que hace:
 
 - crea `config.json` en `scenes/source/intros/intropuzzles/<scene_id>/`
 - inyecta titulos, audio, assets y subtitulos
+- transcribe subtitulos automaticamente con `openai-whisper` para cada escena generada (por defecto)
 - sincroniza timings con la escena legacy (si esta activado en catalogo)
 - selecciona clips de Cero segun intencion narrativa (intro/briefing/warning/close), con variedad entre escenas
 - prioriza assets de intro segun semantica por puzzle (`puzzleX > shared > desconocido > desaconsejado para ese puzzle`)
@@ -54,6 +55,12 @@ Opciones utiles:
 - `--catalog <ruta>`
 - `--template <ruta>`
 - `--output-root <ruta>`
+- `--[no-]transcribe-subtitles` activa/desactiva transcripcion automatica con Whisper
+- `--whisper-model <modelo>` (por defecto `tiny`)
+- `--whisper-language <codigo>` (por defecto `es`)
+- `--whisper-device <device>` (por defecto `cpu`)
+- `--whisper-cache-dir <ruta>` (por defecto `.cache/whisper` o `WHISPER_CACHE_DIR`)
+- `--subtitles-lang <lang>` (por defecto `es`)
 
 ### `audit_image_assets.py`
 
