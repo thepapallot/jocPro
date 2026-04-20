@@ -2,7 +2,7 @@ from pathlib import Path
 
 from flask import Flask, render_template, redirect, url_for, request, Response, jsonify, stream_with_context, send_from_directory, abort
 from mqtt import MQTTClient, create_puzzles
-from config import PUZZLE_ORDER, PUZZLE_ALIASES, PUZZLE_FINAL, PUZZLE_TUTORIAL
+from config import PUZZLE_ORDER, PUZZLE_ALIASES, PUZZLE_FINAL, PUZZLE_TUTORIAL, SUBTITLE_LANG
 import queue
 import json
 import threading
@@ -104,12 +104,38 @@ def get_display_level(puzzle_id):
     return sequence_index if sequence_index is not None else 1
 
 
+def resolve_subtitle_lang():
+    lang = str(SUBTITLE_LANG or "es").strip().lower()
+    if lang == "en":
+        return "eng"
+    return "eng" if lang == "eng" else "es"
+
+
+DEFAULT_SUBTITLE_LANG = resolve_subtitle_lang()
+
+
+def build_scene_player_target(scene_id, next_url="", **extra_query):
+    query = {
+        "scene": scene_id,
+        "lang": DEFAULT_SUBTITLE_LANG,
+    }
+    if next_url:
+        query["next"] = next_url
+
+    for key, value in extra_query.items():
+        if value is None or value == "":
+            continue
+        query[key] = value
+
+    return url_for("scene_player", **query)
+
+
 def build_puzzle_intro_target(puzzle_id):
     next_url = url_for('puzzle', puzzle_id=puzzle_id)
     scene_id = resolve_intro_scene_for_puzzle(puzzle_id)
     if not scene_id:
         return next_url
-    return f"{url_for('scene_player')}?scene={scene_id}&next={next_url}"
+    return build_scene_player_target(scene_id, next_url=next_url)
 
 
 # Routes
@@ -135,14 +161,14 @@ def welcome():
 @app.route('/videoIntro')
 def play_video_intro():
     next_url = url_for('play_video_between_intro_game')
-    target = url_for('scene_player', scene='scene_intro_game', next=next_url)
+    target = build_scene_player_target('scene_intro_game', next_url=next_url)
     return redirect(target)
 
 
 @app.route('/videoBetweenIntroGame')
 def play_video_between_intro_game():
     tutorial_target = url_for('play_video_tutorial')
-    target = url_for('scene_player', scene='scene_tutorial', next=tutorial_target)
+    target = build_scene_player_target('scene_tutorial', next_url=tutorial_target)
     return redirect(target)
 
 
@@ -169,12 +195,10 @@ def play_video_puzzles(puzzle_id):
     next_target = build_puzzle_intro_target(puzzle_id)
 
     between_kwargs = {
-        "scene": "scene_between_puzzles",
-        "next": next_target,
         "brief_progress": f"{idx_puzzle_id}/{len(PUZZLE_ORDER)}" if idx_puzzle_id else "",
     }
 
-    target = url_for('scene_player', **between_kwargs)
+    target = build_scene_player_target("scene_between_puzzles", next_url=next_target, **between_kwargs)
     return redirect(target)
 
 @app.route('/direct/<int:idx_puzzle_id>', methods=['GET'])
@@ -209,7 +233,7 @@ def puzzle_superat(puzzle_id):
 @app.route('/videoJocFinal', methods=['GET','POST'])
 def play_joc_final(): 
     next_url = url_for('puzzle_final')
-    target = f"{url_for('scene_player')}?scene=scene_video_final&next={next_url}"
+    target = build_scene_player_target("scene_video_final", next_url=next_url)
     return redirect(target)
 
 
@@ -229,6 +253,24 @@ def scene_config(scene_id):
         return send_from_directory(scene_dir, 'config.json')
 
     abort(404)
+
+@app.route('/scenes/subtitles/<lang>/<filename>')
+def scene_subtitles(lang, filename):
+    safe_lang = (lang or "").strip().lower()
+    if safe_lang not in {"es", "eng"}:
+        abort(404)
+
+    if "/" in filename or "\\" in filename or not filename.endswith(".srt"):
+        abort(404)
+
+    subtitles_dir = BASE_DIR / "scenes" / "subtitles" / safe_lang
+    subtitle_path = (subtitles_dir / filename).resolve()
+    if not subtitle_path.exists():
+        abort(404)
+    if subtitles_dir.resolve() not in subtitle_path.parents:
+        abort(404)
+
+    return send_from_directory(subtitles_dir, filename)
 ##### Fin Scene Player #####
 
 @app.route('/final', methods=['GET', 'POST'])

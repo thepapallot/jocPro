@@ -1,4 +1,6 @@
 const DEFAULT_SCENE_ID = "scene_intro_sumas";
+const DEFAULT_SUBTITLE_LANG = "es";
+const SUBTITLE_LANG_STORAGE_KEY = "subtitle_lang";
 const EPSILON = 0.12;
 const SAFE_NEXT_GRACE_SECONDS = 0.45;
 const STALL_THRESHOLD_MS = 2500;
@@ -45,6 +47,149 @@ function resolveNextUrl() {
 function resolveOnComplete() {
     const params = new URLSearchParams(window.location.search);
     return params.get("on_complete") || "";
+}
+
+function normalizeSubtitleLang(raw) {
+    const value = String(raw || "").trim().toLowerCase();
+    if (value === "en") {
+        return "eng";
+    }
+    if (value === "es" || value === "eng") {
+        return value;
+    }
+    return DEFAULT_SUBTITLE_LANG;
+}
+
+function readStoredSubtitleLang() {
+    try {
+        const stored = window.localStorage.getItem(SUBTITLE_LANG_STORAGE_KEY);
+        return normalizeSubtitleLang(stored);
+    } catch (error) {
+        return DEFAULT_SUBTITLE_LANG;
+    }
+}
+
+function persistSubtitleLang(lang) {
+    try {
+        window.localStorage.setItem(SUBTITLE_LANG_STORAGE_KEY, normalizeSubtitleLang(lang));
+    } catch (error) {
+        // Ignore storage restrictions in kiosk/private modes.
+    }
+}
+
+function resolveSubtitleLang() {
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get("lang");
+    const lang = requested ? normalizeSubtitleLang(requested) : readStoredSubtitleLang();
+    persistSubtitleLang(lang);
+    return lang;
+}
+
+function redirectWithSubtitleLang(lang) {
+    const safeLang = normalizeSubtitleLang(lang);
+    const url = new URL(window.location.href);
+    url.searchParams.set("lang", safeLang);
+    window.location.replace(url.toString());
+}
+
+function toggleSubtitleLang() {
+    const current = resolveSubtitleLang();
+    const next = current === "eng" ? "es" : "eng";
+    persistSubtitleLang(next);
+    redirectWithSubtitleLang(next);
+}
+
+function deriveSubtitleSrtBaseName(sceneId) {
+    if (sceneId === "scene_intro_game") {
+        return "intro_inicial";
+    }
+
+    if (sceneId === "scene_outro_game" || sceneId === "scene_video_final") {
+        return "outro_final";
+    }
+
+    const introPuzzleMap = {
+        scene_intro_sumas: "intro_puzzle_01_sumas",
+        scene_intro_laberinto: "intro_puzzle_02_laberinto",
+        scene_intro_trivial: "intro_puzzle_03_trivial",
+        scene_intro_musica: "intro_puzzle_04_musica",
+        scene_intro_cronometro: "intro_puzzle_05_cronometro",
+        scene_intro_energia: "intro_puzzle_06_energia",
+        scene_intro_memory: "intro_puzzle_08_memory",
+        scene_intro_token_a_lloc: "intro_puzzle_09_token_a_lloc",
+        scene_intro_segments: "intro_puzzle_10_segments",
+        scene_intro_simulacro: "intro_puzzle_11_simulacro",
+        scene_intro_apreta_botons: "intro_puzzle_12_apreta_botons",
+    };
+
+    return introPuzzleMap[sceneId] || "";
+}
+
+function parseSrtTimestamp(raw) {
+    const match = String(raw || "").trim().match(/^(\d{2}):(\d{2}):(\d{2}),(\d{3})$/);
+    if (!match) {
+        return NaN;
+    }
+
+    const hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    const seconds = Number(match[3]);
+    const millis = Number(match[4]);
+    return (hours * 3600) + (minutes * 60) + seconds + (millis / 1000);
+}
+
+function parseSrtContent(content) {
+    return String(content || "")
+        .replace(/\r\n/g, "\n")
+        .split(/\n\s*\n/)
+        .map((chunk) => chunk.trim())
+        .filter(Boolean)
+        .map((chunk) => {
+            const lines = chunk.split("\n").map((line) => line.trim());
+            if (lines.length < 2) {
+                return null;
+            }
+
+            const timeIndex = lines[0].includes("-->") ? 0 : 1;
+            const timeLine = lines[timeIndex] || "";
+            const textLines = lines.slice(timeIndex + 1).filter(Boolean);
+
+            if (!timeLine.includes("-->") || textLines.length === 0) {
+                return null;
+            }
+
+            const [startRaw, endRaw] = timeLine.split("-->").map((part) => part.trim());
+            const start = parseSrtTimestamp(startRaw);
+            const end = parseSrtTimestamp(endRaw);
+            if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) {
+                return null;
+            }
+
+            return {
+                start: Number(start.toFixed(3)),
+                end: Number(end.toFixed(3)),
+                text: textLines.join(" "),
+            };
+        })
+        .filter(Boolean);
+}
+
+async function loadSubtitlesFromSrt(sceneId, lang) {
+    const baseName = deriveSubtitleSrtBaseName(sceneId);
+    if (!baseName) {
+        return null;
+    }
+
+    const safeLang = normalizeSubtitleLang(lang);
+    const fileName = `${baseName}.${safeLang}.srt`;
+    const response = await fetch(`/scenes/subtitles/${safeLang}/${fileName}`, { cache: "no-store" });
+    if (!response.ok) {
+        return null;
+    }
+
+    const raw = await response.text();
+    const parsed = parseSrtContent(raw);
+    return parsed.length > 0 ? parsed : null;
 }
 
 function resolveNextSceneId() {
@@ -2540,24 +2685,39 @@ class ScenePlayer {
     }
 }
 
-async function loadScene(sceneId) {
+async function loadScene(sceneId, subtitleLang = DEFAULT_SUBTITLE_LANG) {
     const response = await fetch(`/scenes/${sceneId}/config.json`, { cache: "no-store" });
     if (!response.ok) {
         throw new Error(`No s'ha pogut carregar la configuracio de l'escena: ${sceneId}`);
     }
-    return response.json();
+
+    const scene = await response.json();
+    const selectedLang = normalizeSubtitleLang(subtitleLang);
+    scene.subtitle_lang = selectedLang;
+
+    if (selectedLang !== DEFAULT_SUBTITLE_LANG) {
+        const translatedSubtitles = await loadSubtitlesFromSrt(sceneId, selectedLang);
+        if (Array.isArray(translatedSubtitles) && translatedSubtitles.length > 0) {
+            scene.subtitles = translatedSubtitles;
+        }
+    }
+
+    return scene;
 }
 
 let playerInstance;
 
 async function bootstrap() {
     const sceneId = resolveSceneId();
+    const subtitleLang = resolveSubtitleLang();
+    document.documentElement.lang = subtitleLang === "eng" ? "en" : "es";
+
     if (elements.sceneId) {
         elements.sceneId.textContent = sceneId;
     }
 
     try {
-        const scene = await loadScene(sceneId);
+        const scene = await loadScene(sceneId, subtitleLang);
         briefContentCatalog = scene?.brief_by_scene && typeof scene.brief_by_scene === "object"
             ? scene.brief_by_scene
             : {};
@@ -2579,6 +2739,12 @@ async function bootstrap() {
 }
 
 document.addEventListener("keydown", async (event) => {
+    if (event.key.toLowerCase() === "l") {
+        event.preventDefault();
+        toggleSubtitleLang();
+        return;
+    }
+
     if (!playerInstance) {
         return;
     }

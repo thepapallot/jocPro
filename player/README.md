@@ -29,6 +29,12 @@ Abrir:
 http://127.0.0.1:5000/player/?scene=scene_intro_sumas
 ```
 
+Con subtítulos en inglés:
+
+```text
+http://127.0.0.1:5000/player/?scene=scene_intro_sumas&lang=eng
+```
+
 El player intenta arrancar automáticamente si el navegador permite autoplay.
 
 ## Controles
@@ -36,6 +42,7 @@ El player intenta arrancar automáticamente si el navegador permite autoplay.
 - `Espacio`: play/pause
 - `R`: reiniciar escena
 - `Flecha derecha`: saltar al siguiente segmento
+- `L`: alternar idioma de subtítulos (`es` <-> `eng`)
 
 ## Estructura
 
