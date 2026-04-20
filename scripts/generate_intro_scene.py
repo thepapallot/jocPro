@@ -168,6 +168,19 @@ CONCEPT_ASSET_PREFERENCES = {
     ],
 }
 
+SEGMENTS_PATTERN_CODES = [
+    {"box": 0, "code": "042"},
+    {"box": 1, "code": "414"},
+]
+
+SEGMENTS_OBJECTIVE_MIN_TEXT_SECONDS = 5.4
+SEGMENTS_OBJECTIVE_TEXT = "COMPLETAR LOS PATRONES DE CADA TERMINAL"
+DEFAULT_DISALLOWED_ASSET_PATH_FRAGMENTS = (
+    "/old_pics/",
+    "/legacy/",
+    "/archive/legacy/",
+)
+
 
 def load_json(path: Path):
     with path.open("r", encoding="utf-8") as f:
@@ -385,6 +398,54 @@ def path_to_alt(src: str):
     return label.capitalize() if label else "Recurso visual"
 
 
+def build_segments_pattern_codes():
+    return [dict(item) for item in SEGMENTS_PATTERN_CODES]
+
+
+def resolve_disallowed_asset_path_fragments(defaults: dict):
+    configured = defaults.get("disallowed_asset_path_fragments", []) if isinstance(defaults, dict) else []
+    parts = []
+    for item in configured:
+        if not isinstance(item, str):
+            continue
+        value = item.strip().lower()
+        if value:
+            parts.append(value)
+    if not parts:
+        parts = list(DEFAULT_DISALLOWED_ASSET_PATH_FRAGMENTS)
+    return tuple(dict.fromkeys(parts))
+
+
+def is_disallowed_asset_path(src: str, disallowed_fragments: tuple[str, ...]):
+    if not isinstance(src, str):
+        return False
+    normalized = src.lower()
+    return any(fragment in normalized for fragment in disallowed_fragments)
+
+
+def static_asset_exists(repo_root: Path, src: str):
+    if not isinstance(src, str) or not src.startswith("/static/"):
+        return True
+    return (repo_root / src.lstrip("/")).exists()
+
+
+def apply_large_three_asset_layout(scene: dict):
+    """If a phase shows exactly 3 assets, mark it for large rendering in the player."""
+    for segment in scene.get("segments", []):
+        phases = segment.get("phases", [])
+        if not isinstance(phases, list):
+            continue
+        for phase in phases:
+            if not isinstance(phase, dict):
+                continue
+            top = phase.get("top")
+            if not isinstance(top, dict):
+                continue
+            assets = top.get("assets")
+            if isinstance(assets, list) and len(assets) == 3:
+                top["layout"] = "large-3"
+
+
 def infer_concept_from_path(rel_path: str):
     normalized = normalize_text(rel_path).replace("/", " ")
     compact = normalized.replace(" ", "")
@@ -457,7 +518,12 @@ def load_puzzle_context(repo_root: Path, scene_id: str):
     }
 
 
-def discover_puzzle_assets(repo_root: Path, puzzle_tag: str, existing_paths: set[str]):
+def discover_puzzle_assets(
+    repo_root: Path,
+    puzzle_tag: str,
+    existing_paths: set[str],
+    disallowed_fragments: tuple[str, ...],
+):
     if not puzzle_tag:
         return []
     scan_roots = [
@@ -474,6 +540,8 @@ def discover_puzzle_assets(repo_root: Path, puzzle_tag: str, existing_paths: set
             if path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".svg", ".webp", ".gif"}:
                 continue
             rel = "/" + str(path.relative_to(repo_root)).replace("\\", "/")
+            if is_disallowed_asset_path(rel, disallowed_fragments):
+                continue
             if rel in existing_paths or rel in seen:
                 continue
             seen.add(rel)
@@ -490,11 +558,20 @@ def discover_puzzle_assets(repo_root: Path, puzzle_tag: str, existing_paths: set
     return found[:24]
 
 
-def discover_assets_from_puzzle_context(puzzle_context: dict, existing_paths: set[str]):
+def discover_assets_from_puzzle_context(
+    repo_root: Path,
+    puzzle_context: dict,
+    existing_paths: set[str],
+    disallowed_fragments: tuple[str, ...],
+):
     puzzle_tag = puzzle_context.get("puzzle_tag") or ""
     keywords = sorted(puzzle_context.get("keywords") or set())
     found = []
     for ref in puzzle_context.get("static_images", []):
+        if is_disallowed_asset_path(ref, disallowed_fragments):
+            continue
+        if not static_asset_exists(repo_root, ref):
+            continue
         if ref in existing_paths:
             continue
         found.append(
@@ -510,12 +587,20 @@ def discover_assets_from_puzzle_context(puzzle_context: dict, existing_paths: se
     return found[:16]
 
 
-def build_asset_candidates(scene_id: str, image_semantics: dict, repo_root: Path, puzzle_context: dict):
+def build_asset_candidates(
+    scene_id: str,
+    image_semantics: dict,
+    repo_root: Path,
+    puzzle_context: dict,
+    disallowed_fragments: tuple[str, ...],
+):
     puzzle_tag = SCENE_TO_PUZZLE_TAG.get(scene_id, "")
     candidates = []
     existing_paths = set()
     for src, meta in image_semantics.items():
-        if "/old_pics/" in str(src):
+        if is_disallowed_asset_path(str(src), disallowed_fragments):
+            continue
+        if not static_asset_exists(repo_root, src):
             continue
         puzzles = meta.get("puzzles", []) if isinstance(meta, dict) else []
         normalized = {str(v).lower() for v in puzzles if isinstance(v, (str, int))}
@@ -539,8 +624,12 @@ def build_asset_candidates(scene_id: str, image_semantics: dict, repo_root: Path
         )
         existing_paths.add(src)
 
-    candidates.extend(discover_puzzle_assets(repo_root, puzzle_tag, existing_paths))
-    candidates.extend(discover_assets_from_puzzle_context(puzzle_context, existing_paths))
+    candidates.extend(
+        discover_puzzle_assets(repo_root, puzzle_tag, existing_paths, disallowed_fragments)
+    )
+    candidates.extend(
+        discover_assets_from_puzzle_context(repo_root, puzzle_context, existing_paths, disallowed_fragments)
+    )
     return candidates
 
 
@@ -1097,7 +1186,14 @@ def build_scene(
     subtitles = scene["subtitles"]
 
     puzzle_tag = SCENE_TO_PUZZLE_TAG.get(scene_id, "")
-    asset_candidates = build_asset_candidates(scene_id, image_semantics, repo_root, puzzle_context)
+    disallowed_fragments = resolve_disallowed_asset_path_fragments(defaults)
+    asset_candidates = build_asset_candidates(
+        scene_id,
+        image_semantics,
+        repo_root,
+        puzzle_context,
+        disallowed_fragments,
+    )
     used_paths = set()
     concept_first_use = {}
     context_keywords = puzzle_context.get("keywords") or set()
@@ -1145,16 +1241,22 @@ def build_scene(
 
     # Objective block: large text + subtitle-matched assets.
     scene["segments"][1]["variant"] = "immersive-strip"
+    objective_text = (
+        SEGMENTS_OBJECTIVE_TEXT if scene_id == "scene_intro_segments" else (resolved_headline or "OBJETIVO")
+    )
     objective_phases = [
         {
             "at": 0,
             "sfx": "objective",
             "variant": "immersive-strip",
-            "top": {"variant": "immersive-strip", "text": resolved_headline or "OBJETIVO"},
+            "top": {"variant": "immersive-strip", "text": objective_text},
         }
     ]
     objective_phase_at = round(max(2.4, objective_assets_at), 3)
-    if len(objective_concepts) >= 2:
+    force_segments_patterns = scene_id == "scene_intro_segments"
+    if force_segments_patterns:
+        objective_phase_at = round(max(SEGMENTS_OBJECTIVE_MIN_TEXT_SECONDS, objective_phase_at), 3)
+    elif len(objective_concepts) >= 2:
         first_asset = pick_asset_for_concept(
             objective_concepts[0],
             objective_hint,
@@ -1214,6 +1316,18 @@ def build_scene(
         )
     scene["segments"][1]["phases"] = objective_phases
 
+    if scene_id == "scene_intro_segments" and len(scene.get("segments", [])) > 2:
+        segment_two_duration = float(scene["segments"][2].get("duration", 0) or 0)
+        if segment_two_duration < 0.5:
+            segment_two_duration = 3.7
+        scene["segments"][2] = {
+            "type": "transition",
+            "duration": round(segment_two_duration, 3),
+            "variant": "puzzle10-patterns",
+            "patterns": build_segments_pattern_codes(),
+            "sfx": "objective",
+        }
+
     # Visual block only (no big middle text): switch icons at subtitle timestamps.
     visual_duration = float(scene["segments"][3].get("duration", 0) or 0)
     visual_safe_end = max(0.0, visual_duration - 0.2)
@@ -1270,6 +1384,63 @@ def build_scene(
                 },
             }
         )
+
+    if scene_id == "scene_intro_segments":
+        phase_asset_plan = [
+            ("token", ["/static/images/shared/gameplay/token_card.png"]),
+            ("token", ["/static/images/shared/terminal_3d/buttons_panel_front.png"]),
+            ("objective", ["/static/images/shared/terminal_3d/scanner_bar_on.png"]),
+            ("token", ["/static/images/shared/gameplay/terminal_box.png"]),
+            ("objective", ["/static/images/shared/nuevos iconos/tira led.png"]),
+            ("token", ["/static/images/shared/nuevos iconos/base nfc con token.png"]),
+            ("warning", ["/static/images/shared/nuevos iconos/temporizador.png"]),
+            ("objective", ["/static/images/shared/terminal_3d/terminal_box_buttons_numbers_front.png"]),
+        ]
+        at_points = (
+            [
+                float(point.get("at", 0) or 0)
+                for point in points4
+                if float(point.get("at", 0) or 0) > 0.4
+            ]
+            if points4
+            else []
+        )
+        if len(at_points) < len(phase_asset_plan):
+            fallback = [0.78, 7.26, 10.94, 14.62, 19.26, 24.30, 28.30, 32.54]
+            at_points = fallback[:]
+
+        forced_phases = []
+        for idx, (sfx, src_list) in enumerate(phase_asset_plan):
+            if idx >= len(at_points):
+                break
+            at_value = round(max(0.0, at_points[idx]), 3)
+            if at_value > visual_safe_end:
+                continue
+
+            assets = []
+            for src in src_list:
+                if not static_asset_exists(repo_root, src):
+                    continue
+                assets.append({"src": src, "alt": path_to_alt(src)})
+                used_paths.add(src)
+            if not assets:
+                continue
+
+            forced_phases.append(
+                {
+                    "at": at_value,
+                    "sfx": sfx,
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": assets,
+                    },
+                }
+            )
+
+        if forced_phases:
+            visual_phases = forced_phases
     scene["segments"][3]["phases"] = visual_phases
 
     # Countdown has to start only after audio ends. We keep 3 transitions (3-2-1),
@@ -1284,6 +1455,7 @@ def build_scene(
 
     # Keep overlay title explicit too
     scene["broadcast_title"] = resolved_game_title
+    apply_large_three_asset_layout(scene)
 
     return scene
 

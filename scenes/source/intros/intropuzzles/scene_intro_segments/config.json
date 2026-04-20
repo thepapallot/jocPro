@@ -38,7 +38,7 @@
       "text": "Cada token contiene tres colores ocultos. Para descubrirlos, colocad el token en cualquier terminal y pulsad los botones negro, rojo y verde."
     },
     {
-      "start": 28.08,
+      "start": 28.0,
       "end": 31.76,
       "text": "Cada botón encenderá uno de los colores de ese token."
     },
@@ -69,7 +69,7 @@
     },
     {
       "start": 53.36,
-      "end": 57.28,
+      "end": 59.95,
       "text": "Entended el sistema y hacedlo vuestro."
     }
   ],
@@ -78,13 +78,13 @@
       "type": "character",
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
-      "clip_end": 4.12,
-      "duration": 4.12,
+      "clip_end": 5.12,
+      "duration": 5.12,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 12.999,
+      "duration": 5.44,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -93,36 +93,30 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "PATRÓN MAESTRO"
-          }
-        },
-        {
-          "at": 2.4,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "assets": [
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-                "alt": "Scanner bar on"
-              }
-            ]
+            "text": "COMPLETAR LOS PATRONES DE COLORES DE CADA TERMINAL"
           }
         }
       ]
     },
     {
-      "type": "character",
-      "src": "/static/videos/characters/cero_gesture_medium_a.mp4",
-      "clip_start": 0,
-      "clip_end": 3.701,
-      "duration": 3.701,
-      "label": "bloque_estable"
+      "type": "transition",
+      "duration": 5.48,
+      "variant": "puzzle10-patterns",
+      "patterns": [
+        {
+          "box": 0,
+          "code": "042"
+        },
+        {
+          "box": 1,
+          "code": "414"
+        }
+      ],
+      "sfx": "objective"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 35.96202,
+      "duration": 41.24202,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -131,8 +125,116 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "large-3",
             "show_equals": false,
             "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
+              }
+            ]
+          }
+        },
+        {
+          "at": 5.56,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar (secuencia leds)",
+                "fx": "scanner-sequence"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
+                "alt": "Apretar boton"
+              }
+            ]
+          }
+        },
+        {
+          "at": 11.96,
+          "sfx": "pulse",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores negro.png",
+                "alt": "Boton negro encendido"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores rojo.png",
+                "alt": "Boton rojo encendido"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores verde.png",
+                "alt": "Boton verde encendido"
+              }
+            ]
+          }
+        },
+        {
+          "at": 15.72,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "layout": "large-3",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              }
+            ]
+          }
+        },
+        {
+          "at": 19.4,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "layout": "terminals-3-tokens-2",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
                 "alt": "Token card"
@@ -141,22 +243,32 @@
           }
         },
         {
-          "at": 7.26,
+          "at": 24.04,
           "sfx": "token",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "large-3",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/shared/terminal_3d/terminal_box_buttons_numbers_front.png",
+                "alt": "Terminal y segmentos"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar (3 colores fija)",
+                "fx": "scanner-static-3"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
+                "alt": "Apretar boton"
               }
             ]
           }
         },
         {
-          "at": 10.94,
+          "at": 29.08,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -164,23 +276,55 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base nfc con token"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/gameplay/terminal_box.png",
+                "alt": "Terminal box"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
               }
             ]
           }
         },
         {
-          "at": 14.62,
-          "sfx": "token",
+          "at": 33.08,
+          "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "src": "/static/images/shared/nuevos iconos/temporizador.png",
+                "alt": "Temporizador"
+              }
+            ]
+          }
+        },
+        {
+          "at": 37.32,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Scanner bar (secuencia leds)",
+                "fx": "scanner-sequence"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
               }
             ]
           }

@@ -103,37 +103,23 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "CÓDIGO SONORO"
+            "text": "RECONSTRUIR SECUENCIA MUSICAL"
           }
         },
         {
           "at": 4.44,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base nfc"
-              }
-            ]
-          }
-        },
-        {
-          "at": 5.44,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc.png",
-                "alt": "Base nfc"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token card"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/termial con token.png",
-                "alt": "Termial con token"
+                "src": "/static/images/shared/nuevos iconos/botones colores.png",
+                "alt": "Botones colores"
               }
             ]
           }
@@ -162,6 +148,10 @@
             "show_equals": false,
             "assets": [
               {
+                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
+                "alt": "Base nfc con token"
+              },
+              {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
                 "alt": "Terminal box"
               }
@@ -169,7 +159,22 @@
           }
         },
         {
-          "at": 10.62,
+          "at": 2.42,
+          "sfx": "pulse",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/repetir.png",
+                "alt": "Repetir"
+              }
+            ]
+          }
+        },
+        {
+          "at": 6.14,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -177,8 +182,68 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/shared/nuevos iconos/checklist.png",
+                "alt": "Checklist"
+              }
+            ]
+          }
+        },
+        {
+          "at": 8.98,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/progreso_objetivo.png",
+                "alt": "Progreso objetivo"
+              }
+            ]
+          }
+        },
+        {
+          "at": 10.72,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores azul.png",
+                "alt": "Boton azul (escuchar)"
+              }
+            ]
+          }
+        },
+        {
+          "at": 12.28,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores verde.png",
+                "alt": "Boton verde (registrar)"
+              }
+            ]
+          }
+        },
+        {
+          "at": 13.74,
+          "sfx": "warning",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores blanco.png",
+                "alt": "Boton blanco (borrar)"
               }
             ]
           }

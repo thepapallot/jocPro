@@ -121,6 +121,11 @@
     "use_between_brief": true,
     "between_brief_path": "scenes/source/transicion/scene_between_puzzles/config.json",
     "image_semantics_path": "scenes/catalog/image_semantics.json",
+    "disallowed_asset_path_fragments": [
+      "/old_pics/",
+      "/legacy/",
+      "/archive/legacy/"
+    ],
     "lock_opening_character": true,
     "lock_closing_character": false,
     "character_intents": {
