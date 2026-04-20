@@ -76,13 +76,7 @@
     }
 
     function getGifUrl(streakId, giffIndex) {
-        if (streakId !== 4) {
-            return `/static/images/puzzle12/imatges/fase${streakId}_${giffIndex}.gif`;
-        }
-
-        if (streakId === 4) {
-            return `/static/images/puzzle12/imatges/fase4_1.gif`;
-        }
+        return `/static/images/puzzle12/imatges/fase${streakId}_${giffIndex}.gif`;
     }
 
     function showGif(streakId, giffIndex, duration) {
@@ -223,9 +217,8 @@
             });
         }
 
-        if (d.puzzle_solved && !solved) {
-            solved = true;
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
+        if (d.puzzle_solved) {
+            playEffect('nivel_completado.wav');
             // Show solved banner and flash
             const banner = document.getElementById('p12-solved-banner');
             if (banner) banner.classList.remove('hidden');
@@ -244,7 +237,7 @@
                     .catch(function () {
                         window.location.href = '/videoPuzzles/' + nextId;
                     });
-            }, 1800);
+            }, 5200);
             return;
         }
     }
@@ -273,12 +266,12 @@
                     puzzle_id: 12,
                     startRound: true,
                     round,
-                    total_rounds: 4,
+                    total_rounds: 3,
                     num_giff: gif,
                     duration
                 });
             },
-            partial(round = 1, total = 4) {
+            partial(round = 1, total = 3) {
                 updateRoundHud(round);
                 updateRoundIndicator(round, total, 'active');
                 setStatus('active', `Ronda ${round} en curs`, 'Vista parcial de la fase activa sense reiniciar temporitzadors.', 'Activa');

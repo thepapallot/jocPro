@@ -81,7 +81,8 @@
 <script src="{{ url_for('static', filename='js/puzzle4.js') }}"></script>
 {% endblock %}
 
-<!-- Solved banner -->
+{% block after_body %}
 <div id="p4-solved-banner" class="p4-solved-banner hidden">
-        <div class="p4-solved-text">Puzle completat!</div>
+    <div class="p4-solved-text">Nivel completado!</div>
 </div>
+{% endblock %}
