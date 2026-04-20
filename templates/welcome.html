@@ -2,56 +2,7 @@
 <html>
 <head>
     <title>Welcome</title>
-    <style>
-        @font-face {
-            font-family: 'Orbitron';
-            src: url('/static/fonts/Orbitron-Bold.ttf') format('truetype');
-            font-weight: 700;
-            font-style: normal;
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background: black;
-        }
-        .overlay-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: min(1400px, 85%);
-            z-index: 2;
-            display: none; /* shown on first click */
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(40px, 3.3vw, 66px);
-            font-weight: 700;
-            line-height: 1.35;
-            text-align: center;
-            color: #ffffff;
-            text-shadow: 0 0 16px rgba(0, 0, 0, 0.9);
-        }
-        #welcome-stage {
-            position: relative;
-            width: 1920px;
-            height: 1080px;
-            overflow: hidden;
-            transform-origin: center center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-        }
-        #welcome-stage video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0; left: 0;
-            z-index: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}">
 </head>
 <body>
     <div id="welcome-stage">
@@ -63,63 +14,10 @@
         <audio id="overlay-audio" src="{{ url_for('static', filename='audios/inicial/ESP_dividios.wav') }}"></audio>
     </div>
     <script>
-        const stage = document.getElementById('welcome-stage');
-        const redirectFlag = "{{ redirect_flag }}";
-        const idxStr = "{{ idx }}";  // will be empty string if None
-        const puzzleIdx = idxStr ? parseInt(idxStr, 10) : null;
-
-        const overlayImg = document.getElementById('overlay');
-        const overlayAudio = document.getElementById('overlay-audio');
-
-        function updateStageScale() {
-            if (!stage) return;
-            const scale = Math.min(
-                window.innerWidth / 1920,
-                window.innerHeight / 1080
-            );
-            stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
-        }
-
-        function onAdvance() {
-            if (redirectFlag === 'indexFinal') {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/videoJocFinal`;
-                document.body.appendChild(form);
-                form.submit();
-            } else if (redirectFlag && redirectFlag.startsWith('puzzle') && puzzleIdx !== null) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/videoPuzzles/${puzzleIdx}`;
-                document.body.appendChild(form);
-                form.submit();
-            } else {
-                // Default "start" flow: first activation plays audio + shows text, second advances
-                if (!onAdvance._done) {
-                    onAdvance._done = true;
-                    try {
-                        overlayAudio.currentTime = 0;
-                        overlayAudio.loop = true;
-                        overlayAudio.play();
-                    } catch {}
-                    overlayImg.style.display = 'block';
-                    return;
-                }
-                try {
-                    overlayAudio.pause();
-                    overlayAudio.currentTime = 0;
-                    overlayAudio.loop = false;
-                } catch {}
-                window.location.replace({{ url_for('play_video_intro')|tojson }});
-            }
-        }
-        onAdvance._done = false;
-
-        document.body.addEventListener('click', onAdvance);
-        document.addEventListener('keydown', (e) => { if (e.key === ' ') onAdvance(); });
-
-        window.addEventListener('resize', updateStageScale, { passive: true });
-        updateStageScale();
+      window.REDIRECT_FLAG = "{{ redirect_flag }}";
+      window.IDX_STR = "{{ idx }}";
+      window.PLAY_VIDEO_INTRO_URL = {{ url_for('play_video_intro')|tojson }};
     </script>
+    <script src="{{ url_for('static', filename='js/welcome.js') }}"></script>
 </body>
 </html>

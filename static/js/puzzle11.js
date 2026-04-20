@@ -116,7 +116,18 @@
             setTimeout(function () {
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
                     ? NEXT_PUZZLE_ID : 1;
-                window.location.href = '/?redirect_flag=puzzle' + nextId;
+                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
+                    .then(function (response) {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else {
+                            // fallback: force navigation
+                            window.location.href = '/videoPuzzles/' + nextId;
+                        }
+                    })
+                    .catch(function () {
+                        window.location.href = '/videoPuzzles/' + nextId;
+                    });
             }, 5200);
         }
     }

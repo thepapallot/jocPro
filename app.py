@@ -110,6 +110,7 @@ def build_puzzle_intro_target(puzzle_id):
         return next_url
     return f"{url_for('scene_player')}?scene={scene_id}&next={next_url}"
 
+
 # Routes
 @app.route('/')
 def welcome():
@@ -123,8 +124,6 @@ def welcome():
 
         except ValueError:
             pass
-    #elif redirect_flag == 'indexFinal':
-     #   idx = -1
 
     return render_template(
         'welcome.html',
