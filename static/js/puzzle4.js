@@ -309,9 +309,25 @@
             clearFeedbackTimer();
             setStatus('Cancion completada', 'solved');
             playSound((d.play_final && d.play_final.url) || PUZZLE_COMPLETE_SOUND_URL);
-            setTimeout(() => {
-                window.location.href = '/puzzleSuperat/4';
-            }, 4000);
+            // Show solved banner and flash
+            const banner = document.getElementById('p4-solved-banner');
+            if (banner) banner.classList.remove('hidden');
+            document.body.classList.add('p4-solved-flash');
+            setTimeout(function () {
+                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
+                    ? NEXT_PUZZLE_ID : 1;
+                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
+                    .then(function (response) {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else {
+                            window.location.href = '/videoPuzzles/' + nextId;
+                        }
+                    })
+                    .catch(function () {
+                        window.location.href = '/videoPuzzles/' + nextId;
+                    });
+            }, 1800);
             return;
         }
 

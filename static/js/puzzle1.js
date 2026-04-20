@@ -326,9 +326,25 @@
                 clearInterval(timerInterval);
                 timerRunning = false;
 
-                setTimeout(() => {
-                    window.location.href = '/puzzleSuperat/1';
-                }, 5000);
+                // Show solved banner and flash
+                const banner = document.getElementById('p1-solved-banner');
+                if (banner) banner.classList.remove('hidden');
+                document.body.classList.add('p1-solved-flash');
+                setTimeout(function () {
+                    var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
+                        ? NEXT_PUZZLE_ID : 1;
+                    fetch('/videoPuzzles/' + nextId, { method: 'POST' })
+                        .then(function (response) {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                window.location.href = '/videoPuzzles/' + nextId;
+                            }
+                        })
+                        .catch(function () {
+                            window.location.href = '/videoPuzzles/' + nextId;
+                        });
+                }, 5200);
                 return;
             }
 

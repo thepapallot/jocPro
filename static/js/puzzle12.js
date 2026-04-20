@@ -223,28 +223,28 @@
             });
         }
 
-        if (d.puzzle_solved) {
-            console.log("Puzzle solved!");
-            clearInterval(countdownInterval);
-            playEffect('nivel_completado.wav');
-            clearTimeout(redirectTimeout);
-            setStatus(
-                'success',
-                'Protocol complet',
-                'Les quatre rondes s’han validat. La seqüencia final s’està tancant abans de passar a la pantalla de culminació.',
-                'Completat'
-            );
-            setPhase(
-                'Piramide sincronitzada',
-                'El sistema ha acabat la fase final. Es mostrarà l’escena de tancament en uns instants.'
-            );
-            updateRoundIndicator(roundCards.length, roundCards.length, 'success');
-
-            redirectTimeout = setTimeout(() => {
-                console.log("Redirecting to Final");
-                const target = window.PUZZLE_FINAL_OUTRO_URL || "/final";
-                window.location.replace(target);
-            }, 3000);
+        if (d.puzzle_solved && !solved) {
+            solved = true;
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
+            // Show solved banner and flash
+            const banner = document.getElementById('p12-solved-banner');
+            if (banner) banner.classList.remove('hidden');
+            document.body.classList.add('p12-solved-flash');
+            setTimeout(function () {
+                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
+                    ? NEXT_PUZZLE_ID : 1;
+                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
+                    .then(function (response) {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else {
+                            window.location.href = '/videoPuzzles/' + nextId;
+                        }
+                    })
+                    .catch(function () {
+                        window.location.href = '/videoPuzzles/' + nextId;
+                    });
+            }, 1800);
             return;
         }
     }
