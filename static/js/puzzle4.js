@@ -319,7 +319,8 @@
             currentSampleUrl = null;
             clearFeedbackTimer();
             setStatus('Cancion completada', 'solved');
-            playSound((d.play_final && d.play_final.url) || PUZZLE_COMPLETE_SOUND_URL);
+            //playSound((d.play_final && d.play_final.url) || PUZZLE_COMPLETE_SOUND_URL);
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
             // Show solved banner and flash
             const banner = document.getElementById('p4-solved-banner');
             if (banner) banner.classList.remove('hidden');

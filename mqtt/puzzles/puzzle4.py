@@ -286,6 +286,9 @@ class Puzzle4(BasePuzzle):
                 
             # Button 3: Start storing
             if button == 3:
+                if self.storing:
+                    return
+                    
                 self.storing = True
                 self.current_progress = 0
                 self.played_sequence = []
