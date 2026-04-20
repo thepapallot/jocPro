@@ -151,21 +151,26 @@ def play_video_tutorial():
         return redirect(url_for('welcome'))
     return redirect(build_puzzle_intro_target(PUZZLE_TUTORIAL))
 
-@app.route('/videoPuzzles/<int:idx_puzzle_id>', methods=['GET','POST'])
-def play_video_puzzles(idx_puzzle_id): 
-    puzzle_id = None
-    if 1 <= idx_puzzle_id <= len(PUZZLE_ORDER):
-        puzzle_id = PUZZLE_ORDER[idx_puzzle_id - 1]
-
-    if puzzle_id is None:
+@app.route('/videoPuzzles/<int:puzzle_id>', methods=['GET','POST'])
+def play_video_puzzles(puzzle_id):
+    if not is_playable_puzzle_id(puzzle_id):
         return redirect(url_for('welcome'))
+
+    # Find index in PUZZLE_ORDER for progress display (1-based)
+    idx_puzzle_id = None
+    if puzzle_id in PUZZLE_ORDER:
+        idx_puzzle_id = PUZZLE_ORDER.index(puzzle_id) + 1
+    elif puzzle_id == PUZZLE_TUTORIAL:
+        idx_puzzle_id = 0
+    elif puzzle_id == PUZZLE_FINAL:
+        idx_puzzle_id = len(PUZZLE_ORDER) + 1
 
     next_target = build_puzzle_intro_target(puzzle_id)
 
     between_kwargs = {
         "scene": "scene_between_puzzles",
         "next": next_target,
-        "brief_progress": f"{idx_puzzle_id}/{len(PUZZLE_ORDER)}",
+        "brief_progress": f"{idx_puzzle_id}/{len(PUZZLE_ORDER)}" if idx_puzzle_id else "",
     }
 
     # First transition (before puzzle 11): custom messaging.
@@ -258,10 +263,18 @@ def puzzle(puzzle_id):
     puzzle_index = get_sequence_index(puzzle_id)
     mqtt_client.set_current_sequence_index(puzzle_index or 0)
 
+    # Determine next_puzzle_id according to requirements
     next_puzzle_id = None
-    if puzzle_id in PUZZLE_ORDER:
-        next_puzzle_id = puzzle_index + 1 if puzzle_index < len(PUZZLE_ORDER) else None
-
+    if puzzle_id == PUZZLE_TUTORIAL:
+        # After tutorial, go to first in PUZZLE_ORDER
+        next_puzzle_id = PUZZLE_ORDER[0] if PUZZLE_ORDER else None
+    elif puzzle_id in PUZZLE_ORDER:
+        idx = PUZZLE_ORDER.index(puzzle_id)
+        if idx < len(PUZZLE_ORDER) - 1:
+            next_puzzle_id = PUZZLE_ORDER[idx + 1]
+        else:
+            next_puzzle_id = PUZZLE_FINAL
+            
     display_level = get_display_level(puzzle_id)
     return render_template(f'puzzle{puzzle_id}.html', current_level=display_level, next_puzzle_id=next_puzzle_id)
 
