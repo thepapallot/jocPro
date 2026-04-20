@@ -2101,6 +2101,7 @@ class ScenePlayer {
             elements.playerRoot?.classList.add("player-root--character-feed");
             elements.broadcastOverlay?.classList.remove("hidden");
             applyBroadcastOverlay(this.scene, segment);
+            this.updateCharacterBroadcastTitleVisibility(this.segmentElapsed);
             void elements.video.offsetWidth;
             elements.video.classList.add("scene-video--reveal");
             return;
@@ -2124,6 +2125,7 @@ class ScenePlayer {
         if (segment.type === "transition") {
             elements.transitionLayer.classList.remove("hidden");
             const nextScreen = TransitionScreen(segment);
+            this.bindTransitionVideoAutoAdvance(nextScreen, segment, this.currentSegmentIndex);
             if (crossfadeTransition) {
                 const previousScreen = elements.transitionLayer.querySelector(".transition-screen");
                 if (previousScreen) {
@@ -2150,6 +2152,76 @@ class ScenePlayer {
         if (elements.segmentStatus) {
             elements.segmentStatus.textContent = `${this.currentSegmentIndex + 1} / ${this.segments.length}`;
         }
+    }
+
+    updateCharacterBroadcastTitleVisibility(elapsedSeconds = 0) {
+        if (this.currentSegment?.type !== "character") {
+            return;
+        }
+
+        const broadcast = this.currentSegment.broadcast || {};
+        const eyebrow = elements.broadcastOverlay?.querySelector(".broadcast-overlay__eyebrow");
+        if (!eyebrow || !broadcast.title || broadcast.show_eyebrow === false) {
+            return;
+        }
+
+        const showAt = Number(broadcast.title_show_at);
+        const showFor = Number(broadcast.title_show_for);
+        const hasTimedWindow = Number.isFinite(showAt) && Number.isFinite(showFor) && showFor > 0;
+
+        if (!hasTimedWindow) {
+            eyebrow.classList.remove("hidden");
+            return;
+        }
+
+        const visible = elapsedSeconds >= showAt && elapsedSeconds < showAt + showFor;
+        eyebrow.classList.toggle("hidden", !visible);
+    }
+
+    bindTransitionVideoAutoAdvance(screen, segment, segmentIndex) {
+        if (!screen || segment?.type !== "transition" || segment.loopsMedia) {
+            return;
+        }
+
+        const clipEnd = segment.clip_end != null ? Number(segment.clip_end) : null;
+        const videos = Array.from(screen.querySelectorAll("video"));
+        if (videos.length === 0) {
+            return;
+        }
+
+        videos.forEach((video) => {
+            let advanced = false;
+
+            const maybeAdvance = (reason) => {
+                if (advanced) {
+                    return;
+                }
+                if (!this.playing) {
+                    return;
+                }
+                if (this.currentSegmentIndex !== segmentIndex || this.currentSegment?.type !== "transition") {
+                    return;
+                }
+
+                advanced = true;
+                this.logEvent("transition_video_complete", {
+                    reason,
+                    segmentIndex,
+                    src: video.currentSrc || video.src || segment.video || "",
+                });
+                this.advanceSegment();
+            };
+
+            video.addEventListener("ended", () => maybeAdvance("ended"));
+
+            if (clipEnd != null && Number.isFinite(clipEnd)) {
+                video.addEventListener("timeupdate", () => {
+                    if (video.currentTime >= clipEnd - EPSILON) {
+                        maybeAdvance("clip_end");
+                    }
+                });
+            }
+        });
     }
 
     getPhaseKey(segment, elapsedSeconds) {
@@ -2252,6 +2324,9 @@ class ScenePlayer {
 
         this.updateSubtitleOverlay();
         this.updatePersistentElementsStrip(elapsed, sceneTime);
+        if (this.currentSegment.type === "character") {
+            this.updateCharacterBroadcastTitleVisibility(elapsed);
+        }
 
         if (this.currentSegment.type === "fullscreen_ui") {
             const phaseKey = this.getPhaseKey(this.currentSegment, elapsed);
@@ -2292,6 +2367,7 @@ class ScenePlayer {
         const elapsed = this.hasMasterAudio()
             ? Math.max(0, this.getSceneTime() - this.currentSegment.timelineStart)
             : elements.video.currentTime - Number(this.currentSegment.clip_start || 0);
+        this.updateCharacterBroadcastTitleVisibility(elapsed);
         this.recordProgress(this.getSceneTime(), performance.now());
 
         if (elapsed >= this.currentSegment.durationSeconds - EPSILON) {

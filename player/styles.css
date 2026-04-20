@@ -271,6 +271,29 @@ body {
         0 0 14px rgba(255, 79, 214, 0.12);
 }
 
+/* Intro game: show "CERO" as a prominent centered title over the opening video. */
+.player-root[data-scene-id="scene_intro_game"].player-root--character-feed .broadcast-overlay__brand--left {
+    left: 50%;
+    top: 62%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    justify-items: center;
+    align-items: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    clip-path: none;
+}
+
+.player-root[data-scene-id="scene_intro_game"].player-root--character-feed .broadcast-overlay__eyebrow {
+    font-size: clamp(2.6rem, 5.2cqw, 5.8rem);
+    letter-spacing: 0.34em;
+    color: rgba(239, 249, 255, 0.95);
+    text-shadow:
+        0 0 24px rgba(87, 222, 245, 0.28),
+        0 0 54px rgba(87, 222, 245, 0.18);
+}
+
 .scene-video,
 .ui-layer,
 .transition-layer {
