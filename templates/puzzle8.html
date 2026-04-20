@@ -60,5 +60,8 @@
 {% endblock %}
 
 {% block extra_js %}
+<script>
+    window.NEXT_PUZZLE_ID = {{ next_puzzle_id|tojson|safe }};
+</script>
 <script src="{{ url_for('static', filename='js/puzzle8.js') }}"></script>
 {% endblock %}

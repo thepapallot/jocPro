@@ -1,3 +1,53 @@
+/* Solved banner styles (matching puzzle8 green) */
+.p5-solved-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(45,255,155,0.88);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    opacity: 1;
+    transition: opacity 0.4s;
+    border: 1px solid rgba(45,255,155,0.4);
+    border-radius: 24px;
+    box-shadow: 0 0 60px rgba(45,255,155,0.2);
+    text-shadow: 0 0 24px rgba(45,255,155,0.6);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding: 40px;
+    animation: p5FadeIn 0.5s ease;
+}
+.p5-solved-banner.hidden {
+    display: none !important;
+}
+.p5-solved-text {
+    color: #fff;
+    font-size: clamp(3rem, 5.2vw, 5.4rem);
+    line-height: 1.05;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    text-shadow: 0 2px 24px #1a7f4f, 0 0 32px #2dff9b, 0 0 8px #000;
+    letter-spacing: 0.04em;
+}
+@keyframes p5FadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes p5SolvedFlash {
+    0%   { background: rgba(45,255,155,0); }
+    20%  { background: rgba(45,255,155,0.38); }
+    100% { background: rgba(45,255,155,0.12); }
+}
+body.p5-solved-flash {
+    animation: p5SolvedFlash 2.2s ease-out forwards;
+}
 :root {
     --p5-line: rgba(69, 230, 255, 0.16);
     --p5-line-strong: rgba(69, 230, 255, 0.34);
