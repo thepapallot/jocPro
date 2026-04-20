@@ -171,8 +171,9 @@
         drop-shadow(0 0 24px rgba(255,89,214,0.10));
 }
 
+/* Augmentem el màxim per projector */
 #objective-formula span {
-    font-size: 4.5rem;
+    font-size: clamp(2.2rem, 6vw, 7rem);
     font-weight: 800;
     line-height: 1;
     color: #d8f3ff;
@@ -250,10 +251,10 @@
 }
 
 #objective-message {
-    width: min(94%, 960px);
+    width: min(94%, 1200px);
     min-height: 1.4em;
     text-align: center;
-    font-size: clamp(1.7rem, 2.9vw, 2.35rem);
+    font-size: clamp(2.2rem, 4vw, 3.8rem);
     font-weight: 700;
     line-height: 1.3;
     color: rgba(216,243,255,0.95);
@@ -471,7 +472,8 @@
 #puzzle-container.round-2 .op {
     min-height: 92px;
     height: clamp(92px, 11vh, 126px);
-    font-size: clamp(1.85rem, 2.4vw, 2.8rem);
+    font-size: clamp(2.2rem, 7vh, 4.6rem);
+    padding: 0 6px;
 }
 
 @media (max-width: 1200px) {
@@ -491,6 +493,8 @@
     #puzzle-container.round-2 .op {
         min-height: 84px;
         height: clamp(84px, 10.5vh, 116px);
+        font-size: clamp(1.8rem, 6.5vh, 3.8rem);
+        padding: 0 4px;
     }
 }
 
@@ -525,6 +529,8 @@
     #puzzle-container.round-2 .op {
         min-height: 76px;
         height: clamp(76px, 9.5vh, 102px);
+        font-size: clamp(1.4rem, 5.5vh, 2.8rem);
+        padding: 0 2px;
     }
 }
 
@@ -547,7 +553,7 @@
     border-radius: 20px;
     background: rgba(7,16,31,0.94);
     border: 1px solid rgba(69,230,255,0.30);
-    font-size: clamp(2.4rem, 3.1vw, 3.4rem);
+    font-size: clamp(2.8rem, 4vw, 4.6rem);
     font-weight: 800;
     color: var(--cyan-strong);
     box-shadow:
@@ -587,7 +593,23 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    font-size: clamp(4rem, 8vw, 7rem);
+    @media (min-width: 2000px) {
+        #objective-formula span {
+            font-size: clamp(3rem, 7vw, 10rem);
+        }
+        #objective-message {
+            font-size: clamp(3rem, 6vw, 6rem);
+        }
+        .op {
+            font-size: clamp(3.2rem, 6vw, 7rem);
+            min-height: 200px;
+            height: clamp(200px, 22vh, 320px);
+        }
+        .tick {
+            font-size: clamp(5rem, 10vw, 10rem);
+        }
+    }
     font-weight: 800;
     line-height: 1;
     color: var(--ok);
@@ -670,7 +692,8 @@
     #puzzle-container.round-2 .op {
         min-height: 70px;
         height: clamp(70px, 9.5vh, 92px);
-        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-size: clamp(1.2rem, 5vh, 2.2rem);
+        padding: 0 2px;
     }
 
     .op {
@@ -764,8 +787,9 @@
     #puzzle-container.round-2 .op {
         min-height: 58px;
         height: clamp(58px, 8.2vh, 72px);
-        font-size: clamp(1.05rem, 3.8vw, 1.45rem);
+        font-size: clamp(1rem, 4vh, 1.6rem);
         border-radius: 14px;
+        padding: 0 1px;
     }
 
     .op {

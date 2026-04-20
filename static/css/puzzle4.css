@@ -120,7 +120,7 @@ body::after {
     position: relative;
     z-index: 1;
     display: grid;
-    gap: 18px;
+    gap: 32px;
     width: 100%;
     margin: auto 0;
 }
@@ -138,6 +138,7 @@ body::after {
     box-shadow:
         inset 0 0 18px rgba(255, 255, 255, 0.02),
         0 0 22px rgba(69, 230, 255, 0.05);
+    margin-bottom: 18px;
 }
 
 .legend-pill {
@@ -159,7 +160,7 @@ body::after {
 
 .legend-copy {
     color: var(--p4-text-soft);
-    font-size: 1.04rem;
+    font-size: clamp(1.5rem, 2.8vw, 2.2rem);
     font-weight: 700;
     line-height: 1.35;
 }
@@ -339,7 +340,7 @@ body::after {
 
 .sequence-title {
     color: var(--p4-cyan);
-    font-size: 0.92rem;
+    font-size: clamp(1.3rem, 2.2vw, 2rem);
     font-weight: 700;
 }
 

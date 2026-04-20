@@ -140,7 +140,7 @@ body::after {
 .panel-title {
     margin: 6px 0 0;
     color: var(--p3-cyan);
-    font-size: clamp(1.35rem, 2vw, 2rem);
+    font-size: clamp(1.8rem, 3vw, 3.2rem);
     line-height: 1.02;
     text-transform: uppercase;
     text-shadow: 0 0 12px rgba(69, 230, 255, 0.2);
@@ -342,7 +342,7 @@ body::after {
     color: #effbff;
     width: 100%;
     min-height: 44px;
-    font-size: clamp(1.9rem, 2.5vw, 2.6rem);
+    font-size: clamp(2.5rem, 3.5vw, 3.6rem);
     font-weight: 800;
     letter-spacing: 0.1em;
     line-height: 1;
@@ -424,7 +424,7 @@ body::after {
 
 #question-text {
     color: #f2fbff;
-    font-size: clamp(1.45rem, 2.15vw, 2.55rem);
+    font-size: clamp(1.45rem, 2.2vw, 2.4rem);
     font-weight: 800;
     line-height: 1.12;
     text-align: left;
@@ -478,7 +478,7 @@ body::after {
         radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)),
         linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
     color: #dff6ff;
-    font-size: clamp(2rem, 3vw, 3rem);
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
     font-weight: 800;
     box-shadow:
         inset 0 0 12px rgba(69, 230, 255, 0.05),
@@ -490,10 +490,21 @@ body::after {
 
 .answer-text {
     color: #f4fcff;
-    font-size: clamp(1.6rem, 2.2vw, 2.6rem);
+    font-size: clamp(2.2rem, 3.2vw, 2.7rem);
     font-weight: 700;
     line-height: 1.14;
     padding-left: 12px;
+}
+@media (min-width: 2000px) {
+    #question-text {
+        font-size: clamp(2.2rem, 3vw, 3.2rem);
+    }
+    .answer-index {
+        font-size: clamp(2rem, 3vw, 2.8rem);
+    }
+    .answer-text {
+        font-size: clamp(2.5rem, 4vw, 3.2rem);
+    }
 }
 
 .answer-row.correct {

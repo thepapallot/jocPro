@@ -34,11 +34,9 @@
             </div>
             <div id="round-steps">
                 <div class="round-step is-current" data-round-step="1">
-                    <span class="step-index">01</span>
                     <span class="step-time">10 s</span>
                 </div>
                 <div class="round-step" data-round-step="2">
-                    <span class="step-index">02</span>
                     <span class="step-time">30 s</span>
                 </div>
             </div>
@@ -60,7 +58,7 @@
             {% for idx in range(10) %}
             <div class="player-box" data-player="{{ idx }}">
                 <div class="player-frame"></div>
-                <div class="box-label">{{ "%02d"|format(idx) }}</div>
+                <div class="box-label">{{ idx }}</div>
                 <div class="time-core">
                     <div class="time-ring"></div>
                     <div class="box-time"></div>
