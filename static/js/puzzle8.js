@@ -149,15 +149,38 @@
     const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";     // NEW
     const LLETRES_SOUND_URL = "/static/audios/effects/apareix_contingut.wav";                // NEW
 
+
+    function showSolvedBanner() {
+        const banner = document.getElementById('p8-solved-banner');
+        if (banner) banner.classList.remove('hidden');
+        document.body.classList.add('p8-solved-flash');
+    }
+
     function handleUpdate(d) {
         if (!d || d.puzzle_id !== 8) return;
 
         const entersInputPhase = d.phase === 'input' || (d.clear === true && Array.isArray(d.symbols));
 
-        // NEW: redirect when puzzle solved
+        // Show solved banner and flash when puzzle is solved
         if (d.puzzle_solved && !solved) {
             solved = true;
-            setTimeout(() => { window.location.href = '/puzzleSuperat/8'; }, 500);
+            showSolvedBanner();
+            setTimeout(function () {
+                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
+                    ? NEXT_PUZZLE_ID : 1;
+                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
+                    .then(function (response) {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else {
+                            // fallback: force navigation
+                            window.location.href = '/videoPuzzles/' + nextId;
+                        }
+                    })
+                    .catch(function () {
+                        window.location.href = '/videoPuzzles/' + nextId;
+                    });
+            }, 5200);
             return;
         }
 
