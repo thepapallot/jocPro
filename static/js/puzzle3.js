@@ -30,7 +30,8 @@
     let activeQuestionNumber = 1;
 
     function getDisplayStreak(streak, target) {
-        return Math.min(target, streak + 1);
+        // Mostra el nombre real de respostes correctes (començant per 0)
+        return Math.max(0, Math.min(target, streak));
     }
 
     function initPlayers(count = totalPlayers) {
