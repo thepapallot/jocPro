@@ -120,7 +120,7 @@
             if (nextPuzzleIndex === null || Number.isNaN(nextPuzzleIndex)) {
                 window.location.href = "{{ url_for('welcome') }}?redirect_flag=start";
             } else if (isFinal) {
-                window.location.href = "{{ url_for('play_joc_final') }}";
+                window.location.href = "{{ url_for('play_video_puzzles', puzzle_id=final_puzzle_id) }}";
             } else {
                 // Go directly to the next puzzle intro flow and avoid an extra click in welcome.
                 window.location.href = "{{ url_for('play_video_puzzles', idx_puzzle_id=0)|replace('0', '__IDX__')|safe }}".replace('__IDX__', String(nextPuzzleIndex));

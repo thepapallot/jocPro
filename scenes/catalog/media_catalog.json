@@ -108,14 +108,14 @@
       "duration": 5.041667,
       "role": "explanation_short",
       "loop_safe": true,
-      "used_in": ["scene_intro_cronometro", "scene_video_final"]
+      "used_in": ["scene_intro_cronometro"]
     },
     "cero_outro_close_a.mp4": {
       "path": "/static/videos/characters/cero_outro_close_a.mp4",
       "duration": 5.041667,
       "role": "outro_close",
       "loop_safe": true,
-      "used_in": ["scene_intro_cronometro", "scene_outro_game"]
+      "used_in": ["scene_intro_cronometro", "scene_final"]
     },
     "cero_emphasis_long_a.mp4": {
       "path": "/static/videos/characters/cero_emphasis_long_a.mp4",
@@ -237,13 +237,13 @@
       "path": "/static/videos/recursos_varios/pyramid_bricks.mp4",
       "theme": "pyramid",
       "shows_pyramid": true,
-      "used_in": ["scene_outro_game"]
+      "used_in": ["scene_final"]
     },
     "pyramid_outline.mp4": {
       "path": "/static/videos/recursos_varios/pyramid_outline.mp4",
       "theme": "pyramid",
       "shows_pyramid": true,
-      "used_in": ["scene_outro_game"]
+      "used_in": ["scene_final"]
     }
   },
   "archives": {

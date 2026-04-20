@@ -267,7 +267,7 @@
             applySolvedState();
             // Play final puzzle completion sound
             playSound(PUZZLE_COMPLETE_SOUND_URL);
-            setTimeout(() => window.location.href = '/puzzleSuperat/6', 3000);
+            setTimeout(() => window.location.href = '/final', 3000);
         }
     }
 

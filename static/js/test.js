@@ -33,8 +33,7 @@
     { id: "scene_intro_segments", label: "Puzzle 10 Intro", href: "/player/?scene=scene_intro_segments" },
     { id: "scene_intro_simulacro", label: "Puzzle 11 Intro", href: "/player/?scene=scene_intro_simulacro" },
     { id: "scene_intro_apreta_botons", label: "Puzzle 12 Intro", href: "/player/?scene=scene_intro_apreta_botons" },
-    { id: "scene_video_final", label: "Intro Final", href: "/player/?scene=scene_video_final" },
-    { id: "scene_outro_game", label: "Outro Final", href: "/player/?scene=scene_outro_game" }
+    { id: "scene_final", label: "Outro Final", href: "/player/?scene=scene_final" }
   ];
   const puzzle11Steps = [
     "El token 5 debe pasar por el terminal 6 y apretar el botón verde",
