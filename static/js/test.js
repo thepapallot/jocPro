@@ -1607,6 +1607,9 @@
       return `<button type="button" class="sim-button${selected}" data-sim-answer="${answer}">${answer}</button>`;
     }).join("");
 
+    // Botó per solucionar directament la pregunta
+    const solveQuestionButton = `<button type="button" class="sim-button primary-action" data-sim-p3-solve-question>Solucionar pregunta</button>`;
+
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
       return `
         <button type="button" class="sim-box sim-p3-terminal" data-sim-p3-box="${index}">
@@ -1631,6 +1634,7 @@
       <div class="sim-actions">
         <button type="button" class="sim-button" data-sim-p3-solution>Ver correcta</button>
         <button type="button" class="sim-button" data-sim-p3-all>Enviar a todos los terminales</button>
+        ${solveQuestionButton}
       </div>
     `;
 
@@ -1679,6 +1683,31 @@
           renderPuzzle3Simulator();
         } catch (error) {
           appendLog({ error: String(error), simulated: "puzzle3_solution" });
+        }
+      });
+    }
+
+    // Handler pel botó de solucionar pregunta
+    const solveQuestionBtn = els.simContent.querySelector('[data-sim-p3-solve-question]');
+    if (solveQuestionBtn) {
+      solveQuestionBtn.addEventListener('click', async () => {
+        try {
+          // Demana la resposta correcta
+          await refreshPuzzle3Solution();
+          const correct = simState.puzzle3Correct?.correct_answer;
+          if (typeof correct === 'number' && correct >= 1 && correct <= 6) {
+            simState.puzzle3Answer = correct;
+            // Envia payloads a tots els terminals
+            const payloads = Array.from({ length: 10 }, (_, index) => `P3,${index},${correct}`);
+            await sendPayloads(payloads);
+            payloads.forEach((payload) => appendLog({ local: true, payload, simulated: "puzzle3_solve_direct" }));
+            await refreshPuzzle3Solution();
+            renderPuzzle3Simulator();
+          } else {
+            setStatus("No s'ha pogut obtenir la resposta correcta.");
+          }
+        } catch (error) {
+          setStatus(`Error solucionant: ${error.message || error}`);
         }
       });
     }
