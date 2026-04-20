@@ -67,5 +67,13 @@
 {% endblock %}
 
 {% block extra_js %}
+<script>
+    window.NEXT_PUZZLE_ID = {{ next_puzzle_id|tojson|safe }};
+</script>
 <script src="{{ url_for('static', filename='js/puzzle2.js') }}"></script>
 {% endblock %}
+
+<!-- Solved banner -->
+<div id="p2-solved-banner" class="p2-solved-banner hidden">
+        <div class="p2-solved-text">Puzle completat!</div>
+</div>

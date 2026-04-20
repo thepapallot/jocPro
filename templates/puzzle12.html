@@ -50,7 +50,15 @@
 
 {% block extra_js %}
 <script>
+    window.NEXT_PUZZLE_ID = {{ next_puzzle_id|tojson|safe }};
+</script>
+<script>
 window.PUZZLE_FINAL_OUTRO_URL = "{{ url_for('scene_player') }}?scene=scene_outro_game&next={{ url_for('final_loop') | urlencode }}";
 </script>
 <script src="{{ url_for('static', filename='js/puzzle12.js') }}"></script>
 {% endblock %}
+
+<!-- Solved banner -->
+<div id="p12-solved-banner" class="p12-solved-banner hidden">
+        <div class="p12-solved-text">Puzle completat!</div>
+</div>

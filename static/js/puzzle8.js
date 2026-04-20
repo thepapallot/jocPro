@@ -148,7 +148,7 @@
     const PHASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";       // NEW
     const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";     // NEW
     const LLETRES_SOUND_URL = "/static/audios/effects/apareix_contingut.wav";                // NEW
-
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
 
     function showSolvedBanner() {
         const banner = document.getElementById('p8-solved-banner');
@@ -164,6 +164,7 @@
         // Show solved banner and flash when puzzle is solved
         if (d.puzzle_solved && !solved) {
             solved = true;
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
             showSolvedBanner();
             setTimeout(function () {
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
