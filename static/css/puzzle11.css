@@ -147,15 +147,28 @@
 
 #p11-step-text {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     flex: 1;
-    font-size: 4.4rem;
+    gap: 14px;
+    max-width: 1500px;
+    text-shadow: 0 0 18px rgba(0,240,255,0.15);
+}
+
+#p11-step-main {
+    font-size: clamp(2.8rem, 4vw, 4.4rem);
     font-weight: 700;
     color: var(--p11-white);
     line-height: 1.25;
-    text-shadow: 0 0 18px rgba(0,240,255,0.15);
-    max-width: 1500px;
+}
+
+#p11-step-translation {
+    font-size: clamp(1.4rem, 2.1vw, 2.1rem);
+    font-weight: 500;
+    line-height: 1.35;
+    color: rgba(234,252,255,0.78);
+    letter-spacing: 0.02em;
 }
 
 @keyframes p11FadeIn {

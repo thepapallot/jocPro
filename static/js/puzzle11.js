@@ -2,6 +2,8 @@
     var CORRECT_SOUND_URL         = '/static/audios/effects/correcte.wav';
     var PHASE_COMPLETE_SOUND_URL  = '/static/audios/effects/fase_completada.wav';
     var COMPLETE_SOUND_URL        = '/static/audios/effects/nivel_completado.wav';
+    // Toggle this to quickly enable/disable the English line below each instruction.
+    var SHOW_ENGLISH_TRANSLATION  = true;
 
     function playSound(url) {
         var a = new Audio(url);
@@ -23,9 +25,23 @@
         'El token 31 debe pasar por el terminal 7 dos veces y luego apretar el botón rojo',
         'El token 35 debe pasar por el terminal que tiene el símbolo "pi"',
     ];
+    var STEPS_EN = [
+        'Token 5 must pass through terminal 6 and press the green button',
+        'Token 10 must pass through terminal 2 and then through terminal 5',
+        'Token 13 must pass through terminal 2 three times',
+        'Token 14 must pass through terminal 1 and press the red button, then the green button, then the yellow button',
+        'Token 17 must pass through terminal 1, then terminal 2, and then terminal 3',
+        'Token 18 must pass through terminal 9 and press the black button twice',
+        'Token 20 must pass through the terminal that has a symbol with one wave and two dots',
+        'Token 22 must pass through terminal 3, then terminal 4, and press the yellow button there',
+        'Token 31 must pass through terminal 7 twice and then press the red button',
+        'Token 35 must pass through the terminal with the "pi" symbol',
+    ];
 
     var timeline     = document.getElementById('p11-timeline');
     var stepText     = document.getElementById('p11-step-text');
+    var stepMain     = document.getElementById('p11-step-main');
+    var stepTranslation = document.getElementById('p11-step-translation');
     var currentCard  = document.getElementById('p11-current-card');
     var solvedBanner = document.getElementById('p11-solved-banner');
 
@@ -83,7 +99,21 @@
             solvedBanner.classList.remove('hidden');
         } else {
             timeline.classList.remove('hidden');
-            stepText.textContent = STEPS[currentStep] || '';
+            if (stepMain) {
+                stepMain.textContent = STEPS[currentStep] || '';
+            } else if (stepText) {
+                stepText.textContent = STEPS[currentStep] || '';
+            }
+
+            if (stepTranslation) {
+                if (SHOW_ENGLISH_TRANSLATION) {
+                    stepTranslation.textContent = STEPS_EN[currentStep] || '';
+                    stepTranslation.classList.remove('hidden');
+                } else {
+                    stepTranslation.textContent = '';
+                    stepTranslation.classList.add('hidden');
+                }
+            }
             currentCard.classList.remove('hidden');
             solvedBanner.classList.add('hidden');
         }
