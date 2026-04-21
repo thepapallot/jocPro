@@ -49,11 +49,6 @@
 
 <div id="solved-container"></div>
 
-<!-- Solved banner -->
-<div id="p1-solved-banner" class="p1-solved-banner hidden">
-        <div class="p1-solved-text">¡NIVEL COMPLETADO!</div>
-</div>
-
 <div id="puzzle-container" class="round-1"></div>
 {% endblock %}
 
@@ -62,4 +57,10 @@
     window.NEXT_PUZZLE_ID = {{ next_puzzle_id|tojson|safe }};
 </script>
 <script src="{{ url_for('static', filename='js/puzzle1.js') }}"></script>
+{% endblock %}
+
+{% block after_body %}
+<div id="p1-solved-banner" class="p1-solved-banner hidden">
+    <div class="p1-solved-text">¡NIVEL COMPLETADO!</div>
+</div>
 {% endblock %}

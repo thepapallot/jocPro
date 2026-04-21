@@ -70,7 +70,7 @@ QUESTIONS = [
     {"id": 69, "q": "How many bones does an average adult human have?", "answers": ["One hundred five", "Three hundred seventeen", "Two hundred", "One hundred eighty-seven", "Fifty", "Two hundred six"], "correct": 6},
     {"id": 70, "q": "Which architect designed the Sagrada Familia?", "answers": ["Domènech i Montaner", "Calatrava", "Puig i Cadafalch", "Miralles", "Bofill", "Antoni Gaudí"], "correct": 6},
     {"id": 71, "q": "Which of these mountains is not in the Pyrenees?", "answers": ["Vignemale", "Mulhacén", "Aneto", "Pica d'Estats", "Canigó", "Monte Perdido"], "correct": 2},
-    {"id": 72, "q": "Which team plays at the Benito Villamarin?", "answers": ["Espanyol", "Betis", "Deportivo de la Coruña", "Valencia CF", "Sevilla FC", "Betis"], "correct": 2},
+    {"id": 72, "q": "Which team plays at the Benito Villamarin?", "answers": ["Espanyol", "Betis", "Deportivo de la Coruña", "Valencia CF", "Sevilla FC", "Albacete"], "correct": 2},
     {"id": 73, "q": "Which of these names does not belong to a Pokemon?", "answers": ["Snorlax", "Corbix", "Gyarados", "Pikachu", "Charmander", "Arceus"], "correct": 2},
     {"id": 74, "q": "Which neighborhood in Barcelona has the most people?", "answers": ["Eixample", "Sants", "Sant Martí", "Raval", "Barceloneta", "Les Corts"], "correct": 1},
     {"id": 75, "q": "How many minutes are in two and a half hours?", "answers": ["One hundred twenty", "One hundred thirty", "One hundred forty", "One hundred", "One hundred fifty", "Ninety"], "correct": 5},
