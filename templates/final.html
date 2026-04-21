@@ -6,7 +6,8 @@
 <body>
     <p>Redirigiendo al nuevo outro…</p>
     <script>
-        window.location.replace(`{{ url_for('scene_player') }}?scene=scene_final&next=${encodeURIComponent({{ url_for('final_loop')|tojson }})}`);
+        const lang = {{ default_subtitle_lang|tojson }};
+        window.location.replace(`{{ url_for('scene_player') }}?scene=scene_final&lang=${encodeURIComponent(lang)}&next=${encodeURIComponent({{ url_for('final_loop')|tojson }})}`);
     </script>
 </body>
 </html>

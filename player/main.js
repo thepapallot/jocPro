@@ -184,6 +184,30 @@ function parseSrtContent(content) {
         .filter(Boolean);
 }
 
+function alignSubtitlesToReferenceTimeline(referenceSubtitles, translatedSubtitles) {
+    const reference = Array.isArray(referenceSubtitles) ? referenceSubtitles : [];
+    const translated = Array.isArray(translatedSubtitles) ? translatedSubtitles : [];
+
+    if (reference.length === 0 || translated.length === 0 || reference.length !== translated.length) {
+        return translated;
+    }
+
+    return translated.map((item, index) => {
+        const ref = reference[index] || {};
+        const start = Number(ref.start);
+        const end = Number(ref.end);
+        if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) {
+            return item;
+        }
+
+        return {
+            ...item,
+            start: Number(start.toFixed(3)),
+            end: Number(end.toFixed(3)),
+        };
+    });
+}
+
 async function loadSubtitlesFromSrt(sceneId, lang) {
     const baseName = deriveSubtitleSrtBaseName(sceneId);
     if (!baseName) {
@@ -2787,10 +2811,12 @@ async function loadScene(sceneId, subtitleLang = DEFAULT_SUBTITLE_LANG) {
     const selectedLang = normalizeSubtitleLang(subtitleLang);
     scene.subtitle_lang = selectedLang;
 
-    if (selectedLang !== DEFAULT_SUBTITLE_LANG) {
-        const translatedSubtitles = await loadSubtitlesFromSrt(sceneId, selectedLang);
-        if (Array.isArray(translatedSubtitles) && translatedSubtitles.length > 0) {
-            scene.subtitles = translatedSubtitles;
+    const subtitlesFromSrt = await loadSubtitlesFromSrt(sceneId, selectedLang);
+    if (Array.isArray(subtitlesFromSrt) && subtitlesFromSrt.length > 0) {
+        if (selectedLang === "eng") {
+            scene.subtitles = alignSubtitlesToReferenceTimeline(scene.subtitles, subtitlesFromSrt);
+        } else {
+            scene.subtitles = subtitlesFromSrt;
         }
     }
 

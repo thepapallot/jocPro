@@ -50,7 +50,8 @@
 
         video.onended = function() {
             const next = {{ url_for('welcome', redirect_flag='puzzle1')|tojson }};
-            const target = `{{ url_for('scene_player') }}?scene=scene_intro_game&next=${encodeURIComponent(next)}`;
+            const lang = {{ default_subtitle_lang|tojson }};
+            const target = `{{ url_for('scene_player') }}?scene=scene_intro_game&lang=${encodeURIComponent(lang)}&next=${encodeURIComponent(next)}`;
             window.location.replace(target);
         };
 
