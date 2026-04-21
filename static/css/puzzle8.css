@@ -150,6 +150,14 @@ body::after {
     gap: 12px;
 }
 
+#p8-rounds.is-pending {
+    visibility: hidden;
+}
+
+#p8-rounds[data-round-total="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .round-card {
     display: grid;
     place-items: center;
@@ -163,6 +171,10 @@ body::after {
     transition: opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.round-card[hidden] {
+    display: none !important;
+}
+
 .round-card.is-active {
     opacity: 1;
     border-color: rgba(69, 230, 255, 0.18);
@@ -171,9 +183,13 @@ body::after {
 
 .round-card.is-complete {
     opacity: 1;
-    border-color: rgba(45, 255, 155, 0.2);
+    border-color: rgba(45, 255, 155, 0.78);
     background:
-        linear-gradient(180deg, rgba(45, 255, 155, 0.1), rgba(45, 255, 155, 0.03));
+        linear-gradient(180deg, rgba(45, 255, 155, 0.32), rgba(18, 190, 106, 0.14));
+    box-shadow:
+        0 0 0 1px rgba(107, 255, 187, 0.42),
+        0 0 18px rgba(45, 255, 155, 0.2),
+        inset 0 0 18px rgba(45, 255, 155, 0.08);
 }
 
 .round-name {
@@ -342,9 +358,13 @@ body::after {
 }
 
 .p8-frame.p8-correct {
+    border-width: 4px;
     background-color: rgba(46, 204, 113, 0.15);
-    border-color: rgba(46, 204, 113, 0.5);
-    box-shadow: 0 0 14px rgba(46, 204, 113, 0.16) inset;
+    border-color: rgba(46, 204, 113, 0.95);
+    box-shadow:
+        0 0 0 1px rgba(126, 255, 182, 0.55),
+        0 0 24px rgba(46, 204, 113, 0.28),
+        inset 0 0 18px rgba(46, 204, 113, 0.24);
 }
 
 .p8-frame.p8-wrong {
@@ -358,6 +378,14 @@ body::after {
 }
 
 .p8-frame.p8-wrong::after {
+    opacity: 1;
+}
+
+.p8-frame.p8-correct::after {
+    background:
+        radial-gradient(circle at 50% 78%, rgba(46, 204, 113, 0.52), transparent 60%),
+        radial-gradient(circle at 50% 45%, rgba(46, 204, 113, 0.24), transparent 72%),
+        linear-gradient(180deg, rgba(46, 204, 113, 0.12) 0%, rgba(18, 190, 80, 0.24) 100%);
     opacity: 1;
 }
 
@@ -493,6 +521,10 @@ body::after {
 
     #p8-rounds {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #p8-rounds[data-round-total="2"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
