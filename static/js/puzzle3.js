@@ -17,6 +17,7 @@
     const INCORRECT_SOUND_URL = "/static/audios/effects/incorrecte.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
     const APAREIX_SOUND_URL = "/static/audios/effects/apareix_contingut.wav"; // NEW
+    const SOLVED_GREEN_DELAY_MS = 2500;
 
     // Sound block window to avoid overlap after correct/incorrect
     let soundBlockUntil = 0;
@@ -28,6 +29,7 @@
     let totalPlayers = 10;
     let currentQuestionId = null;
     let activeQuestionNumber = 1;
+    let solvedSequenceStarted = false;
 
     function getDisplayStreak(streak, target) {
         // Mostra el nombre real de respostes correctes (començant per 0)
@@ -163,27 +165,34 @@
     }
 
     function showSolved() {
+        if (solvedSequenceStarted) return;
+        solvedSequenceStarted = true;
+
         // Play puzzle completion sound
         playSound(PUZZLE_COMPLETE_SOUND_URL);
-        // Show solved banner and flash
-        const banner = document.getElementById('p3-solved-banner');
-        if (banner) banner.classList.remove('hidden');
-        document.body.classList.add('p3-solved-flash');
+
+        // Delay green solved transition so it does not appear immediately.
         setTimeout(function () {
-            var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                ? NEXT_PUZZLE_ID : 1;
-            fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                .then(function (response) {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    } else {
+            const banner = document.getElementById('p3-solved-banner');
+            if (banner) banner.classList.remove('hidden');
+            document.body.classList.add('p3-solved-flash');
+
+            setTimeout(function () {
+                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
+                    ? NEXT_PUZZLE_ID : 1;
+                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
+                    .then(function (response) {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else {
+                            window.location.href = '/videoPuzzles/' + nextId;
+                        }
+                    })
+                    .catch(function () {
                         window.location.href = '/videoPuzzles/' + nextId;
-                    }
-                })
-                .catch(function () {
-                    window.location.href = '/videoPuzzles/' + nextId;
-                });
-        }, 5200);
+                    });
+            }, 5200);
+        }, SOLVED_GREEN_DELAY_MS);
     }
 
     function showResult(result, streak, target) {
