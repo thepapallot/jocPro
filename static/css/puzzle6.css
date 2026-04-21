@@ -5,6 +5,9 @@
     --p6-ok: #2dff9b;
     --p6-bad: #ff4f6d;
     --p6-warning: #ffb347;
+    --p6-token-size: 156px;
+    --p6-orbit-margin: 34px;
+    --p6-orbit-duration: 34s;
 }
 
 body {
@@ -42,16 +45,48 @@ body::after {
     position: relative;
     z-index: 2;
     height: 100%;
-    padding: 10px 24px 24px;
+    padding: 14px 24px;
     display: grid;
     place-items: center;
     overflow: hidden;
 }
 
+#top-center {
+    display: none;
+}
+
+#top-right {
+    display: none;
+}
+
+#top-area {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 6;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 24px 44px 0;
+    pointer-events: none;
+}
+
+#top-area::after {
+    display: none;
+}
+
+#bottom-area {
+    height: 100%;
+}
+
 #p6-arena {
     position: relative;
-    width: min(100%, 1500px);
-    height: min(100%, 860px);
+    width: 100%;
+    height: 100%;
+    --p6-ring-radius: min(
+        calc(50cqh - (var(--p6-token-size) / 2) - var(--p6-orbit-margin)),
+        calc(50cqw - (var(--p6-token-size) / 2) - var(--p6-orbit-margin))
+    );
+    --p6-core-size: calc(var(--p6-ring-radius) * 1.52);
     border: 1px solid var(--p6-line);
     border-radius: 36px;
     background:
@@ -61,6 +96,11 @@ body::after {
         0 0 34px rgba(0, 240, 255, 0.1),
         inset 0 0 54px rgba(0, 240, 255, 0.05);
     overflow: hidden;
+    container-type: size;
+    isolation: isolate;
+    transition:
+        box-shadow 280ms ease,
+        filter 280ms ease;
 }
 
 #p6-arena::before {
@@ -69,7 +109,26 @@ body::after {
     inset: 16px;
     border-radius: 26px;
     border: 1px solid rgba(255, 255, 255, 0.06);
+    z-index: 2;
     pointer-events: none;
+}
+
+#p6-arena::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 52%, rgba(255, 170, 78, 0.24), transparent 58%),
+        linear-gradient(180deg, rgba(255, 147, 66, 0.16) 0%, rgba(255, 84, 42, 0.2) 100%);
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 260ms ease, filter 260ms ease;
+    pointer-events: none;
+}
+
+#p6-arena > * {
+    position: relative;
+    z-index: 1;
 }
 
 #countdown-core {
@@ -77,7 +136,7 @@ body::after {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: min(44vw, 470px);
+    width: var(--p6-core-size);
     aspect-ratio: 1;
     border-radius: 999px;
     display: grid;
@@ -110,32 +169,20 @@ body::after {
     opacity: 0.6;
 }
 
-#pyramid-ghost {
-    position: absolute;
-    inset: 12%;
-    background-image: url('/static/images/piramidetrans.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    opacity: 0.18;
-    filter: blur(0.4px) saturate(0.8);
-    pointer-events: none;
-}
-
 #countdown-panel {
     position: relative;
     z-index: 1;
     display: grid;
     place-items: center;
     width: 100%;
-    padding-inline: 12%;
+    padding-inline: 6%;
 }
 
 #countdown {
     color: #ffffff;
     max-width: 100%;
     text-align: center;
-    font-size: clamp(2.8rem, 18cqw, 6.8rem);
+    font-size: clamp(4.2rem, 24cqw, 9.8rem);
     font-weight: 900;
     line-height: 1;
     letter-spacing: 0.015em;
@@ -164,7 +211,7 @@ body::after {
 }
 
 #token-grid {
-    --ring-radius: min(38vw, 350px);
+    --ring-radius: var(--p6-ring-radius);
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -173,14 +220,17 @@ body::after {
 #token-orbit {
     position: absolute;
     inset: 0;
-    animation: p6OrbitClockwise 34s linear infinite;
+    animation: p6OrbitClockwise var(--p6-orbit-duration) linear infinite;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .token-card {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: clamp(122px, 9vw, 156px);
+    width: var(--p6-token-size);
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     border-radius: 999px;
@@ -198,6 +248,9 @@ body::after {
     justify-content: center;
     gap: 4px;
     pointer-events: auto;
+    will-change: transform;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 .token-face {
@@ -206,7 +259,10 @@ body::after {
     align-items: center;
     justify-content: center;
     gap: 4px;
-    animation: p6OrbitCounter 34s linear infinite;
+    animation: p6OrbitCounter var(--p6-orbit-duration) linear infinite;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .token-card:nth-child(1) {
@@ -345,25 +401,76 @@ body::after {
 }
 
 #puzzle6-shell.time-low #countdown {
-    color: #ffd84f;
-    transform: scale(1.08);
+    color: #ffb05f;
+    transform: scale(1.1);
     text-shadow:
-        0 0 18px rgba(255, 216, 79, 0.58),
-        0 0 46px rgba(255, 216, 79, 0.28);
+        0 0 18px rgba(255, 167, 95, 0.62),
+        0 0 46px rgba(255, 121, 62, 0.34);
+}
+
+#puzzle6-shell.time-warning #countdown {
+    color: #ffd98a;
+    transform: scale(1.06);
+    text-shadow:
+        0 0 14px rgba(255, 217, 138, 0.5),
+        0 0 34px rgba(255, 181, 86, 0.24);
 }
 
 #puzzle6-shell.time-critical #countdown {
-    color: #ff8d66;
-    transform: scale(1.16);
+    color: #ff6c63;
+    transform: scale(1.18);
     text-shadow:
-        0 0 18px rgba(255, 121, 87, 0.72),
-        0 0 54px rgba(255, 79, 109, 0.34);
-    filter: saturate(1.28);
+        0 0 18px rgba(255, 97, 90, 0.82),
+        0 0 58px rgba(255, 56, 71, 0.42);
+    filter: saturate(1.36);
     animation: p6CriticalCountdown 540ms ease-in-out infinite;
 }
 
+#puzzle6-shell.time-warning #p6-arena {
+    box-shadow:
+        0 0 44px rgba(255, 186, 102, 0.18),
+        inset 0 0 72px rgba(255, 170, 72, 0.18),
+        inset 0 0 128px rgba(255, 120, 58, 0.12);
+    filter: saturate(1.08);
+}
+
+#puzzle6-shell.time-warning #p6-arena::after {
+    opacity: 0.5;
+}
+
+#puzzle6-shell.time-low #p6-arena {
+    box-shadow:
+        0 0 54px rgba(255, 152, 64, 0.24),
+        inset 0 0 84px rgba(255, 116, 54, 0.26),
+        inset 0 0 150px rgba(255, 76, 40, 0.18);
+    filter: saturate(1.16) contrast(1.03);
+}
+
+#puzzle6-shell.time-low #p6-arena::after {
+    opacity: 0.72;
+    filter: saturate(1.08);
+}
+
+#puzzle6-shell.time-critical #p6-arena {
+    box-shadow:
+        0 0 64px rgba(255, 82, 64, 0.34),
+        inset 0 0 110px rgba(255, 62, 62, 0.4),
+        inset 0 0 180px rgba(255, 38, 38, 0.32);
+    filter: saturate(1.3) contrast(1.06);
+}
+
+#puzzle6-shell.time-critical #p6-arena::after {
+    opacity: 0.95;
+    filter: saturate(1.22) hue-rotate(-12deg);
+    animation: p6CriticalHeat 620ms ease-in-out infinite;
+}
+
+#puzzle6-shell.time-warning #token-grid {
+    animation: p6GridHum 3.1s ease-in-out infinite;
+}
+
 #puzzle6-shell.time-low #token-grid {
-    animation: p6GridHum 2.4s ease-in-out infinite;
+    animation: p6GridHum 2s ease-in-out infinite;
 }
 
 #puzzle6-shell.time-critical #token-grid {
@@ -400,6 +507,14 @@ body::after {
     box-shadow:
         inset 0 0 80px rgba(255, 121, 87, 0.22),
         0 0 54px rgba(255, 79, 109, 0.22);
+}
+
+#puzzle6-shell.tick-pulse-warning #p6-arena::after {
+    filter: brightness(1.04) saturate(1.06);
+}
+
+#puzzle6-shell.tick-pulse-low #p6-arena::after {
+    filter: brightness(1.08) saturate(1.12);
 }
 
 #puzzle6-shell.is-error-burst .fx-flash {
@@ -450,6 +565,17 @@ body::after {
     }
     50% {
         transform: scale(1.22);
+    }
+}
+
+@keyframes p6CriticalHeat {
+    0%, 100% {
+        opacity: 0.82;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.02);
     }
 }
 
@@ -589,16 +715,42 @@ body::after {
 }
 
 @media (max-width: 1280px) {
-    #token-grid {
-        --ring-radius: min(33vw, 312px);
+    :root {
+        --p6-token-size: 142px;
+        --p6-orbit-margin: 28px;
     }
 
-    #countdown { font-size: clamp(2.6rem, 18cqw, 6.2rem); }
+    #token-grid {
+        --ring-radius: var(--p6-ring-radius);
+    }
+
+    #countdown { font-size: clamp(3.8rem, 22cqw, 8.6rem); }
+}
+
+@media (min-width: 2200px), (min-height: 1400px) {
+    :root {
+        --p6-orbit-duration: 42s;
+    }
+}
+
+@media (min-width: 3000px), (min-height: 1800px) {
+    :root {
+        --p6-orbit-duration: 50s;
+    }
 }
 
 @media (max-width: 980px) {
+    :root {
+        --p6-token-size: 118px;
+        --p6-orbit-margin: 24px;
+    }
+
     #puzzle6-shell {
-        padding: 10px 14px 14px;
+        padding: 10px 14px;
+    }
+
+    #top-area {
+        padding: 22px 24px 0;
     }
 
     #p6-arena {
@@ -606,11 +758,11 @@ body::after {
     }
 
     #token-grid {
-        --ring-radius: min(31vw, 248px);
+        --ring-radius: var(--p6-ring-radius);
     }
 
     .token-card {
-        width: clamp(92px, 11.4vw, 118px);
+        width: var(--p6-token-size);
     }
 
     .token-id {
@@ -628,24 +780,33 @@ body::after {
     }
 
     #countdown-core {
-        width: min(56vw, 360px);
+        width: var(--p6-core-size);
     }
 }
 
 @media (max-width: 640px) {
+    :root {
+        --p6-token-size: 94px;
+        --p6-orbit-margin: 18px;
+    }
+
+    #top-area {
+        padding: 18px 18px 0;
+    }
+
     #token-grid {
-        --ring-radius: min(34vw, 188px);
+        --ring-radius: var(--p6-ring-radius);
     }
 
     .token-card {
-        width: clamp(74px, 12.2vw, 94px);
+        width: var(--p6-token-size);
     }
 
     #countdown-core {
-        width: min(62vw, 286px);
+        width: var(--p6-core-size);
     }
 
-    #countdown { font-size: clamp(2.2rem, 19cqw, 4.8rem); }
+    #countdown { font-size: clamp(3.1rem, 24cqw, 6.6rem); }
 
     .token-id {
         font-size: clamp(1.5rem, 4.6vw, 2rem);

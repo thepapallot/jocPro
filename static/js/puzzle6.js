@@ -60,13 +60,17 @@
 
     function setUrgency(remainingSeconds = null) {
         if (!shellEl) return;
-        shellEl.classList.remove('time-low', 'time-critical');
-        if (remainingSeconds == null || remainingSeconds > 20) return;
+        shellEl.classList.remove('time-warning', 'time-low', 'time-critical');
+        if (remainingSeconds == null || remainingSeconds > 30) return;
         if (remainingSeconds <= 10) {
             shellEl.classList.add('time-critical');
             return;
         }
-        shellEl.classList.add('time-low');
+        if (remainingSeconds <= 18) {
+            shellEl.classList.add('time-low');
+            return;
+        }
+        shellEl.classList.add('time-warning');
     }
 
     function triggerBurst(type) {
@@ -82,13 +86,15 @@
 
     function triggerTickPulse(remainingSeconds) {
         if (!shellEl) return;
-        shellEl.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
+        shellEl.classList.remove('tick-pulse', 'tick-pulse-warning', 'tick-pulse-low', 'tick-pulse-critical');
         void shellEl.offsetWidth;
         shellEl.classList.add('tick-pulse');
         if (remainingSeconds <= 10) {
             shellEl.classList.add('tick-pulse-critical');
-        } else if (remainingSeconds <= 20) {
+        } else if (remainingSeconds <= 18) {
             shellEl.classList.add('tick-pulse-low');
+        } else if (remainingSeconds <= 30) {
+            shellEl.classList.add('tick-pulse-warning');
         }
     }
 
@@ -96,9 +102,13 @@
         let playbackRate = 1;
         let volume = 0.28;
 
-        if (remainingSeconds <= 20) {
-            playbackRate = 1.08;
-            volume = 0.34;
+        if (remainingSeconds <= 30) {
+            playbackRate = 1.04;
+            volume = 0.32;
+        }
+        if (remainingSeconds <= 18) {
+            playbackRate = 1.1;
+            volume = 0.36;
         }
         if (remainingSeconds <= 10) {
             playbackRate = 1.16;
@@ -114,9 +124,7 @@
 
     function format(sec) {
         if (sec < 0) sec = 0;
-        const m = Math.floor(sec / 60);
-        const s = sec % 60;
-        return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        return String(sec);
     }
 
     function startLocalCountdown(remainingSeconds) {
@@ -184,7 +192,7 @@
                 setMessage(WAITING_MESSAGE, false);
                 setTrackerState('waiting');
                 setUrgency(null);
-                shellEl?.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
+                shellEl?.classList.remove('tick-pulse', 'tick-pulse-warning', 'tick-pulse-low', 'tick-pulse-critical');
             }
         }
         tick();
@@ -196,7 +204,7 @@
         active = false;
         endTime = null;
         clearTimers();
-        countdownEl.textContent = '00:00';
+        countdownEl.textContent = '0';
         countdownEl.classList.add('expired');
         countdownEl.classList.remove('failure');
         setMessage('Secuencia completada.', false);
@@ -204,7 +212,7 @@
         setTrackerState('solved');
         setUrgency(null);
         triggerBurst('solved');
-        shellEl?.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
+        shellEl?.classList.remove('tick-pulse', 'tick-pulse-warning', 'tick-pulse-low', 'tick-pulse-critical');
     }
 
     function applySnapshot(d) {
@@ -233,7 +241,7 @@
         setStatusBadge('active', 'En espera');
         setTrackerState('waiting');
         setUrgency(null);
-        shellEl?.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
+        shellEl?.classList.remove('tick-pulse', 'tick-pulse-warning', 'tick-pulse-low', 'tick-pulse-critical');
     }
 
     function handleUpdate(d) {
