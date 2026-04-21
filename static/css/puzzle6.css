@@ -57,7 +57,7 @@ body.p6-solved-flash {
     --p6-ok: #2dff9b;
     --p6-bad: #ff4f6d;
     --p6-warning: #ffb347;
-    --p6-token-size: 156px;
+    --p6-token-size: 176px;
     --p6-orbit-margin: 34px;
     --p6-orbit-duration: 34s;
 }
@@ -138,7 +138,7 @@ body::after {
         calc(50cqh - (var(--p6-token-size) / 2) - var(--p6-orbit-margin)),
         calc(50cqw - (var(--p6-token-size) / 2) - var(--p6-orbit-margin))
     );
-    --p6-core-size: calc(var(--p6-ring-radius) * 1.52);
+    --p6-core-size: calc(var(--p6-ring-radius) * 1.62);
     border: 1px solid var(--p6-line);
     border-radius: 36px;
     background:
@@ -234,7 +234,7 @@ body::after {
     color: #ffffff;
     max-width: 100%;
     text-align: center;
-    font-size: clamp(4.2rem, 24cqw, 9.8rem);
+    font-size: clamp(6.4rem, 35cqw, 14.8rem);
     font-weight: 900;
     line-height: 1;
     letter-spacing: 0.015em;
@@ -286,14 +286,14 @@ body::after {
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--token-color) 58%, rgba(255, 255, 255, 0.08));
+    border: 1px solid color-mix(in srgb, var(--token-color) 78%, rgba(255, 255, 255, 0.12));
     background:
-        radial-gradient(circle at 35% 24%, rgba(255, 255, 255, 0.22), transparent 42%),
-        radial-gradient(circle at 50% 54%, color-mix(in srgb, var(--token-color) 34%, rgba(8, 18, 30, 0.96)) 0%, rgba(7, 16, 28, 0.96) 70%);
+        radial-gradient(circle at 35% 24%, rgba(255, 255, 255, 0.3), transparent 42%),
+        radial-gradient(circle at 50% 54%, color-mix(in srgb, var(--token-color) 56%, rgba(8, 18, 30, 0.9)) 0%, rgba(7, 16, 28, 0.94) 72%);
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.14),
-        inset 0 0 30px color-mix(in srgb, var(--token-color) 26%, transparent),
-        0 0 26px color-mix(in srgb, var(--token-color) 24%, transparent);
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 0 42px color-mix(in srgb, var(--token-color) 42%, transparent),
+        0 0 36px color-mix(in srgb, var(--token-color) 44%, transparent);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -363,16 +363,16 @@ body::after {
     font-weight: 900;
     line-height: 1;
     text-shadow:
-        0 0 10px rgba(0, 0, 0, 0.8),
-        0 0 18px color-mix(in srgb, var(--token-color) 45%, transparent);
+        0 0 12px rgba(0, 0, 0, 0.72),
+        0 0 24px color-mix(in srgb, var(--token-color) 70%, transparent);
 }
 
 .token-core {
     position: relative;
     display: grid;
     place-items: center;
-    width: 54px;
-    height: 54px;
+    width: 62px;
+    height: 62px;
 }
 
 .token-halo {
@@ -380,29 +380,29 @@ body::after {
     inset: -6px;
     border-radius: 999px;
     background:
-        radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--token-color) 82%, transparent), transparent 56%),
+        radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--token-color) 98%, transparent), transparent 56%),
         linear-gradient(
             180deg,
-            color-mix(in srgb, var(--token-color) 42%, rgba(255, 255, 255, 0.1)) 0%,
-            color-mix(in srgb, var(--token-color) 22%, transparent) 100%
+            color-mix(in srgb, var(--token-color) 62%, rgba(255, 255, 255, 0.14)) 0%,
+            color-mix(in srgb, var(--token-color) 34%, transparent) 100%
         );
     box-shadow:
-        0 0 26px color-mix(in srgb, var(--token-color) 46%, transparent),
-        inset 0 0 16px color-mix(in srgb, var(--token-color) 32%, transparent);
+        0 0 34px color-mix(in srgb, var(--token-color) 64%, transparent),
+        inset 0 0 20px color-mix(in srgb, var(--token-color) 48%, transparent);
 }
 
 .token-icon {
     position: relative;
     z-index: 1;
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
     object-fit: contain;
     filter:
-        brightness(0.88)
-        saturate(1.08)
+        brightness(0.96)
+        saturate(1.28)
         drop-shadow(0 0 8px rgba(255, 255, 255, 0.35))
-        drop-shadow(0 0 16px color-mix(in srgb, var(--token-color) 70%, transparent));
-    opacity: 0.94;
+        drop-shadow(0 0 22px color-mix(in srgb, var(--token-color) 86%, transparent));
+    opacity: 0.98;
 }
 
 #p6-fx-layer {
@@ -770,7 +770,7 @@ body::after {
 
 @media (max-width: 1280px) {
     :root {
-        --p6-token-size: 142px;
+        --p6-token-size: 160px;
         --p6-orbit-margin: 28px;
     }
 
@@ -778,7 +778,7 @@ body::after {
         --ring-radius: var(--p6-ring-radius);
     }
 
-    #countdown { font-size: clamp(3.8rem, 22cqw, 8.6rem); }
+    #countdown { font-size: clamp(5.8rem, 33cqw, 12.8rem); }
 }
 
 @media (min-width: 2200px), (min-height: 1400px) {
@@ -795,7 +795,7 @@ body::after {
 
 @media (max-width: 980px) {
     :root {
-        --p6-token-size: 118px;
+        --p6-token-size: 132px;
         --p6-orbit-margin: 24px;
     }
 
@@ -824,13 +824,13 @@ body::after {
     }
 
     .token-core {
-        width: 38px;
-        height: 38px;
+        width: 44px;
+        height: 44px;
     }
 
     .token-icon {
-        width: 30px;
-        height: 30px;
+        width: 34px;
+        height: 34px;
     }
 
     #countdown-core {
@@ -840,7 +840,7 @@ body::after {
 
 @media (max-width: 640px) {
     :root {
-        --p6-token-size: 94px;
+        --p6-token-size: 106px;
         --p6-orbit-margin: 18px;
     }
 
@@ -860,7 +860,7 @@ body::after {
         width: var(--p6-core-size);
     }
 
-    #countdown { font-size: clamp(3.1rem, 24cqw, 6.6rem); }
+    #countdown { font-size: clamp(4.8rem, 32cqw, 9.8rem); }
 
     .token-id {
         font-size: clamp(1.5rem, 4.6vw, 2rem);

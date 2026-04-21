@@ -8,7 +8,7 @@ PUZZLE_FINAL = 6
 
 # Subtitle language used by the scene player by default.
 # Allowed values: "es", "eng" (also accepts "en" as alias).
-SUBTITLE_LANG = "es"
+SUBTITLE_LANG = "eng"
 
 # Alias funcional de cada puzzle por puzzle_id.
 # Se usa como source of truth de la escena intro asociada a cada puzzle.

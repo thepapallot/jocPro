@@ -5,7 +5,18 @@
   const puzzleAliases = window.TEST_PUZZLE_ALIASES || {};
   const tutorialPuzzleId = String(window.TEST_PUZZLE_TUTORIAL ?? "").trim();
   const finalPuzzleId = String(window.TEST_PUZZLE_FINAL ?? "").trim();
+  const defaultSubtitleLangRaw = String(window.TEST_DEFAULT_SUBTITLE_LANG || "es").trim().toLowerCase();
+  const defaultSubtitleLang = defaultSubtitleLangRaw === "en" ? "eng" : (defaultSubtitleLangRaw === "eng" ? "eng" : "es");
   const finalPuzzleMqttId = finalPuzzleId || "6";
+  function buildPlayerHref(sceneId, nextUrl) {
+    const params = new URLSearchParams();
+    params.set("scene", sceneId);
+    params.set("lang", defaultSubtitleLang);
+    if (nextUrl) {
+      params.set("next", nextUrl);
+    }
+    return `/player/?${params.toString()}`;
+  }
   const aliasToScene = {
     simulacro: "scene_intro_simulacro",
     sumas: "scene_intro_sumas",
@@ -21,19 +32,19 @@
     "apreta botons": "scene_intro_apreta_botons"
   };
   const sceneHealthConfigs = [
-    { id: "scene_intro_game", label: "Intro General", href: "/player/?scene=scene_intro_game" },
-    { id: "scene_intro_sumas", label: "Puzzle 1 Intro", href: "/player/?scene=scene_intro_sumas" },
-    { id: "scene_intro_laberinto", label: "Puzzle 2 Intro", href: "/player/?scene=scene_intro_laberinto" },
-    { id: "scene_intro_trivial", label: "Puzzle 3 Intro", href: "/player/?scene=scene_intro_trivial" },
-    { id: "scene_intro_musica", label: "Puzzle 4 Intro", href: "/player/?scene=scene_intro_musica" },
-    { id: "scene_intro_cronometro", label: "Puzzle 5 Intro", href: "/player/?scene=scene_intro_cronometro" },
-    { id: "scene_intro_energia", label: "Puzzle 6 Intro", href: "/player/?scene=scene_intro_energia" },
-    { id: "scene_intro_memory", label: "Puzzle 8 Intro", href: "/player/?scene=scene_intro_memory" },
-    { id: "scene_intro_token_a_lloc", label: "Puzzle 9 Intro", href: "/player/?scene=scene_intro_token_a_lloc" },
-    { id: "scene_intro_segments", label: "Puzzle 10 Intro", href: "/player/?scene=scene_intro_segments" },
-    { id: "scene_intro_simulacro", label: "Puzzle 11 Intro", href: "/player/?scene=scene_intro_simulacro" },
-    { id: "scene_intro_apreta_botons", label: "Puzzle 12 Intro", href: "/player/?scene=scene_intro_apreta_botons" },
-    { id: "scene_final", label: "Outro Final", href: "/player/?scene=scene_final" }
+    { id: "scene_intro_game", label: "Intro General", href: buildPlayerHref("scene_intro_game") },
+    { id: "scene_intro_sumas", label: "Puzzle 1 Intro", href: buildPlayerHref("scene_intro_sumas") },
+    { id: "scene_intro_laberinto", label: "Puzzle 2 Intro", href: buildPlayerHref("scene_intro_laberinto") },
+    { id: "scene_intro_trivial", label: "Puzzle 3 Intro", href: buildPlayerHref("scene_intro_trivial") },
+    { id: "scene_intro_musica", label: "Puzzle 4 Intro", href: buildPlayerHref("scene_intro_musica") },
+    { id: "scene_intro_cronometro", label: "Puzzle 5 Intro", href: buildPlayerHref("scene_intro_cronometro") },
+    { id: "scene_intro_energia", label: "Puzzle 6 Intro", href: buildPlayerHref("scene_intro_energia") },
+    { id: "scene_intro_memory", label: "Puzzle 8 Intro", href: buildPlayerHref("scene_intro_memory") },
+    { id: "scene_intro_token_a_lloc", label: "Puzzle 9 Intro", href: buildPlayerHref("scene_intro_token_a_lloc") },
+    { id: "scene_intro_segments", label: "Puzzle 10 Intro", href: buildPlayerHref("scene_intro_segments") },
+    { id: "scene_intro_simulacro", label: "Puzzle 11 Intro", href: buildPlayerHref("scene_intro_simulacro") },
+    { id: "scene_intro_apreta_botons", label: "Puzzle 12 Intro", href: buildPlayerHref("scene_intro_apreta_botons") },
+    { id: "scene_final", label: "Outro Final", href: buildPlayerHref("scene_final") }
   ];
   const puzzle11Steps = [
     "El token 5 debe pasar por el terminal 6 y apretar el botón verde",
@@ -749,7 +760,7 @@
       const alias = getPuzzleDisplayName(id);
       const introSceneId = resolveIntroSceneForPuzzle(id);
       const href = introSceneId
-        ? `/player/?scene=${encodeURIComponent(introSceneId)}&next=${encodeURIComponent(`/puzzle/${id}`)}`
+        ? buildPlayerHref(introSceneId, `/puzzle/${id}`)
         : `/videoPuzzles/${index + 1}`;
       return `
         <a class="test-shortcut-btn test-shortcut-btn--intro" href="${href}" target="_blank" rel="noopener">
@@ -761,7 +772,7 @@
 
     const extraIntroStart = visibleIds.length;
     const extraIntros = `
-      <a class="test-shortcut-btn test-shortcut-btn--intro" href="/player/?scene=scene_intro_game" target="_blank" rel="noopener">
+      <a class="test-shortcut-btn test-shortcut-btn--intro" href="${buildPlayerHref("scene_intro_game")}" target="_blank" rel="noopener">
         <strong>${escapeHtml(`${extraIntroStart + 1}. Intro general`)}</strong>
         <span>inicio</span>
       </a>

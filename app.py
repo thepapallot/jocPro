@@ -113,6 +113,12 @@ def resolve_subtitle_lang():
 
 DEFAULT_SUBTITLE_LANG = resolve_subtitle_lang()
 
+@app.context_processor
+def inject_player_defaults():
+    return {
+        "default_subtitle_lang": DEFAULT_SUBTITLE_LANG,
+    }
+
 
 def build_scene_player_target(scene_id, next_url="", **extra_query):
     query = {
