@@ -63,3 +63,9 @@
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/puzzle6.js') }}"></script>
 {% endblock %}
+
+{% block after_body %}
+<div id="p6-solved-banner" class="p6-solved-banner hidden">
+        <div class="p6-solved-text">Puzle completat!</div>
+</div>
+{% endblock %}

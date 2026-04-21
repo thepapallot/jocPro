@@ -212,7 +212,10 @@
         setTrackerState('solved');
         setUrgency(null);
         triggerBurst('solved');
-        shellEl?.classList.remove('tick-pulse', 'tick-pulse-warning', 'tick-pulse-low', 'tick-pulse-critical');
+        shellEl?.classList.remove('tick-pulse', 'tick-pulse-low', 'tick-pulse-critical');
+        // Ensure the puzzle shell stays visible during the banner
+        shellEl.style.visibility = '';
+        shellEl.style.opacity = '';
     }
 
     function applySnapshot(d) {
@@ -273,9 +276,13 @@
 
         if (d.puzzle_solved && !solved) {
             applySolvedState();
-            // Play final puzzle completion sound
             playSound(PUZZLE_COMPLETE_SOUND_URL);
-            setTimeout(() => window.location.href = '/final', 3000);
+            const banner = document.getElementById('p6-solved-banner');
+            if (banner) banner.classList.remove('hidden');
+            document.body.classList.add('p6-solved-flash');
+            setTimeout(function () {
+                window.location.href = '/final';
+            }, 5200);
         }
     }
 
