@@ -1,4 +1,5 @@
 (function() {
+    const ACTION_FEEDBACK_MS = 2000;
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
     const FASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
@@ -25,6 +26,7 @@
     })();
 
     let statusEl = null;
+    let statusSectionEl = null;
     let streakEl = null;
     let progressSectionEl = null;
     let solved = false;
@@ -34,6 +36,49 @@
     let currentSampleUrl = null;
     let samplePlaybackToken = 0;
     let feedbackTimer = null;
+    let lastKnownStoring = false;
+    let actionFeedbackTimer = null;
+    let actionFeedbackActive = false;
+    let lastNormalStatusText = '';
+    let lastNormalStatusTone = '';
+    let pendingStatusText = null;
+    let pendingStatusTone = null;
+
+    function setStatusPanelTone(tone) {
+        if (!statusSectionEl) return;
+        statusSectionEl.classList.remove('action-blue', 'action-green', 'action-red', 'action-white');
+        if (tone) {
+            statusSectionEl.classList.add(tone);
+        }
+    }
+
+    function clearActionFeedbackTimer() {
+        if (actionFeedbackTimer) {
+            clearTimeout(actionFeedbackTimer);
+            actionFeedbackTimer = null;
+        }
+    }
+
+    function showActionFeedback(panelTone, text, textTone) {
+        actionFeedbackActive = true;
+        setStatusPanelTone(panelTone);
+        setStatus(text, textTone, true);
+        clearActionFeedbackTimer();
+        actionFeedbackTimer = setTimeout(() => {
+            actionFeedbackTimer = null;
+            actionFeedbackActive = false;
+            setStatusPanelTone(null);
+            if (pendingStatusText !== null) {
+                const queuedText = pendingStatusText;
+                const queuedTone = pendingStatusTone;
+                pendingStatusText = null;
+                pendingStatusTone = null;
+                setStatus(queuedText, queuedTone);
+                return;
+            }
+            setStatus(lastNormalStatusText, lastNormalStatusTone, true);
+        }, ACTION_FEEDBACK_MS);
+    }
 
     function playAudio(audioEl, url, onComplete) {
         if (!url) return;
@@ -74,12 +119,21 @@
         playAudio(sfxAudio, url, onComplete);
     }
 
-    function setStatus(text, tone) {
+    function setStatus(text, tone, force) {
         if (!statusEl) return;
+        if (actionFeedbackActive && !force) {
+            pendingStatusText = text || '';
+            pendingStatusTone = tone || '';
+            return;
+        }
         statusEl.textContent = text || '';
         statusEl.className = '';
         if (tone) {
             statusEl.classList.add(tone);
+        }
+        if (!force) {
+            lastNormalStatusText = text || '';
+            lastNormalStatusTone = tone || '';
         }
     }
 
@@ -260,6 +314,21 @@
     function handleUpdate(d) {
         console.log('[P4] handleUpdate called with:', d);
         if (!d || d.puzzle_id !== 4) return;
+
+        const wasStoring = lastKnownStoring;
+        if (typeof d.storing === 'boolean') {
+            lastKnownStoring = d.storing;
+        }
+
+        if (d.reset_attempt) {
+            showActionFeedback('action-white', 'Reiniciando intento', 'action-white');
+        } else if (d.play_mostra) {
+            showActionFeedback('action-blue', 'Reproduciendo cancion completa', 'action-blue');
+        } else if (d.storing === true) {
+            showActionFeedback('action-green', 'Registrando secuencia', 'action-green');
+        } else if (d.storing === false && wasStoring) {
+            showActionFeedback('action-red', 'Registro detenido', 'action-red');
+        }
 
         if (typeof d.playing_sample === 'boolean') {
             setSampleWaveActive(d.playing_sample);
@@ -477,6 +546,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         statusEl = document.getElementById('status-text');
+        statusSectionEl = document.getElementById('status-section');
         streakEl = document.getElementById('streak');
         progressSectionEl = document.getElementById('progress-section');
 

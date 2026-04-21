@@ -1299,6 +1299,11 @@
   }
 
   function renderPuzzle4Simulator() {
+    const streakOrders = {
+      0: [5, 1, 8, 3],
+      1: [6, 1, 0, 9, 8, 4, 2, 7]
+    };
+
     const buttons = [
       { value: "4", label: "Escuchar la muestra completa", shortLabel: "Azul", colorClass: "sim-p4-blue" },
       { value: "3", label: "Registrar", shortLabel: "Verde", colorClass: "sim-p4-green" },
@@ -1336,6 +1341,7 @@
       <div class="sim-palette">${tracks}</div>
       <div class="sim-actions">
         <button type="button" class="sim-button" data-sim-p4-send-track>Reproducir pista seleccionada</button>
+        <button type="button" class="sim-button primary-action" data-sim-p4-solve-round>Resolver ronda</button>
       </div>
     `;
 
@@ -1362,6 +1368,61 @@
       await sendPayloads([payload]);
       appendLog({ local: true, payload, simulated: "puzzle4" });
       renderPuzzle4Simulator();
+    });
+
+    els.simContent.querySelector("[data-sim-p4-solve-round]").addEventListener("click", async () => {
+      try {
+        const stateResponse = await fetch("/current_state");
+        const state = await stateResponse.json();
+
+        if (String(state.puzzle_id) !== "4") {
+          setStatus("Puzzle 4 no esta activo");
+          return;
+        }
+
+        if (state.puzzle_solved) {
+          setStatus("Puzzle 4 ya esta resuelto");
+          return;
+        }
+
+        if (state.playing_sample) {
+          setStatus("Puzzle 4 reproduce muestra; espera a que termine");
+          return;
+        }
+
+        const streak = Number(state.streak || 0);
+        const order = streakOrders[streak];
+
+        if (!Array.isArray(order) || !order.length) {
+          setStatus("No hay ronda pendiente para resolver");
+          return;
+        }
+
+        const payloads = [
+          "P4,2,0",
+          "P4,3,0",
+          ...order.map((song) => `P4,0,${song}`)
+        ];
+
+        const previousTopic = els.topicSelect.value;
+        els.topicSelect.value = "TO_FLASK";
+        updateTopicHelp();
+        updateSendModeUI();
+
+        await sendPayloads(payloads);
+
+        simState.puzzle4Button = "0";
+        simState.puzzle4Song = String(order[order.length - 1]);
+        appendLog({ local: true, simulated: "puzzle4_solve_round", payloads });
+        renderPuzzle4Simulator();
+
+        if (previousTopic !== "TO_FLASK") {
+          els.topicSelect.value = previousTopic;
+          syncEditorForTopic();
+        }
+      } catch (error) {
+        setStatus(`Puzzle 4 · ${error.message || "error"}`);
+      }
     });
   }
 
