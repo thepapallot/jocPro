@@ -629,7 +629,7 @@
 
                 playEffect('fase_nocompletada.wav');
 
-                renderStatus('timeout');
+                // renderStatus('timeout');  // Keep for future use
                 resetObjectiveFormula();
 
                 setTimeout(() => {
