@@ -16,33 +16,36 @@ Para conseguirlo, utilizaréis vuestros tokens y los botones de los terminales.
 
 5
 00:00:21,600 --> 00:00:28,000
-Cada token contiene tres colores ocultos. Para descubrirlos, colocad el token en cualquier terminal y pulsad
-los botones negro, rojo y verde.
+Cada token contiene tres colores ocultos. Para descubrirlos, colocad el token en cualquier terminal.
 
 6
 00:00:28,080 --> 00:00:31,760
-Cada botón encenderá uno de los colores de ese token.
+Y pulsad los botones negro, rojo y verde.
 
 7
 00:00:31,760 --> 00:00:35,440
-Y esos colores serán siempre los mismos, esté donde esté.
+Cada botón encenderá uno de los colores de ese token.
 
 8
 00:00:35,440 --> 00:00:40,080
-Tendréis que moveros entre terminales usando cada token donde más convenga.
+Y esos colores serán siempre los mismos, esté donde esté.
 
 9
 00:00:40,080 --> 00:00:45,120
-Así completaréis los segmentos que faltan en cada patrón.
+Tendréis que moveros entre terminales usando cada token donde más convenga.
 
 10
 00:00:45,120 --> 00:00:49,120
-Descubrid, combinad y coordinaos rápido.
+Así completaréis los segmentos que faltan en cada patrón.
 
 11
 00:00:49,120 --> 00:00:53,360
-Si el tiempo llega a cero, la fase se reiniciará.
+Descubrid, combinad y coordinaos rápido.
 
 12
 00:00:53,360 --> 00:00:57,280
+Si el tiempo llega a cero, la fase se reiniciará.
+
+13
+00:00:57,280 --> 00:00:59,950
 Entended el sistema y hacedlo vuestro.

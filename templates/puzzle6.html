@@ -1,16 +1,13 @@
 {% extends "base.html" %}
 
 {% block title %}Puzzle 6{% endblock %}
+{% block level_title %}NIVEL FINAL{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle6.css') }}">
 {% endblock %}
 
-{% block top_right %}
-<div id="countdown-panel">
-    <div id="countdown">01:00</div>
-</div>
-{% endblock %}
+{% block top_right %}{% endblock %}
 
 {% block puzzle_content %}
 <div id="puzzle6-shell">
@@ -21,66 +18,42 @@
         <div class="fx-scanline"></div>
     </div>
 
-    <aside id="token-panel" class="p6-panel">
-        <div id="token-grid">
+    <section id="p6-arena" aria-label="Panel central de energia">
+        <div id="countdown-core">
+            <div id="countdown-panel">
+                <div id="countdown">60</div>
+            </div>
+        </div>
+
+        <div id="token-grid" aria-label="Tokens y codigos de color">
+            <div id="token-orbit">
             {% set token_colors = [
                 ('5', 'Rojo', '#ff2b2b'),
                 ('31', 'Amarillo', '#ffd84f'),
-                ('13', 'Azul', '#2490ff'),
                 ('14', 'Lila', '#bb6cff'),
-                ('20', 'Azul', '#2490ff'),
-                ('22', 'Lila', '#bb6cff'),
                 ('17', 'Verde', '#19d96b'),
+                ('20', 'Azul', '#2490ff'),
                 ('10', 'Rojo', '#ff2b2b'),
-                ('18', 'Verde', '#19d96b'),
-                ('35', 'Amarillo', '#ffd84f')
+                ('22', 'Lila', '#bb6cff'),
+                ('35', 'Amarillo', '#ffd84f'),
+                ('13', 'Azul', '#2490ff'),
+                ('18', 'Verde', '#19d96b')
             ] %}
             {% for code, name, color in token_colors %}
             <div class="token-card" style="--token-color: {{ color }}">
-                <div class="token-id">{{ code }}</div>
-                <div class="token-core">
-                    <div class="token-halo"></div>
-                    <img
-                        class="token-icon"
-                        src="{{ url_for('static', filename='images/shared/gameplay/token_card.png') }}"
-                        alt="Token {{ code }}"
-                    >
+                <div class="token-face">
+                    <div class="token-id">{{ code }}</div>
+                    <div class="token-core">
+                        <div class="token-halo"></div>
+                        <img
+                            class="token-icon"
+                            src="{{ url_for('static', filename='images/shared/gameplay/token_card.png') }}"
+                            alt="Token {{ code }}"
+                        >
+                    </div>
                 </div>
             </div>
             {% endfor %}
-        </div>
-    </aside>
-
-    <section id="tracker-panel" class="p6-panel">
-        <div id="energy-stage">
-            <div id="led-rig">
-                <div class="led-screw led-screw-top-left"></div>
-                <div class="led-screw led-screw-top-right"></div>
-                <div class="led-screw led-screw-bottom-left"></div>
-                <div class="led-screw led-screw-bottom-right"></div>
-
-                <div id="led-rig-inner">
-                    <div id="led-strip-window">
-                        <div class="led-lane">
-                            {% set led_pixels = [
-                                'red', 'red', 'yellow', 'yellow', 'blue', 'blue',
-                                'lilac', 'lilac', 'blue', 'blue', 'lilac', 'lilac',
-                                'green', 'green', 'red', 'red', 'green', 'green',
-                                'yellow', 'yellow'
-                            ] %}
-                            {% for tone in led_pixels %}
-                            <div
-                                class="mini-led tone-{{ tone }}"
-                                style="--blink-delay: {{ '%.2f'|format(loop.index0 * 0.11) }}s;"
-                            ></div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="led-glow led-glow-a"></div>
-                <div class="led-glow led-glow-b"></div>
-                <div class="led-glow led-glow-c"></div>
             </div>
         </div>
     </section>

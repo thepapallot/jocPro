@@ -328,14 +328,14 @@ body {
 .scene-video {
     object-fit: cover;
     background: #000;
-    transition: opacity 440ms ease, filter 440ms ease, transform 440ms ease;
+    transition: opacity 560ms cubic-bezier(0.22, 0.72, 0.22, 1), filter 560ms cubic-bezier(0.22, 0.72, 0.22, 1), transform 560ms cubic-bezier(0.22, 0.72, 0.22, 1);
 }
 
 .scene-video--hidden {
     opacity: 0;
     pointer-events: none;
-    filter: saturate(0.56) brightness(0.52) blur(2px);
-    transform: scale(1.03);
+    filter: saturate(0.72) brightness(0.66) blur(1px);
+    transform: scale(1.014);
 }
 
 .scene-video--reveal {
@@ -347,7 +347,7 @@ body {
     z-index: 10;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 360ms ease;
+    transition: opacity 460ms cubic-bezier(0.2, 0.72, 0.24, 1);
 }
 
 .ui-layer.layer-visible,
@@ -2249,6 +2249,37 @@ body {
     transform: translateX(-50%) translateY(0);
 }
 
+.keyword-overlay {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    z-index: 26;
+    width: min(1400px, calc(100% - 120px));
+    transform: translate(-50%, -50%) scale(0.9);
+    padding: 10px 18px;
+    color: rgba(239, 249, 255, 0.98);
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5.2cqw, 5.8rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    text-shadow:
+        0 0 24px rgba(87, 222, 245, 0.42),
+        0 0 48px rgba(255, 79, 214, 0.3),
+        0 8px 24px rgba(1, 4, 10, 0.65);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease, transform 260ms cubic-bezier(0.2, 0.82, 0.22, 1);
+}
+
+.keyword-overlay--visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    animation: keyword-impact 640ms cubic-bezier(0.16, 0.84, 0.2, 1);
+}
+
 .transition-screen {
     position: absolute;
     inset: 0;
@@ -2259,12 +2290,12 @@ body {
 }
 
 .transition-screen--crossfade-in {
-    animation: transition-crossfade-in 360ms cubic-bezier(0.2, 0.72, 0.24, 1) both;
+    animation: transition-crossfade-in 460ms cubic-bezier(0.2, 0.72, 0.24, 1) both;
 }
 
 .transition-screen--crossfade-out {
     pointer-events: none;
-    animation: transition-crossfade-out 340ms ease both;
+    animation: transition-crossfade-out 440ms ease both;
 }
 
 @keyframes transition-crossfade-in {
@@ -3190,10 +3221,11 @@ body {
     z-index: 1;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
+    gap: 20px;
     height: 100%;
-    align-content: stretch;
-    grid-auto-rows: 1fr;
+    align-content: center;
+    justify-items: center;
+    grid-auto-rows: auto;
 }
 
 /* Energia intro uses only two token blocks in this transition; center them and
@@ -3203,6 +3235,7 @@ body {
     width: min(920px, 100%);
     margin-inline: auto;
     justify-content: center;
+    align-items: center;
 }
 
 .p6-map-card {
@@ -3210,61 +3243,54 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
-    padding: 10px 12px 14px;
-    min-height: 0;
-    height: 100%;
+    justify-content: center;
+    gap: 6px;
+    width: clamp(170px, 12.6cqw, 238px);
+    aspect-ratio: 1;
     overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--token-color) 48%, rgba(255, 255, 255, 0.08));
-    border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--token-color) 58%, rgba(255, 255, 255, 0.08));
+    border-radius: 999px;
     background:
-        linear-gradient(
-            180deg,
-            color-mix(in srgb, var(--token-color) 30%, rgba(255, 255, 255, 0.04)) 0%,
-            color-mix(in srgb, var(--token-color) 16%, rgba(6, 14, 28, 0.92)) 100%
-        ),
-        radial-gradient(circle at 50% 22%, color-mix(in srgb, var(--token-color) 58%, transparent), transparent 48%),
-        radial-gradient(circle at 50% 82%, color-mix(in srgb, var(--token-color) 28%, transparent), transparent 62%);
+        radial-gradient(circle at 35% 24%, rgba(255, 255, 255, 0.22), transparent 42%),
+        radial-gradient(
+            circle at 50% 54%,
+            color-mix(in srgb, var(--token-color) 34%, rgba(8, 18, 30, 0.96)) 0%,
+            rgba(7, 16, 28, 0.96) 70%
+        );
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 0 34px color-mix(in srgb, var(--token-color) 18%, transparent),
-        0 0 22px color-mix(in srgb, var(--token-color) 14%, transparent);
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 0 30px color-mix(in srgb, var(--token-color) 26%, transparent),
+        0 0 26px color-mix(in srgb, var(--token-color) 24%, transparent);
 }
 
 .p6-map-card::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: 8%;
+    border-radius: inherit;
     background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 30%),
-        radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--token-color) 34%, transparent), transparent 52%);
-    opacity: 0.9;
+        radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--token-color) 26%, transparent), transparent 56%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 48%);
+    opacity: 0.85;
     pointer-events: none;
 }
 
 .p6-map-card::after {
-    content: "";
-    position: absolute;
-    inset: auto 12px 10px 12px;
-    height: 3px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, transparent, var(--token-color), transparent);
-    opacity: 0.9;
+    content: none;
 }
 
 .p6-map-card__number {
     position: relative;
     z-index: 2;
-    margin-top: 6px;
+    margin-top: 0;
     font-family: var(--font-display);
-    font-size: clamp(3.1rem, 4.6cqw, 5rem);
-    font-weight: 800;
+    font-size: clamp(3.2rem, 4.7cqw, 5.2rem);
+    font-weight: 900;
     line-height: 1;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.03em;
     color: #f8fdff;
     text-shadow:
-        0 0 10px rgba(0, 0, 0, 0.9),
+        0 0 10px rgba(0, 0, 0, 0.82),
         0 0 18px color-mix(in srgb, var(--token-color) 45%, transparent);
 }
 
@@ -3272,41 +3298,40 @@ body {
     position: relative;
     display: grid;
     place-items: center;
-    width: 126px;
-    height: 150px;
-    margin-top: 12px;
+    width: clamp(60px, 4.2cqw, 78px);
+    height: clamp(60px, 4.2cqw, 78px);
+    margin-top: 0;
 }
 
 .p6-map-card__core::before {
     content: "";
     position: absolute;
-    inset: -6px 2px 2px;
-    border-radius: 24px;
+    inset: -6px;
+    border-radius: 999px;
     background:
-        radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--token-color) 82%, transparent), transparent 54%),
+        radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--token-color) 82%, transparent), transparent 56%),
         linear-gradient(
             180deg,
-            color-mix(in srgb, var(--token-color) 54%, rgba(255, 255, 255, 0.08)) 0%,
-            color-mix(in srgb, var(--token-color) 20%, transparent) 100%
+            color-mix(in srgb, var(--token-color) 42%, rgba(255, 255, 255, 0.1)) 0%,
+            color-mix(in srgb, var(--token-color) 22%, transparent) 100%
         );
     box-shadow:
-        0 0 34px color-mix(in srgb, var(--token-color) 52%, transparent),
-        0 0 68px color-mix(in srgb, var(--token-color) 24%, transparent),
-        inset 0 0 28px color-mix(in srgb, var(--token-color) 34%, transparent);
+        0 0 26px color-mix(in srgb, var(--token-color) 46%, transparent),
+        inset 0 0 16px color-mix(in srgb, var(--token-color) 32%, transparent);
 }
 
 .p6-map-card__token {
     position: relative;
     z-index: 1;
-    width: 88px;
-    height: 88px;
+    width: clamp(44px, 3.2cqw, 60px);
+    height: clamp(44px, 3.2cqw, 60px);
     object-fit: contain;
     filter:
-        brightness(0.82)
-        saturate(1.12)
-        drop-shadow(0 0 12px rgba(255,255,255,0.45))
-        drop-shadow(0 0 30px color-mix(in srgb, var(--token-color) 74%, transparent));
-    opacity: 0.92;
+        brightness(0.88)
+        saturate(1.08)
+        drop-shadow(0 0 8px rgba(255,255,255,0.35))
+        drop-shadow(0 0 16px color-mix(in srgb, var(--token-color) 70%, transparent));
+    opacity: 0.94;
 }
 
 .transition-screen--puzzle8-grid {
@@ -4160,6 +4185,17 @@ body {
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes keyword-impact {
+    from {
+        letter-spacing: 0.18em;
+        filter: blur(8px);
+    }
+    to {
+        letter-spacing: 0.1em;
         filter: blur(0);
     }
 }
