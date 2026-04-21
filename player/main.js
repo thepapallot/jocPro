@@ -1063,7 +1063,7 @@ function IntroBriefTransition(segment) {
 
     if (evaluationText) {
         const evaluationBlock = createElement("article", "intro-brief-block intro-brief-block--evaluation");
-        evaluationBlock.appendChild(createElement("h3", "intro-brief-block__title", "EVALUACION"));
+        evaluationBlock.appendChild(createElement("h3", "intro-brief-block__title", "EVALUACIÓN"));
         evaluationBlock.appendChild(createElement("p", "intro-brief-block__text", evaluationText));
         details.appendChild(evaluationBlock);
     }
