@@ -35,40 +35,45 @@
     {
       "start": 21.6,
       "end": 28.0,
-      "text": "Cada token contiene tres colores ocultos. Para descubrirlos, colocad el token en cualquier terminal y pulsad los botones negro, rojo y verde."
+      "text": "Cada token contiene tres colores ocultos. Para descubrirlos, colocad el token en cualquier terminal."
     },
     {
-      "start": 28.0,
+      "start": 28.08,
       "end": 31.76,
-      "text": "Cada botón encenderá uno de los colores de ese token."
+      "text": "Y pulsad los botones negro, rojo y verde."
     },
     {
       "start": 31.76,
       "end": 35.44,
-      "text": "Y esos colores serán siempre los mismos, esté donde esté."
+      "text": "Cada botón encenderá uno de los colores de ese token."
     },
     {
       "start": 35.44,
       "end": 40.08,
-      "text": "Tendréis que moveros entre terminales usando cada token donde más convenga."
+      "text": "Y esos colores serán siempre los mismos, esté donde esté."
     },
     {
       "start": 40.08,
       "end": 45.12,
-      "text": "Así completaréis los segmentos que faltan en cada patrón."
+      "text": "Tendréis que moveros entre terminales usando cada token donde más convenga."
     },
     {
       "start": 45.12,
       "end": 49.12,
-      "text": "Descubrid, combinad y coordinaos rápido."
+      "text": "Así completaréis los segmentos que faltan en cada patrón."
     },
     {
       "start": 49.12,
       "end": 53.36,
-      "text": "Si el tiempo llega a cero, la fase se reiniciará."
+      "text": "Descubrid, combinad y coordinaos rápido."
     },
     {
       "start": 53.36,
+      "end": 57.28,
+      "text": "Si el tiempo llega a cero, la fase se reiniciará."
+    },
+    {
+      "start": 57.28,
       "end": 59.95,
       "text": "Entended el sistema y hacedlo vuestro."
     }
@@ -116,7 +121,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 41.24202,
+      "duration": 24.04,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -164,7 +169,7 @@
           }
         },
         {
-          "at": 11.96,
+          "at": 12.04,
           "sfx": "pulse",
           "variant": "immersive-strip",
           "top": {
@@ -187,88 +192,42 @@
           }
         },
         {
-          "at": 15.72,
+          "at": 15.76,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "layout": "large-3",
             "show_equals": false,
             "assets": [
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
-              },
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
-              },
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
-              }
-            ]
-          }
-        },
-        {
-          "at": 19.4,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "layout": "terminals-3-tokens-2",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
-              },
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
-              },
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
-              },
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
-              },
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
-              }
-            ]
-          }
-        },
-        {
-          "at": 24.04,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "layout": "large-3",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/terminal_3d/terminal_box_buttons_numbers_front.png",
-                "alt": "Terminal y segmentos"
-              },
-              {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar (3 colores fija)",
-                "fx": "scanner-static-3"
-              },
               {
                 "src": "/static/images/shared/nuevos iconos/apretar boton.png",
                 "alt": "Apretar boton"
+              },
+              {
+                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+                "alt": "Tira led en secuencia",
+                "fx": "scanner-sequence"
               }
             ]
           }
-        },
+        }
+      ]
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_explanation_long_a.mp4",
+      "clip_start": 0,
+      "clip_end": 5.04,
+      "duration": 5.04,
+      "label": "cero_medio_refuerzo"
+    },
+    {
+      "type": "fullscreen_ui",
+      "duration": 12.16202,
+      "variant": "immersive-strip",
+      "phases": [
         {
-          "at": 29.08,
+          "at": 0.0,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -276,37 +235,52 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
-              },
-              {
-                "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones colores"
+                "src": "/static/images/shared/terminal_3d/scanner_bar_on.png",
+                "alt": "Segmentos completados"
               }
             ]
           }
         },
         {
-          "at": 33.08,
+          "at": 4.0,
+          "sfx": "pulse",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/decision_rapida.png",
+                "alt": "Decision rapida"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/equipo_consenso.png",
+                "alt": "Equipo consenso"
+              }
+            ]
+          }
+        },
+        {
+          "at": 8.24,
           "sfx": "warning",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
+            "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/temporizador.png",
-                "alt": "Temporizador"
+                "src": "/static/images/shared/nuevos iconos/reloj tiempo.png",
+                "alt": "Reloj tiempo"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/reset.png",
+                "alt": "Reset"
               }
             ]
           }
         },
         {
-          "at": 37.32,
+          "at": 12.16,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -314,17 +288,12 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/resultado_pantalla.png",
+                "alt": "Resultado en pantalla"
               },
               {
-                "src": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-                "alt": "Scanner bar (secuencia leds)",
-                "fx": "scanner-sequence"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores.png",
-                "alt": "Botones colores"
+                "src": "/static/images/shared/nuevos iconos/veredicto_ok.png",
+                "alt": "Veredicto correcto"
               }
             ]
           }

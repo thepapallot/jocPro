@@ -16,33 +16,36 @@ To achieve this, you will use your tokens and the terminal buttons.
 
 5
 00:00:21,600 --> 00:00:28,000
-Each token contains three hidden colors. To discover them, place the token on any terminal and press
-the black, red, and green buttons.
+Each token contains three hidden colors. To discover them, place the token on any terminal.
 
 6
 00:00:28,080 --> 00:00:31,760
-Each button will light up one of that token's colors.
+And press the black, red, and green buttons.
 
 7
 00:00:31,760 --> 00:00:35,440
-And those colors will always be the same, no matter where it is.
+Each button will light up one of that token's colors.
 
 8
 00:00:35,440 --> 00:00:40,080
-You will need to move between terminals, using each token where it is most useful.
+And those colors will always be the same, no matter where it is.
 
 9
 00:00:40,080 --> 00:00:45,120
-That is how you will complete the missing segments in each pattern.
+You will need to move between terminals, using each token where it is most useful.
 
 10
 00:00:45,120 --> 00:00:49,120
-Discover, combine, and coordinate quickly.
+That is how you will complete the missing segments in each pattern.
 
 11
 00:00:49,120 --> 00:00:53,360
-If time reaches zero, the phase will reset.
+Discover, combine, and coordinate quickly.
 
 12
 00:00:53,360 --> 00:00:57,280
+If time reaches zero, the phase will reset.
+
+13
+00:00:57,280 --> 00:00:59,950
 Understand the system and make it yours.

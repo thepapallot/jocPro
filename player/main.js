@@ -30,9 +30,17 @@ const elements = {
     uiLayer: document.getElementById("ui-layer"),
     transitionLayer: document.getElementById("transition-layer"),
     subtitleOverlay: document.getElementById("subtitle-overlay"),
+    keywordOverlay: document.getElementById("keyword-overlay"),
     persistentElementsStrip: document.getElementById("persistent-elements-strip"),
     bootOverlay: document.getElementById("boot-overlay"),
 };
+
+function normalizeForMatch(value) {
+    return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+}
 
 function resolveSceneId() {
     const params = new URLSearchParams(window.location.search);
@@ -80,7 +88,9 @@ function persistSubtitleLang(lang) {
 function resolveSubtitleLang() {
     const params = new URLSearchParams(window.location.search);
     const requested = params.get("lang");
-    const lang = requested ? normalizeSubtitleLang(requested) : readStoredSubtitleLang();
+    // Config/default should win when URL does not request a specific language.
+    // This avoids stale localStorage forcing an unexpected subtitle language.
+    const lang = requested ? normalizeSubtitleLang(requested) : DEFAULT_SUBTITLE_LANG;
     persistSubtitleLang(lang);
     return lang;
 }
@@ -104,7 +114,7 @@ function deriveSubtitleSrtBaseName(sceneId) {
         return "intro_inicial";
     }
 
-    if (sceneId === "scene_outro_game" || sceneId === "scene_video_final") {
+    if (sceneId === "scene_outro_game" || sceneId === "scene_video_final" || sceneId === "scene_final") {
         return "outro_final";
     }
 
@@ -1634,6 +1644,7 @@ class ScenePlayer {
         this.activePhaseKey = "";
         this.activePhaseIndex = -1;
         this.activeSubtitleKey = "";
+        this.activeKeywordKey = "";
         this.fullscreenPanelState = null;
         this.persistentStripState = null;
         this.audioContext = null;
@@ -1698,6 +1709,8 @@ class ScenePlayer {
 
         if (!subtitle) {
             elements.subtitleOverlay.classList.remove("subtitle-overlay--visible");
+            elements.keywordOverlay?.classList.remove("keyword-overlay--visible");
+            this.activeKeywordKey = "";
             return;
         }
 
@@ -1706,6 +1719,58 @@ class ScenePlayer {
         elements.subtitleOverlay.classList.remove("subtitle-overlay--visible");
         void elements.subtitleOverlay.offsetWidth;
         elements.subtitleOverlay.classList.add("subtitle-overlay--visible");
+
+        this.updateKeywordOverlay(subtitle);
+    }
+
+    updateKeywordOverlay(subtitle) {
+        if (!elements.keywordOverlay) {
+            return;
+        }
+
+        const emphasisRules = Array.isArray(this.scene.subtitle_emphasis)
+            ? this.scene.subtitle_emphasis
+            : [];
+
+        const normalizedSubtitle = normalizeForMatch(subtitle?.text || "");
+        const matchRule = emphasisRules.find((rule) => {
+            const terms = Array.isArray(rule?.matches)
+                ? rule.matches
+                : (rule?.match ? [rule.match] : []);
+            return terms.some((term) => normalizedSubtitle.includes(normalizeForMatch(term)));
+        });
+
+        if (!matchRule) {
+            elements.keywordOverlay.classList.remove("keyword-overlay--visible");
+            this.activeKeywordKey = "";
+            return;
+        }
+
+        const displayText = String(
+            matchRule.text ||
+            matchRule.label ||
+            (Array.isArray(matchRule.matches) && matchRule.matches[0]) ||
+            matchRule.match ||
+            "",
+        ).trim();
+
+        if (!displayText) {
+            elements.keywordOverlay.classList.remove("keyword-overlay--visible");
+            this.activeKeywordKey = "";
+            return;
+        }
+
+        const nextKeywordKey = `${subtitle.start}-${subtitle.end}-${displayText}`;
+        if (nextKeywordKey === this.activeKeywordKey) {
+            return;
+        }
+
+        this.activeKeywordKey = nextKeywordKey;
+        elements.keywordOverlay.textContent = displayText;
+        elements.keywordOverlay.classList.remove("hidden");
+        elements.keywordOverlay.classList.remove("keyword-overlay--visible");
+        void elements.keywordOverlay.offsetWidth;
+        elements.keywordOverlay.classList.add("keyword-overlay--visible");
     }
 
     hasMasterAudio() {
@@ -2273,13 +2338,14 @@ class ScenePlayer {
 
         const nextSegment = this.segments[nextIndex];
         const crossfadeTransition = previousSegment?.type === "transition" && nextSegment?.type === "transition";
+        const previousSegmentType = previousSegment?.type || "";
         const shouldAutoplay = autoplay && !nextSegment?.advance_on_space;
         this.playing = shouldAutoplay;
         this.currentSegmentIndex = nextIndex;
         this.segmentElapsed = 0;
         this.segmentStartedAt = shouldAutoplay ? performance.now() : 0;
         this.primeProgressWatch(this.segmentStartedAt || performance.now());
-        this.renderSegment({ crossfadeTransition });
+        this.renderSegment({ crossfadeTransition, previousSegmentType });
         this.updateStatus();
         await this.syncMedia(shouldAutoplay, { preserveAudio });
 
@@ -2288,7 +2354,26 @@ class ScenePlayer {
         }
     }
 
-    renderSegment({ crossfadeTransition = false } = {}) {
+    fadeOutTransitionLayer() {
+        const screens = Array.from(elements.transitionLayer.querySelectorAll(".transition-screen"));
+        if (screens.length === 0) {
+            elements.transitionLayer.innerHTML = "";
+            elements.transitionLayer.classList.remove("layer-visible");
+            return;
+        }
+
+        screens.forEach((screen) => {
+            screen.classList.remove("transition-screen--crossfade-in");
+            screen.classList.add("transition-screen--crossfade-out");
+        });
+
+        window.setTimeout(() => {
+            elements.transitionLayer.innerHTML = "";
+            elements.transitionLayer.classList.remove("layer-visible");
+        }, 460);
+    }
+
+    renderSegment({ crossfadeTransition = false, previousSegmentType = "" } = {}) {
         const segment = this.currentSegment;
         const keepCharacterFrame = Boolean(this.scene?.use_character_frame);
         this.clearIntroBriefTitleAudio({ stopPlayback: true });
@@ -2302,8 +2387,12 @@ class ScenePlayer {
         elements.video.classList.remove("scene-video--hidden", "scene-video--reveal");
 
         if (!(crossfadeTransition && segment.type === "transition")) {
-            elements.transitionLayer.innerHTML = "";
-            elements.transitionLayer.classList.remove("layer-visible");
+            if (previousSegmentType === "transition" && segment.type !== "transition") {
+                this.fadeOutTransitionLayer();
+            } else {
+                elements.transitionLayer.innerHTML = "";
+                elements.transitionLayer.classList.remove("layer-visible");
+            }
         }
         elements.playerRoot?.classList.remove("player-root--character-feed");
         if (!keepCharacterFrame) {
@@ -2363,6 +2452,9 @@ class ScenePlayer {
                     }
                 }, 340);
             } else {
+                if (previousSegmentType === "character") {
+                    nextScreen.classList.add("transition-screen--crossfade-in");
+                }
                 elements.transitionLayer.appendChild(nextScreen);
             }
             if (segment.variant === "countdown") {
