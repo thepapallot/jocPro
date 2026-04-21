@@ -2069,6 +2069,7 @@
       }
       simState.puzzle8Phase = data.phase || "idle";
       simState.puzzle8Round = data.round || 0;
+      simState.puzzle8RoundTotal = data.round_total || simState.puzzle8RoundTotal || 3;
       simState.puzzle8State = data;
       if (!silent) {
         setStatus("Puzzle 8 sincronizado");
@@ -2102,6 +2103,7 @@
     const colorNames = { "1": "red", "2": "yellow", "3": "blue", "4": "black", "5": "green", "6": "white" };
     const phase = simState.puzzle8Phase || "idle";
     const state = simState.puzzle8State || {};
+    const roundTotal = Number(state.round_total || simState.puzzle8RoundTotal || 3);
     const tokenByTerminal = Object.fromEntries(tokenMap.map((token) => [token.terminal, token]));
     const tokenByCode = Object.fromEntries(tokenMap.map((token) => [token.value, token]));
     const symbolCodeByName = Object.fromEntries(symbolNames.map((name, index) => [name, String(index)]));
@@ -2192,7 +2194,7 @@
 
     els.simContent.innerHTML = `
       <div class="sim-selected-readout">
-        Fase: <strong>${phase}</strong> · Ronda: <strong>${simState.puzzle8Round || 0}</strong>
+        Fase: <strong>${phase}</strong> · Ronda: <strong>${simState.puzzle8Round || 0}/${roundTotal}</strong>
       </div>
       <div class="sim-p8-display">
         <div class="field-label">Solucion</div>

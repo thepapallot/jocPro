@@ -16,7 +16,7 @@ class Puzzle8(BasePuzzle):
         self.token_numbers = [18, 14, 17, 5, 20, 10, 13, 31, 35, 22]
         
         # Round configuration
-        self.round_total = 3
+        self.round_total = 2 #You can set this to 1, 2, or 3 for different difficulty levels
         self.round = 0
         self.phase = "idle"
         self._timers = []
@@ -47,6 +47,11 @@ class Puzzle8(BasePuzzle):
         }
         self.number_to_code_map = {number: code for code, number in self.numbers_code_map.items()}
         self.color_name_to_code = {name: code for code, name in self.color_code_map.items()}
+
+    def _push(self, data):
+        payload = {"round_total": self.round_total}
+        payload.update(data)
+        super()._push(payload)
         
     def _schedule(self, fn, delay):
         """Schedule a function to run after delay seconds"""
@@ -80,7 +85,7 @@ class Puzzle8(BasePuzzle):
             
             # Clear frames
             self._push({"clear": True})
-            
+
             # Wait 5s then show numbers
             self._schedule(self._show_numbers, 5)
             
@@ -161,6 +166,7 @@ class Puzzle8(BasePuzzle):
         with self.lock:
             state = {
                 "puzzle_id": self.id,
+                "round_total": self.round_total,
                 "round": self.round,
                 "phase": self.phase,
                 "puzzle_solved": self.solved

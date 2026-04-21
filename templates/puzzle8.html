@@ -8,7 +8,7 @@
 
 {% block top_right %}
 <div id="streak-panel">
-    <div id="streak">1/3</div>
+    <div id="streak">--/--</div>
 
     <!-- Solved banner -->
     <div id="p8-solved-banner" class="p8-solved-banner hidden">
@@ -20,7 +20,7 @@
 {% block puzzle_content %}
 <div id="p8-shell">
     <section id="p8-stage" class="p8-panel">
-        <div id="p8-rounds">
+        <div id="p8-rounds" class="is-pending" data-round-total="3">
             <div class="round-card" data-round-card="1">
                 <div class="round-name round-name-1" aria-label="Ronda 1">
                     <span class="round-dot"></span>
