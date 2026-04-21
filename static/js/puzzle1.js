@@ -637,7 +637,7 @@
                 playEffect('fase_nocompletada.wav');
                 setDangerScreenActive(true);
 
-                clearSolvedContainer();
+                // renderStatus('timeout');  // Keep for future use
                 resetObjectiveFormula();
                 if (objectivePanel) {
                     objectivePanel.classList.add('p1-formula-error');

@@ -47,11 +47,6 @@
 			{% endfor %}
 		</div>
 	</section>
-
-	<!-- Solved banner -->
-	<div id="p10-solved-banner" class="p10-solved-banner hidden">
-		<div class="p10-solved-text">NIVEL COMPLETADO</div>
-	</div>
 </div>
 {% endblock %}
 
@@ -60,4 +55,10 @@
 	window.NEXT_PUZZLE_ID = {{ next_puzzle_id|tojson|safe }};
 </script>
 <script src="{{ url_for('static', filename='js/puzzle10.js') }}"></script>
+{% endblock %}
+
+{% block after_body %}
+<div id="p10-solved-banner" class="p10-solved-banner hidden">
+	<div class="p10-solved-text">NIVEL COMPLETADO</div>
+</div>
 {% endblock %}

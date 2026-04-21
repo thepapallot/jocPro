@@ -458,20 +458,20 @@ body.p1-danger-state::before {
 }
 
 .status-badge.is-timeout::before {
-    width: 16px;
-    height: 22px;
-    border: 3px solid var(--bad);
+    width: 24px;
+    height: 28px;
+    border: 3.5px solid var(--bad);
     border-top-width: 4px;
     border-bottom-width: 4px;
     border-radius: 999px;
 }
 
 .status-badge.is-timeout::after {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 999px;
     background: var(--bad);
-    box-shadow: 0 10px 0 0 rgba(255,79,109,0.35);
+    box-shadow: 0 12px 0 0 rgba(255,79,109,0.35);
 }
 
 .status-badge.is-countdown {
@@ -664,11 +664,9 @@ body.p1-danger-state::before {
 ========================= */
 
 .tick {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100%;
     font-size: clamp(4rem, 8vw, 7rem);
     @media (min-width: 2000px) {
         #objective-formula span {
@@ -694,6 +692,7 @@ body.p1-danger-state::before {
         0 0 22px rgba(45,255,155,0.6),
         0 0 40px rgba(45,255,155,0.25);
     animation: none;
+    white-space: nowrap;
 }
 
 .tick.is-new {

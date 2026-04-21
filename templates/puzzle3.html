@@ -10,11 +10,6 @@
 <div id="streak-panel">
     <div class="hud-label">Progreso</div>
     <div id="streak">1/10</div>
-
-    <!-- Solved banner -->
-    <div id="p3-solved-banner" class="p3-solved-banner hidden">
-        <div class="p3-solved-text">NIVEL COMPLETADO</div>
-    </div>
 </div>
 {% endblock %}
 
@@ -77,4 +72,10 @@
     window.NEXT_PUZZLE_ID = {{ next_puzzle_id|tojson|safe }};
 </script>
 <script src="{{ url_for('static', filename='js/puzzle3.js') }}"></script>
+{% endblock %}
+
+{% block after_body %}
+<div id="p3-solved-banner" class="p3-solved-banner hidden">
+    <div class="p3-solved-text">NIVEL COMPLETADO</div>
+</div>
 {% endblock %}

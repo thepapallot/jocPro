@@ -12,6 +12,7 @@
     let endTime = null;
     let countdownTimer = null;
     let resetTimer = null;
+    let lastRenderedSecond = null;
 
     // Sound helper and URLs
     function playSound(url, options = {}) {
@@ -131,6 +132,7 @@
         clearTimers();
         active = true;
         solved = false;
+        lastRenderedSecond = null;
         setMessage(DEFAULT_MESSAGE, false);
         countdownEl.classList.remove('failure');  // Remove failure class when starting normal countdown
         countdownEl.classList.remove('expired');
@@ -139,31 +141,37 @@
         setUrgency(remainingSeconds);
         endTime = Date.now() + Math.max(0, remainingSeconds) * 1000;
         updateCountdown(); // immediate
-        countdownTimer = setInterval(updateCountdown, 1000);
+        countdownTimer = setInterval(updateCountdown, 120);
     }
 
     function updateCountdown() {
         if (!active || solved || endTime == null) return;
-        const remaining = Math.round((endTime - Date.now()) / 1000);
+        const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
         countdownEl.textContent = format(remaining);
         setUrgency(remaining);
-        triggerTickPulse(remaining);
 
-        // Play boto.wav on each second tick while main countdown is active
-        if (remaining > 0) {
-            playCountdownBeep(remaining);
+        const secondChanged = remaining !== lastRenderedSecond;
+        if (secondChanged) {
+            triggerTickPulse(remaining);
+            // Only play on real second transitions, not on timer jitter.
+            if (lastRenderedSecond != null && remaining > 0) {
+                playCountdownBeep(remaining);
+            }
+            lastRenderedSecond = remaining;
         }
         
         // Add expired class when time runs out
         if (remaining <= 0) {
             clearInterval(countdownTimer);
             active = false;
+            lastRenderedSecond = null;
             countdownEl.classList.add('expired');
         }
     }
 
     function handleReset(waitSeconds, msg) {
         active = false;
+        lastRenderedSecond = null;
         clearTimers();
         // Play KO sound on reset
         playSound(PHASE_KO_SOUND_URL);
@@ -202,6 +210,7 @@
     function applySolvedState() {
         solved = true;
         active = false;
+        lastRenderedSecond = null;
         endTime = null;
         clearTimers();
         countdownEl.textContent = '0';
@@ -236,6 +245,7 @@
         }
 
         active = false;
+        lastRenderedSecond = null;
         endTime = null;
         clearTimers();
         countdownEl.classList.remove('failure', 'expired');
