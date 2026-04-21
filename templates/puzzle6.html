@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Puzzle 6{% endblock %}
+{% block level_title %}NIVEL FINAL{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle6.css') }}">
@@ -19,9 +20,8 @@
 
     <section id="p6-arena" aria-label="Panel central de energia">
         <div id="countdown-core">
-            <div id="pyramid-ghost" aria-hidden="true"></div>
             <div id="countdown-panel">
-                <div id="countdown">01:00</div>
+                <div id="countdown">60</div>
             </div>
         </div>
 
@@ -30,14 +30,14 @@
             {% set token_colors = [
                 ('5', 'Rojo', '#ff2b2b'),
                 ('31', 'Amarillo', '#ffd84f'),
-                ('13', 'Azul', '#2490ff'),
                 ('14', 'Lila', '#bb6cff'),
-                ('20', 'Azul', '#2490ff'),
-                ('22', 'Lila', '#bb6cff'),
                 ('17', 'Verde', '#19d96b'),
+                ('20', 'Azul', '#2490ff'),
                 ('10', 'Rojo', '#ff2b2b'),
-                ('18', 'Verde', '#19d96b'),
-                ('35', 'Amarillo', '#ffd84f')
+                ('22', 'Lila', '#bb6cff'),
+                ('35', 'Amarillo', '#ffd84f'),
+                ('13', 'Azul', '#2490ff'),
+                ('18', 'Verde', '#19d96b')
             ] %}
             {% for code, name, color in token_colors %}
             <div class="token-card" style="--token-color: {{ color }}">
