@@ -1,83 +1,195 @@
 1
 00:00:00,000 --> 00:00:04,000
-Welcome. You cannot imagine how glad I am that you are already here.
+Welcome, you do not know how glad I am that you are all here today.
 
 2
-00:00:04,000 --> 00:00:07,599
-I am Cero, a member of Organization ADN.
+00:00:04,000 --> 00:00:08,000
+I am Cero, member of Organization ADN.
 
 3
-00:00:07,599 --> 00:00:12,000
-For years we have been investigating what makes some human groups
+00:00:08,000 --> 00:00:14,000
+For a long time in the Organization we have been investigating what it is that makes some human groups
 
 4
-00:00:12,000 --> 00:00:14,800
-able to go farther than the rest.
+00:00:14,000 --> 00:00:17,000
+able to go further than the rest.
 
 5
-00:00:14,800 --> 00:00:19,199
-Why are there teams that, together, can achieve milestones that seem impossible.
+00:00:17,000 --> 00:00:22,000
+Why are there teams that together can achieve feats that seem impossible?
 
 6
-00:00:19,199 --> 00:00:21,399
-After a long time analyzing data,
+00:00:22,000 --> 00:00:24,000
+Thousands of years ago,
 
 7
-00:00:21,399 --> 00:00:25,000
-we have identified a very small number of groups with
+00:00:24,000 --> 00:00:30,000
+humanity already showed what it can do when many people share a common goal.
 
 8
-00:00:25,000 --> 00:00:30,800
-unique potential. You are one of them. Thousands of years ago, humanity already showed what it
+00:00:30,000 --> 00:00:32,000
+Colossal works,
 
 9
-00:00:30,800 --> 00:00:35,399
-can do when many people share a common goal.
+00:00:32,000 --> 00:00:35,000
+legacies that still amaze us today.
 
 10
-00:00:35,399 --> 00:00:41,119
-Colossal works, legacies that still amaze us today. Among all of them, one rises
+00:00:35,000 --> 00:00:36,000
+Among them all,
 
 11
-00:00:41,119 --> 00:00:45,500
-as a symbol of balance, effort, and precision: the pyramid.
+00:00:36,000 --> 00:00:39,000
+one rises as a symbol of balance,
 
 12
-00:00:45,500 --> 00:00:51,200
-Today we will evaluate your skills as a team, and you will have to overcome a series of challenges
+00:00:39,000 --> 00:00:41,000
+effort and precision,
 
 13
-00:00:51,200 --> 00:00:59,200
-to build your own pyramid, a construction made of coordination, ingenuity, and trust.
+00:00:41,000 --> 00:00:42,000
+the pyramid.
 
 14
-00:00:59,200 --> 00:01:04,900
-To overcome these tests, you will need the ten terminals distributed around the room,
+00:00:42,000 --> 00:00:44,000
+And we have spent years studying patterns,
 
 15
-00:01:04,900 --> 00:01:05,239
-and some pyramid tokens that we will hand out to each group.
+00:00:44,000 --> 00:00:48,000
+cross-referencing data and exploring the mysteries of human creativity,
 
 16
-00:01:05,239 --> 00:01:10,400
-And some pyramid tokens that we will hand out to each group. These tokens will be
+00:00:48,000 --> 00:00:50,000
+with an ambitious objective,
 
 17
-00:01:10,400 --> 00:01:15,560
-non-transferable. To use them, you must place them on the square mark on the
+00:00:50,000 --> 00:00:53,000
+to understand and recover the extraordinary creative capacity
 
 18
-00:01:15,560 --> 00:01:22,280
-top of the terminals. A warning: we do not allow interference here. Phones and external
+00:00:53,000 --> 00:00:56,000
+that flourished in the era of the pyramids.
 
 19
-00:01:22,280 --> 00:01:30,359
-accessories are forbidden. Your only tools will be what you have in front of you and your ability to collaborate.
+00:00:56,000 --> 00:00:57,000
+Today, at last,
 
 20
-00:01:30,359 --> 00:01:33,359
-For now, this is all I can tell you.
+00:00:57,000 --> 00:01:00,000
+we can say that this effort has borne fruit.
 
 21
-00:01:33,359 --> 00:01:35,840
-Prove that you are a capable team.
+00:01:00,000 --> 00:01:03,000
+We have identified a very small number of groups
+
+22
+00:01:03,000 --> 00:01:06,000
+that possess truly exceptional potential.
+
+23
+00:01:06,000 --> 00:01:08,000
+And you,
+
+24
+00:01:08,000 --> 00:01:10,000
+are among them.
+
+25
+00:01:10,000 --> 00:01:13,000
+Today we will evaluate your skills as a team
+
+26
+00:01:13,000 --> 00:01:15,000
+and you will have to overcome a series of trials
+
+27
+00:01:15,000 --> 00:01:18,000
+to build your own pyramid.
+
+28
+00:01:18,000 --> 00:01:21,000
+A construction made of coordination,
+
+29
+00:01:21,000 --> 00:01:22,000
+ingenuity,
+
+30
+00:01:22,000 --> 00:01:24,000
+and trust.
+
+31
+00:01:24,000 --> 00:01:26,000
+To overcome these trials,
+
+32
+00:01:26,000 --> 00:01:28,000
+you will need the ten terminals
+
+33
+00:01:28,000 --> 00:01:30,000
+distributed around the room
+
+34
+00:01:30,000 --> 00:01:33,000
+and some pyramid tokens that we will hand out to you.
+
+35
+00:01:33,000 --> 00:01:36,000
+These tokens will be non-transferable.
+
+36
+00:01:36,000 --> 00:01:37,000
+To use them,
+
+37
+00:01:37,000 --> 00:01:39,000
+you must place them on the square mark
+
+38
+00:01:39,000 --> 00:01:42,000
+on the upper part of the terminals.
+
+39
+00:01:42,000 --> 00:01:43,000
+A warning:
+
+40
+00:01:43,000 --> 00:01:46,000
+we do not allow interference here.
+
+41
+00:01:46,000 --> 00:01:48,000
+Mobile phones and external accessories
+
+42
+00:01:48,000 --> 00:01:50,000
+are forbidden.
+
+43
+00:01:50,000 --> 00:01:51,000
+Your only tools
+
+44
+00:01:51,000 --> 00:01:53,000
+will be what you have in front of you
+
+45
+00:01:53,000 --> 00:01:56,000
+and your ability to collaborate.
+
+46
+00:01:56,000 --> 00:01:57,000
+For now,
+
+47
+00:01:57,000 --> 00:01:59,000
+this is all I can tell you.
+
+48
+00:01:59,000 --> 00:02:01,000
+Show me you are a capable team.
+
+49
+00:02:01,000 --> 00:02:04,000
+The test begins now.

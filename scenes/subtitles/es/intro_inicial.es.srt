@@ -1,83 +1,196 @@
 1
 00:00:00,000 --> 00:00:04,000
-Bienvenidos. No os imagináis cuánto me alegro de que estéis ya aquí.
+Bienvenidos, no sabéis cuánto me alegro de que esté y soya aquí.
 
 2
-00:00:04,000 --> 00:00:07,599
+00:00:04,000 --> 00:00:08,000
 Soy Cero, miembro de la Organización ADN.
 
 3
-00:00:07,599 --> 00:00:12,000
-Hace años que estamos investigando qué es lo que hace que algunos grupos humanos
+00:00:08,000 --> 00:00:14,000
+Hace mucho tiempo que en la Organización estamos investigando que es lo que hace que algunos grupos humanos
 
 4
-00:00:12,000 --> 00:00:14,800
+00:00:14,000 --> 00:00:17,000
 sean capaces de llegar más lejos que el resto.
 
 5
-00:00:14,800 --> 00:00:19,199
-Por qué hay equipos que juntos pueden lograr hitos que parecen imposibles.
+00:00:17,000 --> 00:00:22,000
+Porque hay equipos que juntos pueden lograritos que parecen imposibles.
 
 6
-00:00:19,199 --> 00:00:21,399
-Después de mucho tiempo analizando datos,
+00:00:22,000 --> 00:00:24,000
+Hace miles de años,
 
 7
-00:00:21,399 --> 00:00:25,000
-hemos identificado un número muy reducido de grupos con un potencial
+00:00:24,000 --> 00:00:30,000
+la comunidad ya demostró lo que puede llegar a hacer cuando muchas personas comparten un objetivo común.
 
 8
-00:00:25,000 --> 00:00:30,800
-único. Vosotros sois uno de ellos. Hace miles de años, la humanidad ya demostró lo que
+00:00:30,000 --> 00:00:32,000
+Hobras colosales,
 
 9
-00:00:30,800 --> 00:00:35,399
-puede llegar a hacer cuando muchas personas comparten un objetivo común.
+00:00:32,000 --> 00:00:35,000
+legados que todavía hoy nos maravillan.
 
 10
-00:00:35,399 --> 00:00:41,119
-Obras colosales, legados que todavía hoy nos maravillan. Entre todas, una se levanta
+00:00:35,000 --> 00:00:36,000
+Entre todas,
 
 11
-00:00:41,119 --> 00:00:45,500
-como símbolo de equilibrio, esfuerzo y precisión: la pirámide.
+00:00:36,000 --> 00:00:39,000
+una celebanta como símbolo de equilibrio,
 
 12
-00:00:45,500 --> 00:00:51,200
-Hoy evaluaremos vuestras habilidades como equipo, y tendréis que superar una serie de retos
+00:00:39,000 --> 00:00:41,000
+esfuerzo y precisión,
 
 13
-00:00:51,200 --> 00:00:59,200
-para así construir vuestra propia pirámide, una construcción hecha de coordinación, ingenio y confianza.
+00:00:41,000 --> 00:00:42,000
+la pirámide.
 
 14
-00:00:59,200 --> 00:01:04,900
-Para superar estas pruebas, necesitaréis los diez terminales que están distribuidos por la sala,
+00:00:42,000 --> 00:00:44,000
+Y vamos años estudiando patrones,
 
 15
-00:01:04,900 --> 00:01:05,239
-y unos tokens piramidales que repartiremos a cada uno de los grupos.
+00:00:44,000 --> 00:00:48,000
+cruzando datos y explorando los misterios de la creatividad humana,
 
 16
-00:01:05,239 --> 00:01:10,400
-Y unos tokens piramidales que repartiremos a cada uno de los grupos. Estos tokens serán
+00:00:48,000 --> 00:00:50,000
+con un objetivo envicioso,
 
 17
-00:01:10,400 --> 00:01:15,560
-intransferibles. Para usarlos, deberéis colocarlos en la marca cuadrada que hay en la parte
+00:00:50,000 --> 00:00:53,000
+comprender y recuperar la extraordinaria capacidad de creación
 
 18
-00:01:15,560 --> 00:01:22,280
-superior de los terminales. Os aviso: aquí no admitimos interferencias. Móviles y accesorios
+00:00:53,000 --> 00:00:56,000
+que floreció en la época de las pirámides.
 
 19
-00:01:22,280 --> 00:01:30,359
-externos están prohibidos. Vuestras únicas herramientas serán las que tenéis delante y vuestra capacidad para colaborar.
+00:00:56,000 --> 00:00:57,000
+Hoy por fin,
 
 20
-00:01:30,359 --> 00:01:33,359
-De momento, esto es todo lo que os puedo contar.
+00:00:57,000 --> 00:01:00,000
+podemos decir que es esfuerzo adado fruto.
 
 21
-00:01:33,359 --> 00:01:35,840
-Demostrad que sois un equipo capaz.
+00:01:00,000 --> 00:01:03,000
+Hemos identificado un número muy reducido de grupos
+
+22
+00:01:03,000 --> 00:01:06,000
+que poseen un potencial verdaderamente excepcional.
+
+23
+00:01:06,000 --> 00:01:08,000
+Y vosotros,
+
+24
+00:01:08,000 --> 00:01:10,000
+estáis entre ellos.
+
+25
+00:01:10,000 --> 00:01:13,000
+Hoy valoremos vuestras habilidades como equipo
+
+26
+00:01:13,000 --> 00:01:15,000
+y tendréis que superar una serie de pruebas
+
+27
+00:01:15,000 --> 00:01:18,000
+para si construir vuestra propia pirámide.
+
+28
+00:01:18,000 --> 00:01:21,000
+Una construcción hecha de coordinación,
+
+29
+00:01:21,000 --> 00:01:22,000
+ingenio,
+
+30
+00:01:22,000 --> 00:01:24,000
+y confianza.
+
+31
+00:01:24,000 --> 00:01:26,000
+Para superar estas pruebas,
+
+32
+00:01:26,000 --> 00:01:28,000
+necesitaréis los diez terminales
+
+33
+00:01:28,000 --> 00:01:30,000
+que están distribuidos por la sala
+
+34
+00:01:30,000 --> 00:01:33,000
+y unos toques piramidales que os repartiremos.
+
+35
+00:01:33,000 --> 00:01:36,000
+Estos toques serán intransferibles
+
+36
+00:01:36,000 --> 00:01:37,000
+para usarlos,
+
+37
+00:01:37,000 --> 00:01:39,000
+deberéis colocarlos en la marca cuadrada
+
+38
+00:01:39,000 --> 00:01:42,000
+que hay en la parte superior de los terminales.
+
+39
+00:01:42,000 --> 00:01:43,000
+O sabíso,
+
+40
+00:01:43,000 --> 00:01:46,000
+aquí no admitimos interferencias.
+
+41
+00:01:46,000 --> 00:01:48,000
+Móviles y accesorios externos
+
+42
+00:01:48,000 --> 00:01:50,000
+están prohibidos.
+
+43
+00:01:50,000 --> 00:01:51,000
+vuestras únicas herramientas
+
+44
+00:01:51,000 --> 00:01:53,000
+serán las que tenéis delante
+
+45
+00:01:53,000 --> 00:01:56,000
+y vuestra capacidad para colaborar.
+
+46
+00:01:56,000 --> 00:01:57,000
+De momento,
+
+47
+00:01:57,000 --> 00:01:59,000
+esto es todo lo que os puedo contar.
+
+48
+00:01:59,000 --> 00:02:01,000
+De mostrado que soy un equipo capaz.
+
+49
+00:02:01,000 --> 00:02:04,000
+La prueba empieza ahora.
+
