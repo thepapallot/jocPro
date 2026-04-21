@@ -14,7 +14,7 @@ const SCENE_OVERLAY_TITLES = {
     scene_intro_trivial: "Mente Colmena",
     scene_intro_musica: "Código Sonoro",
     scene_intro_cronometro: "Pulso de Tiempo",
-    scene_intro_energia: "Carga Crítica",
+    scene_intro_energia: "Carga Final",
     scene_intro_memory: "Memoria Fantasma",
     scene_intro_token_a_lloc: "Arquitectos del Orden",
     scene_intro_segments: "Patrón Maestro",

@@ -76,7 +76,7 @@
     },
     "scene_intro_energia": {
       "kicker": "SIGUIENTE PRUEBA",
-      "title": "CARGA CRÍTICA",
+      "title": "CARGA FINAL",
       "objective": "Mantener las luces encendidas",
       "evaluation": "Anticipación y planificación",
       "title_audio": "/static/audios/audiosTitols/carga_final.mp3"

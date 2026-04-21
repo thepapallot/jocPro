@@ -321,12 +321,12 @@
         }
 
         if (d.reset_attempt) {
-            showActionFeedback('action-white', 'Reiniciando intento', 'action-white');
+            showActionFeedback('action-white', 'Reseteando', 'action-white');
         } else if (d.play_mostra) {
             showActionFeedback('action-blue', 'Reproduciendo cancion completa', 'action-blue');
         } else if (d.storing === true) {
             showActionFeedback('action-green', 'Registrando secuencia', 'action-green');
-        } else if (d.storing === false && wasStoring) {
+        } else if (d.user_stopped) {
             showActionFeedback('action-red', 'Registro detenido', 'action-red');
         }
 
