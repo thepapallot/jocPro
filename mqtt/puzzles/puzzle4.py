@@ -308,6 +308,7 @@ class Puzzle4(BasePuzzle):
                 self.played_sequence = []
                 self._push({
                     "storing": False,
+                    "user_stopped": True,
                     "streak": self.streak,
                     "total_required": self.total_required,
                     "current_progress": 0,

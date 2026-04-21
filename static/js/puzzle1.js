@@ -62,6 +62,10 @@
         solvedContainer.innerHTML = '';
     }
 
+    function setDangerScreenActive(isActive) {
+        document.body.classList.toggle('p1-danger-state', Boolean(isActive));
+    }
+
     function renderStatus(kind, value = null) {
         if (!solvedContainer) return;
 
@@ -351,6 +355,7 @@
             if (data.start_timer) {
                 playEffect('apareix_contingut.wav');
                 timerElement.classList.remove('expired');
+                setDangerScreenActive(false);
                 clearSolvedContainer();
                 resetObjectiveFormula();
                 startTimer();
@@ -435,6 +440,7 @@
                 const incorrectDisplayMs = Number(data.incorrect.display_ms) || 5000;
 
                 playEffect('incorrecte.wav');
+                setDangerScreenActive(true);
                 renderStatus('error');
                 setObjectiveMessage(data.incorrect.text, 'error');
                 setObjectiveFormula(data.incorrect.text, 'error', false, incorrectDisplayMs);
@@ -608,6 +614,7 @@
         clearInterval(timerInterval);
         timer = 90;
         timerElement.classList.remove('expired', 'warning');
+        setDangerScreenActive(false);
         updateTimerDisplay();
 
         timerInterval = setInterval(() => {
@@ -628,9 +635,14 @@
                 timerElement.classList.add('expired');
 
                 playEffect('fase_nocompletada.wav');
+                setDangerScreenActive(true);
 
-                renderStatus('timeout');
+                clearSolvedContainer();
                 resetObjectiveFormula();
+                if (objectivePanel) {
+                    objectivePanel.classList.add('p1-formula-error');
+                }
+                setObjectiveMessage('Tiempo agotado', 'error');
 
                 setTimeout(() => {
                     clearSolvedContainer();

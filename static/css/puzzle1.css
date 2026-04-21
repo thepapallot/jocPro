@@ -48,6 +48,32 @@
 body.p1-solved-flash {
     animation: p1SolvedFlash 2.2s ease-out forwards;
 }
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 86, 118, 0.18) 0%, rgba(255, 86, 118, 0.08) 28%, rgba(255, 86, 118, 0) 58%),
+        linear-gradient(180deg, rgba(120, 0, 18, 0.14) 0%, rgba(180, 18, 42, 0.1) 45%, rgba(90, 0, 0, 0.16) 100%);
+    transition: opacity 0.28s ease;
+}
+body.p1-danger-state::before {
+    opacity: 1;
+    animation: p1DangerPulse 1.8s ease-in-out infinite;
+}
+@keyframes p1DangerPulse {
+    0%, 100% {
+        filter: saturate(1);
+        opacity: 0.88;
+    }
+    50% {
+        filter: saturate(1.15);
+        opacity: 1;
+    }
+}
 :root {
     --cyan: #45e6ff;
     --cyan-strong: #00f0ff;
