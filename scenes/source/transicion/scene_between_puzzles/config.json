@@ -1,6 +1,6 @@
 {
   "scene_id": "scene_between_puzzles",
-  "description": "Transicion entre pruebas: clip de piramide y portada siguiente prueba.",
+  "description": "Transición entre pruebas: clip de pirámide y portada siguiente prueba.",
   "segments": [
     {
       "type": "transition",
@@ -30,14 +30,14 @@
       "kicker": "SIGUIENTE PRUEBA",
       "title": "SIMULACRO INICIAL",
       "objective": "Familiarizarse con tokens y terminales",
-      "evaluation": "Adaptacion y coordinacion",
+      "evaluation": "Adaptación y coordinación",
       "title_audio": "/static/audios/audiosTitols/simulacro_inicial.mp3"
     },
     "scene_intro_sumas": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "CÁLCULO EXTREMO",
       "objective": "Resolver las sumas",
-      "evaluation": "Asociacion",
+      "evaluation": "Asociación",
       "title_audio": "/static/audios/audiosTitols/calculo_extremo.mp3"
     },
     "scene_intro_laberinto": {
@@ -57,28 +57,28 @@
       "kicker": "SIGUIENTE PRUEBA",
       "title": "CÓDIGO SONORO",
       "objective": "Ordenar los fragmentos de la canción",
-      "evaluation": "Percepcion auditiva",
+      "evaluation": "Percepción auditiva",
       "title_audio": "/static/audios/audiosTitols/codigo_sonoro.mp3"
     },
     "scene_intro_cronometro": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "PULSO DE TIEMPO",
       "objective": "Contar los segundos exactos",
-      "evaluation": "Percepcion temporal",
+      "evaluation": "Percepción temporal",
       "title_audio": "/static/audios/audiosTitols/pulso_tiempo.mp3"
     },
     "scene_intro_apreta_botons": {
       "kicker": "SIGUIENTE PRUEBA",
-      "title": "PRESION SINCRONIZADA",
+      "title": "PRESIÓN SINCRONIZADA",
       "objective": "Mantener pulsados los botones correctos",
-      "evaluation": "Coordinacion en tiempo real",
+      "evaluation": "Coordinación en tiempo real",
       "title_audio": "/static/audios/audiosTitols/presion_sincronizada.mp3"
     },
     "scene_intro_energia": {
       "kicker": "SIGUIENTE PRUEBA",
       "title": "CARGA CRÍTICA",
       "objective": "Mantener las luces encendidas",
-      "evaluation": "Anticipacion y planificacion",
+      "evaluation": "Anticipación y planificación",
       "title_audio": "/static/audios/audiosTitols/carga_final.mp3"
     },
     "scene_intro_memory": {
@@ -98,7 +98,7 @@
       "kicker": "SIGUIENTE PRUEBA",
       "title": "PATRÓN MAESTRO",
       "objective": "Replicar los patrones de colores",
-      "evaluation": "Simbolizacion e interpretacion",
+      "evaluation": "Simbolización e interpretación",
       "title_audio": "/static/audios/audiosTitols/patron_maestro.mp3"
     }
   }

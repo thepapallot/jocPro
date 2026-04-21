@@ -74,6 +74,14 @@
     // Round 4
     [[0,8,5,8,6,1], [0,4,10,7,6,1], [0,6,8,9,4,1], [0,4,8,8,7,1], [0,5,3,9,10,1]]
   ];
+  const puzzle12ButtonLabels = [
+    "Botones negros",
+    "Botones verdes",
+    "Botones rojos",
+    "Botones amarillos",
+    "Botones azules",
+    "Botones blancos"
+  ];
   const puzzleConfigs = {
     "11": {
       label: "Puzzle 11",
@@ -945,6 +953,16 @@
     }
     if (puzzleId === "-1") {
       renderFinalCompatSimulator();
+
+
+
+
+
+      return;
+    }
+
+    if (puzzleId === "12") {
+      renderPuzzle12Simulator();
       return;
     }
 
@@ -2399,6 +2417,161 @@
     });
   }
 
+  function renderPuzzle12Simulator() {
+    els.simContent.innerHTML = `
+      <div class="sim-note">Resolver ronda envia els missatges necessaris per igualar el target de la ronda i GIF actuals.</div>
+      <div class="sim-actions">
+        <button type="button" class="sim-button primary-action" data-sim-p12-solve-round>Resolver ronda</button>
+        <button type="button" class="sim-button" data-sim-p12-refresh-state>Refrescar estado</button>
+      </div>
+      <div data-sim-p12-state>
+        <div class="sim-note">Cargando current state...</div>
+      </div>
+    `;
+
+    els.simContent.querySelector("[data-sim-p12-solve-round]").addEventListener("click", async () => {
+      try {
+        const stateResponse = await fetch("/current_state");
+        const state = await stateResponse.json();
+
+        if (String(state.puzzle_id) !== "12") {
+          setStatus("Puzzle 12 no esta activo");
+          return;
+        }
+
+        if (state.puzzle_solved) {
+          setStatus("Puzzle 12 ja esta resolt");
+          return;
+        }
+
+        const target = state.target;
+        if (!Array.isArray(target) || target.length !== 6) {
+          setStatus("No hi ha target disponible per la ronda actual");
+          return;
+        }
+
+        const maxVal = Math.max(...target);
+        if (maxVal <= 0) {
+          setStatus("El target de la ronda es zero");
+          return;
+        }
+
+        // Decompose target into binary box messages:
+        // box j has bit i = 1 if target[i] > j
+        const payloads = [];
+        for (let j = 0; j < maxVal; j++) {
+          const buttons = target.map((v) => (v > j ? "1" : "0")).join("");
+          payloads.push(`P12,${j + 1},${buttons}`);
+        }
+
+        const previousTopic = els.topicSelect.value;
+        els.topicSelect.value = "TO_FLASK";
+        updateTopicHelp();
+        updateSendModeUI();
+
+        await sendPayloads(payloads);
+        appendLog({ local: true, simulated: "puzzle12_solve_round", payloads });
+        await refreshPuzzle12SimulatorState();
+
+        if (previousTopic !== "TO_FLASK") {
+          els.topicSelect.value = previousTopic;
+          syncEditorForTopic();
+        }
+      } catch (error) {
+        setStatus(`Puzzle 12 · ${error.message || "error"}`);
+      }
+    });
+
+    els.simContent.querySelector("[data-sim-p12-refresh-state]").addEventListener("click", async () => {
+      try {
+        await refreshPuzzle12SimulatorState();
+        setStatus("Puzzle 12 · estado actualizado");
+      } catch (error) {
+        setStatus(`Puzzle 12 · ${error.message || "error"}`);
+      }
+    });
+
+    refreshPuzzle12SimulatorState().catch(() => {
+      const container = els.simContent.querySelector("[data-sim-p12-state]");
+      if (container) {
+        container.innerHTML = '<div class="sim-note">No se ha podido cargar el current state.</div>';
+      }
+    });
+  }
+
+  function getPuzzle12Totals(boxStates) {
+    const totals = [0, 0, 0, 0, 0, 0];
+    if (!boxStates || typeof boxStates !== "object") {
+      return totals;
+    }
+
+    Object.values(boxStates).forEach((buttons) => {
+      if (!Array.isArray(buttons)) {
+        return;
+      }
+      for (let index = 0; index < 6; index += 1) {
+        totals[index] += Number(buttons[index] || 0);
+      }
+    });
+
+    return totals;
+  }
+
+  function renderPuzzle12StateBlock(data) {
+    if (String(data?.puzzle_id) !== "12") {
+      return '<div class="sim-note">El current state activo no corresponde al puzzle 12.</div>';
+    }
+
+    const target = Array.isArray(data.target) ? data.target : [0, 0, 0, 0, 0, 0];
+    const totals = getPuzzle12Totals(data.box_states);
+    const activeBoxes = data.box_states && typeof data.box_states === "object"
+      ? Object.keys(data.box_states).length
+      : 0;
+    const rows = puzzle12ButtonLabels.map((label, index) => `
+      <div class="state-metric">
+        <span>${label}</span>
+        <strong>${totals[index]} / ${Number(target[index] || 0)}</strong>
+      </div>
+    `).join("");
+
+    return `
+      <div class="state-summary">
+        <div class="state-grid">
+          <section class="state-card">
+            <h3>Current state</h3>
+            <div class="state-metrics">
+              ${stateMetric("Ronda", data.round)}
+              ${stateMetric("GIF", data.num_giff)}
+              ${stateMetric("Duracion", data.duration)}
+              ${stateMetric("Cajas activas", activeBoxes)}
+            </div>
+          </section>
+          <section class="state-card">
+            <h3>Botones actuales / objetivo</h3>
+            <div class="state-metrics">
+              ${rows}
+            </div>
+          </section>
+        </div>
+      </div>
+    `;
+  }
+
+  function updatePuzzle12SimulatorState(data) {
+    const container = els.simContent.querySelector("[data-sim-p12-state]");
+    if (!container) {
+      return;
+    }
+    container.innerHTML = renderPuzzle12StateBlock(data);
+  }
+
+  async function refreshPuzzle12SimulatorState() {
+    const response = await fetch("/current_state", { cache: "no-store" });
+    const data = await response.json();
+    updatePuzzle12SimulatorState(data);
+    return data;
+  }
+
   function renderFinalCompatSimulator() {
     const boxes = Array.from({ length: 10 }, (_, index) => {
       return `<button type="button" class="sim-box" data-sim-pf-box="${index}">Terminal ${index}</button>`;
@@ -2552,6 +2725,9 @@
     }
     await sendPayloads([payload]);
     appendLog({ local: true, payload });
+    if (els.puzzleSelect.value === "12") {
+      await refreshCurrentState();
+    }
   }
 
   async function startPuzzle(restart = false) {
@@ -3321,6 +3497,9 @@
       if (String(data.puzzle_id) === "2" && els.puzzleSelect.value === "2") {
         applyPuzzle2State(data);
         renderPuzzle2Simulator();
+      }
+      if (els.puzzleSelect.value === "12") {
+        updatePuzzle12SimulatorState(data);
       }
       els.currentState.innerHTML = renderStateSummary(data);
     } catch (error) {
