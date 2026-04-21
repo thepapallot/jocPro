@@ -2,7 +2,6 @@
     const cards = new Map(
         Array.from(document.querySelectorAll('.led-card')).map(card => [Number(card.dataset.box), card])
     );
-    const statusBadge = document.getElementById('p10-status');
     const timerBadge = document.getElementById('timer');
 
     let solved = false;
@@ -187,13 +186,6 @@
         }
     }
 
-    function updateStatus() {
-        if (!statusBadge) return;
-        const solvedCount = Array.from(cards.values()).filter(card => card.classList.contains('is-solved')).length;
-        statusBadge.textContent = `${solvedCount} / 10 sincronizadas`;
-        statusBadge.classList.toggle('is-complete', solvedCount === cards.size);
-    }
-
     function pulseCard(card) {
         card.classList.remove('is-newly-solved');
         void card.offsetWidth;
@@ -208,7 +200,6 @@
         if (animate && !wasSolved) {
             pulseCard(card);
         }
-        updateStatus();
         return !wasSolved;
     }
 
@@ -311,7 +302,6 @@
                 hydratingSnapshot = true;
                 handleUpdate(d);
                 hydratingSnapshot = false;
-                updateStatus();
             })
             .catch(() => {
                 hydratingSnapshot = false;
@@ -351,7 +341,6 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initAudioPolicyHandling();
-        updateStatus();
         resetRoundTimer();
         loadSnapshot();
         initSSE();

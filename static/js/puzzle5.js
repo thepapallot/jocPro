@@ -6,6 +6,7 @@
     const objectiveEl = document.getElementById('objective-text');
     const objectiveSubtextEl = document.getElementById('objective-subtext');
     const errorEl = document.getElementById('error-text');
+    const errorLimitTextEl = document.getElementById('error-limit-text');
     const streakEl = document.getElementById('streak');
     const playerBoxes = document.querySelectorAll('.player-box');
     const playersSection = document.getElementById('players-section');
@@ -22,6 +23,8 @@
     let lastRoundResult = null;  // Track if we just showed a result
     let snapshotRequested = false; // NEW: prevent double fetch on initial load
     let activeCountdownDeadline = null;
+    const phaseLimitByRound = { 1: 15, 2: 25 };
+    const phaseLimitByObjective = { 10: 15, 30: 25 };
 
     // Sound helpers and URLs
     function playSound(url) {
@@ -198,6 +201,41 @@
                 errorEl.classList.add('failure-result');
             }
         }
+
+        if (errorLimitTextEl) {
+            const numericLimit = Number(limit);
+            if (Number.isFinite(numericLimit)) {
+                errorLimitTextEl.textContent = `${numericLimit.toFixed(0)} S`;
+            }
+        }
+    }
+
+    function resolvePhaseLimit(round = currentRound, objective = roundObjectives, explicitLimit = null) {
+        const numericExplicit = Number(explicitLimit);
+        if (Number.isFinite(numericExplicit) && numericExplicit > 0) {
+            return numericExplicit;
+        }
+
+        const numericRound = Number(round);
+        if (Number.isFinite(numericRound) && phaseLimitByRound[numericRound]) {
+            return phaseLimitByRound[numericRound];
+        }
+
+        const numericObjective = Number(objective);
+        if (Number.isFinite(numericObjective) && phaseLimitByObjective[numericObjective]) {
+            return phaseLimitByObjective[numericObjective];
+        }
+
+        const knownCurrentLimit = Number(roundLimits);
+        return Number.isFinite(knownCurrentLimit) && knownCurrentLimit > 0 ? knownCurrentLimit : phaseLimitByRound[1];
+    }
+
+    function refreshPhaseLimitLabel(round = currentRound, objective = roundObjectives, explicitLimit = null) {
+        if (!errorLimitTextEl) {
+            return;
+        }
+        const limit = resolvePhaseLimit(round, objective, explicitLimit);
+        errorLimitTextEl.textContent = `${limit.toFixed(0)} S`;
     }
 
     function updatePlayerBoxes(times) {
@@ -236,6 +274,17 @@
         }
     }
 
+    function setRoundResultVisual(result = null) {
+        playerBoxes.forEach(box => {
+            box.classList.remove('result-success', 'result-failure');
+            if (result === 'success') {
+                box.classList.add('result-success');
+            } else if (result === 'failure') {
+                box.classList.add('result-failure');
+            }
+        });
+    }
+
     function handleUpdate(d,func) {
         console.log('Pre handleUpdate called from:', func);
         if (!d || d.puzzle_id !== 5) return;
@@ -252,13 +301,14 @@
             currentRound = 0;
             roundObjectives = d.objective || roundObjectives || 10;
             roundLimits = d.limit || roundLimits;
+            refreshPhaseLimitLabel(1, roundObjectives, d.limit);
             updateStreak(1);
-            showWaitingState({
-                objective: roundObjectives,
-                message: d.countdown_message || 'Ronda empieza en 10 segundos',
-                waitingSeconds: d.waiting_seconds,
-                countdownDeadline: d.countdown_deadline
-            });
+                showWaitingState({
+                    objective: roundObjectives,
+                    message: d.countdown_message || 'Ronda empieza en 5 segundos',
+                    waitingSeconds: d.waiting_seconds,
+                    countdownDeadline: d.countdown_deadline
+                });
             return;
         }
 
@@ -266,6 +316,7 @@
             currentRound = d.round;
             roundLimits = d.limit || roundLimits;
             roundObjectives = d.objective || roundObjectives;
+            refreshPhaseLimitLabel(currentRound, roundObjectives, d.limit);
             updateStreak(d.round);
 
             if (Array.isArray(d.times) && d.times.length) {
@@ -290,7 +341,7 @@
             // Clear boxes and colors first if we had a result
             if (lastRoundResult) {
                 playerBoxes.forEach(box => {
-                    box.classList.remove('filled', 'error-positive', 'error-negative');
+                    box.classList.remove('filled', 'error-positive', 'error-negative', 'result-success', 'result-failure');
                     const timeEl = box.querySelector('.box-time');
                     if (timeEl) {
                         timeEl.textContent = '';
@@ -305,6 +356,7 @@
             }
             
             roundObjectives = d.objective || roundObjectives || 10;
+            refreshPhaseLimitLabel(currentRound || 1, roundObjectives, d.limit);
             showCountdownMessage(d.countdown_message, d.waiting_seconds, d.countdown_deadline);
 
             return;
@@ -315,6 +367,8 @@
             currentRound = d.round;
             roundLimits = d.limit || roundLimits;
             roundObjectives = d.objective || roundObjectives;
+            refreshPhaseLimitLabel(currentRound, roundObjectives, d.limit);
+            setRoundResultVisual(null);
             showGameUI(d.round);
             updateStreak(d.round);
             // Update error counter limit when round changes
@@ -344,6 +398,7 @@
             const result = rr.success ? 'success' : 'failure';
             lastRoundResult = result;  // Remember we showed a result
             updateErrorCounter(rr.total, rr.limit, result);
+            setRoundResultVisual(result);
             // Play corresponding round result sound
             if (rr.success) {
                 playSound(ROUND_OK_SOUND_URL);

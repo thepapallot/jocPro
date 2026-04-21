@@ -17,6 +17,7 @@ class Puzzle3(BasePuzzle):
         self.total_required = 10         # need 10 correct in a row
         self.total_players = 10
         self.answered_players = {}       # {player: answer_idx}
+        self.correct_question_ids = set()  # questions solved correctly in this run
 
     def _checkpoint_for_streak(self, streak):
         """Return the last unlocked checkpoint based on solved questions."""
@@ -27,14 +28,45 @@ class Puzzle3(BasePuzzle):
         return 0
         
     def _choose_new_set(self):
-        """Pick 10 random questions from the bank"""
-        self.chosen_questions = random.sample(
-            self.question_bank, 
-            min(10, len(self.question_bank))
-        )
+        """Pick 10 questions prioritizing IDs 101..108 in every set."""
+        available_questions = [
+            q for q in self.question_bank
+            if q.get("id") not in self.correct_question_ids
+        ]
+        target_size = min(10, len(available_questions))
+        priority_ids = set(range(101, 109))
+
+        priority_questions = [
+            q for q in available_questions
+            if q.get("id") in priority_ids
+        ]
+        other_questions = [
+            q for q in available_questions
+            if q.get("id") not in priority_ids
+        ]
+
+        chosen = []
+
+        # Always include prioritized questions when available.
+        if priority_questions and target_size > 0:
+            chosen.extend(
+                random.sample(priority_questions, min(len(priority_questions), target_size))
+            )
+
+        # Fill the remaining slots with non-priority questions.
+        remaining = target_size - len(chosen)
+        if remaining > 0 and other_questions:
+            chosen.extend(
+                random.sample(other_questions, min(remaining, len(other_questions)))
+            )
+
+        random.shuffle(chosen)
+        self.chosen_questions = chosen
         self.current_question_idx = 0
         self.streak = 0
         self.answered_players = {}
+        # Keep self.correct_question_ids so correctly solved questions
+        # are not reintroduced when creating new sets after failures.
         
     def _push_question(self):
         """Send current question to frontend"""
@@ -76,6 +108,7 @@ class Puzzle3(BasePuzzle):
         """Full reset to start"""
         super().reset()
         with self.lock:
+            self.correct_question_ids = set()
             self._choose_new_set()
             self._push_question()
 
@@ -173,6 +206,7 @@ class Puzzle3(BasePuzzle):
                 
                 if all_correct:
                     self.streak += 1
+                    self.correct_question_ids.add(q.get("id"))
                 else:
                     # Failure: return to last unlocked checkpoint within current set.
                     checkpoint = self._checkpoint_for_streak(self.streak)
