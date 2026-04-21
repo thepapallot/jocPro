@@ -328,14 +328,14 @@ body {
 .scene-video {
     object-fit: cover;
     background: #000;
-    transition: opacity 440ms ease, filter 440ms ease, transform 440ms ease;
+    transition: opacity 560ms cubic-bezier(0.22, 0.72, 0.22, 1), filter 560ms cubic-bezier(0.22, 0.72, 0.22, 1), transform 560ms cubic-bezier(0.22, 0.72, 0.22, 1);
 }
 
 .scene-video--hidden {
     opacity: 0;
     pointer-events: none;
-    filter: saturate(0.56) brightness(0.52) blur(2px);
-    transform: scale(1.03);
+    filter: saturate(0.72) brightness(0.66) blur(1px);
+    transform: scale(1.014);
 }
 
 .scene-video--reveal {
@@ -347,7 +347,7 @@ body {
     z-index: 10;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 360ms ease;
+    transition: opacity 460ms cubic-bezier(0.2, 0.72, 0.24, 1);
 }
 
 .ui-layer.layer-visible,
@@ -2249,6 +2249,37 @@ body {
     transform: translateX(-50%) translateY(0);
 }
 
+.keyword-overlay {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    z-index: 26;
+    width: min(1400px, calc(100% - 120px));
+    transform: translate(-50%, -50%) scale(0.9);
+    padding: 10px 18px;
+    color: rgba(239, 249, 255, 0.98);
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5.2cqw, 5.8rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    text-shadow:
+        0 0 24px rgba(87, 222, 245, 0.42),
+        0 0 48px rgba(255, 79, 214, 0.3),
+        0 8px 24px rgba(1, 4, 10, 0.65);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease, transform 260ms cubic-bezier(0.2, 0.82, 0.22, 1);
+}
+
+.keyword-overlay--visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    animation: keyword-impact 640ms cubic-bezier(0.16, 0.84, 0.2, 1);
+}
+
 .transition-screen {
     position: absolute;
     inset: 0;
@@ -2259,12 +2290,12 @@ body {
 }
 
 .transition-screen--crossfade-in {
-    animation: transition-crossfade-in 360ms cubic-bezier(0.2, 0.72, 0.24, 1) both;
+    animation: transition-crossfade-in 460ms cubic-bezier(0.2, 0.72, 0.24, 1) both;
 }
 
 .transition-screen--crossfade-out {
     pointer-events: none;
-    animation: transition-crossfade-out 340ms ease both;
+    animation: transition-crossfade-out 440ms ease both;
 }
 
 @keyframes transition-crossfade-in {
@@ -4160,6 +4191,17 @@ body {
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes keyword-impact {
+    from {
+        letter-spacing: 0.18em;
+        filter: blur(8px);
+    }
+    to {
+        letter-spacing: 0.1em;
         filter: blur(0);
     }
 }

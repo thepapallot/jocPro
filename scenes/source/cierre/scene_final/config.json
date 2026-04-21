@@ -1,6 +1,7 @@
 {
   "scene_id": "scene_final",
-  "description": "Base de produccion para el outro final del juego, ajustada al audio y subtitulos oficiales.",
+  "description": "Outro final estilo clasico del juego, centrado en personaje y transiciones de video existentes.",
+  "broadcast_title": "ENHORABUENA EQUIPO",
   "ui_titles": {
     "top": "OBJETIVO",
     "left": "ELEMENTOS",
@@ -9,6 +10,32 @@
   "audio": {
     "src": "/static/audios/scene/outro_game_final.wav"
   },
+  "subtitle_emphasis": [
+    {
+      "matches": ["coordinación", "coordination"],
+      "text": "COORDINACION"
+    },
+    {
+      "matches": ["comunicación", "communication"],
+      "text": "COMUNICACION"
+    },
+    {
+      "matches": ["objetivo compartido", "shared goal"],
+      "text": "OBJETIVO COMPARTIDO"
+    },
+    {
+      "matches": ["trabajo en equipo", "teamwork"],
+      "text": "TRABAJO EN EQUIPO"
+    },
+    {
+      "matches": ["trabajando juntos", "working together"],
+      "text": "TRABAJANDO JUNTOS"
+    },
+    {
+      "matches": ["cada aportación", "every contribution"],
+      "text": "CADA APORTACION"
+    }
+  ],
   "subtitles": [
     {
       "start": 0,
@@ -64,51 +91,81 @@
   "segments": [
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_outro_close_a.mp4",
+      "src": "/static/videos/characters/cero_emphasis_forward.mp4",
       "clip_start": 0,
-      "clip_end": 4.96,
-      "duration": 4.8,
+      "clip_end": 2.819,
+      "duration": 2.819,
       "label": "outro_apertura"
     },
     {
       "type": "transition",
-      "duration": 10.083334,
-      "video": "/static/videos/recursos_varios/pyramid_bricks.mp4",
+      "duration": 4.56,
+      "video": "/static/videos/recursos_varios/gm_pyramid_construction_b.mp4",
       "clip_start": 0,
-      "clip_end": 5.041667
+      "clip_end": 4.56
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_outro_close_a.mp4",
-      "clip_start": 0,
-      "clip_end": 4.96,
-      "duration": 4.8,
+      "duration": 4.261,
+      "src": "/static/videos/characters/cero_briefing_short_a.mp4",
+      "clip_start": 0.4,
+      "clip_end": 4.661,
       "label": "outro_reflexion"
     },
     {
       "type": "transition",
-      "duration": 7.115666,
-      "video": "/static/videos/recursos_varios/pyramid_outline.mp4",
-      "clip_start": 0
+      "duration": 3,
+      "video": "/static/videos/recursos_varios/gm_pyramid_establishing_a.mp4",
+      "clip_start": 0,
+      "clip_end": 3
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_emphasis_long_a.mp4",
+      "clip_start": 0.2,
+      "clip_end": 6.84,
+      "duration": 6.64,
+      "label": "outro_equipo"
+    },
+    {
+      "type": "transition",
+      "duration": 2.459,
+      "video": "/static/videos/recursos_varios/gm_network_grid_a.mp4",
+      "clip_start": 2,
+      "clip_end": 4.459
+    },
+    {
+      "type": "character",
+      "src": "/static/videos/characters/cero_gesture_medium_a.mp4",
+      "clip_start": 0.4,
+      "clip_end": 2.761,
+      "duration": 2.361,
+      "label": "outro_aportacion"
+    },
+    {
+      "type": "transition",
+      "duration": 2.299,
+      "video": "/static/videos/recursos_varios/gm_pyramid_precision_a.mp4",
+      "clip_start": 1.2,
+      "clip_end": 3.499
     },
     {
       "type": "character",
       "src": "/static/videos/characters/cero_outro_close_a.mp4",
-      "clip_start": 0,
-      "clip_end": 4.96,
-      "duration": 4.8,
+      "clip_start": 0.2,
+      "clip_end": 2.2,
+      "duration": 2,
       "label": "outro_cierre",
       "broadcast": {
-        "logo_src": "/static/images/shared/branding/logo_adn.png",
         "show_right_brand": false
       }
     },
     {
       "type": "transition",
-      "duration": 2.470796,
-      "variant": "gm-icon",
-      "image": "/static/images/shared/branding/logo_adn.png",
-      "alt": "Logo ADN"
+      "duration": 2.4,
+      "video": "/static/videos/recursos_varios/gm_pyramid_wide_a.mp4",
+      "clip_start": 0,
+      "clip_end": 2.4
     }
   ]
 }
