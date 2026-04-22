@@ -612,7 +612,7 @@
 
     function startTimer() {
         clearInterval(timerInterval);
-        timer = 90;
+        timer = 45;
         timerElement.classList.remove('expired', 'warning');
         setDangerScreenActive(false);
         updateTimerDisplay();
