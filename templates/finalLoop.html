@@ -38,8 +38,13 @@
             Your browser does not support the video tag.
         </video>
     </div>
+    <audio id="final-loop-audio" loop preload="auto">
+        <source src="{{ url_for('static', filename='audios/effects/fondo_final.wav') }}" type="audio/wav">
+    </audio>
     <script>
         const stage = document.getElementById('final-stage');
+        const finalLoopAudio = document.getElementById('final-loop-audio');
+
         function updateStageScale() {
             if (!stage) return;
             const scale = Math.min(
@@ -48,8 +53,21 @@
             );
             stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
+
+        function tryPlayFinalAudio() {
+            if (!finalLoopAudio) return;
+            finalLoopAudio.play().catch(() => {
+                // Autoplay with sound may be blocked until user interaction.
+            });
+        }
+
+        ['click', 'touchstart', 'keydown'].forEach((eventName) => {
+            document.addEventListener(eventName, tryPlayFinalAudio, { once: true, passive: true });
+        });
+
         window.addEventListener('resize', updateStageScale, { passive: true });
         updateStageScale();
+        tryPlayFinalAudio();
     </script>
 </body>
 </html>

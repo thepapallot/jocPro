@@ -26,7 +26,7 @@
         audio.play().catch(err => console.warn("Audio play failed:", err));
     }
     const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
-    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/piramide_completada.wav";
     const BTN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
 
     function clearTimers() {
