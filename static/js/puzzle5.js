@@ -85,7 +85,7 @@
         activeCountdownDeadlineMs = null;
     }
 
-    function computeRemainingSeconds(waitingSeconds, countdownDeadline) {
+    function computeRemainingSeconds(waitingSeconds) {
         if (activeCountdownDeadlineMs) {
             return Math.max(0, Math.ceil((activeCountdownDeadlineMs - Date.now()) / 1000));
         }
@@ -95,15 +95,11 @@
             return Math.max(0, Math.ceil(numericWaitingSeconds));
         }
 
-        if (countdownDeadline) {
-            return Math.max(0, Math.ceil(countdownDeadline - (Date.now() / 1000)));
-        }
-
         return Math.max(0, Number(waitingSeconds) || 0);
     }
 
-    function showCountdownMessage(message, waitingSeconds, countdownDeadline = null) {
-        console.log('[P5] Showing countdown message:', message, waitingSeconds, countdownDeadline);
+    function showCountdownMessage(message, waitingSeconds) {
+        console.log('[P5] Showing countdown message:', message, waitingSeconds);
         playersSection.style.display = 'none';
         errorSection.style.display = 'none';
         setDisplayMode('countdown');
@@ -113,7 +109,7 @@
         console.log('[P5] Base message for countdown:', baseMessage);
 
 
-        const remaining = computeRemainingSeconds(waitingSeconds, countdownDeadline);
+        const remaining = computeRemainingSeconds(waitingSeconds);
         if (remaining > 0) {
             activeCountdownDeadlineMs = Date.now() + (remaining * 1000);
             setObjectiveValue(remaining, '');
@@ -167,11 +163,10 @@
         objective = roundObjectives || 10,
         message = null,
         subtext = 'sec',
-        waitingSeconds = null,
-        countdownDeadline = null
+        waitingSeconds = null
     } = {}) {
-        if (waitingSeconds || countdownDeadline) {
-            showCountdownMessage(message, waitingSeconds, countdownDeadline);
+        if (Number(waitingSeconds) > 0) {
+            showCountdownMessage(message, waitingSeconds);
             return;
         }
 
@@ -316,8 +311,7 @@
                 showWaitingState({
                     objective: roundObjectives,
                     message: d.countdown_message || 'Ronda empieza en 5 segundos',
-                    waitingSeconds: d.waiting_seconds,
-                    countdownDeadline: d.countdown_deadline
+                    waitingSeconds: d.waiting_seconds
                 });
             return;
         }
@@ -339,8 +333,7 @@
                 showWaitingState({
                     objective: roundObjectives,
                     message: d.countdown_message,
-                    waitingSeconds: d.waiting_seconds,
-                    countdownDeadline: d.countdown_deadline
+                    waitingSeconds: d.waiting_seconds
                 });
             }
             return;
@@ -367,7 +360,7 @@
             
             roundObjectives = d.objective || roundObjectives || 10;
             refreshPhaseLimitLabel(currentRound || 1, roundObjectives, d.limit);
-            showCountdownMessage(d.countdown_message, d.waiting_seconds, d.countdown_deadline);
+            showCountdownMessage(d.countdown_message, d.waiting_seconds);
 
             return;
         }
