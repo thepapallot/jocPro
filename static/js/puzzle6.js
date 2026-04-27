@@ -264,10 +264,7 @@
 
         if (d.countdown_start) {
             const info = d.countdown_start;
-            const serverNow = Date.now();
-            const elapsed = Math.max(0, Math.floor(serverNow/1000 - info.start_ts));
-            const remaining = info.duration - elapsed;
-            startLocalCountdown(remaining);
+            startLocalCountdown(info.duration);
         }
 
         if (d.countdown_tick && active && !solved) {
