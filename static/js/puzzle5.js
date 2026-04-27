@@ -22,7 +22,7 @@
     let backendTotalRounds = totalRounds;
     let lastRoundResult = null;  // Track if we just showed a result
     let snapshotRequested = false; // NEW: prevent double fetch on initial load
-    let activeCountdownDeadline = null;
+    let activeCountdownDeadlineMs = null;
     const phaseLimitByRound = { 1: 15, 2: 25 };
     const phaseLimitByObjective = { 10: 15, 30: 25 };
 
@@ -82,13 +82,23 @@
             clearInterval(countdownInterval);
             countdownInterval = null;
         }
-        activeCountdownDeadline = null;
+        activeCountdownDeadlineMs = null;
     }
 
     function computeRemainingSeconds(waitingSeconds, countdownDeadline) {
+        if (activeCountdownDeadlineMs) {
+            return Math.max(0, Math.ceil((activeCountdownDeadlineMs - Date.now()) / 1000));
+        }
+
+        const numericWaitingSeconds = Number(waitingSeconds);
+        if (Number.isFinite(numericWaitingSeconds)) {
+            return Math.max(0, Math.ceil(numericWaitingSeconds));
+        }
+
         if (countdownDeadline) {
             return Math.max(0, Math.ceil(countdownDeadline - (Date.now() / 1000)));
         }
+
         return Math.max(0, Number(waitingSeconds) || 0);
     }
 
@@ -105,11 +115,11 @@
 
         const remaining = computeRemainingSeconds(waitingSeconds, countdownDeadline);
         if (remaining > 0) {
-            activeCountdownDeadline = countdownDeadline || ((Date.now() / 1000) + remaining);
+            activeCountdownDeadlineMs = Date.now() + (remaining * 1000);
             setObjectiveValue(remaining, '');
             console.log('[P5] Starting countdown from:', remaining);
             countdownInterval = setInterval(() => {
-                const remaining = computeRemainingSeconds(null, activeCountdownDeadline);
+                const remaining = computeRemainingSeconds();
                 if (remaining > 0) {
                     setObjectiveValue(remaining, '');
                     // Play beep each second during countdown
