@@ -531,13 +531,21 @@ body::after {
     display: none;
 }
 
+#terminal-box-img {
+    display: none;
+    width: 100%;
+    max-height: clamp(40px, 6vh, 80px);
+    object-fit: contain;
+    margin-bottom: clamp(4px, 0.6vh, 8px);
+}
+
 #players-section {
     position: relative;
     z-index: 1;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     grid-auto-rows: minmax(0, 1fr);
-    gap: clamp(10px, 1.8vh, 20px);
+    gap: clamp(6px, 1.2vh, 14px);
     flex: 1;
     min-height: 0;
     align-content: stretch;
@@ -549,10 +557,10 @@ body::after {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: clamp(6px, 1vh, 14px);
+    gap: clamp(4px, 0.7vh, 10px);
     min-height: 0;
     height: 100%;
-    padding: clamp(10px, 1.6vh, 18px) clamp(10px, 1.1vw, 16px);
+    padding: clamp(6px, 1vh, 12px) clamp(6px, 0.8vw, 12px);
     border: 1px solid rgba(69, 230, 255, 0.11);
     border-radius: 22px;
     background:
@@ -591,7 +599,7 @@ body::after {
     position: relative;
     z-index: 1;
     color: rgba(234, 252, 255, 0.72);
-    font-size: clamp(2rem, 3.4vw, 3.2rem);
+    font-size: clamp(1.6rem, 2.8vw, 2.8rem);
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -603,7 +611,7 @@ body::after {
     z-index: 1;
     display: grid;
     place-items: center;
-    width: min(100%, clamp(110px, 11vw, 176px));
+    width: min(100%, clamp(70px, 7.5vw, 120px));
     aspect-ratio: 1;
     margin: 0;
 }
@@ -652,9 +660,9 @@ body::after {
     align-items: center;
     justify-content: center;
     min-height: 0;
-    padding: 0 8px;
+    padding: 0 4px;
     color: #ffe7a8;
-    font-size: clamp(2rem, 2.8vw, 3.2rem);
+    font-size: clamp(1.1rem, 1.8vw, 2rem);
     font-weight: 900;
     line-height: 1;
     letter-spacing: 0.06em;
