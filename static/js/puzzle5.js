@@ -10,6 +10,7 @@
     const streakEl = document.getElementById('streak');
     const playerBoxes = document.querySelectorAll('.player-box');
     const playersSection = document.getElementById('players-section');
+    const terminalBoxImg = document.getElementById('terminal-box-img');
     const errorSection = document.getElementById('error-section');
     const roundSteps = document.querySelectorAll('.round-step');
     const totalRounds = roundSteps.length || 0;
@@ -101,6 +102,7 @@
     function showCountdownMessage(message, waitingSeconds) {
         console.log('[P5] Showing countdown message:', message, waitingSeconds);
         playersSection.style.display = 'none';
+        if (terminalBoxImg) terminalBoxImg.style.display = 'none';
         errorSection.style.display = 'none';
         setDisplayMode('countdown');
         clearCountdown();
@@ -141,6 +143,7 @@
 
         // Show boxes and error counter
         playersSection.style.display = 'grid';
+        if (terminalBoxImg) terminalBoxImg.style.display = 'block';
         errorSection.style.display = 'block';
         // Update objective text
         if (round && roundObjectives) {
@@ -174,6 +177,7 @@
         setDisplayMode('countdown');
         setObjectiveValue(objective, '');
         playersSection.style.display = 'none';
+        if (terminalBoxImg) terminalBoxImg.style.display = 'none';
         errorSection.style.display = 'none';
     }
 
