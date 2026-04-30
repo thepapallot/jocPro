@@ -10,7 +10,8 @@
     const goodEl = document.getElementById('good-img');
     const waitScreen = document.getElementById('wait-screen');
     const countdownEl = document.getElementById('countdown-number');
-    const roundCards = Array.from(document.querySelectorAll('.final-level'));
+    const roundLevelsEl = document.getElementById('final-levels');
+    let roundCards = [];
     const roundIndicatorEl = document.getElementById('final-round-indicator');
     const statusChipEl = document.getElementById('final-status-chip');
     const phaseTitleEl = document.getElementById('final-phase-title');
@@ -38,6 +39,32 @@
     function setPhase(title, copy) {
         setText(phaseTitleEl, title);
         setText(phaseCopyEl, copy);
+    }
+
+    function renderRoundCards(total) {
+        if (!roundLevelsEl) {
+            roundCards = [];
+            return;
+        }
+
+        const safeTotal = Math.max(0, Number(total) || 0);
+        roundLevelsEl.innerHTML = '';
+        roundLevelsEl.style.gridTemplateRows = safeTotal > 0 ? `repeat(${safeTotal}, minmax(0, 1fr))` : '';
+
+        for (let round = 1; round <= safeTotal; round += 1) {
+            const card = document.createElement('div');
+            card.className = 'final-level';
+            card.dataset.roundCard = String(round);
+
+            const value = document.createElement('span');
+            value.className = 'final-level-value';
+            value.textContent = String(round);
+
+            card.appendChild(value);
+            roundLevelsEl.appendChild(card);
+        }
+
+        roundCards = Array.from(roundLevelsEl.querySelectorAll('.final-level'));
     }
 
     function updateRoundIndicator(round = 0, total = roundCards.length, state = 'idle') {
@@ -195,6 +222,7 @@
         }
 
         if (d.startRound) {
+            renderRoundCards(d.total_rounds);
             updateRoundHud(d.round);
             updateRoundIndicator(d.round, d.total_rounds, 'countdown');
             if (d.round > d.total_rounds) {
@@ -266,12 +294,13 @@
                     puzzle_id: 12,
                     startRound: true,
                     round,
-                    total_rounds: 3,
+                    total_rounds: roundCards.length || 3,
                     num_giff: gif,
                     duration
                 });
             },
-            partial(round = 1, total = 3) {
+            partial(round = 1, total = roundCards.length || 3) {
+                renderRoundCards(total);
                 updateRoundHud(round);
                 updateRoundIndicator(round, total, 'active');
                 setStatus('active', `Ronda ${round} en curs`, 'Vista parcial de la fase activa sense reiniciar temporitzadors.', 'Activa');
@@ -306,6 +335,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+        renderRoundCards(0);
         updateRoundIndicator(0, roundCards.length, 'idle');
         showIdlePyramid();
         installDebugHelpers();
