@@ -456,7 +456,7 @@
         "8 -> 110",
         "9 -> 423",
         "",
-        "Cada payload correcto resuelve una caja: P10,box,code",
+        "Cada mensaje correcto resuelve una caja: P10,box,code",
         "Al completar las 10 cajas, el puzzle se marca como superado."
       ].join("\n")
     },
@@ -511,12 +511,28 @@
     }
   };
 
-  const els = {
-    tabPuzzles: document.getElementById("test-tab-puzzles"),
-    tabSystem: document.getElementById("test-tab-system"),
-    panelPuzzles: document.getElementById("test-panel-puzzles"),
-    panelSystem: document.getElementById("test-panel-system"),
-    puzzleSelect: document.getElementById("test-puzzle-select"),
+	  const els = {
+	    tabAyudas: document.getElementById("test-tab-ayudas"),
+	    tabPuzzles: document.getElementById("test-tab-puzzles"),
+	    tabSystem: document.getElementById("test-tab-system"),
+	    panelPuzzles: document.getElementById("test-panel-puzzles"),
+	    panelSystem: document.getElementById("test-panel-system"),
+	    gmNavTabs: Array.from(document.querySelectorAll("[data-gm-section]")),
+	    gmSections: Array.from(document.querySelectorAll("[data-gm-panel]")),
+	    gmCurrentPuzzle: document.getElementById("test-gm-current-puzzle"),
+	    gmPuzzleStatus: document.getElementById("test-gm-puzzle-status"),
+	    gmProgress: document.getElementById("test-gm-progress"),
+	    gmDashboardSummary: document.getElementById("test-gm-dashboard-summary"),
+	    gmNextAction: document.getElementById("test-gm-next-action"),
+	    gmQuickNext: document.getElementById("test-gm-quick-next"),
+	    gmSideSummary: document.getElementById("test-gm-side-summary"),
+	    gmLastAction: document.getElementById("test-gm-last-action"),
+	    gmAlerts: document.getElementById("test-gm-alerts"),
+	    gmDeviceSummary: document.getElementById("test-gm-device-summary"),
+	    gmTerminalGrid: document.getElementById("test-gm-terminal-grid"),
+	    gmAyudasPuzzle: document.getElementById("test-gm-ayudas-puzzle"),
+	    gmAyudasScope: document.getElementById("test-gm-ayudas-scope"),
+	    puzzleSelect: document.getElementById("test-puzzle-select"),
     formBuilder: document.getElementById("test-form-builder"),
     sendBtn: document.getElementById("test-send-btn"),
     topicSelect: document.getElementById("test-topic-select"),
@@ -631,29 +647,49 @@
     return true;
   }
 
-  function switchTab(tabId) {
-    const isSystem = tabId === "system";
+	  function switchTab(tabId) {
+	    const normalizedTab = tabId === "system" ? "tecnico" : tabId;
+	    const isSystem = normalizedTab === "tecnico";
+	    const panelId = isSystem ? "tecnico" : normalizedTab;
 
-    if (els.tabPuzzles) {
-      els.tabPuzzles.classList.toggle("is-active", !isSystem);
-      els.tabPuzzles.setAttribute("aria-selected", String(!isSystem));
-    }
+	    els.gmNavTabs.forEach((tab) => {
+	      const isActive = tab.dataset.gmSection === panelId;
+	      tab.classList.toggle("is-active", isActive);
+	      tab.setAttribute("aria-selected", String(isActive));
+	    });
 
-    if (els.tabSystem) {
-      els.tabSystem.classList.toggle("is-active", isSystem);
-      els.tabSystem.setAttribute("aria-selected", String(isSystem));
-    }
+	    if (els.tabAyudas) {
+	      const isAyudas = normalizedTab === "ayudas";
+	      els.tabAyudas.classList.toggle("is-active", isAyudas);
+	      els.tabAyudas.setAttribute("aria-selected", String(isAyudas));
+	    }
 
-    if (els.panelPuzzles) {
-      els.panelPuzzles.classList.toggle("is-active", !isSystem);
-      els.panelPuzzles.hidden = isSystem;
-    }
+	    if (els.tabPuzzles) {
+	      els.tabPuzzles.classList.toggle("is-active", normalizedTab === "partida");
+	      els.tabPuzzles.setAttribute("aria-selected", String(normalizedTab === "partida"));
+	    }
 
-    if (els.panelSystem) {
-      els.panelSystem.classList.toggle("is-active", isSystem);
-      els.panelSystem.hidden = !isSystem;
-    }
-  }
+	    if (els.tabSystem) {
+	      els.tabSystem.classList.toggle("is-active", isSystem);
+	      els.tabSystem.setAttribute("aria-selected", String(isSystem));
+	    }
+
+	    if (els.panelPuzzles) {
+	      els.panelPuzzles.classList.toggle("is-active", !isSystem);
+	      els.panelPuzzles.hidden = isSystem;
+	    }
+
+	    els.gmSections.forEach((section) => {
+	      const isActive = section.dataset.gmPanel === panelId;
+	      section.classList.toggle("is-active", isActive);
+	      section.hidden = !isActive;
+	    });
+
+	    if (els.panelSystem) {
+	      els.panelSystem.classList.toggle("is-active", isSystem);
+	      els.panelSystem.hidden = !isSystem;
+	    }
+	  }
 
   const simState = {
     puzzle1A: "4",
@@ -719,10 +755,10 @@
     }
   }
 
-  function renderShortcutButtons() {
-    if (!els.puzzleShortcuts || !els.introShortcuts) {
-      return;
-    }
+	  function renderShortcutButtons() {
+	    if (!els.puzzleShortcuts || !els.introShortcuts) {
+	      return;
+	    }
 
     const visibleIds = getVisiblePuzzleIds();
     const shortcutPuzzleIds = [...visibleIds];
@@ -730,68 +766,100 @@
       shortcutPuzzleIds.push("-1");
     }
 
-    els.puzzleShortcuts.innerHTML = shortcutPuzzleIds.map((id, index) => {
-      const label = id === "-1" ? "Final" : getPuzzleDisplayName(id);
-      const subtitle = id === "-1" ? "Puzzle final" : `Puzzle ${id}`;
-      return `
-        <button type="button" class="test-shortcut-btn" data-shortcut-puzzle="${escapeHtml(id)}">
-          <strong>${escapeHtml(`${index + 1}. ${label}`)}</strong>
-          <span>${escapeHtml(subtitle)}</span>
-        </button>
-      `;
-    }).join("");
+	    els.puzzleShortcuts.innerHTML = shortcutPuzzleIds.map((id, index) => {
+	      const label = id === "-1" ? "Final" : getPuzzleDisplayName(id);
+	      const subtitle = id === "-1" ? "Compatibilidad final" : `Puzzle ${id}`;
+	      return `
+	        <article class="gm-puzzle-card" data-shortcut-puzzle="${escapeHtml(id)}">
+	          <div>
+	            <strong>${escapeHtml(`${index + 1}. ${label}`)}</strong>
+	            <span>${escapeHtml(subtitle)}</span>
+	          </div>
+	          <div class="gm-card-actions">
+	            <button type="button" class="test-shortcut-btn" data-gm-puzzle-action="open" data-gm-puzzle-id="${escapeHtml(id)}">Abrir</button>
+	            <button type="button" class="test-shortcut-btn primary-action" data-gm-puzzle-action="start" data-gm-puzzle-id="${escapeHtml(id)}">Arrancar</button>
+	            <button type="button" class="test-shortcut-btn danger-action" data-gm-puzzle-action="restart" data-gm-puzzle-id="${escapeHtml(id)}">Reiniciar</button>
+	          </div>
+	        </article>
+	      `;
+	    }).join("");
 
-    els.puzzleShortcuts.querySelectorAll("[data-shortcut-puzzle]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const puzzleId = String(button.dataset.shortcutPuzzle || "");
-        if (puzzleId === "-1") {
-          window.open("/puzzle/final", "_blank", "noopener");
-          return;
-        }
-        const config = puzzleConfigs[puzzleId];
-        if (!config || !config.route) {
-          return;
-        }
-        window.open(config.route, "_blank", "noopener");
-      });
-    });
+	    els.puzzleShortcuts.querySelectorAll("[data-gm-puzzle-action]").forEach((button) => {
+	      button.addEventListener("click", () => {
+	        const puzzleId = String(button.dataset.gmPuzzleId || "");
+	        const action = String(button.dataset.gmPuzzleAction || "open");
+	        selectPuzzle(puzzleId);
+	        if (puzzleId === "-1") {
+	          if (action === "open") {
+	            window.open("/puzzle/final", "_blank", "noopener");
+	          } else {
+	            startPuzzle(action === "restart").catch((error) => appendLog({ error: String(error) }));
+	          }
+	          return;
+	        }
+	        const config = puzzleConfigs[puzzleId];
+	        if (!config) {
+	          return;
+	        }
+	        if (action === "open") {
+	          window.open(config.route, "_blank", "noopener");
+	          return;
+	        }
+	        startPuzzle(action === "restart").catch((error) => appendLog({ error: String(error) }));
+	      });
+	    });
 
-    const introRows = visibleIds.map((id, index) => {
-      const alias = getPuzzleDisplayName(id);
-      const introSceneId = resolveIntroSceneForPuzzle(id);
-      const href = introSceneId
-        ? buildPlayerHref(introSceneId, `/puzzle/${id}`)
-        : `/videoPuzzles/${index + 1}`;
-      return `
-        <a class="test-shortcut-btn test-shortcut-btn--intro" href="${href}" target="_blank" rel="noopener">
-          <strong>${escapeHtml(`${index + 1}. ${alias}`)}</strong>
-          <span>${escapeHtml(`Intro · Puzzle ${id}`)}</span>
-        </a>
-      `;
-    }).join("");
+	    const introRows = visibleIds.map((id, index) => {
+	      const alias = getPuzzleDisplayName(id);
+	      const introSceneId = resolveIntroSceneForPuzzle(id);
+	      const href = introSceneId
+	        ? buildPlayerHref(introSceneId, `/puzzle/${id}`)
+	        : `/videoPuzzles/${index + 1}`;
+	      return `
+	        <a class="test-shortcut-btn test-shortcut-btn--intro" href="${href}" target="_blank" rel="noopener">
+	          <strong>${escapeHtml(alias)}</strong>
+	          <span>${escapeHtml(`Intro · Puzzle ${id}`)}</span>
+	        </a>
+	      `;
+	    }).join("");
 
-    const extraIntroStart = visibleIds.length;
-    const extraIntros = `
-      <a class="test-shortcut-btn test-shortcut-btn--intro" href="${buildPlayerHref("scene_intro_game")}" target="_blank" rel="noopener">
-        <strong>${escapeHtml(`${extraIntroStart + 1}. Intro general`)}</strong>
-        <span>inicio</span>
-      </a>
-      <a class="test-shortcut-btn test-shortcut-btn--intro" href="/final" target="_blank" rel="noopener">
-        <strong>${escapeHtml(`${extraIntroStart + 2}. Video final`)}</strong>
-        <span>felicitacion</span>
-      </a>
-    `;
+	    const extraIntros = `
+	      <a class="test-shortcut-btn test-shortcut-btn--intro" href="${buildPlayerHref("scene_intro_game")}" target="_blank" rel="noopener">
+	        <strong>Intro general</strong>
+	        <span>Inicio de partida</span>
+	      </a>
+	      <a class="test-shortcut-btn test-shortcut-btn--intro" href="/final" target="_blank" rel="noopener">
+	        <strong>Final</strong>
+	        <span>Vídeo final</span>
+	      </a>
+	    `;
 
-    els.introShortcuts.innerHTML = `${introRows}${extraIntros}`;
-  }
+	    els.introShortcuts.innerHTML = `${extraIntros}${introRows}`;
+	  }
 
-  function getSelectedConfig() {
-    return puzzleConfigs[els.puzzleSelect.value];
-  }
+	  function getSelectedConfig() {
+	    return puzzleConfigs[els.puzzleSelect.value];
+	  }
 
-  function setStatus(message) {
-    document.title = message ? `Test Lab · ${message}` : "Test Lab";
-  }
+	  function selectPuzzle(puzzleId) {
+	    if (!els.puzzleSelect) {
+	      return;
+	    }
+	    const id = String(puzzleId || "");
+	    const option = Array.from(els.puzzleSelect.options).find((item) => item.value === id);
+	    if (!option) {
+	      return;
+	    }
+	    els.puzzleSelect.value = id;
+	    renderForm();
+	  }
+
+	  function setStatus(message) {
+	    document.title = message ? `Panel Game Master · ${message}` : "Panel Game Master";
+	    if (message && els.gmLastAction) {
+	      els.gmLastAction.textContent = message;
+	    }
+	  }
 
   function updateTopicHelp() {
     if (!els.topicHelp) {
@@ -836,10 +904,11 @@
     renderMessageOptions();
   }
 
-  function renderForm() {
-    const config = getSelectedConfig();
-    els.formBuilder.innerHTML = "";
-    els.referenceOutput.textContent = config.reference || "Sin referencia disponible.";
+	  function renderForm() {
+	    const config = getSelectedConfig();
+	    renderSelectedPuzzleSummary();
+	    els.formBuilder.innerHTML = "";
+	    els.referenceOutput.textContent = config.reference || "Sin referencia disponible.";
     updateTopicHelp();
     updateSolveButtonState();
 
@@ -979,7 +1048,7 @@
 
     els.simContent.innerHTML = `
       <div class="sim-note">
-        Este puzzle sigue usando bien el formulario rapido y el payload libre.
+        Este puzzle sigue usando bien el formulario rápido y el mensaje manual.
         Iremos anadiendo simulaciones visuales especificas donde tenga mas sentido con la mecanica real.
       </div>
     `;
@@ -1055,7 +1124,7 @@
         </div>
       </div>
       <div class="sim-actions">
-        <button type="button" class="sim-button primary-action" data-sim-p1-send>Enviar lectura</button>
+	        <button type="button" class="sim-button primary-action" data-sim-p1-send>Enviar acción</button>
         <button type="button" class="sim-button primary-action" data-sim-p1-solve>Resolver ronda</button>
       </div>
     `;
@@ -1697,7 +1766,7 @@
     }).join("");
 
     // Botó per solucionar directament la pregunta
-    const solveQuestionButton = `<button type="button" class="sim-button primary-action" data-sim-p3-solve-question>Solucionar pregunta</button>`;
+	    const solveQuestionButton = `<button type="button" class="sim-button primary-action" data-sim-p3-solve-question>Resolver pregunta</button>`;
 
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
       return `
@@ -1916,12 +1985,12 @@
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Selecciona una caja y pulsa el boton para resolverla directamente.</div>
+	      <div class="sim-note">Selecciona una caja y pulsa el botón para marcarla como resuelta.</div>
       <div class="sim-selected-readout">Caja seleccionada: <strong>${simState.puzzle10Box}</strong> · Codigo objetivo: <strong>${targetCode}</strong></div>
       <div class="field-label">Caja</div>
       <div class="sim-grid box-grid">${boxButtons}</div>
       <div class="sim-actions">
-        <button type="button" class="sim-button" data-sim-p10-solve-box>Solucionar caja</button>
+	        <button type="button" class="sim-button" data-sim-p10-solve-box>Marcar caja como resuelta</button>
       </div>
     `;
 
@@ -2032,7 +2101,7 @@
           <button type="button" class="sim-button" data-sim-p11-refresh>Actualizar</button>
           <button type="button" class="sim-button" data-sim-p11-start>Arrancar puzzle 11</button>
           <button type="button" class="sim-button primary-action" data-sim-p11-next ${solved ? "disabled" : ""}>Enviar fase actual</button>
-          <button type="button" class="sim-button" data-sim-p11-solve ${solved ? "disabled" : ""}>Resolver fases restants</button>
+	          <button type="button" class="sim-button" data-sim-p11-solve ${solved ? "disabled" : ""}>Resolver fases restantes</button>
         </div>
         <div class="sim-solution-card">
           <div class="field-label">Fases del Puzzle 11</div>
@@ -2435,7 +2504,7 @@
       <div class="sim-note">Resolver ronda envia els missatges necessaris per igualar el target de la ronda i GIF actuals.</div>
       <div class="sim-actions">
         <button type="button" class="sim-button primary-action" data-sim-p12-solve-round>Resolver ronda</button>
-        <button type="button" class="sim-button" data-sim-p12-refresh-state>Refrescar estado</button>
+	        <button type="button" class="sim-button" data-sim-p12-refresh-state>Actualizar estado</button>
       </div>
       <div data-sim-p12-state>
         <div class="sim-note">Cargando current state...</div>
@@ -2593,7 +2662,7 @@
     els.simContent.innerHTML = `
       <div class="sim-note">La ruta final sigue existiendo por compatibilidad, pero ahora arranca el puzzle 6. Pulsa un terminal para simular un fallo de energia.</div>
       <div class="sim-actions" style="margin-bottom: 1rem;">
-        <button type="button" class="sim-button" data-sim-open-final>Open /puzzle/final</button>
+	        <button type="button" class="sim-button" data-sim-open-final>Abrir pantalla final</button>
       </div>
       <div class="sim-grid box-grid">${boxes}</div>
     `;
@@ -2727,34 +2796,44 @@
     if (!response.ok) {
       throw new Error(data.error || "send_failed");
     }
-    setStatus(`${data.topic} · ${data.count} enviado(s)`);
+	    setStatus(`Acción enviada · ${data.count} mensaje(s)`);
     return data;
   }
 
-  async function sendGeneratedPayload() {
-    const payload = els.messageEditor.value.trim();
-    if (!payload) {
-      return;
-    }
-    await sendPayloads([payload]);
-    appendLog({ local: true, payload });
-    if (els.puzzleSelect.value === "12") {
-      await refreshCurrentState();
-    }
-  }
+	  async function sendGeneratedPayload() {
+	    const payload = els.messageEditor.value.trim();
+	    if (!payload) {
+	      return;
+	    }
+	    if (!window.confirm("Enviar payload manual desde Técnico?")) {
+	      return;
+	    }
+	    await sendPayloads([payload]);
+	    appendLog({ local: true, payload });
+	    if (els.puzzleSelect.value === "12") {
+	      await refreshCurrentState();
+	    }
+	  }
 
-  async function startPuzzle(restart = false) {
-    const config = getSelectedConfig();
-    const endpoint = restart ? config.restartRoute : config.startRoute;
-    const response = await fetch(endpoint, { method: "POST" });
+	  async function startPuzzle(restart = false) {
+	    const config = getSelectedConfig();
+	    if (!config) {
+	      throw new Error("puzzle_not_selected");
+	    }
+	    if (restart && !window.confirm(`Reiniciar ${config.label}?`)) {
+	      return;
+	    }
+	    const endpoint = restart ? config.restartRoute : config.startRoute;
+	    const response = await fetch(endpoint, { method: "POST" });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       throw new Error(data.error || "start_failed");
     }
-    setStatus(restart
-      ? `${config.label} reiniciado`
-      : `${config.label} arrancado`);
-  }
+	    setStatus(restart
+	      ? `${config.label} reiniciado`
+	      : `${config.label} arrancado`);
+	    refreshCurrentState();
+	  }
 
   function updateSolveButtonState() {
     if (!els.solveBtn || !els.unsolveBtn) {
@@ -2767,11 +2846,14 @@
     els.unsolveBtn.disabled = !isPuzzle6;
   }
 
-  async function solvePuzzle6() {
-    if (els.puzzleSelect.value !== "6") {
-      setStatus("Soluciona solo aplica a Puzzle 6");
-      return;
-    }
+	  async function solvePuzzle6() {
+	    if (els.puzzleSelect.value !== "6") {
+	      setStatus("Activar solvePuzzle solo aplica a Puzzle 6");
+	      return;
+	    }
+	    if (!window.confirm("Activar solvePuzzle P6?")) {
+	      return;
+	    }
 
     const response = await fetch("/test/puzzle6/solve", {
       method: "POST",
@@ -2787,11 +2869,14 @@
     appendLog({ local: true, action: "puzzle6_solve_enabled", data });
   }
 
-  async function unsolvePuzzle6() {
-    if (els.puzzleSelect.value !== "6") {
-      setStatus("Unsoluciona solo aplica a Puzzle 6");
-      return;
-    }
+	  async function unsolvePuzzle6() {
+	    if (els.puzzleSelect.value !== "6") {
+	      setStatus("Desactivar solvePuzzle solo aplica a Puzzle 6");
+	      return;
+	    }
+	    if (!window.confirm("Desactivar solvePuzzle P6?")) {
+	      return;
+	    }
 
     const response = await fetch("/test/puzzle6/solve", {
       method: "POST",
@@ -2812,12 +2897,15 @@
     window.open(config.route, "_blank", "noopener");
   }
 
-  function appendLog(entry) {
-    if (!els.eventLog) {
-      return;
-    }
+	  function appendLog(entry) {
+	    if (!els.eventLog) {
+	      return;
+	    }
+	    if (els.eventLog.textContent.trim() === "Sin eventos locales.") {
+	      els.eventLog.innerHTML = "";
+	    }
 
-    const row = document.createElement("div");
+	    const row = document.createElement("div");
     row.className = "log-entry";
 
     const stamp = document.createElement("span");
@@ -2873,10 +2961,10 @@
     `;
   }
 
-  function renderFallbackState(data) {
-    const entries = Object.entries(data || {}).filter(([key]) => key !== "puzzle_id");
-    return `
-      <div class="state-summary">
+	  function renderFallbackState(data) {
+	    const entries = Object.entries(data || {}).filter(([key]) => key !== "puzzle_id");
+	    return `
+	      <div class="state-summary">
         <div class="state-grid">
           <section class="state-card">
             <h3>Estado</h3>
@@ -2885,9 +2973,183 @@
             </div>
           </section>
         </div>
-      </div>
-    `;
-  }
+	      </div>
+	    `;
+	  }
+
+	  function getProgressInfo(data) {
+	    if (!data || typeof data !== "object") {
+	      return { status: "Sin datos", progress: "--", action: "Actualizar estado" };
+	    }
+	    const puzzleId = String(data.puzzle_id ?? els.puzzleSelect.value);
+	    if (!data.puzzle_id) {
+	      return { status: "Sin puzzle activo", progress: "--", action: "Seleccionar y arrancar puzzle" };
+	    }
+	    if (data.puzzle_solved) {
+	      return { status: "Resuelto", progress: "Completado", action: "Abrir intro o siguiente puzzle" };
+	    }
+	    if (puzzleId === "1") {
+	      const operations = Array.isArray(data.operations) ? data.operations : [];
+	      const solved = operations.filter((item) => Array.isArray(item) && item[2] === "Y").length;
+	      return { status: "En juego", progress: `${solved}/${operations.length || data.round_size || "?"}`, action: "Resolver pendientes si el grupo se atasca" };
+	    }
+	    if (puzzleId === "2") {
+	      const players = Array.isArray(data.players) ? data.players : [];
+	      const complete = players.filter((player) => Number(player.progress) >= Number(player.total || 5)).length;
+	      return { status: data.alarm_mode ? "Alarma activa" : "En juego", progress: `${complete}/${players.length || 10} terminales`, action: "Revisar terminal objetivo en Ayudas" };
+	    }
+	    if (puzzleId === "3") {
+	      const answered = Array.isArray(data.answered_players) ? data.answered_players.length : 0;
+	      return { status: "Pregunta activa", progress: `${data.streak || 0}/${data.target || 10} aciertos · ${answered}/${data.total_players || 10} respuestas`, action: "Ver correcta o resolver pregunta" };
+	    }
+	    if (puzzleId === "4") {
+	      const label = data.playing_sample ? "Reproduciendo muestra" : (data.storing ? "Grabando" : "En juego");
+	      return { status: label, progress: `${data.streak || 0}/${data.total_required || 2} secuencias`, action: "Resolver ronda musical si hace falta" };
+	    }
+	    if (puzzleId === "5") {
+	      return { status: data.waiting ? "Esperando" : (data.active_round ? "Ronda activa" : "Parado"), progress: `Ronda ${data.round || 1} · ${data.total ?? 0}/${data.limit ?? "--"}`, action: "Actualizar o resolver ronda" };
+	    }
+	    if (puzzleId === "6") {
+	      return { status: data.restart_pending ? "Reinicio pendiente" : (data.active ? "Final activo" : "Preparado"), progress: `${data.remaining ?? data.duration ?? "--"} s`, action: "Vigilar terminales o finalizar" };
+	    }
+	    if (puzzleId === "7") {
+	      const solved = Array.isArray(data.solved_boxes) ? data.solved_boxes.length : 0;
+	      return { status: "En juego", progress: `${solved}/10 terminales`, action: "Marcar terminales desde Ayudas" };
+	    }
+	    if (puzzleId === "8") {
+	      return { status: data.phase || "En juego", progress: `Ronda ${data.round || 0}/${data.round_total || 3}`, action: "Resolver token o todo si se atascan" };
+	    }
+	    if (puzzleId === "9") {
+	      const boxes = data.boxes && typeof data.boxes === "object" ? Object.keys(data.boxes).length : 0;
+	      return { status: "En juego", progress: `${boxes}/10 posiciones`, action: "Revisar colocación de tokens" };
+	    }
+	    if (puzzleId === "10") {
+	      const solved = Array.isArray(data.solved_boxes) ? data.solved_boxes.length : 0;
+	      return { status: "En juego", progress: `${solved}/10 cajas`, action: "Marcar caja como resuelta" };
+	    }
+	    if (puzzleId === "11") {
+	      const step = Number(data.current_step || 0);
+	      return { status: data.puzzle_solved ? "Tutorial completado" : "Tutorial activo", progress: `${Math.min(step, 10)}/10 fases`, action: "Enviar fase actual" };
+	    }
+	    if (puzzleId === "12") {
+	      return { status: "Ronda de botones", progress: `Ronda ${data.round || 1}/${data.total_rounds || 3}`, action: "Resolver ronda si el grupo se bloquea" };
+	    }
+	    return { status: "En juego", progress: "--", action: "Revisar Ayudas / Resolver" };
+	  }
+
+	  function getSelectedPuzzleLabel() {
+	    const id = els.puzzleSelect?.value || "";
+	    if (id === "-1") return "Final";
+	    const label = getPuzzleDisplayName(id);
+	    return id ? `${label} · Puzzle ${id}` : "Sin seleccionar";
+	  }
+
+	  function renderSelectedPuzzleSummary() {
+	    const label = getSelectedPuzzleLabel();
+	    if (els.gmCurrentPuzzle) {
+	      els.gmCurrentPuzzle.textContent = label;
+	    }
+	    if (els.gmSideSummary) {
+	      els.gmSideSummary.innerHTML = `
+	        <div class="gm-side-kpi">
+	          <span>Puzzle seleccionado</span>
+	          <strong>${escapeHtml(label)}</strong>
+	        </div>
+	      `;
+	    }
+	    if (els.gmQuickNext) {
+	      els.gmQuickNext.textContent = label;
+	    }
+	    if (els.gmAyudasPuzzle) {
+	      els.gmAyudasPuzzle.textContent = label;
+	    }
+	    if (els.gmAyudasScope) {
+	      els.gmAyudasScope.textContent = `${label} es el puzzle activo para esta sección.`;
+	    }
+	  }
+
+	  function renderGMState(data) {
+	    const label = data?.puzzle_id ? `${getPuzzleDisplayName(String(data.puzzle_id))} · Puzzle ${data.puzzle_id}` : getSelectedPuzzleLabel();
+	    const info = getProgressInfo(data);
+	    if (els.gmCurrentPuzzle) els.gmCurrentPuzzle.textContent = label;
+	    if (els.gmPuzzleStatus) els.gmPuzzleStatus.textContent = info.status;
+	    if (els.gmProgress) els.gmProgress.textContent = info.progress;
+	    if (els.gmNextAction) els.gmNextAction.textContent = info.action;
+	    if (els.gmQuickNext) els.gmQuickNext.textContent = label;
+	    if (els.gmDashboardSummary) {
+	      els.gmDashboardSummary.innerHTML = `
+	        <div class="gm-summary-card">
+	          <span>Puzzle actual</span>
+	          <strong>${escapeHtml(label)}</strong>
+	        </div>
+	        <div class="gm-summary-card">
+	          <span>Estado actual</span>
+	          <strong>${escapeHtml(info.status)}</strong>
+	        </div>
+	        <div class="gm-summary-card">
+	          <span>Progreso</span>
+	          <strong>${escapeHtml(info.progress)}</strong>
+	        </div>
+	        <div class="gm-summary-card">
+	          <span>Siguiente acción recomendada</span>
+	          <strong>${escapeHtml(info.action)}</strong>
+	        </div>
+	      `;
+	    }
+	    if (els.gmSideSummary) {
+	      els.gmSideSummary.innerHTML = `
+	        <div class="gm-side-kpi">
+	          <span>Puzzle actual</span>
+	          <strong>${escapeHtml(label)}</strong>
+	        </div>
+	        <div class="gm-side-kpi">
+	          <span>Progreso</span>
+	          <strong>${escapeHtml(info.progress)}</strong>
+	        </div>
+	      `;
+	    }
+	    if (els.gmAlerts) {
+	      els.gmAlerts.textContent = data?.restart_pending ? "Hay un reinicio pendiente." : "Sin avisos.";
+	    }
+	    if (els.gmAyudasPuzzle) {
+	      els.gmAyudasPuzzle.textContent = label;
+	    }
+	    if (els.gmAyudasScope) {
+	      els.gmAyudasScope.textContent = `Las acciones de Ayudas / Resolver se aplican a ${label}.`;
+	    }
+	    renderDeviceState(data);
+	  }
+
+	  function renderDeviceState(data = {}) {
+	    if (!els.gmTerminalGrid) {
+	      return;
+	    }
+	    let activeTerminals = new Set();
+	    let lastTerminal = data.last_reset_box ?? data.last_box ?? data.box ?? null;
+	    if (Array.isArray(data.solved_boxes)) {
+	      activeTerminals = new Set(data.solved_boxes.map((item) => Number(item)));
+	    } else if (data.boxes && typeof data.boxes === "object") {
+	      activeTerminals = new Set(Object.keys(data.boxes).map((item) => Number(item)));
+	    } else if (data.box_states && typeof data.box_states === "object") {
+	      activeTerminals = new Set(Object.keys(data.box_states).map((item) => Number(item)));
+	    } else if (Array.isArray(data.times)) {
+	      activeTerminals = new Set(data.times.map((item) => Number(item.player)));
+	    }
+	    els.gmTerminalGrid.innerHTML = Array.from({ length: 10 }, (_, index) => `
+	      <div class="gm-terminal${activeTerminals.has(index) ? " is-active" : ""}${Number(lastTerminal) === index ? " is-last" : ""}">
+	        <strong>${index}</strong>
+	        <span>${Number(lastTerminal) === index ? "Último" : (activeTerminals.has(index) ? "Con datos" : "Sin datos")}</span>
+	      </div>
+	    `).join("");
+	    if (els.gmDeviceSummary) {
+	      els.gmDeviceSummary.innerHTML = `
+	        <div class="gm-action-note">
+	          ${lastTerminal !== null && lastTerminal !== undefined ? `Último terminal detectado: ${escapeHtml(lastTerminal)}` : "No hay último terminal disponible."}
+	          Los datos reales de hardware completos aún no están expuestos en este panel.
+	        </div>
+	      `;
+	    }
+	  }
 
   async function resourceExists(url) {
     try {
@@ -3008,7 +3270,7 @@
             <div class="state-metrics">
               ${stateMetric("Online", onlineState)}
               ${stateMetric("Autoplay", autoplayState)}
-              ${stateMetric("Fullscreen", fullscreenState)}
+	              ${stateMetric("Pantalla completa", fullscreenState)}
               ${stateMetric("WAV", canPlayWav || "No")}
               ${stateMetric("Session", storageState)}
               ${stateMetric("Pantalla", `${window.innerWidth}x${window.innerHeight}`)}
@@ -3067,7 +3329,7 @@
   async function runAudioTest() {
     const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextCtor) {
-      setStatus("Audio test no disponible");
+	      setStatus("Prueba de audio no disponible");
       return;
     }
 
@@ -3088,23 +3350,23 @@
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now + 0.28);
-    setStatus("Audio test OK");
+	    setStatus("Prueba de audio OK");
   }
 
   async function toggleFullscreen() {
     if (!document.fullscreenEnabled) {
-      setStatus("Fullscreen no disponible");
+	      setStatus("Pantalla completa no disponible");
       return;
     }
 
     if (document.fullscreenElement) {
       await document.exitFullscreen();
-      setStatus("Fullscreen cerrado");
+	      setStatus("Pantalla completa cerrada");
       return;
     }
 
     await document.documentElement.requestFullscreen();
-    setStatus("Fullscreen abierto");
+	    setStatus("Pantalla completa abierta");
   }
 
   async function checkSceneHealth() {
@@ -3511,23 +3773,24 @@
         applyPuzzle2State(data);
         renderPuzzle2Simulator();
       }
-      if (els.puzzleSelect.value === "12") {
-        updatePuzzle12SimulatorState(data);
-      }
-      els.currentState.innerHTML = renderStateSummary(data);
-    } catch (error) {
-      els.currentState.innerHTML = `<div class="state-empty">Error: ${escapeHtml(String(error))}</div>`;
-    }
-  }
+	      if (els.puzzleSelect.value === "12") {
+	        updatePuzzle12SimulatorState(data);
+	      }
+	      els.currentState.innerHTML = renderStateSummary(data);
+	      renderGMState(data);
+	    } catch (error) {
+	      els.currentState.innerHTML = `<div class="state-empty">Error: ${escapeHtml(String(error))}</div>`;
+	      if (els.gmAlerts) {
+	        els.gmAlerts.textContent = `Error actualizando estado: ${String(error)}`;
+	      }
+	    }
+	  }
 
-  function bindEvents() {
-    if (els.tabPuzzles) {
-      els.tabPuzzles.addEventListener("click", () => switchTab("puzzles"));
-    }
-    if (els.tabSystem) {
-      els.tabSystem.addEventListener("click", () => switchTab("system"));
-    }
-    els.puzzleSelect.addEventListener("change", renderForm);
+	  function bindEvents() {
+	    els.gmNavTabs.forEach((tab) => {
+	      tab.addEventListener("click", () => switchTab(tab.dataset.gmSection || "partida"));
+	    });
+	    els.puzzleSelect.addEventListener("change", renderForm);
     els.topicSelect.addEventListener("change", () => {
       updateTopicHelp();
       syncEditorForTopic();
@@ -3580,11 +3843,14 @@
         renderPlayerLogs();
       });
     }
-    if (els.clearLogsBtn) {
-      els.clearLogsBtn.addEventListener("click", () => {
-        clearPlayerLogs();
-      });
-    }
+	    if (els.clearLogsBtn) {
+	      els.clearLogsBtn.addEventListener("click", () => {
+	        if (!window.confirm("Borrar logs del player?")) {
+	          return;
+	        }
+	        clearPlayerLogs();
+	      });
+	    }
     if (els.fullscreenBtn) {
       els.fullscreenBtn.addEventListener("click", () => {
         toggleFullscreen().catch((error) => appendLog({ error: String(error) }));
@@ -3616,11 +3882,12 @@
     });
   }
 
-  initPuzzleSelect();
-  renderShortcutButtons();
-  switchTab("puzzles");
-  renderSystemSummary();
-  renderPlayerLogs();
-  renderForm();
-  bindEvents();
+	  initPuzzleSelect();
+	  renderShortcutButtons();
+	  switchTab("ayudas");
+	  renderSystemSummary();
+	  renderPlayerLogs();
+	  renderForm();
+	  renderDeviceState();
+	  bindEvents();
 })();
