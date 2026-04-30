@@ -12,7 +12,7 @@ class Puzzle12(BasePuzzle):
         self.processing_wrong_result = False
         self.current_giff = 0
         self.current_streak = 0
-        self.streaks = 3
+        self.streaks = 2 #You can set this to 1, 2, or 3 for different difficulty levels
         self.counters = [
             { "id": 1, "duration": 30, "num_giff": 5 },
             { "id": 2, "duration": 45, "num_giff": 5 },
@@ -20,7 +20,7 @@ class Puzzle12(BasePuzzle):
         ]
         # box_states[box_id] = list of 6 ints (0/1), box_id 1-based
         self.box_states = {}
-        self._solve_timer = None  # threading.Timer for 5-second confirmation
+        self._solve_timer = None  # threading.Timer for 3-second confirmation
 
         #negre,verd,vermell,groc,blau,blanc
         self.botons = (((2,2,1,2,2,1),(2,1,2,1,2,2),(1,1,1,3,3,1),(2,1,3,2,1,1),(1,2,1,2,1,3)),
@@ -76,11 +76,11 @@ class Puzzle12(BasePuzzle):
             print(f"Totals: {totals}, Target: {target}")
 
             if totals == target:
-                # Start 5-second confirmation timer if not already running
+                # Start 2-second confirmation timer if not already running
                 if self._solve_timer is None:
-                    self._solve_timer = threading.Timer(3.0, self._confirm_solved)
+                    self._solve_timer = threading.Timer(2.0, self._confirm_solved)
                     self._solve_timer.start()
-                    print("Correct! Starting 3s confirmation timer.")
+                    print("Correct! Starting 2s confirmation timer.")
             else:
                 # Cancel confirmation timer if state no longer matches
                 if self._solve_timer is not None:
