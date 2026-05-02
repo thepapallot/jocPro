@@ -55,67 +55,11 @@
 
         <div id="test-tabs" class="gm-nav" role="tablist" aria-label="Secciones del Game Master">
             <button type="button" id="test-tab-ayudas" class="test-tab is-active" role="tab" aria-selected="true" data-gm-section="ayudas">Ayudas / Resolver</button>
-            <button type="button" id="test-tab-puzzles" class="test-tab" role="tab" aria-selected="false" aria-controls="test-panel-puzzles" data-gm-section="partida">Partida</button>
-            <button type="button" class="test-tab" role="tab" aria-selected="false" data-gm-section="puzzles">Puzzles</button>
-            <button type="button" class="test-tab" role="tab" aria-selected="false" data-gm-section="intros">Intros</button>
-            <button type="button" class="test-tab" role="tab" aria-selected="false" data-gm-section="dispositivos">Dispositivos</button>
-            <button type="button" id="test-tab-system" class="test-tab" role="tab" aria-selected="false" aria-controls="test-panel-system" data-gm-section="tecnico">Técnico</button>
+            <button type="button" id="test-tab-system" class="test-tab" role="tab" aria-selected="false" aria-controls="test-panel-system" data-gm-section="tecnico">Técnico / Prepartida</button>
         </div>
 
         <main id="test-shell" class="gm-shell">
-            <section id="test-panel-puzzles" class="test-tab-panel gm-main-panel is-active" role="tabpanel" aria-labelledby="test-tab-puzzles">
-                <section class="gm-section" data-gm-panel="partida" hidden>
-                    <div class="test-panel gm-dashboard">
-                        <div class="gm-section-head">
-                            <div>
-                                <h2>Partida</h2>
-                            </div>
-                        </div>
-
-                        <div id="test-gm-dashboard-summary" class="gm-summary-grid">
-                            <div class="gm-summary-card">
-                                <span>Puzzle actual</span>
-                                <strong>Sin datos</strong>
-                            </div>
-                            <div class="gm-summary-card">
-                                <span>Estado actual</span>
-                                <strong>Actualiza para ver el estado</strong>
-                            </div>
-                            <div class="gm-summary-card">
-                                <span>Siguiente acción recomendada</span>
-                                <strong>Actualizar estado</strong>
-                            </div>
-                        </div>
-
-                        <div class="gm-control-strip">
-                            <div class="section-tag">Acciones principales</div>
-                            <p>Usa la barra superior para arrancar, reiniciar, abrir la pantalla del juego o actualizar el estado.</p>
-                        </div>
-
-                        <div class="gm-next-actions">
-                            <div>
-                                <div class="section-tag">Siguiente paso</div>
-                                <div id="test-gm-next-action" class="gm-action-note">Actualizar estado</div>
-                            </div>
-                            <div>
-                                <div class="section-tag">Acceso rápido</div>
-                                <div id="test-gm-quick-next" class="gm-action-note">Selecciona puzzle</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="gm-section" data-gm-panel="puzzles" hidden>
-                    <div class="test-panel control-panel">
-                        <div class="gm-section-head">
-                            <div>
-                                <h2>Puzzles</h2>
-                            </div>
-                        </div>
-                        <div id="test-puzzle-shortcuts" class="test-shortcuts-grid gm-puzzle-grid"></div>
-                    </div>
-                </section>
-
+            <section id="test-panel-puzzles" class="test-tab-panel gm-main-panel is-active" role="tabpanel" aria-labelledby="test-tab-ayudas">
                 <section class="gm-section is-active" data-gm-panel="ayudas">
                     <div class="test-panel control-panel gm-ayudas-panel">
                         <div class="gm-section-head">
@@ -123,13 +67,9 @@
                                 <h2>Ayudas / Resolver</h2>
                             </div>
                         </div>
-                        <div class="gm-focus-puzzle">
-                            <span>Puzzle activo</span>
-                            <strong id="test-gm-ayudas-puzzle">Sin seleccionar</strong>
-                        </div>
-
                         <div class="test-block test-sim-block section-sim">
                             <div class="section-tag">Herramientas del puzzle</div>
+                            <div id="test-resolver-hub"></div>
                             <div id="test-sim-content"></div>
                         </div>
 
@@ -143,46 +83,7 @@
                     </div>
                 </section>
 
-                <section class="gm-section" data-gm-panel="intros" hidden>
-                    <div class="test-panel monitor-panel">
-                        <div class="gm-section-head">
-                            <div>
-                                <h2>Intros</h2>
-                            </div>
-                        </div>
-                        <div id="test-intro-shortcuts" class="test-shortcuts-grid gm-intro-grid"></div>
-                    </div>
-                </section>
-
-                <section class="gm-section" data-gm-panel="dispositivos" hidden>
-                    <div class="test-panel monitor-panel">
-                        <div class="gm-section-head">
-                            <div>
-                                <h2>Terminales</h2>
-                            </div>
-                        </div>
-                        <div id="test-gm-device-summary" class="gm-device-summary">
-                            <div class="gm-action-note">No hay datos reales completos de hardware disponibles en este panel.</div>
-                        </div>
-                        <div id="test-gm-terminal-grid" class="gm-terminal-grid" aria-label="Terminales"></div>
-                    </div>
-                </section>
             </section>
-
-            <aside class="gm-side-panel" aria-label="Estado actual">
-                <div class="test-block section-state gm-side-card">
-                    <div class="section-tag">Resumen</div>
-                    <div id="test-gm-side-summary" class="gm-side-summary">Sin estado</div>
-                </div>
-                <div class="test-block gm-side-card">
-                    <div class="section-tag">Última acción</div>
-                    <div id="test-gm-last-action" class="gm-action-note">Sin acciones</div>
-                </div>
-                <div class="test-block gm-side-card">
-                    <div class="section-tag">Avisos</div>
-                    <div id="test-gm-alerts" class="gm-action-note">Sin avisos.</div>
-                </div>
-            </aside>
 
             <section id="test-panel-system" class="test-tab-panel gm-tech-panel" role="tabpanel" aria-labelledby="test-tab-system" hidden>
                 <div class="test-panel monitor-panel">
@@ -193,6 +94,24 @@
                     </div>
 
                     <div class="monitor-grid monitor-grid--single">
+                        <div class="monitor-card">
+                            <div class="section-tag">Prepartida · Atajos de puzzle</div>
+                            <div id="test-puzzle-shortcuts" class="test-shortcuts-grid gm-puzzle-grid"></div>
+                        </div>
+
+                        <div class="monitor-card">
+                            <div class="section-tag">Prepartida · Intros</div>
+                            <div id="test-intro-shortcuts" class="test-shortcuts-grid gm-intro-grid"></div>
+                        </div>
+
+                        <div class="monitor-card">
+                            <div class="section-tag">Terminales</div>
+                            <div id="test-gm-device-summary" class="gm-device-summary">
+                                <div class="gm-action-note">No hay datos reales completos de hardware disponibles en este panel.</div>
+                            </div>
+                            <div id="test-gm-terminal-grid" class="gm-terminal-grid" aria-label="Terminales"></div>
+                        </div>
+
                         <div class="monitor-card section-send">
                             <div class="section-tag">Envío manual</div>
                             <div class="inline-fields">

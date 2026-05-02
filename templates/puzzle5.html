@@ -58,7 +58,14 @@
             {% for idx in range(10) %}
             <div class="player-box" data-player="{{ idx }}">
                 <div class="player-frame"></div>
-                <div class="box-label">{{ idx }}</div>
+                <div class="box-label">
+                    <img
+                        class="box-terminal-icon"
+                        src="{{ url_for('static', filename='images/shared/gameplay/terminal_box.png') }}"
+                        alt="Terminal"
+                    >
+                    <span class="box-terminal-number">{{ idx }}</span>
+                </div>
                 <div class="time-core">
                     <div class="time-ring"></div>
                     <div class="box-time"></div>
