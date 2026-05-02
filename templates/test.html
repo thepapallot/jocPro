@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Lab</title>
+    <title>Panel Game Master</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/test.css') }}">
 </head>
 <body class="test-lab-body">
     <div id="test-app">
-        <header id="test-header">
+        <header id="test-header" class="gm-header">
             <div class="test-header-main">
                 <div class="test-hero">
-                    <h1 class="test-title">Test Lab</h1>
+                    <h1 class="test-title">Panel Game Master</h1>
                 </div>
 
-                <div id="test-tabs" role="tablist" aria-label="Test sections">
-                    <button type="button" id="test-tab-puzzles" class="test-tab is-active" role="tab" aria-selected="true" aria-controls="test-panel-puzzles">Puzzles</button>
-                    <button type="button" id="test-tab-system" class="test-tab" role="tab" aria-selected="false" aria-controls="test-panel-system">System</button>
+                <div class="gm-header-status" aria-label="Estado de partida">
+                    <div class="gm-status-pill">
+                        <span>Puzzle actual</span>
+                        <strong id="test-gm-current-puzzle">Sin datos</strong>
+                    </div>
+                    <div class="gm-status-pill">
+                        <span>Estado</span>
+                        <strong id="test-gm-puzzle-status">Pendiente</strong>
+                    </div>
+                    <div class="gm-status-pill">
+                        <span>Progreso</span>
+                        <strong id="test-gm-progress">--</strong>
+                    </div>
                 </div>
             </div>
 
@@ -30,43 +40,83 @@
             </div>
         </header>
 
-        <main id="test-shell">
-            <section id="test-panel-puzzles" class="test-tab-panel is-active" role="tabpanel" aria-labelledby="test-tab-puzzles">
-                <div class="test-panel control-panel">
-                    <div class="test-block test-ops-block">
-                        <div class="section-tag">Control</div>
-                        <div class="test-header-controls test-header-controls--embedded">
-                            <select id="test-puzzle-select" aria-label="Puzzle"></select>
+        <section class="gm-quickbar" aria-label="Control rapido">
+            <label class="gm-puzzle-select">
+                <span class="field-label">Puzzle seleccionado</span>
+                <select id="test-puzzle-select" aria-label="Puzzle"></select>
+            </label>
+            <div class="action-row test-header-actions">
+                <button type="button" id="test-start-btn" class="primary-action">Arrancar</button>
+                <button type="button" id="test-restart-btn" class="danger-action">Reiniciar</button>
+                <button type="button" id="test-view-btn">Abrir pantalla</button>
+                <button type="button" id="test-refresh-state-btn" class="primary-action">Actualizar</button>
+            </div>
+        </section>
 
-                            <div class="action-row test-header-actions">
-                                <button type="button" id="test-start-btn" class="primary-action">Arrancar</button>
-                                <button type="button" id="test-restart-btn">Reiniciar</button>
-                                <button type="button" id="test-view-btn">Ver puzzle</button>
+        <div id="test-tabs" class="gm-nav" role="tablist" aria-label="Secciones del Game Master">
+            <button type="button" id="test-tab-ayudas" class="test-tab is-active" role="tab" aria-selected="true" data-gm-section="ayudas">Ayudas / Resolver</button>
+            <button type="button" id="test-tab-system" class="test-tab" role="tab" aria-selected="false" aria-controls="test-panel-system" data-gm-section="tecnico">Técnico / Prepartida</button>
+        </div>
+
+        <main id="test-shell" class="gm-shell">
+            <section id="test-panel-puzzles" class="test-tab-panel gm-main-panel is-active" role="tabpanel" aria-labelledby="test-tab-ayudas">
+                <section class="gm-section is-active" data-gm-panel="ayudas">
+                    <div class="test-panel control-panel gm-ayudas-panel">
+                        <div class="gm-section-head">
+                            <div>
+                                <h2>Ayudas / Resolver</h2>
                             </div>
                         </div>
-                    </div>
+                        <div class="test-block test-sim-block section-sim">
+                            <div class="section-tag">Herramientas del puzzle</div>
+                            <div id="test-resolver-hub"></div>
+                            <div id="test-sim-content"></div>
+                        </div>
 
-                    <div class="test-block test-sim-block section-sim">
-                        <div class="section-tag">Simulacion</div>
-                        <div id="test-sim-content"></div>
-                    </div>
-
-                    <div id="test-support-grid">
                         <div class="test-block section-reference">
-                            <div class="section-tag">Solucion</div>
+                            <div class="section-tag">Referencia para el Game Master</div>
                             <div class="action-row">
                                 <button type="button" id="test-copy-reference-btn">Copiar referencia</button>
-                                <button type="button" id="test-solve-btn" hidden>Soluciona</button>
-                                <button type="button" id="test-unsolve-btn" hidden>Unsoluciona</button>
                             </div>
                             <pre id="test-reference-output"></pre>
                         </div>
+                    </div>
+                </section>
 
-                        <div class="test-block section-send">
-                            <div class="section-tag">Enviar</div>
+            </section>
+
+            <section id="test-panel-system" class="test-tab-panel gm-tech-panel" role="tabpanel" aria-labelledby="test-tab-system" hidden>
+                <div class="test-panel monitor-panel">
+                    <div class="gm-section-head">
+                        <div>
+                            <h2>Técnico</h2>
+                        </div>
+                    </div>
+
+                    <div class="monitor-grid monitor-grid--single">
+                        <div class="monitor-card">
+                            <div class="section-tag">Prepartida · Atajos de puzzle</div>
+                            <div id="test-puzzle-shortcuts" class="test-shortcuts-grid gm-puzzle-grid"></div>
+                        </div>
+
+                        <div class="monitor-card">
+                            <div class="section-tag">Prepartida · Intros</div>
+                            <div id="test-intro-shortcuts" class="test-shortcuts-grid gm-intro-grid"></div>
+                        </div>
+
+                        <div class="monitor-card">
+                            <div class="section-tag">Terminales</div>
+                            <div id="test-gm-device-summary" class="gm-device-summary">
+                                <div class="gm-action-note">No hay datos reales completos de hardware disponibles en este panel.</div>
+                            </div>
+                            <div id="test-gm-terminal-grid" class="gm-terminal-grid" aria-label="Terminales"></div>
+                        </div>
+
+                        <div class="monitor-card section-send">
+                            <div class="section-tag">Envío manual</div>
                             <div class="inline-fields">
                                 <label>
-                                    <span class="field-label">Direccion</span>
+                                    <span class="field-label">Dirección</span>
                                     <select id="test-topic-select">
                                         <option value="TO_FLASK">TO_FLASK</option>
                                         <option value="FROM_FLASK">FROM_FLASK</option>
@@ -79,43 +129,32 @@
                                 </label>
                             </div>
                             <form id="test-form-builder"></form>
-                            <div class="action-row">
-                                <button type="button" id="test-send-btn" class="primary-action">Enviar</button>
-                            </div>
                             <textarea id="test-message-editor" spellcheck="false" placeholder="Mensaje MQTT"></textarea>
+                            <div class="action-row">
+                                <button type="button" id="test-send-btn" class="primary-action danger-action">Enviar payload</button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </section>
 
-            <section id="test-panel-system" class="test-tab-panel" role="tabpanel" aria-labelledby="test-tab-system" hidden>
-                <div class="test-panel monitor-panel">
-                    <div class="section-tag monitor-tag">System</div>
-                    <div class="monitor-grid monitor-grid--single">
-                        <div class="monitor-card section-selector">
-                            <div class="section-tag">Accesos directos</div>
-                            <div class="test-shortcuts-layout">
-                                <section class="test-shortcuts-column">
-                                    <h3 class="test-shortcuts-title">Puzzles</h3>
-                                    <div id="test-puzzle-shortcuts" class="test-shortcuts-grid"></div>
-                                </section>
-                                <section class="test-shortcuts-column">
-                                    <h3 class="test-shortcuts-title">Intros</h3>
-                                    <div id="test-intro-shortcuts" class="test-shortcuts-grid"></div>
-                                </section>
+                        <div class="monitor-card section-reference">
+                            <div class="section-tag">Puzzle 6 avanzado</div>
+                            <div class="action-row">
+                                <button type="button" id="test-solve-btn" class="danger-action" hidden>Activar solvePuzzle P6</button>
+                                <button type="button" id="test-unsolve-btn" hidden>Desactivar solvePuzzle P6</button>
                             </div>
                         </div>
 
                         <div class="monitor-card section-system-summary">
+                            <div class="section-tag">Sistema</div>
                             <div class="action-row">
-                                <button type="button" id="test-refresh-system-btn" class="primary-action">Actualizar system</button>
-                                <button type="button" id="test-fullscreen-btn">Fullscreen</button>
-                                <button type="button" id="test-audio-btn">Audio test</button>
+                                <button type="button" id="test-refresh-system-btn" class="primary-action">Actualizar sistema</button>
+                                <button type="button" id="test-fullscreen-btn">Pantalla completa</button>
+                                <button type="button" id="test-audio-btn">Probar audio</button>
                             </div>
-                            <div id="test-system-summary">Pulsa "Actualizar system"</div>
+                            <div id="test-system-summary">Pulsa "Actualizar sistema"</div>
                         </div>
 
                         <div class="monitor-card section-scenes">
+                            <div class="section-tag">Escenas</div>
                             <div class="action-row">
                                 <button type="button" id="test-refresh-scenes-btn" class="primary-action">Comprobar escenas</button>
                             </div>
@@ -123,18 +162,25 @@
                         </div>
 
                         <div class="monitor-card section-system-logs">
+                            <div class="section-tag">Logs del player</div>
                             <div class="action-row">
                                 <button type="button" id="test-refresh-logs-btn" class="primary-action">Actualizar logs</button>
-                                <button type="button" id="test-clear-logs-btn">Borrar logs</button>
+                                <button type="button" id="test-clear-logs-btn" class="danger-action">Borrar logs</button>
                             </div>
-                            <div id="test-system-logs">Sin logs de player en esta sesion.</div>
+                            <div id="test-system-logs">Sin logs de player en esta sesión.</div>
+                        </div>
+
+                        <div class="monitor-card section-events">
+                            <div class="section-tag">Eventos locales</div>
+                            <div class="action-row">
+                                <button type="button" id="test-clear-log-btn">Borrar eventos locales</button>
+                            </div>
+                            <div id="test-event-log">Sin eventos locales.</div>
                         </div>
 
                         <div class="monitor-card section-state">
-                            <div class="action-row">
-                                <button type="button" id="test-refresh-state-btn" class="primary-action">Actualizar estado</button>
-                            </div>
-                            <div id="test-current-state">Pulsa "Actualizar estado"</div>
+                            <div class="section-tag">Estado completo</div>
+                            <div id="test-current-state">Pulsa "Actualizar"</div>
                         </div>
                     </div>
                 </div>
