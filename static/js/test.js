@@ -2028,8 +2028,7 @@
     const buttons = [
       { value: "4", label: "Escuchar la muestra completa", shortLabel: "Azul", colorClass: "sim-p4-blue" },
       { value: "3", label: "Registrar", shortLabel: "Verde", colorClass: "sim-p4-green" },
-      { value: "1", label: "Dejar de registrar", shortLabel: "Rojo", colorClass: "sim-p4-red" },
-      { value: "2", label: "Resetear", shortLabel: "Blanco", colorClass: "sim-p4-white" }
+      { value: "1", label: "Dejar de registrar", shortLabel: "Rojo", colorClass: "sim-p4-red" }
     ].map((item) => {
       const selected = simState.puzzle4Button === item.value ? " is-selected" : "";
       return `

@@ -7,7 +7,7 @@
     --p9-soft: rgba(234, 252, 255, 0.72);
     --p9-good: #2dff9b;
     --p9-wrong: #ff4f6d;
-    --p9-panel: linear-gradient(180deg, rgba(9, 18, 33, 0.94), rgba(5, 11, 22, 0.86));
+    --p9-panel: #050c18;
 }
 
 body {
@@ -19,6 +19,7 @@ body::after {
     content: "";
     position: fixed;
     inset: 0;
+    display: none;
     pointer-events: none;
     z-index: 0;
 }
@@ -64,7 +65,7 @@ body::after {
     padding: 8px 18px;
     border-radius: 999px;
     border: 1px solid rgba(89, 231, 255, 0.2);
-    background: linear-gradient(180deg, rgba(89, 231, 255, 0.14), rgba(89, 231, 255, 0.04));
+    background: #071426;
     color: #eaf9ff;
     font-size: 0.92rem;
     font-weight: 700;
@@ -80,13 +81,13 @@ body::after {
 
 #p9-status-badge.status-good {
     border-color: rgba(73, 225, 107, 0.34);
-    background: linear-gradient(180deg, rgba(73, 225, 107, 0.18), rgba(73, 225, 107, 0.05));
+    background: #073522;
     color: #dfffe7;
 }
 
 #p9-status-badge.status-wrong {
     border-color: rgba(255, 90, 102, 0.34);
-    background: linear-gradient(180deg, rgba(255, 90, 102, 0.16), rgba(255, 90, 102, 0.04));
+    background: #3d0d1a;
     color: #ffe3e6;
 }
 
@@ -372,7 +373,7 @@ body::after {
     padding: 18px 34px;
     border-radius: 20px;
     border: 2px solid rgba(89, 231, 255, 0.22);
-    background: rgba(6, 20, 38, 0.92);
+    background: #061426;
     color: #f5fbff;
     font-size: clamp(1.3rem, 2cqw, 2.2rem);
     font-weight: 800;

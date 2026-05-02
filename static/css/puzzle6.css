@@ -70,6 +70,7 @@ body::before,
 body::after {
     content: "";
     position: fixed;
+    display: none;
     pointer-events: none;
     z-index: 0;
 }
@@ -141,9 +142,7 @@ body::after {
     --p6-core-size: calc(var(--p6-ring-radius) * 1.62);
     border: 1px solid var(--p6-line);
     border-radius: 36px;
-    background:
-        radial-gradient(circle at 50% 50%, rgba(24, 40, 64, 0.66), rgba(6, 12, 22, 0.9) 64%),
-        linear-gradient(180deg, rgba(8, 18, 33, 0.9) 0%, rgba(5, 12, 24, 0.88) 100%);
+    background: #050c18;
     box-shadow:
         0 0 34px rgba(0, 240, 255, 0.1),
         inset 0 0 54px rgba(0, 240, 255, 0.05);
