@@ -1,4 +1,62 @@
 /* Solved banner styles (matching puzzle8 green) */
+.p4-phase-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%) scale(0.95);
+    z-index: 950;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 2vh, 20px);
+    width: min(96vw, 920px);
+    aspect-ratio: 1 / 1;
+    max-height: 94vh;
+    padding: clamp(16px, 3.2vw, 48px);
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: 8px;
+    border: 2px solid rgba(69, 230, 255, 0.32);
+    background:
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.05), transparent 56%),
+        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), rgb(10, 18, 32) 68%),
+        linear-gradient(180deg, rgb(8, 18, 33) 0%, rgb(5, 12, 24) 100%);
+    box-shadow:
+        0 0 0 100vmax rgba(45,255,155,0.16),
+        0 0 34px rgba(0, 240, 255, 0.14),
+        inset 0 0 54px rgba(69, 230, 255, 0.08);
+    opacity: 0;
+    overflow: hidden;
+    transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.p4-phase-popup.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) scale(1);
+}
+
+.p4-phase-popup-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-inline: 0;
+    box-sizing: border-box;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.8rem, 5.2vw, 5rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+    line-height: 1.05;
+    text-align: center;
+    white-space: nowrap;
+    max-width: 88%;
+    overflow: hidden;
+}
+
 .p4-solved-banner {
     position: fixed;
     top: 0;

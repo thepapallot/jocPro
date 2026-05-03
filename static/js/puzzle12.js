@@ -1,8 +1,18 @@
 (function () {
+    const PHASE_POPUP_DELAY_MS = 3000;
+    const PHASE_POPUP_VISIBLE_MS = 3000;
+    const INTER_ROUND_PAUSE_MS = PHASE_POPUP_DELAY_MS + PHASE_POPUP_VISIBLE_MS;
     let timerInterval = null;
     let timeLeft = 0;
     let countdownInterval = null;
     let redirectTimeout = null;
+    let phasePopupTimer = null;
+    let delayedPopupTimer = null;
+    let interRoundPauseTimer = null;
+    let interRoundPauseActive = false;
+    let queuedStartRoundUpdate = null;
+    let currentRound = null;
+    let totalRounds = null;
 
     const gifEl = document.getElementById('fase-gif');
     const timerEl = document.getElementById('timer-overlay');
@@ -18,6 +28,53 @@
     const phaseCopyEl = document.getElementById('final-phase-copy');
     const statusTitleEl = document.getElementById('final-status-title');
     const statusCopyEl = document.getElementById('final-status-copy');
+    let phasePopupEl = null;
+    let phasePopupTextEl = null;
+
+    function resolvePhasePopupElements() {
+        if (!phasePopupEl) {
+            phasePopupEl = document.getElementById('p12-phase-popup');
+        }
+    }
+
+    function showPhasePopup(message) {
+        resolvePhasePopupElements();
+        if (!phasePopupEl) return;
+        phasePopupEl.classList.remove('hidden');
+        phasePopupEl.classList.add('is-visible');
+        if (phasePopupTimer) {
+            clearTimeout(phasePopupTimer);
+        }
+        phasePopupTimer = setTimeout(() => {
+            phasePopupEl.classList.remove('is-visible');
+            phasePopupEl.classList.add('hidden');
+            phasePopupTimer = null;
+        }, PHASE_POPUP_VISIBLE_MS);
+    }
+
+    function startInterRoundPause() {
+        interRoundPauseActive = true;
+        if (delayedPopupTimer) {
+            clearTimeout(delayedPopupTimer);
+        }
+        delayedPopupTimer = setTimeout(() => {
+            delayedPopupTimer = null;
+            showPhasePopup('Primera fase superada');
+        }, PHASE_POPUP_DELAY_MS);
+
+        if (interRoundPauseTimer) {
+            clearTimeout(interRoundPauseTimer);
+        }
+        interRoundPauseTimer = setTimeout(() => {
+            interRoundPauseTimer = null;
+            interRoundPauseActive = false;
+            if (queuedStartRoundUpdate) {
+                const nextUpdate = queuedStartRoundUpdate;
+                queuedStartRoundUpdate = null;
+                handleUpdate(nextUpdate);
+            }
+        }, INTER_ROUND_PAUSE_MS);
+    }
 
     function setText(el, value) {
         if (el) el.textContent = value;
@@ -198,12 +255,19 @@
 
     function handleUpdate(d) {
         if (!d || d.puzzle_id !== 12) return;
+        if (interRoundPauseActive && d.startRound) {
+            queuedStartRoundUpdate = d;
+            return;
+        }
 
         console.log("Received update:", d);
 
         if (d.streak_solved) {
             clearInterval(countdownInterval);
             playEffect('fase_completada.wav');
+            if (currentRound > 0 && totalRounds > 0 && currentRound < totalRounds) {
+                startInterRoundPause();
+            }
             clearInterval(timerInterval);
             gifEl.style.display = 'none';
             timerEl.style.display = 'none';
@@ -222,6 +286,9 @@
         }
 
         if (d.startRound) {
+            // Save round info for later use in streak_solved event
+            currentRound = d.round;
+            totalRounds = d.total_rounds;
             renderRoundCards(d.total_rounds);
             updateRoundHud(d.round);
             updateRoundIndicator(d.round, d.total_rounds, 'countdown');

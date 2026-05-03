@@ -1,4 +1,6 @@
 (function() {
+    const PHASE_POPUP_DELAY_MS = 500;
+    const PHASE_POPUP_VISIBLE_MS = 3000;
     const totalRounds = 2;
     const puzzleContainer = document.getElementById('puzzle-container');
     const bottomArea = document.getElementById('bottom-area');
@@ -48,6 +50,37 @@
     let pendingSolvedResult = null;
     let awaitingRecoveryOperations = false;
     let operationsDelayTimeout = null;
+    let phasePopupTimer = null;
+    let phasePopupDelayTimer = null;
+    let phasePopupEl = null;
+    let phasePopupTextEl = null;
+
+    function resolvePhasePopupElements() {
+        if (!phasePopupEl) {
+            phasePopupEl = document.getElementById('p1-phase-popup');
+        }
+    }
+
+    function showPhasePopup(message) {
+        resolvePhasePopupElements();
+        if (!phasePopupEl) return;
+        if (phasePopupDelayTimer) {
+            clearTimeout(phasePopupDelayTimer);
+        }
+        if (phasePopupTimer) {
+            clearTimeout(phasePopupTimer);
+        }
+        phasePopupDelayTimer = setTimeout(() => {
+            phasePopupDelayTimer = null;
+            phasePopupEl.classList.remove('hidden');
+            phasePopupEl.classList.add('is-visible');
+            phasePopupTimer = setTimeout(() => {
+                phasePopupEl.classList.remove('is-visible');
+                phasePopupEl.classList.add('hidden');
+                phasePopupTimer = null;
+            }, PHASE_POPUP_VISIBLE_MS);
+        }, PHASE_POPUP_DELAY_MS);
+    }
 
     function playEffect(file) {
         try {
@@ -365,6 +398,11 @@
                 renderStatus('success');
 
                 playEffect('fase_completada.wav');
+                // Only show popup if NOT last phase (round < 2, since total is 2)
+                const popupRound = Number(data.round) || Number(currentRound) || null;
+                if (popupRound && popupRound < 2) {
+                    showPhasePopup('Primera fase superada');
+                }
 
                 clearInterval(timerInterval);
                 timerRunning = false;

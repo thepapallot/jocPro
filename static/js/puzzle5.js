@@ -1,4 +1,6 @@
 (function() {
+    const PHASE_POPUP_DELAY_MS = 500;
+    const PHASE_POPUP_VISIBLE_MS = 3000;
     const objectiveCardEl = document.getElementById('objective-card');
     const briefObjectiveEl = document.getElementById('brief-objective');
     const briefObjectiveValueEl = document.getElementById('brief-objective-value');
@@ -10,7 +12,6 @@
     const streakEl = document.getElementById('streak');
     const playerBoxes = document.querySelectorAll('.player-box');
     const playersSection = document.getElementById('players-section');
-    const terminalBoxImg = document.getElementById('terminal-box-img');
     const errorSection = document.getElementById('error-section');
     const roundSteps = document.querySelectorAll('.round-step');
     const totalRounds = roundSteps.length || 0;
@@ -38,6 +39,37 @@
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
     const BEEP_COUNTDOWN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
     let objectivePulseTimeout = null;
+    let phasePopupTimer = null;
+    let phasePopupDelayTimer = null;
+    let phasePopupEl = null;
+    let phasePopupTextEl = null;
+
+    function resolvePhasePopupElements() {
+        if (!phasePopupEl) {
+            phasePopupEl = document.getElementById('p5-phase-popup');
+        }
+    }
+
+    function showPhasePopup(message) {
+        resolvePhasePopupElements();
+        if (!phasePopupEl) return;
+        if (phasePopupDelayTimer) {
+            clearTimeout(phasePopupDelayTimer);
+        }
+        if (phasePopupTimer) {
+            clearTimeout(phasePopupTimer);
+        }
+        phasePopupDelayTimer = setTimeout(() => {
+            phasePopupDelayTimer = null;
+            phasePopupEl.classList.remove('hidden');
+            phasePopupEl.classList.add('is-visible');
+            phasePopupTimer = setTimeout(() => {
+                phasePopupEl.classList.remove('is-visible');
+                phasePopupEl.classList.add('hidden');
+                phasePopupTimer = null;
+            }, PHASE_POPUP_VISIBLE_MS);
+        }, PHASE_POPUP_DELAY_MS);
+    }
 
     function setDisplayMode(mode = 'play') {
         if (!objectiveCardEl) return;
@@ -102,7 +134,6 @@
     function showCountdownMessage(message, waitingSeconds) {
         console.log('[P5] Showing countdown message:', message, waitingSeconds);
         playersSection.style.display = 'none';
-        if (terminalBoxImg) terminalBoxImg.style.display = 'none';
         errorSection.style.display = 'none';
         setDisplayMode('countdown');
         clearCountdown();
@@ -143,7 +174,6 @@
 
         // Show boxes and error counter
         playersSection.style.display = 'grid';
-        if (terminalBoxImg) terminalBoxImg.style.display = 'block';
         errorSection.style.display = 'block';
         // Update objective text
         if (round && roundObjectives) {
@@ -177,7 +207,6 @@
         setDisplayMode('countdown');
         setObjectiveValue(objective, '');
         playersSection.style.display = 'none';
-        if (terminalBoxImg) terminalBoxImg.style.display = 'none';
         errorSection.style.display = 'none';
     }
 
@@ -409,6 +438,11 @@
             // Play corresponding round result sound
             if (rr.success) {
                 playSound(ROUND_OK_SOUND_URL);
+                // Only show popup if NOT last round (round < 2, since total_rounds = 2)
+                const popupRound = Number(d.round) || Number(currentRound) || null;
+                if (popupRound && popupRound < 2) {
+                    showPhasePopup('Primera fase superada');
+                }
             } else {
                 playSound(ROUND_KO_SOUND_URL);
             }
@@ -606,6 +640,9 @@
         clearCountdown();
         if (objectivePulseTimeout) {
             clearTimeout(objectivePulseTimeout);
+        }
+        if (phasePopupTimer) {
+            clearTimeout(phasePopupTimer);
         }
         console.log('[P5] Cleanup complete');
     });

@@ -1,5 +1,8 @@
 (function() {
     const ACTION_FEEDBACK_MS = 2000;
+    const PHASE_POPUP_DELAY_MS = 500;
+    const PHASE_POPUP_VISIBLE_MS = 3000;
+    const INTER_ROUND_PAUSE_MS = PHASE_POPUP_DELAY_MS + PHASE_POPUP_VISIBLE_MS;
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
     const FASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
@@ -43,6 +46,51 @@
     let lastNormalStatusTone = '';
     let pendingStatusText = null;
     let pendingStatusTone = null;
+    let phasePopupTimer = null;
+    let delayedPopupTimer = null;
+    let interRoundPauseTimer = null;
+    let interRoundPauseActive = false;
+    let queuedInterRoundUpdate = null;
+    let phasePopupEl = null;
+    let phasePopupTextEl = null;
+
+    function startInterRoundPause() {
+        interRoundPauseActive = true;
+        if (delayedPopupTimer) {
+            clearTimeout(delayedPopupTimer);
+        }
+        delayedPopupTimer = setTimeout(() => {
+            delayedPopupTimer = null;
+            showPhasePopup('Primera fase superada');
+        }, PHASE_POPUP_DELAY_MS);
+
+        if (interRoundPauseTimer) {
+            clearTimeout(interRoundPauseTimer);
+        }
+        interRoundPauseTimer = setTimeout(() => {
+            interRoundPauseTimer = null;
+            interRoundPauseActive = false;
+            if (queuedInterRoundUpdate) {
+                const nextUpdate = queuedInterRoundUpdate;
+                queuedInterRoundUpdate = null;
+                handleUpdate(nextUpdate);
+            }
+        }, INTER_ROUND_PAUSE_MS);
+    }
+
+    function showPhasePopup(message) {
+        if (!phasePopupEl) return;
+        phasePopupEl.classList.remove('hidden');
+        phasePopupEl.classList.add('is-visible');
+        if (phasePopupTimer) {
+            clearTimeout(phasePopupTimer);
+        }
+        phasePopupTimer = setTimeout(() => {
+            phasePopupEl.classList.remove('is-visible');
+            phasePopupEl.classList.add('hidden');
+            phasePopupTimer = null;
+        }, PHASE_POPUP_VISIBLE_MS);
+    }
 
     function setStatusPanelTone(tone) {
         if (!statusSectionEl) return;
@@ -314,6 +362,10 @@
     function handleUpdate(d) {
         console.log('[P4] handleUpdate called with:', d);
         if (!d || d.puzzle_id !== 4) return;
+        if (interRoundPauseActive && !d.show_completion && !d.puzzle_solved) {
+            queuedInterRoundUpdate = d;
+            return;
+        }
 
         const wasStoring = lastKnownStoring;
         if (typeof d.storing === 'boolean') {
@@ -350,8 +402,11 @@
 
         if (d.show_completion && !solved) {
             showingCompletion = true;
-            setStatus('Fase completada', 'completed');
+            setStatus('', 'completed');
             playSound(FASE_OK_SOUND_URL);
+            if (d.streak !== undefined && d.total_required !== undefined && d.streak < d.total_required) {
+                startInterRoundPause();
+            }
         }
 
         if (d.play_mostra) {
@@ -549,6 +604,7 @@
         statusSectionEl = document.getElementById('status-section');
         streakEl = document.getElementById('streak');
         progressSectionEl = document.getElementById('progress-section');
+        phasePopupEl = document.getElementById('p4-phase-popup');
 
         //installDebugHelpers();
         setStatus('Preparando muestra', 'listening');

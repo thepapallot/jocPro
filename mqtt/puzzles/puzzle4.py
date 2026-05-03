@@ -183,6 +183,14 @@ class Puzzle4(BasePuzzle):
                 "validation_feedback": True
             })
 
+            # Show phase completion popup if NOT last phase
+            if streak < total_required:
+                self._push({
+                    "show_completion": True,
+                    "streak": streak,
+                    "total_required": total_required
+                })
+
             if streak >= total_required:
                 time.sleep(2)
                 

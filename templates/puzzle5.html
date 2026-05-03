@@ -54,8 +54,6 @@
             </div>
         </div>
 
-        <img id="terminal-box-img" src="{{ url_for('static', filename='images/shared/gameplay/terminal_box.png') }}" alt="terminal box">
-
         <div id="players-section">
             {% for idx in range(10) %}
             <div class="player-box" data-player="{{ idx }}">
@@ -97,6 +95,10 @@
 {% endblock %}
 
 {% block after_body %}
+<div id="p5-phase-popup" class="p5-phase-popup hidden" aria-live="polite">
+    <div id="p5-phase-popup-line1" class="p5-phase-popup-line">Primera fase</div>
+    <div id="p5-phase-popup-line2" class="p5-phase-popup-line">superada</div>
+</div>
 <div id="p5-solved-banner" class="p5-solved-banner hidden">
     <div class="p5-solved-text">NIVEL COMPLETADO</div>
 </div>
