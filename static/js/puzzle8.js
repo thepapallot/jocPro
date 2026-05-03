@@ -1,4 +1,6 @@
 (function () {
+    const PHASE_POPUP_DELAY_MS = 1000;
+    const PHASE_POPUP_VISIBLE_MS = 4000;
     const COLOR_PREFIX = 'p8-color-';
     let snapshotLoaded = false;
     let symbolsOrder = [];
@@ -6,9 +8,40 @@
     let totalRounds = 3;
     let activeRound = 1;
     let completedRounds = 0;
+    let phasePopupTimer = null;
+    let phasePopupDelayTimer = null;
     const roundCards = Array.from(document.querySelectorAll('.round-card'));
     const grid = document.getElementById('p8-grid');
     const roundsContainer = document.getElementById('p8-rounds');
+    let phasePopupEl = null;
+    let phasePopupTextEl = null;
+
+    function resolvePhasePopupElements() {
+        if (!phasePopupEl) {
+            phasePopupEl = document.getElementById('p8-phase-popup');
+        }
+    }
+
+    function showPhasePopup(message) {
+        resolvePhasePopupElements();
+        if (!phasePopupEl) return;
+        if (phasePopupDelayTimer) {
+            clearTimeout(phasePopupDelayTimer);
+        }
+        if (phasePopupTimer) {
+            clearTimeout(phasePopupTimer);
+        }
+        phasePopupDelayTimer = setTimeout(() => {
+            phasePopupDelayTimer = null;
+            phasePopupEl.classList.remove('hidden');
+            phasePopupEl.classList.add('is-visible');
+            phasePopupTimer = setTimeout(() => {
+                phasePopupEl.classList.remove('is-visible');
+                phasePopupEl.classList.add('hidden');
+                phasePopupTimer = null;
+            }, PHASE_POPUP_VISIBLE_MS);
+        }, PHASE_POPUP_DELAY_MS);
+    }
 
     function setInputPhase(active) {
         if (!grid) return;
@@ -296,6 +329,10 @@
             if (d.input_result.success === true && Number.isInteger(d.round) && d.round >= 1) {
                 completedRounds = Math.max(completedRounds, Math.min(d.round, totalRounds));
                 updateStreak(Math.min(completedRounds + 1, totalRounds));
+                // Only show popup if NOT last round (round < totalRounds)
+                if (d.round < totalRounds) {
+                    showPhasePopup('Primera fase superada');
+                }
             }
             // Play phase result sound
             if (d.input_result.success === true) {
