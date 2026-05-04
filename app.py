@@ -479,5 +479,68 @@ def test_puzzle6_solve():
     return jsonify({"status": "ok", "puzzle_id": 6, "solvePuzzle": solve_puzzle}), 200
 
 
+@app.route('/test/system_status', methods=['GET'])
+def test_system_status():
+    """Operational health for the GM panel.
+
+    Flask is already serving this endpoint when the panel can call it, so this
+    route deliberately reports/refreshes services instead of trying to spawn a
+    second Flask process from inside the running Flask app.
+    """
+    state = mqtt_client.get_current_state() or {}
+    return jsonify({
+        "flask": "ok",
+        "mqtt_connected": bool(getattr(mqtt_client, "connected", False)),
+        "mqtt_last_connect_rc": getattr(mqtt_client, "last_connect_rc", None),
+        "current_puzzle_id": mqtt_client.current_puzzle_id,
+        "current_puzzle_index": mqtt_client.current_puzzle_index,
+        "current_state_available": bool(state),
+        "known_puzzles": sorted(mqtt_client.puzzles.keys()),
+        "note": "No se arranca Flask desde Flask; este endpoint comprueba el proceso activo y el estado MQTT."
+    }), 200
+
+
+@app.route('/test/initialize_system', methods=['POST'])
+def test_initialize_system():
+    # Safe initialization from an already running Flask server: publish a light
+    # status message and return health. Starting another Flask process here would
+    # be fragile and can duplicate ports/workers.
+    try:
+        mqtt_client.send_message("FROM_FLASK", "GM_SYSTEM_CHECK")
+    except Exception as exc:
+        return jsonify({"status": "warning", "error": str(exc)}), 200
+
+    return jsonify({
+        "status": "ok",
+        "message": "Sistema comprobado desde el servidor Flask activo.",
+        "mqtt_connected": bool(getattr(mqtt_client, "connected", False))
+    }), 200
+
+
+@app.route('/test/force_end', methods=['POST'])
+def test_force_end():
+    data = request.get_json(silent=True) or {}
+    puzzle_id = data.get("puzzle_id") or mqtt_client.current_puzzle_id
+    try:
+        puzzle_id = int(puzzle_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "invalid_puzzle"}), 400
+
+    puzzle = mqtt_client.puzzles.get(puzzle_id)
+    if puzzle is None:
+        return jsonify({"error": "puzzle_not_found"}), 404
+
+    end_payload = "P5_End" if puzzle_id == 5 else f"P{puzzle_id}End"
+    try:
+        with puzzle.lock:
+            puzzle.solved = True
+        mqtt_client.send_message("FROM_FLASK", end_payload)
+        puzzle._push({"puzzle_solved": True, "forced_by_gm": True})
+    except Exception as exc:
+        return jsonify({"error": "force_end_failed", "detail": str(exc)}), 500
+
+    return jsonify({"status": "sent", "puzzle_id": puzzle_id, "end_payload": end_payload}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -11,17 +11,26 @@ class MQTTClient:
         self.current_puzzle_index = 0
         self.update_callback = None
         self.lock = threading.Lock()
+        self.connected = False
+        self.last_connect_rc = None
         
         # MQTT setup
         self.client = mqtt.Client()
         self.client.on_connect = self._on_connect
+        self.client.on_disconnect = self._on_disconnect
         self.client.on_message = self._on_message
         self.client.connect("localhost", 1883, 60)
         self.client.loop_start()
         
     def _on_connect(self, client, userdata, flags, rc):
         print(f"Connected to MQTT broker: {rc}")
+        self.connected = (rc == 0)
+        self.last_connect_rc = rc
         client.subscribe("TO_FLASK")
+
+    def _on_disconnect(self, client, userdata, rc):
+        self.connected = False
+        self.last_connect_rc = rc
         
     def _on_message(self, client, userdata, msg):
         try:
