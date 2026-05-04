@@ -197,7 +197,25 @@ class TelemetryQueries:
             )
         
         return [dict(row) for row in cursor.fetchall()]
-    
+
+    def get_pending_sessions(self, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get sessions where ended_at is NULL (not yet played), newest first."""
+        cursor = self.db.execute(
+            """
+            SELECT
+                session_id,
+                name,
+                expected_day,
+                expected_time
+            FROM sessions
+            WHERE ended_at IS NULL
+            ORDER BY expected_day DESC, session_id DESC
+            LIMIT ?
+            """,
+            (limit,),
+        )
+        return [dict(row) for row in cursor.fetchall()]
+
     def get_event_counts_by_type(
         self,
         puzzle_num: Optional[int] = None,

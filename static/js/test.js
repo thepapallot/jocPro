@@ -792,6 +792,53 @@
     });
   }
 
+  function renderDbSessionList(sessions) {
+    if (!els.sessionList) return;
+    if (!sessions || !sessions.length) {
+      els.sessionList.innerHTML = `<div class="gm-empty">No hay sesiones guardadas.</div>`;
+      return;
+    }
+    els.sessionList.innerHTML = sessions.map((s) => {
+      const parts = [s.name || "Sesión sin nombre", s.expected_day, s.expected_time].filter(Boolean);
+      return `<div class="gm-session-item">
+        <strong>${escapeHtml(s.name || "Sesión sin nombre")}</strong>
+        <span>${escapeHtml([s.expected_day, s.expected_time].filter(Boolean).join(" · ") || "Sin fecha")}</span>
+      </div>`;
+    }).join("");
+  }
+
+  async function refreshDbSessionList() {
+    try {
+      const response = await fetch("/test/sessions/pending", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const sessions = await response.json();
+      renderDbSessionList(sessions);
+    } catch (err) {
+      console.warn("[telemetry] refreshDbSessionList failed:", err);
+      renderSessionList();
+    }
+  }
+
+  async function saveSessionToDb(session) {
+    const body = {
+      name: session.sessionName || null,
+      company: session.company || "",
+      expected_day: session.date || "",
+      expected_time: session.time || null,
+      place: session.place || null,
+      players_num: session.players ? parseInt(session.players, 10) || null : null,
+      language: session.gameLanguage || null,
+      notes: session.additionalNotes || null,
+    };
+    const response = await fetch("/test/session/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    await refreshDbSessionList();
+  }
+
   function saveSession() {
     const session = collectSessionForm();
     const sessions = readSessions();
@@ -800,7 +847,10 @@
     else sessions.unshift(session);
     selectedSessionId = session.id;
     writeSessions(sessions);
-    renderSessionList();
+    saveSessionToDb(session).catch((err) => {
+      console.warn("[telemetry] saveSessionToDb failed:", err);
+      setStatus("Sesión guardada (sin BD)");
+    });
     addSimpleEvent("Sesión guardada");
     setStatus("Sesión guardada");
     return session;
@@ -4698,7 +4748,7 @@
     if (els.saveSessionBtn) els.saveSessionBtn.addEventListener("click", saveSession);
     if (els.newSessionBtn) els.newSessionBtn.addEventListener("click", () => {
       clearSessionForm();
-      renderSessionList();
+      refreshDbSessionList();
       setStatus("Nueva sesión preparada");
     });
     if (els.duplicateSessionBtn) els.duplicateSessionBtn.addEventListener("click", duplicateSession);
@@ -4719,7 +4769,7 @@
 
   loadGameState();
   loadActiveSession();
-  renderSessionList();
+  refreshDbSessionList();
   renderPreflightChecklist();
   renderPuzzleProgress();
   renderIncidents();

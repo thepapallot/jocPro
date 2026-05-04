@@ -7,8 +7,25 @@ import queue
 import json
 import threading
 
+try:
+    from telemetry import init_telemetry, TelemetryQueries
+    _TELEMETRY_AVAILABLE = True
+except ImportError:
+    _TELEMETRY_AVAILABLE = False
+
 app = Flask(__name__)
 BASE_DIR = Path(__file__).resolve().parent #Directori base del projecte jocPro/
+
+# Telemetry init (non-fatal: app boots even if DB is unavailable)
+_telemetry_writer = None
+_telemetry_queries = None
+if _TELEMETRY_AVAILABLE:
+    try:
+        _DB_PATH = BASE_DIR / 'data' / 'db'
+        _telemetry_writer = init_telemetry(_DB_PATH)
+        _telemetry_queries = TelemetryQueries(_DB_PATH)
+    except Exception as _e:
+        print(f'[telemetry] init failed, DB unavailable: {_e}')
 
 mqtt_client = MQTTClient(app, puzzle_order=PUZZLE_ORDER)
 SPECIAL_PUZZLE_IDS = {PUZZLE_TUTORIAL, PUZZLE_FINAL}
@@ -540,6 +557,40 @@ def test_force_end():
         return jsonify({"error": "force_end_failed", "detail": str(exc)}), 500
 
     return jsonify({"status": "sent", "puzzle_id": puzzle_id, "end_payload": end_payload}), 200
+
+
+@app.route('/test/session/save', methods=['POST'])
+def test_session_save():
+    if _telemetry_writer is None:
+        return jsonify({'error': 'telemetry_unavailable'}), 503
+    data = request.get_json(silent=True) or {}
+    try:
+        session_id = _telemetry_writer.record_session_start(
+            company=str(data.get('company') or ''),
+            expected_day=str(data.get('expected_day') or ''),
+            name=data.get('name') or None,
+            expected_time=data.get('expected_time') or None,
+            place=data.get('place') or None,
+            players_num=int(data['players_num']) if data.get('players_num') else None,
+            language=data.get('language') or None,
+            notes=data.get('notes') or None,
+            started_at=None,
+            ended_at=None,
+        )
+    except Exception as exc:
+        return jsonify({'error': 'save_failed', 'detail': str(exc)}), 500
+    return jsonify({'session_id': session_id}), 201
+
+
+@app.route('/test/sessions/pending', methods=['GET'])
+def test_sessions_pending():
+    if _telemetry_queries is None:
+        return jsonify([]), 200
+    try:
+        sessions = _telemetry_queries.get_pending_sessions()
+    except Exception as exc:
+        return jsonify({'error': 'query_failed', 'detail': str(exc)}), 500
+    return jsonify(sessions), 200
 
 
 if __name__ == '__main__':

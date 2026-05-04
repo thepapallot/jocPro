@@ -164,7 +164,7 @@ class TelemetryWriter:
                     started_at,
                     ended_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     company,
