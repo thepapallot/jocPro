@@ -8,7 +8,7 @@ class Puzzle3(BasePuzzle):
         super().__init__(puzzle_id=3, mqtt_client=mqtt_client)
         
         # Import question bank
-        from data.puzzle3_questions import QUESTIONS as P3_QUESTIONS
+        from data.puzzle3.puzzle3_questions import QUESTIONS as P3_QUESTIONS
         self.question_bank = P3_QUESTIONS
         
         self.chosen_questions = []       # 10 randomly selected questions
