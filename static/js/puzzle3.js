@@ -6,6 +6,8 @@
     const feedbackEl = document.getElementById('feedback');
     const playerSummaryEl = document.getElementById('player-summary');
     const securityLevels = Array.from(document.querySelectorAll('.security-level'));
+    const checkpointNodes = Array.from(document.querySelectorAll('.checkpoint-node'));
+    const checkpointThresholds = [3, 6];
 
     // Consistent sound helper (same as puzzles 1 and 2)
     function playSound(url) {
@@ -30,6 +32,8 @@
     let currentQuestionId = null;
     let activeQuestionNumber = 1;
     let solvedSequenceStarted = false;
+    let hasStreakBaseline = false;
+    let previousStreak = 0;
 
     function getDisplayStreak(streak, target) {
         // Mostra el nombre real de respostes correctes (començant per 0)
@@ -121,6 +125,18 @@
     function setStreak(streak, target) {
         streakEl.textContent = `${getDisplayStreak(streak, target)}/${target}`;
         updateSecurityLevels(streak, target);
+        updateCheckpointNodes(streak);
+
+        if (hasStreakBaseline) {
+            checkpointThresholds.forEach((checkpoint) => {
+                if (previousStreak < checkpoint && streak >= checkpoint) {
+                    triggerCheckpointHit(checkpoint);
+                }
+            });
+        }
+
+        previousStreak = streak;
+        hasStreakBaseline = true;
     }
 
     function updatePlayerSummary(answeredCount) {
@@ -154,14 +170,34 @@
         });
     }
 
+    function updateCheckpointNodes(streak) {
+        checkpointNodes.forEach((node) => {
+            const checkpoint = parseInt(node.dataset.checkpoint, 10);
+            if (Number.isNaN(checkpoint)) return;
+            node.classList.toggle('unlocked', streak >= checkpoint);
+        });
+    }
+
+    function triggerCheckpointHit(checkpoint) {
+        const node = checkpointNodes.find(
+            (el) => parseInt(el.dataset.checkpoint, 10) === checkpoint
+        );
+        if (!node) return;
+
+        node.classList.remove('hit');
+        // Force reflow so animation can replay if needed.
+        void node.offsetWidth;
+        node.classList.add('hit');
+    }
+
     function showWrong() {
-        feedbackEl.className = 'err';
-        feedbackEl.textContent = 'Hay respuestas incorrectas.';
+        feedbackEl.className = '';
+        feedbackEl.textContent = '';
     }
 
     function showQuestionComplete(streak, target) {
-        feedbackEl.className = 'ok';
-        feedbackEl.textContent = `Pregunta completada. Avanzando ${streak}/${target}.`;
+        feedbackEl.className = '';
+        feedbackEl.textContent = '';
     }
 
     function showSolved() {
@@ -367,7 +403,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initPlayers();
-        updateSecurityLevels(0, 10);
+        setStreak(0, 10);
         installDebugHelpers();
         initSSE();
     });

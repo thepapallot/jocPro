@@ -2,7 +2,7 @@
 PUZZLE_TUTORIAL = 11
 
 # Configurable order of counted puzzles between tutorial and final.
-PUZZLE_ORDER = [8,10,3,1,5,12,4]
+PUZZLE_ORDER = [8,3,10,1,5,12,4]
 
 PUZZLE_FINAL = 6
 
