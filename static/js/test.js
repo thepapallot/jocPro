@@ -585,7 +585,6 @@
     preflightChecklist: document.getElementById("gm-preflight-checklist"),
     checkAllBtn: document.getElementById("gm-check-all-btn"),
     startSystemBtn: document.getElementById("gm-start-system-btn"),
-    testScreenBtn: document.getElementById("gm-test-screen-btn"),
     testMqttBtn: document.getElementById("gm-test-mqtt-btn"),
     testEsp32Btn: document.getElementById("gm-test-esp32-btn"),
     openPlayerBtn: document.getElementById("gm-open-player-btn"),
@@ -617,16 +616,11 @@
     timerId: null
   };
   const preflightItems = [
-    { id: "flask", label: "Servidor Flask activo" },
-    { id: "mqtt", label: "MQTT conectado" },
-    { id: "player", label: "Pantalla principal abierta" },
-    { id: "audio", label: "Audio navegador OK" },
-    { id: "fullscreen", label: "Fullscreen OK" },
-    { id: "esp32", label: "ESP32 conectados" },
-    { id: "terminals", label: "Terminales / cajas detectadas" },
-    { id: "buttons", label: "Botones responden" },
-    { id: "nfc", label: "NFC / tokens responden" },
-    { id: "general", label: "Estado general del sistema" }
+    { id: "flask", label: "Servidor" },
+    { id: "mqtt", label: "MQTT" },
+    { id: "player", label: "Pantalla jugador" },
+    { id: "audio", label: "Audio" },
+    { id: "fullscreen", label: "Pantalla completa" }
   ];
   const preflightState = Object.fromEntries(preflightItems.map((item) => [item.id, "unchecked"]));
 
@@ -751,7 +745,7 @@
   }
 
   function collectSessionForm() {
-    const fields = ["sessionName", "company", "event", "date", "time", "place", "group", "players", "teamName", "gameMaster", "gameLanguage", "gameMode", "difficulty", "internalNotes"];
+    const fields = ["sessionName", "company", "date", "time", "place", "players", "gameLanguage", "additionalNotes"];
     const data = {};
     fields.forEach((field) => {
       const input = getSessionField(field);
@@ -775,8 +769,6 @@
     document.getElementById("gm-session-form")?.reset();
     const lang = getSessionField("gameLanguage");
     if (lang) lang.value = "es";
-    const difficulty = getSessionField("difficulty");
-    if (difficulty) difficulty.value = "normal";
   }
 
   function renderSessionList() {
@@ -789,7 +781,7 @@
     els.sessionList.innerHTML = sessions.map((session) => `
       <button type="button" class="gm-session-item${session.id === selectedSessionId ? " is-selected" : ""}" data-session-id="${escapeHtml(session.id)}">
         <strong>${escapeHtml(session.sessionName || "Sesión sin nombre")}</strong>
-        <span>${escapeHtml([session.company, session.event, session.group].filter(Boolean).join(" · ") || "Sin datos")}</span>
+        <span>${escapeHtml([session.company, session.date, session.time].filter(Boolean).join(" · ") || "Sin datos")}</span>
       </button>
     `).join("");
     els.sessionList.querySelectorAll("[data-session-id]").forEach((button) => {
@@ -865,7 +857,7 @@
   function renderActiveSession() {
     const s = activeSession;
     const line = s
-      ? `${s.company || "Sin empresa"} · ${s.event || "Sin evento"} · ${s.group || "Sin grupo"} | Idioma: ${languageLabel(s.gameLanguage)} | Jugadores: ${s.players || "--"} | GM: ${s.gameMaster || "--"} | Sesión confirmada`
+      ? `${s.sessionName || "Sesión"} · ${s.company || "Sin empresa"} · ${s.date || "Sin fecha"} ${s.time || ""} | Lugar: ${s.place || "--"} | Idioma: ${languageLabel(s.gameLanguage)} | Jugadores: ${s.players || "--"} | Sesión confirmada`
       : "Sin sesión confirmada";
     if (els.activeSessionLine) els.activeSessionLine.textContent = line;
     if (els.headerSessionStatus) {
@@ -953,6 +945,7 @@
       solved: false
     },
     skipFollowingPhases: false,
+    allCorrectMode: false,
     autoSkipMarker: null,
     autoSkipPuzzleId: null,
     autoSkipInFlight: false
@@ -1191,6 +1184,7 @@
   function renderForm() {
     const config = getSelectedConfig();
     simState.skipFollowingPhases = false;
+    simState.allCorrectMode = false;
     simState.autoSkipMarker = null;
     simState.autoSkipPuzzleId = null;
     simState.autoSkipInFlight = false;
@@ -1283,21 +1277,32 @@
 
 	    els.resolverHub.innerHTML = `
       <section class="gm-resolver-strip" aria-label="Control de fase">
-        <article class="gm-resolver-card">
+        <article class="gm-resolver-card gm-resolver-card--context">
           <strong class="gm-resolver-mode">${escapeHtml(puzzleLabel)}</strong>
         </article>
-        <article class="gm-resolver-card gm-resolver-card--action">
+        <article class="gm-resolver-card gm-resolver-card--action gm-resolver-card--good">
 	          ${phaseAction
 	            ? `<button type="button" class="gm-resolver-action primary-action" data-resolver-phase>
 	                 <strong>Dar por buena la fase</strong>
 	               </button>`
 	            : '<div class="gm-resolver-empty">No hay acción de fase definida para este puzzle</div>'}
 	        </article>
-	        <article class="gm-resolver-card">
+	        <article class="gm-resolver-card gm-resolver-card--skip">
 	          <label class="gm-resolver-toggle${canSkipFollowing ? "" : " is-disabled"}">
 	            <input type="checkbox" id="test-skip-following" ${simState.skipFollowingPhases ? "checked" : ""} ${canSkipFollowing ? "" : "disabled"}>
 	            <span>Saltar resto del puzzle</span>
 	          </label>
+	        </article>
+	        <article class="gm-resolver-card gm-resolver-card--all-correct">
+	          <label class="gm-resolver-toggle">
+	            <input type="checkbox" id="test-all-correct-mode" ${simState.allCorrectMode ? "checked" : ""}>
+	            <span>Todo correcto</span>
+	          </label>
+	        </article>
+	        <article class="gm-resolver-card gm-resolver-card--restart">
+	          <button type="button" class="gm-resolver-action danger-action" data-resolver-restart>
+	            <strong>Reiniciar puzzle</strong>
+	          </button>
 	        </article>
       </section>
     `;
@@ -1306,6 +1311,17 @@
     if (skipInput) {
       skipInput.addEventListener("change", () => {
         simState.skipFollowingPhases = !!skipInput.checked;
+        renderResolverHub();
+      });
+    }
+
+    const allCorrectInput = document.getElementById("test-all-correct-mode");
+    if (allCorrectInput) {
+      allCorrectInput.addEventListener("change", () => {
+        // UI-only for now. Backend wiring will later make every input count as valid.
+        simState.allCorrectMode = !!allCorrectInput.checked;
+        setStatus(simState.allCorrectMode ? "Todo correcto activado" : "Todo correcto desactivado");
+        appendLog({ local: true, action: "all_correct_mode", enabled: simState.allCorrectMode });
         renderResolverHub();
       });
     }
@@ -1326,6 +1342,13 @@
         } finally {
           phaseButton.disabled = false;
         }
+      });
+    }
+
+    const restartButton = els.resolverHub.querySelector("[data-resolver-restart]");
+    if (restartButton) {
+      restartButton.addEventListener("click", () => {
+        startPuzzle(true).catch((error) => appendLog({ error: String(error) }));
       });
     }
   }
@@ -3880,7 +3903,7 @@
   }
 
   function statusText(status) {
-    return ({ ok: "OK", warn: "Aviso", error: "Error", unchecked: "No comprobado" })[status] || status;
+    return ({ ok: "OK", warn: "Aviso", error: "Error", unchecked: "No comprobado", unavailable: "No disponible" })[status] || status;
   }
 
   function setPreflightStatus(id, status) {
@@ -3913,18 +3936,12 @@
       setPreflightStatus("flask", data.flask === "ok" ? "ok" : "error");
       setPreflightStatus("mqtt", data.mqtt_connected ? "ok" : "warn");
       setPreflightStatus("fullscreen", document.fullscreenEnabled ? "ok" : "warn");
-      setPreflightStatus("terminals", data.current_state_available ? "ok" : "unchecked");
-      setPreflightStatus("esp32", data.mqtt_connected ? "warn" : "unchecked");
-      setPreflightStatus("buttons", "unchecked");
-      setPreflightStatus("nfc", "unchecked");
-      setPreflightStatus("general", data.flask === "ok" ? "ok" : "warn");
       renderSystemSummary();
       addSimpleEvent("Sistema comprobado");
       setStatus("Sistema comprobado");
       return data;
     } catch (error) {
       setPreflightStatus("flask", "error");
-      setPreflightStatus("general", "error");
       addSimpleEvent("Error comprobando sistema", String(error));
       throw error;
     }
@@ -3963,7 +3980,6 @@
 
   async function testEsp32() {
     await sendPayloads(["GM_ESP32_TEST"], "FROM_FLASK");
-    setPreflightStatus("esp32", "warn");
     addSimpleEvent("Comprobación ESP32 enviada", "Esperando respuesta real de hardware");
   }
 
@@ -4598,9 +4614,11 @@
     els.startBtn.addEventListener("click", () => {
       startPuzzle(false).catch((error) => appendLog({ error: String(error) }));
     });
-    els.restartBtn.addEventListener("click", () => {
-      startPuzzle(true).catch((error) => appendLog({ error: String(error) }));
-    });
+    if (els.restartBtn) {
+      els.restartBtn.addEventListener("click", () => {
+        startPuzzle(true).catch((error) => appendLog({ error: String(error) }));
+      });
+    }
     els.viewBtn.addEventListener("click", openPuzzleView);
     if (els.solveBtn) {
       els.solveBtn.addEventListener("click", () => {
@@ -4689,7 +4707,6 @@
     if (els.exportSessionBtn) els.exportSessionBtn.addEventListener("click", exportSessionResult);
     if (els.checkAllBtn) els.checkAllBtn.addEventListener("click", () => refreshPreflightStatus().catch((error) => appendLog({ error: String(error) })));
     if (els.startSystemBtn) els.startSystemBtn.addEventListener("click", () => initializeGameSystem().catch((error) => appendLog({ error: String(error) })));
-    if (els.testScreenBtn) els.testScreenBtn.addEventListener("click", testScreen);
     if (els.testMqttBtn) els.testMqttBtn.addEventListener("click", () => testMqtt().catch((error) => appendLog({ error: String(error) })));
     if (els.testEsp32Btn) els.testEsp32Btn.addEventListener("click", () => testEsp32().catch((error) => appendLog({ error: String(error) })));
     if (els.openPlayerBtn) els.openPlayerBtn.addEventListener("click", openPlayerScreen);

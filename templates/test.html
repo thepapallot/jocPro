@@ -70,18 +70,12 @@
                         <form id="gm-session-form" class="gm-session-form">
                             <label><span class="field-label">Nombre de la sesión</span><input id="gm-session-name" name="sessionName" type="text"></label>
                             <label><span class="field-label">Empresa / cliente</span><input id="gm-session-company" name="company" type="text"></label>
-                            <label><span class="field-label">Evento</span><input id="gm-session-event" name="event" type="text"></label>
                             <label><span class="field-label">Fecha</span><input id="gm-session-date" name="date" type="date"></label>
                             <label><span class="field-label">Hora prevista</span><input id="gm-session-time" name="time" type="time"></label>
                             <label><span class="field-label">Lugar</span><input id="gm-session-place" name="place" type="text"></label>
-                            <label><span class="field-label">Grupo / turno</span><input id="gm-session-group" name="group" type="text"></label>
                             <label><span class="field-label">Número de jugadores</span><input id="gm-session-players" name="players" type="number" min="1" max="40"></label>
-                            <label><span class="field-label">Nombre del equipo</span><input id="gm-session-team" name="teamName" type="text"></label>
-                            <label><span class="field-label">Game Master responsable</span><input id="gm-session-master" name="gameMaster" type="text"></label>
                             <label><span class="field-label">Idioma del juego</span><select id="gm-session-language" name="gameLanguage"><option value="es">Castellano</option><option value="ca">Català</option><option value="eng">English</option></select></label>
-                            <label><span class="field-label">Modo de juego</span><input id="gm-session-mode" name="gameMode" type="text" placeholder="Normal"></label>
-                            <label><span class="field-label">Dificultad</span><select id="gm-session-difficulty" name="difficulty"><option value="normal">Normal</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select></label>
-                            <label class="full-width"><span class="field-label">Notas internas</span><textarea id="gm-session-notes" name="internalNotes"></textarea></label>
+                            <label class="full-width"><span class="field-label">Notas adicionales</span><textarea id="gm-session-notes" name="additionalNotes"></textarea></label>
                             <div class="action-row full-width">
                                 <button type="button" id="gm-save-session-btn" class="primary-action">Guardar sesión</button>
                                 <button type="button" id="gm-confirm-session-btn" class="primary-action">Confirmar sesión</button>
@@ -105,22 +99,24 @@
                             <span class="section-tag">Comprobar sistema</span>
                             <h2>Prepartida</h2>
                         </div>
-                        <button type="button" id="gm-start-system-btn" class="primary-action gm-big-action">Arrancar sistema de juego</button>
+                        <button type="button" id="gm-start-system-btn" class="primary-action gm-big-action">Arrancar / comprobar sistema</button>
                     </div>
                     <div id="gm-preflight-checklist" class="gm-checklist"></div>
                     <div class="action-row">
                         <button type="button" id="gm-check-all-btn" class="primary-action">Comprobar todo</button>
                         <button type="button" id="test-audio-btn">Probar audio</button>
-                        <button type="button" id="gm-test-screen-btn">Probar pantalla</button>
-                        <button type="button" id="gm-test-mqtt-btn">Probar MQTT</button>
-                        <button type="button" id="gm-test-esp32-btn">Probar ESP32</button>
-                        <button type="button" id="test-refresh-system-btn">Refrescar estado</button>
                         <button type="button" id="gm-open-player-btn">Abrir pantalla jugador</button>
                         <button type="button" id="test-fullscreen-btn">Forzar fullscreen</button>
                     </div>
                     <details class="gm-details">
                         <summary>Detalles técnicos</summary>
+                        <div class="action-row">
+                            <button type="button" id="test-refresh-system-btn">Refrescar estado</button>
+                            <button type="button" id="gm-test-mqtt-btn">Probar MQTT</button>
+                            <button type="button" id="gm-test-esp32-btn">Probar ESP32</button>
+                        </div>
                         <div id="test-system-summary">Pulsa "Refrescar estado"</div>
+                        <div class="gm-action-note">ESP32, terminales, botones y NFC necesitan una comprobación real de hardware. Hasta que exista ese endpoint, se revisan desde Técnico y no aparecen como OK en la vista principal.</div>
                     </details>
                 </div>
             </section>
@@ -144,33 +140,10 @@
                             <button type="button" id="test-refresh-state-btn">Actualizar estado</button>
                         </div>
                     </div>
-                    <details class="gm-details gm-game-controls">
-                        <summary>Control de juego</summary>
-                        <div class="action-row gm-primary-controls">
-                            <button type="button" id="gm-pause-game-btn">Pausar partida</button>
-                            <button type="button" id="gm-resume-game-btn">Reanudar partida</button>
-                            <button type="button" id="test-restart-btn" class="danger-action">Reiniciar puzzle actual</button>
-                            <button type="button" id="gm-finish-game-btn" class="danger-action">Finalizar partida</button>
-                        </div>
-                    </details>
                     <div class="test-block section-sim gm-current-puzzle-tools">
                         <div class="section-tag">Control del puzzle actual</div>
                         <div id="test-resolver-hub"></div>
                         <div id="test-sim-content"></div>
-                    </div>
-                    <div class="gm-control-grid">
-                        <section class="test-block">
-                            <span class="section-tag">Progreso</span>
-                            <div id="gm-puzzle-progress-list" class="gm-puzzle-progress-list"></div>
-                        </section>
-                        <section class="test-block">
-                            <span class="section-tag">Últimos eventos</span>
-                            <div id="gm-simple-events" class="gm-simple-events">Sin eventos.</div>
-                        </section>
-                        <section class="test-block">
-                            <span class="section-tag">Incidencias rápidas</span>
-                            <div id="gm-incidents" class="gm-incidents"></div>
-                        </section>
                     </div>
                     <div class="test-block">
                         <div class="section-tag">Ayuda para el Game Master</div>
@@ -192,8 +165,9 @@
                     <div class="monitor-grid monitor-grid--single">
                         <details class="monitor-card" open><summary>Atajos de puzzle</summary><div id="test-puzzle-shortcuts" class="test-shortcuts-grid gm-puzzle-grid"></div></details>
                         <details class="monitor-card"><summary>Intros y escenas</summary><div id="test-intro-shortcuts" class="test-shortcuts-grid gm-intro-grid"></div><div class="action-row"><button type="button" id="test-refresh-scenes-btn" class="primary-action">Comprobar escenas</button></div><div id="test-scene-health">Pulsa "Comprobar escenas"</div></details>
-                        <details class="monitor-card"><summary>Terminales / cajas</summary><div id="test-gm-device-summary" class="gm-device-summary"><div class="gm-action-note">No hay datos reales completos de hardware disponibles en este panel.</div></div><div id="test-gm-terminal-grid" class="gm-terminal-grid" aria-label="Terminales"></div></details>
-                        <details class="monitor-card section-send"><summary>MQTT y payloads manuales</summary><div class="inline-fields"><label><span class="field-label">Dirección</span><select id="test-topic-select"><option value="TO_FLASK">TO_FLASK</option><option value="FROM_FLASK">FROM_FLASK</option></select><div id="test-topic-help" class="help-text"></div></label><label id="test-message-field"><span class="field-label">Mensaje</span><select id="test-message-select"></select></label></div><form id="test-form-builder"></form><textarea id="test-message-editor" spellcheck="false" placeholder="Mensaje MQTT"></textarea><div class="action-row"><button type="button" id="test-send-btn" class="primary-action danger-action">Enviar payload</button></div></details>
+	                        <details class="monitor-card"><summary>Terminales / cajas</summary><div id="test-gm-device-summary" class="gm-device-summary"><div class="gm-action-note">No hay datos reales completos de hardware disponibles en este panel.</div></div><div id="test-gm-terminal-grid" class="gm-terminal-grid" aria-label="Terminales"></div></details>
+	                        <details class="monitor-card"><summary>Control de partida</summary><div class="action-row"><button type="button" id="gm-resume-game-btn">Reanudar partida</button></div></details>
+	                        <details class="monitor-card section-send"><summary>MQTT y payloads manuales</summary><div class="inline-fields"><label><span class="field-label">Dirección</span><select id="test-topic-select"><option value="TO_FLASK">TO_FLASK</option><option value="FROM_FLASK">FROM_FLASK</option></select><div id="test-topic-help" class="help-text"></div></label><label id="test-message-field"><span class="field-label">Mensaje</span><select id="test-message-select"></select></label></div><form id="test-form-builder"></form><textarea id="test-message-editor" spellcheck="false" placeholder="Mensaje MQTT"></textarea><div class="action-row"><button type="button" id="test-send-btn" class="primary-action danger-action">Enviar payload</button></div></details>
                         <details class="monitor-card"><summary>Puzzle 6 avanzado</summary><div class="action-row"><button type="button" id="test-solve-btn" class="danger-action" hidden>Activar solvePuzzle P6</button><button type="button" id="test-unsolve-btn" hidden>Desactivar solvePuzzle P6</button></div></details>
                         <details class="monitor-card section-system-logs"><summary>Logs del player</summary><div class="action-row"><button type="button" id="test-refresh-logs-btn" class="primary-action">Actualizar logs</button><button type="button" id="test-clear-logs-btn" class="danger-action">Borrar logs</button></div><div id="test-system-logs">Sin logs de player en esta sesión.</div></details>
                         <details class="monitor-card section-events"><summary>Eventos locales</summary><div class="action-row"><button type="button" id="test-clear-log-btn">Borrar eventos locales</button></div><div id="test-event-log">Sin eventos locales.</div></details>
