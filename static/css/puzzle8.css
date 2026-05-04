@@ -258,18 +258,72 @@ body::after {
 
 .round-card.is-active {
     opacity: 1;
-    border-color: rgba(69, 230, 255, 0.18);
-    box-shadow: 0 0 10px rgba(69, 230, 255, 0.04);
+    border-color: rgba(69, 230, 255, 0.82);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.18), rgba(69, 230, 255, 0.04));
+    box-shadow:
+        0 0 0 1px rgba(112, 240, 255, 0.44),
+        0 0 18px rgba(69, 230, 255, 0.32),
+        inset 0 0 20px rgba(69, 230, 255, 0.2);
+    animation: p8RoundActiveGlow 1.5s ease-in-out infinite alternate;
 }
 
 .round-card.is-complete {
-    opacity: 1;
-    border-color: rgba(45, 255, 155, 0.78);
-    background: transparent;
+    opacity: 0.9;
+    border-color: rgba(45, 255, 155, 0.58);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(45, 255, 155, 0.11), rgba(45, 255, 155, 0.03));
     box-shadow:
-        0 0 0 1px rgba(107, 255, 187, 0.42),
-        0 0 18px rgba(45, 255, 155, 0.18),
-        inset 0 0 18px rgba(45, 255, 155, 0.1);
+        0 0 0 1px rgba(107, 255, 187, 0.34),
+        0 0 12px rgba(45, 255, 155, 0.14),
+        inset 0 0 12px rgba(45, 255, 155, 0.09);
+}
+
+.round-card.is-active .round-dot {
+    border-color: rgba(69, 230, 255, 0.9);
+    box-shadow:
+        0 0 16px rgba(69, 230, 255, 0.34),
+        0 0 28px rgba(69, 230, 255, 0.14),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 0 12px rgba(69, 230, 255, 0.2);
+}
+
+.round-card.is-active .round-dot::before {
+    background: rgba(116, 242, 255, 0.95);
+    box-shadow:
+        0 0 14px rgba(69, 230, 255, 0.44),
+        inset 0 0 6px rgba(255, 255, 255, 0.2);
+}
+
+.round-card.is-complete .round-dot {
+    border-color: rgba(45, 255, 155, 0.66);
+    box-shadow:
+        0 0 10px rgba(45, 255, 155, 0.2),
+        0 0 18px rgba(45, 255, 155, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 0 8px rgba(45, 255, 155, 0.12);
+}
+
+.round-card.is-complete .round-dot::before {
+    background: rgba(109, 255, 189, 0.78);
+    box-shadow:
+        0 0 8px rgba(45, 255, 155, 0.26),
+        inset 0 0 4px rgba(255, 255, 255, 0.16);
+}
+
+@keyframes p8RoundActiveGlow {
+    0% {
+        box-shadow:
+            0 0 0 1px rgba(112, 240, 255, 0.34),
+            0 0 14px rgba(69, 230, 255, 0.24),
+            inset 0 0 14px rgba(69, 230, 255, 0.14);
+    }
+    100% {
+        box-shadow:
+            0 0 0 1px rgba(112, 240, 255, 0.52),
+            0 0 26px rgba(69, 230, 255, 0.4),
+            inset 0 0 24px rgba(69, 230, 255, 0.24);
+    }
 }
 
 .round-name {
