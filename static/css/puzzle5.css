@@ -116,7 +116,7 @@ body.p5-solved-flash {
     --p5-ok: #2dff9b;
     --p5-bad: #ff4f6d;
     --p5-warning: #ffb347;
-    --p5-panel: linear-gradient(180deg, rgba(8, 18, 33, 0.9) 0%, rgba(5, 12, 24, 0.82) 100%);
+    --p5-panel: #050c18;
 }
 
 body {
@@ -214,8 +214,7 @@ body::after {
     padding: 20px 20px 24px;
     border: 1px solid rgba(69, 230, 255, 0.14);
     border-radius: 22px;
-    background:
-        linear-gradient(180deg, rgba(8, 18, 33, 0.94), rgba(5, 12, 24, 0.82));
+    background: #071426;
     overflow: hidden;
 }
 
@@ -477,8 +476,7 @@ body::after {
     padding: 20px 22px 22px;
     border: 1px solid rgba(69, 230, 255, 0.1);
     border-radius: 24px;
-    background:
-        linear-gradient(180deg, rgba(8, 18, 33, 0.94), rgba(5, 12, 24, 0.8));
+    background: #071426;
     overflow: hidden;
     min-height: clamp(240px, 28vh, 340px);
 }

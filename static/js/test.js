@@ -8,10 +8,21 @@
   const defaultSubtitleLangRaw = String(window.TEST_DEFAULT_SUBTITLE_LANG || "es").trim().toLowerCase();
   const defaultSubtitleLang = defaultSubtitleLangRaw === "en" ? "eng" : (defaultSubtitleLangRaw === "eng" ? "eng" : "es");
   const finalPuzzleMqttId = finalPuzzleId || "6";
+  function getStoredGameLanguageForPlayer() {
+    try {
+      const session = JSON.parse(window.localStorage.getItem("gmPanelActiveSession") || "null");
+      const lang = session?.gameLanguage || defaultSubtitleLang;
+      // The session keeps ca/es/eng. Player subtitles currently expose es/eng,
+      // so Catalan falls back to es until Catalan scene assets exist.
+      return lang === "eng" || lang === "en" ? "eng" : "es";
+    } catch (error) {
+      return defaultSubtitleLang;
+    }
+  }
   function buildPlayerHref(sceneId, nextUrl) {
     const params = new URLSearchParams();
     params.set("scene", sceneId);
-    params.set("lang", defaultSubtitleLang);
+    params.set("lang", getStoredGameLanguageForPlayer());
     if (nextUrl) {
       params.set("next", nextUrl);
     }
@@ -514,7 +525,7 @@
 	  const els = {
 	    tabAyudas: document.getElementById("test-tab-ayudas"),
 	    tabSystem: document.getElementById("test-tab-system"),
-	    panelPuzzles: document.getElementById("test-panel-puzzles"),
+    panelPuzzles: document.getElementById("test-panel-puzzles"),
 	    panelSystem: document.getElementById("test-panel-system"),
 	    gmNavTabs: Array.from(document.querySelectorAll("[data-gm-section]")),
 	    gmSections: Array.from(document.querySelectorAll("[data-gm-panel]")),
@@ -560,8 +571,64 @@
     resolverHub: document.getElementById("test-resolver-hub"),
     simContent: document.getElementById("test-sim-content"),
     puzzleShortcuts: document.getElementById("test-puzzle-shortcuts"),
-    introShortcuts: document.getElementById("test-intro-shortcuts")
+    introShortcuts: document.getElementById("test-intro-shortcuts"),
+    activeSessionLine: document.getElementById("gm-active-session-line"),
+    headerSessionStatus: document.getElementById("gm-header-session-status"),
+    sessionSummary: document.getElementById("gm-session-summary"),
+    sessionList: document.getElementById("gm-session-list"),
+    loadSessionBtn: document.getElementById("gm-load-session-btn"),
+    saveSessionBtn: document.getElementById("gm-save-session-btn"),
+    newSessionBtn: document.getElementById("gm-new-session-btn"),
+    duplicateSessionBtn: document.getElementById("gm-duplicate-session-btn"),
+    confirmSessionBtn: document.getElementById("gm-confirm-session-btn"),
+    exportSessionBtn: document.getElementById("gm-export-session-btn"),
+    preflightChecklist: document.getElementById("gm-preflight-checklist"),
+    checkAllBtn: document.getElementById("gm-check-all-btn"),
+    startSystemBtn: document.getElementById("gm-start-system-btn"),
+    testScreenBtn: document.getElementById("gm-test-screen-btn"),
+    testMqttBtn: document.getElementById("gm-test-mqtt-btn"),
+    testEsp32Btn: document.getElementById("gm-test-esp32-btn"),
+    openPlayerBtn: document.getElementById("gm-open-player-btn"),
+    gameTime: document.getElementById("gm-game-time"),
+    gameStatus: document.getElementById("gm-game-status"),
+    controlCurrentPuzzle: document.getElementById("gm-control-current-puzzle"),
+    controlProgress: document.getElementById("gm-control-progress"),
+    pauseGameBtn: document.getElementById("gm-pause-game-btn"),
+    resumeGameBtn: document.getElementById("gm-resume-game-btn"),
+    completePuzzleBtn: document.getElementById("gm-complete-puzzle-btn"),
+    skipPuzzleBtn: document.getElementById("gm-skip-puzzle-btn"),
+    finishGameBtn: document.getElementById("gm-finish-game-btn"),
+    puzzleProgressList: document.getElementById("gm-puzzle-progress-list"),
+    simpleEvents: document.getElementById("gm-simple-events"),
+    incidents: document.getElementById("gm-incidents"),
+    puzzleHelp: document.getElementById("gm-puzzle-help")
   };
+
+  const sessionStorageKey = "gmPanelSessions";
+  const activeSessionKey = "gmPanelActiveSession";
+  const gameStateKey = "gmPanelGameState";
+  let selectedSessionId = null;
+  let activeSession = null;
+  const puzzleRuntime = {
+    statuses: {},
+    gameStatus: "Preparado",
+    startedAt: null,
+    elapsedBeforePause: 0,
+    timerId: null
+  };
+  const preflightItems = [
+    { id: "flask", label: "Servidor Flask activo" },
+    { id: "mqtt", label: "MQTT conectado" },
+    { id: "player", label: "Pantalla principal abierta" },
+    { id: "audio", label: "Audio navegador OK" },
+    { id: "fullscreen", label: "Fullscreen OK" },
+    { id: "esp32", label: "ESP32 conectados" },
+    { id: "terminals", label: "Terminales / cajas detectadas" },
+    { id: "buttons", label: "Botones responden" },
+    { id: "nfc", label: "NFC / tokens responden" },
+    { id: "general", label: "Estado general del sistema" }
+  ];
+  const preflightState = Object.fromEntries(preflightItems.map((item) => [item.id, "unchecked"]));
 
   function getAliasForPuzzle(puzzleId) {
     const alias = puzzleAliases[puzzleId] ?? puzzleAliases[String(puzzleId)] ?? "";
@@ -646,9 +713,9 @@
   }
 
 	  function switchTab(tabId) {
-	    const normalizedTab = tabId === "system" ? "tecnico" : tabId;
-	    const isSystem = normalizedTab === "tecnico";
-	    const panelId = isSystem ? "tecnico" : "ayudas";
+	    const panelId = tabId === "system" || tabId === "tecnico"
+        ? "tecnico"
+        : (tabId === "ayudas" || tabId === "puzzles" ? "control" : tabId);
 
 	    els.gmNavTabs.forEach((tab) => {
 	      const isActive = tab.dataset.gmSection === panelId;
@@ -656,33 +723,196 @@
 	      tab.setAttribute("aria-selected", String(isActive));
 	    });
 
-	    if (els.tabAyudas) {
-	      const isAyudas = panelId === "ayudas";
-	      els.tabAyudas.classList.toggle("is-active", isAyudas);
-	      els.tabAyudas.setAttribute("aria-selected", String(isAyudas));
-	    }
-
-	    if (els.tabSystem) {
-	      els.tabSystem.classList.toggle("is-active", isSystem);
-	      els.tabSystem.setAttribute("aria-selected", String(isSystem));
-	    }
-
-	    if (els.panelPuzzles) {
-	      els.panelPuzzles.classList.toggle("is-active", !isSystem);
-	      els.panelPuzzles.hidden = isSystem;
-	    }
-
-	    els.gmSections.forEach((section) => {
+	    document.querySelectorAll("[data-gm-panel]").forEach((section) => {
 	      const isActive = section.dataset.gmPanel === panelId;
 	      section.classList.toggle("is-active", isActive);
 	      section.hidden = !isActive;
 	    });
-
-	    if (els.panelSystem) {
-	      els.panelSystem.classList.toggle("is-active", isSystem);
-	      els.panelSystem.hidden = !isSystem;
-	    }
 	  }
+
+  function languageLabel(value) {
+    return ({ es: "Castellano", ca: "Català", eng: "English", en: "English" })[value] || value || "--";
+  }
+
+  function getSessionField(name) {
+    return document.querySelector(`#gm-session-form [name="${name}"]`);
+  }
+
+  function readSessions() {
+    try {
+      return JSON.parse(window.localStorage.getItem(sessionStorageKey) || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeSessions(sessions) {
+    window.localStorage.setItem(sessionStorageKey, JSON.stringify(sessions));
+  }
+
+  function collectSessionForm() {
+    const fields = ["sessionName", "company", "event", "date", "time", "place", "group", "players", "teamName", "gameMaster", "gameLanguage", "gameMode", "difficulty", "internalNotes"];
+    const data = {};
+    fields.forEach((field) => {
+      const input = getSessionField(field);
+      data[field] = input ? String(input.value || "").trim() : "";
+    });
+    data.id = selectedSessionId || `session_${Date.now()}`;
+    data.updatedAt = new Date().toISOString();
+    return data;
+  }
+
+  function fillSessionForm(session = {}) {
+    selectedSessionId = session.id || selectedSessionId;
+    Object.entries(session).forEach(([key, value]) => {
+      const field = getSessionField(key);
+      if (field) field.value = value ?? "";
+    });
+  }
+
+  function clearSessionForm() {
+    selectedSessionId = null;
+    document.getElementById("gm-session-form")?.reset();
+    const lang = getSessionField("gameLanguage");
+    if (lang) lang.value = "es";
+    const difficulty = getSessionField("difficulty");
+    if (difficulty) difficulty.value = "normal";
+  }
+
+  function renderSessionList() {
+    if (!els.sessionList) return;
+    const sessions = readSessions();
+    if (!sessions.length) {
+      els.sessionList.innerHTML = `<div class="gm-empty">No hay sesiones guardadas.</div>`;
+      return;
+    }
+    els.sessionList.innerHTML = sessions.map((session) => `
+      <button type="button" class="gm-session-item${session.id === selectedSessionId ? " is-selected" : ""}" data-session-id="${escapeHtml(session.id)}">
+        <strong>${escapeHtml(session.sessionName || "Sesión sin nombre")}</strong>
+        <span>${escapeHtml([session.company, session.event, session.group].filter(Boolean).join(" · ") || "Sin datos")}</span>
+      </button>
+    `).join("");
+    els.sessionList.querySelectorAll("[data-session-id]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectedSessionId = button.dataset.sessionId;
+        renderSessionList();
+      });
+    });
+  }
+
+  function saveSession() {
+    const session = collectSessionForm();
+    const sessions = readSessions();
+    const index = sessions.findIndex((item) => item.id === session.id);
+    if (index >= 0) sessions[index] = session;
+    else sessions.unshift(session);
+    selectedSessionId = session.id;
+    writeSessions(sessions);
+    renderSessionList();
+    addSimpleEvent("Sesión guardada");
+    setStatus("Sesión guardada");
+    return session;
+  }
+
+  function loadSelectedSession() {
+    const session = readSessions().find((item) => item.id === selectedSessionId);
+    if (!session) {
+      setStatus("Selecciona una sesión guardada");
+      return;
+    }
+    fillSessionForm(session);
+    addSimpleEvent("Sesión cargada");
+    setStatus("Sesión cargada");
+  }
+
+  function duplicateSession() {
+    const source = selectedSessionId
+      ? readSessions().find((item) => item.id === selectedSessionId)
+      : collectSessionForm();
+    const duplicate = {
+      ...(source || {}),
+      id: `session_${Date.now()}`,
+      sessionName: `${source?.sessionName || "Sesión"} copia`,
+      updatedAt: new Date().toISOString()
+    };
+    selectedSessionId = duplicate.id;
+    fillSessionForm(duplicate);
+    saveSession();
+  }
+
+  function confirmSession() {
+    const session = saveSession();
+    activeSession = { ...session, confirmedAt: new Date().toISOString(), status: "confirmed" };
+    window.localStorage.setItem(activeSessionKey, JSON.stringify(activeSession));
+    renderActiveSession();
+    addSimpleEvent("Sesión confirmada");
+    setStatus("Sesión confirmada");
+  }
+
+  function loadActiveSession() {
+    try {
+      activeSession = JSON.parse(window.localStorage.getItem(activeSessionKey) || "null");
+    } catch (error) {
+      activeSession = null;
+    }
+    if (activeSession) {
+      selectedSessionId = activeSession.id;
+      fillSessionForm(activeSession);
+    }
+    renderActiveSession();
+  }
+
+  function renderActiveSession() {
+    const s = activeSession;
+    const line = s
+      ? `${s.company || "Sin empresa"} · ${s.event || "Sin evento"} · ${s.group || "Sin grupo"} | Idioma: ${languageLabel(s.gameLanguage)} | Jugadores: ${s.players || "--"} | GM: ${s.gameMaster || "--"} | Sesión confirmada`
+      : "Sin sesión confirmada";
+    if (els.activeSessionLine) els.activeSessionLine.textContent = line;
+    if (els.headerSessionStatus) {
+      els.headerSessionStatus.textContent = s ? "Sesión confirmada" : "No confirmada";
+      els.headerSessionStatus.className = s ? "gm-status-ok" : "gm-status-muted";
+    }
+    const pairs = {
+      "gm-summary-company": s?.company || "--",
+      "gm-summary-event": s?.event || "--",
+      "gm-summary-group": s?.group || "--",
+      "gm-summary-language": languageLabel(s?.gameLanguage),
+      "gm-summary-players": s?.players || "--",
+      "gm-summary-master": s?.gameMaster || "--"
+    };
+    Object.entries(pairs).forEach(([id, value]) => {
+      const node = document.getElementById(id);
+      if (node) node.textContent = value;
+    });
+  }
+
+  function addSimpleEvent(message, detail = "") {
+    if (!els.simpleEvents) return;
+    if (els.simpleEvents.textContent.trim() === "Sin eventos.") {
+      els.simpleEvents.innerHTML = "";
+    }
+    const row = document.createElement("div");
+    row.className = "gm-simple-event";
+    row.innerHTML = `<span>${escapeHtml(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }))}</span><strong>${escapeHtml(message)}</strong>${detail ? `<em>${escapeHtml(detail)}</em>` : ""}`;
+    els.simpleEvents.prepend(row);
+    Array.from(els.simpleEvents.children).slice(8).forEach((child) => child.remove());
+  }
+
+  function exportSessionResult() {
+    const payload = {
+      activeSession,
+      game: { ...puzzleRuntime },
+      puzzleStatuses: puzzleRuntime.statuses,
+      exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `gm-session-${activeSession?.sessionName || "resultado"}.json`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    addSimpleEvent("Resultado exportado");
+  }
 
   const simState = {
     puzzle1A: "4",
@@ -1051,24 +1281,24 @@
     const canSkipFollowing = puzzleId !== "6" && puzzleId !== "-1";
     const puzzleLabel = getSelectedPuzzleLabel();
 
-    els.resolverHub.innerHTML = `
+	    els.resolverHub.innerHTML = `
       <section class="gm-resolver-strip" aria-label="Control de fase">
         <article class="gm-resolver-card">
           <strong class="gm-resolver-mode">${escapeHtml(puzzleLabel)}</strong>
         </article>
         <article class="gm-resolver-card gm-resolver-card--action">
-          ${phaseAction
-            ? `<button type="button" class="gm-resolver-action primary-action" data-resolver-phase>
-                 <strong>Resolver fase</strong>
-               </button>`
-            : '<div class="gm-resolver-empty">No hay acción de fase definida para este puzzle</div>'}
-        </article>
-        <article class="gm-resolver-card">
-          <label class="gm-resolver-toggle${canSkipFollowing ? "" : " is-disabled"}">
-            <input type="checkbox" id="test-skip-following" ${simState.skipFollowingPhases ? "checked" : ""} ${canSkipFollowing ? "" : "disabled"}>
-            <span>Saltar fases siguientes</span>
-          </label>
-        </article>
+	          ${phaseAction
+	            ? `<button type="button" class="gm-resolver-action primary-action" data-resolver-phase>
+	                 <strong>Dar por buena la fase</strong>
+	               </button>`
+	            : '<div class="gm-resolver-empty">No hay acción de fase definida para este puzzle</div>'}
+	        </article>
+	        <article class="gm-resolver-card">
+	          <label class="gm-resolver-toggle${canSkipFollowing ? "" : " is-disabled"}">
+	            <input type="checkbox" id="test-skip-following" ${simState.skipFollowingPhases ? "checked" : ""} ${canSkipFollowing ? "" : "disabled"}>
+	            <span>Saltar resto del puzzle</span>
+	          </label>
+	        </article>
       </section>
     `;
 
@@ -2027,9 +2257,8 @@
 	  function renderPuzzle4Simulator() {
     const buttons = [
       { value: "4", label: "Escuchar la muestra completa", shortLabel: "Azul", colorClass: "sim-p4-blue" },
-      { value: "3", label: "Registrar", shortLabel: "Verde", colorClass: "sim-p4-green" },
-      { value: "1", label: "Dejar de registrar", shortLabel: "Rojo", colorClass: "sim-p4-red" },
-      { value: "2", label: "Resetear", shortLabel: "Blanco", colorClass: "sim-p4-white" }
+      { value: "3", label: "Registrar pulsación", shortLabel: "Verde", colorClass: "sim-p4-green" },
+      { value: "1", label: "Cancelar registro", shortLabel: "Rojo", colorClass: "sim-p4-red" }
     ].map((item) => {
       const selected = simState.puzzle4Button === item.value ? " is-selected" : "";
       return `
@@ -2061,7 +2290,7 @@
       <div class="field-label">Pistas</div>
       <div class="sim-palette">${tracks}</div>
       <div class="sim-actions">
-        <button type="button" class="sim-button" data-sim-p4-send-track>Reproducir pista seleccionada</button>
+        <button type="button" class="sim-button" data-sim-p4-send-track>Reproducir pista</button>
       </div>
     `;
 
@@ -3125,8 +3354,33 @@
 	    setStatus(restart
 	      ? `${config.label} reiniciado`
 	      : `${config.label} arrancado`);
+    puzzleRuntime.gameStatus = "En juego";
+    if (!puzzleRuntime.startedAt) {
+      startGameTimer();
+    }
+    setPuzzleStatus(els.puzzleSelect.value, "playing");
+    addSimpleEvent(restart ? "Puzzle reiniciado" : "Partida/puzzle arrancado", config.label);
+    saveGameState();
 	    refreshCurrentState();
 	  }
+
+  async function completeCurrentPuzzle() {
+    const config = getSelectedConfig();
+    if (!config || !window.confirm(`Marcar ${config.label} como completado?`)) return;
+    await forceEndCurrentPuzzle();
+    setPuzzleStatus(els.puzzleSelect.value, "completed");
+    addSimpleEvent("Puzzle marcado como completado", config.label);
+    refreshCurrentState();
+  }
+
+  async function skipCurrentPuzzle() {
+    const config = getSelectedConfig();
+    if (!config || !window.confirm(`Saltar ${config.label}?`)) return;
+    await forceEndCurrentPuzzle();
+    setPuzzleStatus(els.puzzleSelect.value, "skipped");
+    addSimpleEvent("Puzzle saltado", config.label);
+    refreshCurrentState();
+  }
 
   function updateSolveButtonState() {
     if (!els.solveBtn || !els.unsolveBtn) {
@@ -3191,6 +3445,10 @@
   }
 
 	  function appendLog(entry) {
+    const eventLabel = entry?.error
+      ? "Aviso técnico"
+      : (entry?.payload ? `Enviado ${entry.payload}` : (entry?.resolver_action ? "Acción de puzzle ejecutada" : "Evento técnico"));
+    addSimpleEvent(eventLabel);
 	    if (!els.eventLog) {
 	      return;
 	    }
@@ -3342,6 +3600,10 @@
 	    if (els.gmCurrentPuzzle) {
 	      els.gmCurrentPuzzle.textContent = label;
 	    }
+    if (els.controlCurrentPuzzle) {
+      els.controlCurrentPuzzle.textContent = label;
+    }
+    renderPuzzleHelp();
 	    if (els.gmSideSummary) {
 	      els.gmSideSummary.innerHTML = `
 	        <div class="gm-side-kpi">
@@ -3361,6 +3623,8 @@
 	    if (els.gmCurrentPuzzle) els.gmCurrentPuzzle.textContent = label;
 	    if (els.gmPuzzleStatus) els.gmPuzzleStatus.textContent = info.status;
 	    if (els.gmProgress) els.gmProgress.textContent = info.progress;
+    if (els.controlCurrentPuzzle) els.controlCurrentPuzzle.textContent = label;
+    if (els.controlProgress) els.controlProgress.textContent = info.progress;
 	    if (els.gmNextAction) els.gmNextAction.textContent = info.action;
 	    if (els.gmQuickNext) els.gmQuickNext.textContent = label;
 	    if (els.gmDashboardSummary) {
@@ -3400,6 +3664,23 @@
 	    }
 	    renderDeviceState(data);
 	  }
+
+  function renderPuzzleHelp() {
+    if (!els.puzzleHelp) return;
+    const id = String(els.puzzleSelect?.value || "");
+    const name = id === "-1" ? "Final" : getPuzzleDisplayName(id);
+    const reference = getSelectedConfig()?.reference || "Sin solución manual documentada.";
+    els.puzzleHelp.innerHTML = `
+      <div class="gm-help-grid">
+        <section><h3>Objetivo</h3><p>${escapeHtml(name)}: completar la mecánica activa sin que el grupo vea herramientas técnicas.</p></section>
+        <section><h3>Qué hacen los jugadores</h3><p>Interactúan con terminales, botones, tokens o pantalla según el puzzle seleccionado.</p></section>
+        <section><h3>Pista suave</h3><p>Invita al grupo a revisar orden, colores, números o terminales ya usados antes de intervenir.</p></section>
+        <section><h3>Pista fuerte</h3><p>Dirige la atención al siguiente paso correcto sin revelar toda la solución.</p></section>
+        <section><h3>Solución manual</h3><p>${escapeHtml(reference.split("\n").slice(0, 4).join(" · "))}</p></section>
+        <section><h3>Si falla</h3><p>Actualiza estado, prueba MQTT/ESP32 y usa “Dar por buena la fase” o “Saltar resto del puzzle” si la partida debe continuar.</p></section>
+      </div>
+    `;
+  }
 
 	  function renderDeviceState(data = {}) {
 	    if (!els.gmTerminalGrid) {
@@ -3596,6 +3877,237 @@
         <span>${escapeHtml(JSON.stringify(entry.detail || {}))}</span>
       </div>
     `).join("");
+  }
+
+  function statusText(status) {
+    return ({ ok: "OK", warn: "Aviso", error: "Error", unchecked: "No comprobado" })[status] || status;
+  }
+
+  function setPreflightStatus(id, status) {
+    preflightState[id] = status;
+    renderPreflightChecklist();
+  }
+
+  function renderPreflightChecklist() {
+    if (!els.preflightChecklist) return;
+    els.preflightChecklist.innerHTML = preflightItems.map((item) => `
+      <div class="gm-check-item gm-check-${escapeHtml(preflightState[item.id] || "unchecked")}">
+        <span>${escapeHtml(item.label)}</span>
+        <strong>${escapeHtml(statusText(preflightState[item.id] || "unchecked"))}</strong>
+      </div>
+    `).join("");
+  }
+
+  async function fetchSystemStatus() {
+    const response = await fetch("/test/system_status", { cache: "no-store" });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "system_status_failed");
+    }
+    return data;
+  }
+
+  async function refreshPreflightStatus() {
+    try {
+      const data = await fetchSystemStatus();
+      setPreflightStatus("flask", data.flask === "ok" ? "ok" : "error");
+      setPreflightStatus("mqtt", data.mqtt_connected ? "ok" : "warn");
+      setPreflightStatus("fullscreen", document.fullscreenEnabled ? "ok" : "warn");
+      setPreflightStatus("terminals", data.current_state_available ? "ok" : "unchecked");
+      setPreflightStatus("esp32", data.mqtt_connected ? "warn" : "unchecked");
+      setPreflightStatus("buttons", "unchecked");
+      setPreflightStatus("nfc", "unchecked");
+      setPreflightStatus("general", data.flask === "ok" ? "ok" : "warn");
+      renderSystemSummary();
+      addSimpleEvent("Sistema comprobado");
+      setStatus("Sistema comprobado");
+      return data;
+    } catch (error) {
+      setPreflightStatus("flask", "error");
+      setPreflightStatus("general", "error");
+      addSimpleEvent("Error comprobando sistema", String(error));
+      throw error;
+    }
+  }
+
+  async function initializeGameSystem() {
+    const response = await fetch("/test/initialize_system", { method: "POST" });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.error || "initialize_failed");
+    }
+    await refreshPreflightStatus();
+    addSimpleEvent("Sistema inicializado");
+    setStatus("Sistema inicializado");
+  }
+
+  function openPlayerScreen() {
+    const rawLang = activeSession?.gameLanguage || defaultSubtitleLang;
+    const lang = rawLang === "eng" || rawLang === "en" ? "eng" : "es";
+    const params = new URLSearchParams({ scene: "scene_intro_game", lang });
+    window.open(`/player/?${params.toString()}`, "_blank", "noopener");
+    setPreflightStatus("player", "ok");
+    addSimpleEvent("Pantalla jugador abierta");
+  }
+
+  function testScreen() {
+    openPlayerScreen();
+    setStatus("Pantalla abierta para comprobar");
+  }
+
+  async function testMqtt() {
+    await sendPayloads(["GM_MQTT_TEST"], "FROM_FLASK");
+    setPreflightStatus("mqtt", "ok");
+    addSimpleEvent("MQTT probado");
+  }
+
+  async function testEsp32() {
+    await sendPayloads(["GM_ESP32_TEST"], "FROM_FLASK");
+    setPreflightStatus("esp32", "warn");
+    addSimpleEvent("Comprobación ESP32 enviada", "Esperando respuesta real de hardware");
+  }
+
+  function getAllPuzzleIdsForProgress() {
+    const ids = getVisiblePuzzleIds();
+    if (shouldIncludeLegacyFinalShortcut(ids)) ids.push("-1");
+    return ids;
+  }
+
+  function saveGameState() {
+    window.localStorage.setItem(gameStateKey, JSON.stringify({
+      statuses: puzzleRuntime.statuses,
+      gameStatus: puzzleRuntime.gameStatus,
+      startedAt: puzzleRuntime.startedAt,
+      elapsedBeforePause: puzzleRuntime.elapsedBeforePause
+    }));
+  }
+
+  function loadGameState() {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(gameStateKey) || "{}");
+      Object.assign(puzzleRuntime.statuses, saved.statuses || {});
+      puzzleRuntime.gameStatus = saved.gameStatus || "Preparado";
+      puzzleRuntime.startedAt = saved.startedAt || null;
+      puzzleRuntime.elapsedBeforePause = Number(saved.elapsedBeforePause || 0);
+    } catch (error) {
+      // Keep defaults.
+    }
+  }
+
+  function statusLabelForPuzzle(status) {
+    return ({ pending: "Pendiente", playing: "En juego", completed: "Completado", skipped: "Saltado", error: "Error" })[status] || "Pendiente";
+  }
+
+  function setPuzzleStatus(puzzleId, status) {
+    if (!puzzleId) return;
+    puzzleRuntime.statuses[String(puzzleId)] = status;
+    saveGameState();
+    renderPuzzleProgress();
+  }
+
+  function renderPuzzleProgress() {
+    if (!els.puzzleProgressList) return;
+    els.puzzleProgressList.innerHTML = getAllPuzzleIdsForProgress().map((id, index) => {
+      const status = puzzleRuntime.statuses[String(id)] || "pending";
+      const label = id === "-1" ? "Final" : getPuzzleDisplayName(id);
+      return `
+        <div class="gm-puzzle-progress-item gm-puzzle-${escapeHtml(status)}">
+          <span>${index + 1}. ${escapeHtml(label)}</span>
+          <strong>${escapeHtml(statusLabelForPuzzle(status))}</strong>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function currentElapsedMs() {
+    if (!puzzleRuntime.startedAt) return puzzleRuntime.elapsedBeforePause;
+    return puzzleRuntime.elapsedBeforePause + (Date.now() - Number(puzzleRuntime.startedAt));
+  }
+
+  function formatDuration(ms) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const h = String(Math.floor(total / 3600)).padStart(2, "0");
+    const m = String(Math.floor((total % 3600) / 60)).padStart(2, "0");
+    const s = String(total % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  }
+
+  function renderGameTimer() {
+    if (els.gameTime) els.gameTime.textContent = formatDuration(currentElapsedMs());
+    if (els.gameStatus) els.gameStatus.textContent = puzzleRuntime.gameStatus;
+  }
+
+  function startGameTimer() {
+    if (!puzzleRuntime.startedAt) {
+      puzzleRuntime.startedAt = Date.now();
+    }
+    window.clearInterval(puzzleRuntime.timerId);
+    puzzleRuntime.timerId = window.setInterval(renderGameTimer, 1000);
+    renderGameTimer();
+  }
+
+  function pauseGame() {
+    if (!puzzleRuntime.startedAt) return;
+    puzzleRuntime.elapsedBeforePause = currentElapsedMs();
+    puzzleRuntime.startedAt = null;
+    puzzleRuntime.gameStatus = "Pausado";
+    window.clearInterval(puzzleRuntime.timerId);
+    saveGameState();
+    renderGameTimer();
+    addSimpleEvent("Partida pausada");
+  }
+
+  function resumeGame() {
+    puzzleRuntime.startedAt = Date.now();
+    puzzleRuntime.gameStatus = "En juego";
+    saveGameState();
+    startGameTimer();
+    addSimpleEvent("Partida reanudada");
+  }
+
+  function finishGame() {
+    if (!window.confirm("Finalizar partida?")) return;
+    puzzleRuntime.elapsedBeforePause = currentElapsedMs();
+    puzzleRuntime.startedAt = null;
+    puzzleRuntime.gameStatus = "Finalizada";
+    window.clearInterval(puzzleRuntime.timerId);
+    saveGameState();
+    renderGameTimer();
+    addSimpleEvent("Partida finalizada");
+  }
+
+  function renderIncidents() {
+    if (!els.incidents) return;
+    const incidents = [
+      { title: "No se oye el audio", actions: ["Probar audio", "Abrir pantalla jugador", "Ver detalles técnicos"] },
+      { title: "La pantalla no actualiza", actions: ["Refrescar pantalla", "Reenviar estado", "Abrir pantalla jugador"] },
+      { title: "Un botón no responde", actions: ["Probar ESP32", "Reenviar estado", "Ver terminales"] },
+      { title: "Un ESP32 no conecta", actions: ["Reintentar conexión", "Probar MQTT", "Ver detalles técnicos"] },
+      { title: "Un jugador/token no detecta", actions: ["Actualizar estado", "Revisar NFC / tokens", "Ver terminales"] },
+      { title: "El puzzle se ha quedado bloqueado", actions: ["Reiniciar puzzle", "Dar por completado", "Saltar puzzle"] }
+    ];
+    els.incidents.innerHTML = incidents.map((incident) => `
+      <details class="gm-incident">
+        <summary>${escapeHtml(incident.title)}</summary>
+        <div>${incident.actions.map((action) => `<button type="button" data-incident-action="${escapeHtml(action)}">${escapeHtml(action)}</button>`).join("")}</div>
+      </details>
+    `).join("");
+    els.incidents.querySelectorAll("[data-incident-action]").forEach((button) => {
+      button.addEventListener("click", () => handleIncidentAction(button.dataset.incidentAction));
+    });
+  }
+
+  function handleIncidentAction(action) {
+    if (action === "Probar audio") runAudioTest().catch((error) => appendLog({ error: String(error) }));
+    else if (action === "Abrir pantalla jugador" || action === "Refrescar pantalla") openPlayerScreen();
+    else if (action === "Probar MQTT" || action === "Reintentar conexión") testMqtt().catch((error) => appendLog({ error: String(error) }));
+    else if (action === "Probar ESP32") testEsp32().catch((error) => appendLog({ error: String(error) }));
+    else if (action === "Actualizar estado" || action === "Reenviar estado") refreshCurrentState();
+    else if (action === "Reiniciar puzzle") startPuzzle(true).catch((error) => appendLog({ error: String(error) }));
+    else if (action === "Dar por completado") completeCurrentPuzzle().catch((error) => appendLog({ error: String(error) }));
+    else if (action === "Saltar puzzle") skipCurrentPuzzle().catch((error) => appendLog({ error: String(error) }));
+    else switchTab("tecnico");
+    addSimpleEvent(`Incidencia: ${action}`);
   }
 
   function clearPlayerLogs() {
@@ -4118,6 +4630,7 @@
       els.refreshSystemBtn.addEventListener("click", () => {
         renderSystemSummary();
         renderPlayerLogs();
+        refreshPreflightStatus().catch((error) => appendLog({ error: String(error) }));
       });
     }
     if (els.refreshLogsBtn) {
@@ -4140,7 +4653,9 @@
     }
     if (els.audioBtn) {
       els.audioBtn.addEventListener("click", () => {
-        runAudioTest().catch((error) => appendLog({ error: String(error) }));
+        runAudioTest()
+          .then(() => setPreflightStatus("audio", "ok"))
+          .catch((error) => appendLog({ error: String(error) }));
       });
     }
     if (els.clearLogBtn) {
@@ -4162,15 +4677,47 @@
         appendLog({ error: "copy_reference_failed", detail: String(error) });
       }
     });
+    if (els.saveSessionBtn) els.saveSessionBtn.addEventListener("click", saveSession);
+    if (els.newSessionBtn) els.newSessionBtn.addEventListener("click", () => {
+      clearSessionForm();
+      renderSessionList();
+      setStatus("Nueva sesión preparada");
+    });
+    if (els.duplicateSessionBtn) els.duplicateSessionBtn.addEventListener("click", duplicateSession);
+    if (els.loadSessionBtn) els.loadSessionBtn.addEventListener("click", loadSelectedSession);
+    if (els.confirmSessionBtn) els.confirmSessionBtn.addEventListener("click", confirmSession);
+    if (els.exportSessionBtn) els.exportSessionBtn.addEventListener("click", exportSessionResult);
+    if (els.checkAllBtn) els.checkAllBtn.addEventListener("click", () => refreshPreflightStatus().catch((error) => appendLog({ error: String(error) })));
+    if (els.startSystemBtn) els.startSystemBtn.addEventListener("click", () => initializeGameSystem().catch((error) => appendLog({ error: String(error) })));
+    if (els.testScreenBtn) els.testScreenBtn.addEventListener("click", testScreen);
+    if (els.testMqttBtn) els.testMqttBtn.addEventListener("click", () => testMqtt().catch((error) => appendLog({ error: String(error) })));
+    if (els.testEsp32Btn) els.testEsp32Btn.addEventListener("click", () => testEsp32().catch((error) => appendLog({ error: String(error) })));
+    if (els.openPlayerBtn) els.openPlayerBtn.addEventListener("click", openPlayerScreen);
+    if (els.pauseGameBtn) els.pauseGameBtn.addEventListener("click", pauseGame);
+    if (els.resumeGameBtn) els.resumeGameBtn.addEventListener("click", resumeGame);
+    if (els.completePuzzleBtn) els.completePuzzleBtn.addEventListener("click", () => completeCurrentPuzzle().catch((error) => appendLog({ error: String(error) })));
+    if (els.skipPuzzleBtn) els.skipPuzzleBtn.addEventListener("click", () => skipCurrentPuzzle().catch((error) => appendLog({ error: String(error) })));
+    if (els.finishGameBtn) els.finishGameBtn.addEventListener("click", finishGame);
   }
 
+  loadGameState();
+  loadActiveSession();
+  renderSessionList();
+  renderPreflightChecklist();
+  renderPuzzleProgress();
+  renderIncidents();
   initPuzzleSelect();
   renderShortcutButtons();
-  switchTab("ayudas");
+  switchTab("sesiones");
   renderSystemSummary();
   renderPlayerLogs();
   renderForm();
   renderDeviceState();
+  if (puzzleRuntime.startedAt) {
+    startGameTimer();
+  } else {
+    renderGameTimer();
+  }
   bindEvents();
   window.setInterval(() => {
     autoSkipMonitorTick();

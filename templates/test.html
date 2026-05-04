@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +13,18 @@
             <div class="test-header-main">
                 <div class="test-hero">
                     <h1 class="test-title">Panel Game Master</h1>
+                    <div id="gm-active-session-line" class="gm-active-session-line">Sin sesión confirmada</div>
                 </div>
 
                 <div class="gm-header-status" aria-label="Estado de partida">
+                    <div class="gm-status-pill">
+                        <span>Sesión</span>
+                        <strong id="gm-header-session-status">No confirmada</strong>
+                    </div>
+                    <div class="gm-status-pill">
+                        <span>Tiempo</span>
+                        <strong id="gm-game-time">00:00:00</strong>
+                    </div>
                     <div class="gm-status-pill">
                         <span>Puzzle actual</span>
                         <strong id="test-gm-current-puzzle">Sin datos</strong>
@@ -32,156 +41,163 @@
             </div>
 
             <div id="test-top-status" aria-hidden="true">
-                <img
-                    id="test-logo"
-                    src="{{ url_for('static', filename='images/piramidetrans.png') }}"
-                    alt=""
-                >
+                <img id="test-logo" src="{{ url_for('static', filename='images/piramidetrans.png') }}" alt="">
             </div>
         </header>
 
-        <section class="gm-quickbar" aria-label="Control rapido">
-            <label class="gm-puzzle-select">
-                <span class="field-label">Puzzle seleccionado</span>
-                <select id="test-puzzle-select" aria-label="Puzzle"></select>
-            </label>
-            <div class="action-row test-header-actions">
-                <button type="button" id="test-start-btn" class="primary-action">Arrancar</button>
-                <button type="button" id="test-restart-btn" class="danger-action">Reiniciar</button>
-                <button type="button" id="test-view-btn">Abrir pantalla</button>
-                <button type="button" id="test-refresh-state-btn" class="primary-action">Actualizar</button>
-            </div>
-        </section>
-
         <div id="test-tabs" class="gm-nav" role="tablist" aria-label="Secciones del Game Master">
-            <button type="button" id="test-tab-ayudas" class="test-tab is-active" role="tab" aria-selected="true" data-gm-section="ayudas">Ayudas / Resolver</button>
-            <button type="button" id="test-tab-system" class="test-tab" role="tab" aria-selected="false" aria-controls="test-panel-system" data-gm-section="tecnico">Técnico / Prepartida</button>
+            <button type="button" class="test-tab is-active" role="tab" aria-selected="true" data-gm-section="sesiones">Sesiones</button>
+            <button type="button" class="test-tab" role="tab" aria-selected="false" data-gm-section="prepartida">Prepartida</button>
+            <button type="button" class="test-tab" role="tab" aria-selected="false" data-gm-section="control">Control</button>
+            <button type="button" id="test-tab-system" class="test-tab" role="tab" aria-selected="false" data-gm-section="tecnico">Técnico</button>
         </div>
 
         <main id="test-shell" class="gm-shell">
-            <section id="test-panel-puzzles" class="test-tab-panel gm-main-panel is-active" role="tabpanel" aria-labelledby="test-tab-ayudas">
-                <section class="gm-section is-active" data-gm-panel="ayudas">
-                    <div class="test-panel control-panel gm-ayudas-panel">
-                        <div class="gm-section-head">
-                            <div>
-                                <h2>Ayudas / Resolver</h2>
-                            </div>
-                        </div>
-                        <div class="test-block test-sim-block section-sim">
-                            <div class="section-tag">Herramientas del puzzle</div>
-                            <div id="test-resolver-hub"></div>
-                            <div id="test-sim-content"></div>
-                        </div>
-
-                        <div class="test-block section-reference">
-                            <div class="section-tag">Referencia para el Game Master</div>
-                            <div class="action-row">
-                                <button type="button" id="test-copy-reference-btn">Copiar referencia</button>
-                            </div>
-                            <pre id="test-reference-output"></pre>
-                        </div>
-                    </div>
-                </section>
-
-            </section>
-
-            <section id="test-panel-system" class="test-tab-panel gm-tech-panel" role="tabpanel" aria-labelledby="test-tab-system" hidden>
-                <div class="test-panel monitor-panel">
+            <section class="test-tab-panel gm-main-panel is-active" role="tabpanel" data-gm-panel="sesiones">
+                <div class="test-panel control-panel">
                     <div class="gm-section-head">
                         <div>
-                            <h2>Técnico</h2>
+                            <span class="section-tag">Preparar partida</span>
+                            <h2>Sesiones</h2>
+                        </div>
+                        <div class="action-row gm-actions-compact">
+                            <button type="button" id="gm-new-session-btn">Crear nueva sesión</button>
+                            <button type="button" id="gm-duplicate-session-btn">Duplicar sesión</button>
                         </div>
                     </div>
 
+                    <div class="gm-session-layout">
+                        <form id="gm-session-form" class="gm-session-form">
+                            <label><span class="field-label">Nombre de la sesión</span><input id="gm-session-name" name="sessionName" type="text"></label>
+                            <label><span class="field-label">Empresa / cliente</span><input id="gm-session-company" name="company" type="text"></label>
+                            <label><span class="field-label">Evento</span><input id="gm-session-event" name="event" type="text"></label>
+                            <label><span class="field-label">Fecha</span><input id="gm-session-date" name="date" type="date"></label>
+                            <label><span class="field-label">Hora prevista</span><input id="gm-session-time" name="time" type="time"></label>
+                            <label><span class="field-label">Lugar</span><input id="gm-session-place" name="place" type="text"></label>
+                            <label><span class="field-label">Grupo / turno</span><input id="gm-session-group" name="group" type="text"></label>
+                            <label><span class="field-label">Número de jugadores</span><input id="gm-session-players" name="players" type="number" min="1" max="40"></label>
+                            <label><span class="field-label">Nombre del equipo</span><input id="gm-session-team" name="teamName" type="text"></label>
+                            <label><span class="field-label">Game Master responsable</span><input id="gm-session-master" name="gameMaster" type="text"></label>
+                            <label><span class="field-label">Idioma del juego</span><select id="gm-session-language" name="gameLanguage"><option value="es">Castellano</option><option value="ca">Català</option><option value="eng">English</option></select></label>
+                            <label><span class="field-label">Modo de juego</span><input id="gm-session-mode" name="gameMode" type="text" placeholder="Normal"></label>
+                            <label><span class="field-label">Dificultad</span><select id="gm-session-difficulty" name="difficulty"><option value="normal">Normal</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select></label>
+                            <label class="full-width"><span class="field-label">Notas internas</span><textarea id="gm-session-notes" name="internalNotes"></textarea></label>
+                            <div class="action-row full-width">
+                                <button type="button" id="gm-save-session-btn" class="primary-action">Guardar sesión</button>
+                                <button type="button" id="gm-confirm-session-btn" class="primary-action">Confirmar sesión</button>
+                                <button type="button" id="gm-export-session-btn">Exportar resultado</button>
+                            </div>
+                        </form>
+
+                        <aside class="gm-saved-sessions">
+                            <span class="section-tag">Sesiones guardadas</span>
+                            <div id="gm-session-list" class="gm-session-list"></div>
+                            <button type="button" id="gm-load-session-btn">Cargar sesión</button>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+
+            <section class="test-tab-panel gm-main-panel" role="tabpanel" data-gm-panel="prepartida" hidden>
+                <div class="test-panel control-panel">
+                    <div class="gm-section-head">
+                        <div>
+                            <span class="section-tag">Comprobar sistema</span>
+                            <h2>Prepartida</h2>
+                        </div>
+                        <button type="button" id="gm-start-system-btn" class="primary-action gm-big-action">Arrancar sistema de juego</button>
+                    </div>
+                    <div id="gm-preflight-checklist" class="gm-checklist"></div>
+                    <div class="action-row">
+                        <button type="button" id="gm-check-all-btn" class="primary-action">Comprobar todo</button>
+                        <button type="button" id="test-audio-btn">Probar audio</button>
+                        <button type="button" id="gm-test-screen-btn">Probar pantalla</button>
+                        <button type="button" id="gm-test-mqtt-btn">Probar MQTT</button>
+                        <button type="button" id="gm-test-esp32-btn">Probar ESP32</button>
+                        <button type="button" id="test-refresh-system-btn">Refrescar estado</button>
+                        <button type="button" id="gm-open-player-btn">Abrir pantalla jugador</button>
+                        <button type="button" id="test-fullscreen-btn">Forzar fullscreen</button>
+                    </div>
+                    <details class="gm-details">
+                        <summary>Detalles técnicos</summary>
+                        <div id="test-system-summary">Pulsa "Refrescar estado"</div>
+                    </details>
+                </div>
+            </section>
+
+            <section class="test-tab-panel gm-main-panel" role="tabpanel" data-gm-panel="control" hidden>
+                <div class="test-panel control-panel">
+                    <div class="gm-section-head">
+                        <div>
+                            <span class="section-tag">Controlar juego</span>
+                            <h2>Control</h2>
+                        </div>
+                    </div>
+                    <div class="gm-control-puzzle-bar">
+                        <label class="gm-puzzle-select">
+                            <span class="field-label">Puzzle seleccionado</span>
+                            <select id="test-puzzle-select" aria-label="Puzzle"></select>
+                        </label>
+                        <div class="action-row gm-puzzle-base-actions">
+                            <button type="button" id="test-start-btn" class="primary-action">Arrancar puzzle</button>
+                            <button type="button" id="test-view-btn">Abrir pantalla jugador</button>
+                            <button type="button" id="test-refresh-state-btn">Actualizar estado</button>
+                        </div>
+                    </div>
+                    <details class="gm-details gm-game-controls">
+                        <summary>Control de juego</summary>
+                        <div class="action-row gm-primary-controls">
+                            <button type="button" id="gm-pause-game-btn">Pausar partida</button>
+                            <button type="button" id="gm-resume-game-btn">Reanudar partida</button>
+                            <button type="button" id="test-restart-btn" class="danger-action">Reiniciar puzzle actual</button>
+                            <button type="button" id="gm-finish-game-btn" class="danger-action">Finalizar partida</button>
+                        </div>
+                    </details>
+                    <div class="test-block section-sim gm-current-puzzle-tools">
+                        <div class="section-tag">Control del puzzle actual</div>
+                        <div id="test-resolver-hub"></div>
+                        <div id="test-sim-content"></div>
+                    </div>
+                    <div class="gm-control-grid">
+                        <section class="test-block">
+                            <span class="section-tag">Progreso</span>
+                            <div id="gm-puzzle-progress-list" class="gm-puzzle-progress-list"></div>
+                        </section>
+                        <section class="test-block">
+                            <span class="section-tag">Últimos eventos</span>
+                            <div id="gm-simple-events" class="gm-simple-events">Sin eventos.</div>
+                        </section>
+                        <section class="test-block">
+                            <span class="section-tag">Incidencias rápidas</span>
+                            <div id="gm-incidents" class="gm-incidents"></div>
+                        </section>
+                    </div>
+                    <div class="test-block">
+                        <div class="section-tag">Ayuda para el Game Master</div>
+                        <div id="gm-puzzle-help" class="gm-puzzle-help"></div>
+                    </div>
+                    <details class="gm-details">
+                        <summary>Referencia técnica del puzzle</summary>
+                        <div class="action-row">
+                            <button type="button" id="test-copy-reference-btn">Copiar referencia</button>
+                        </div>
+                        <pre id="test-reference-output"></pre>
+                    </details>
+                </div>
+            </section>
+
+            <section id="test-panel-system" class="test-tab-panel gm-tech-panel" role="tabpanel" data-gm-panel="tecnico" hidden>
+                <div class="test-panel monitor-panel">
+                    <div class="gm-section-head"><div><span class="section-tag">Avanzado</span><h2>Técnico</h2></div></div>
                     <div class="monitor-grid monitor-grid--single">
-                        <div class="monitor-card">
-                            <div class="section-tag">Prepartida · Atajos de puzzle</div>
-                            <div id="test-puzzle-shortcuts" class="test-shortcuts-grid gm-puzzle-grid"></div>
-                        </div>
-
-                        <div class="monitor-card">
-                            <div class="section-tag">Prepartida · Intros</div>
-                            <div id="test-intro-shortcuts" class="test-shortcuts-grid gm-intro-grid"></div>
-                        </div>
-
-                        <div class="monitor-card">
-                            <div class="section-tag">Terminales</div>
-                            <div id="test-gm-device-summary" class="gm-device-summary">
-                                <div class="gm-action-note">No hay datos reales completos de hardware disponibles en este panel.</div>
-                            </div>
-                            <div id="test-gm-terminal-grid" class="gm-terminal-grid" aria-label="Terminales"></div>
-                        </div>
-
-                        <div class="monitor-card section-send">
-                            <div class="section-tag">Envío manual</div>
-                            <div class="inline-fields">
-                                <label>
-                                    <span class="field-label">Dirección</span>
-                                    <select id="test-topic-select">
-                                        <option value="TO_FLASK">TO_FLASK</option>
-                                        <option value="FROM_FLASK">FROM_FLASK</option>
-                                    </select>
-                                    <div id="test-topic-help" class="help-text"></div>
-                                </label>
-                                <label id="test-message-field">
-                                    <span class="field-label">Mensaje</span>
-                                    <select id="test-message-select"></select>
-                                </label>
-                            </div>
-                            <form id="test-form-builder"></form>
-                            <textarea id="test-message-editor" spellcheck="false" placeholder="Mensaje MQTT"></textarea>
-                            <div class="action-row">
-                                <button type="button" id="test-send-btn" class="primary-action danger-action">Enviar payload</button>
-                            </div>
-                        </div>
-
-                        <div class="monitor-card section-reference">
-                            <div class="section-tag">Puzzle 6 avanzado</div>
-                            <div class="action-row">
-                                <button type="button" id="test-solve-btn" class="danger-action" hidden>Activar solvePuzzle P6</button>
-                                <button type="button" id="test-unsolve-btn" hidden>Desactivar solvePuzzle P6</button>
-                            </div>
-                        </div>
-
-                        <div class="monitor-card section-system-summary">
-                            <div class="section-tag">Sistema</div>
-                            <div class="action-row">
-                                <button type="button" id="test-refresh-system-btn" class="primary-action">Actualizar sistema</button>
-                                <button type="button" id="test-fullscreen-btn">Pantalla completa</button>
-                                <button type="button" id="test-audio-btn">Probar audio</button>
-                            </div>
-                            <div id="test-system-summary">Pulsa "Actualizar sistema"</div>
-                        </div>
-
-                        <div class="monitor-card section-scenes">
-                            <div class="section-tag">Escenas</div>
-                            <div class="action-row">
-                                <button type="button" id="test-refresh-scenes-btn" class="primary-action">Comprobar escenas</button>
-                            </div>
-                            <div id="test-scene-health">Pulsa "Comprobar escenas"</div>
-                        </div>
-
-                        <div class="monitor-card section-system-logs">
-                            <div class="section-tag">Logs del player</div>
-                            <div class="action-row">
-                                <button type="button" id="test-refresh-logs-btn" class="primary-action">Actualizar logs</button>
-                                <button type="button" id="test-clear-logs-btn" class="danger-action">Borrar logs</button>
-                            </div>
-                            <div id="test-system-logs">Sin logs de player en esta sesión.</div>
-                        </div>
-
-                        <div class="monitor-card section-events">
-                            <div class="section-tag">Eventos locales</div>
-                            <div class="action-row">
-                                <button type="button" id="test-clear-log-btn">Borrar eventos locales</button>
-                            </div>
-                            <div id="test-event-log">Sin eventos locales.</div>
-                        </div>
-
-                        <div class="monitor-card section-state">
-                            <div class="section-tag">Estado completo</div>
-                            <div id="test-current-state">Pulsa "Actualizar"</div>
-                        </div>
+                        <details class="monitor-card" open><summary>Atajos de puzzle</summary><div id="test-puzzle-shortcuts" class="test-shortcuts-grid gm-puzzle-grid"></div></details>
+                        <details class="monitor-card"><summary>Intros y escenas</summary><div id="test-intro-shortcuts" class="test-shortcuts-grid gm-intro-grid"></div><div class="action-row"><button type="button" id="test-refresh-scenes-btn" class="primary-action">Comprobar escenas</button></div><div id="test-scene-health">Pulsa "Comprobar escenas"</div></details>
+                        <details class="monitor-card"><summary>Terminales / cajas</summary><div id="test-gm-device-summary" class="gm-device-summary"><div class="gm-action-note">No hay datos reales completos de hardware disponibles en este panel.</div></div><div id="test-gm-terminal-grid" class="gm-terminal-grid" aria-label="Terminales"></div></details>
+                        <details class="monitor-card section-send"><summary>MQTT y payloads manuales</summary><div class="inline-fields"><label><span class="field-label">Dirección</span><select id="test-topic-select"><option value="TO_FLASK">TO_FLASK</option><option value="FROM_FLASK">FROM_FLASK</option></select><div id="test-topic-help" class="help-text"></div></label><label id="test-message-field"><span class="field-label">Mensaje</span><select id="test-message-select"></select></label></div><form id="test-form-builder"></form><textarea id="test-message-editor" spellcheck="false" placeholder="Mensaje MQTT"></textarea><div class="action-row"><button type="button" id="test-send-btn" class="primary-action danger-action">Enviar payload</button></div></details>
+                        <details class="monitor-card"><summary>Puzzle 6 avanzado</summary><div class="action-row"><button type="button" id="test-solve-btn" class="danger-action" hidden>Activar solvePuzzle P6</button><button type="button" id="test-unsolve-btn" hidden>Desactivar solvePuzzle P6</button></div></details>
+                        <details class="monitor-card section-system-logs"><summary>Logs del player</summary><div class="action-row"><button type="button" id="test-refresh-logs-btn" class="primary-action">Actualizar logs</button><button type="button" id="test-clear-logs-btn" class="danger-action">Borrar logs</button></div><div id="test-system-logs">Sin logs de player en esta sesión.</div></details>
+                        <details class="monitor-card section-events"><summary>Eventos locales</summary><div class="action-row"><button type="button" id="test-clear-log-btn">Borrar eventos locales</button></div><div id="test-event-log">Sin eventos locales.</div></details>
+                        <details class="monitor-card section-state"><summary>Estado completo</summary><div id="test-current-state">Pulsa "Actualizar"</div></details>
                     </div>
                 </div>
             </section>

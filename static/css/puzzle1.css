@@ -173,7 +173,7 @@ body.p1-danger-state::before {
     gap: 12px;
     padding: 20px 40px;
     border-radius: 24px;
-    background: rgba(7,16,31,0.85);
+    background: #07101f;
     border: 1px solid rgba(69,230,255,0.25);
     box-shadow:
         0 0 24px rgba(0,240,255,0.12),

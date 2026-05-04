@@ -129,7 +129,7 @@ body.p8-solved-flash {
     --p8-soft: rgba(234, 252, 255, 0.72);
     --p8-ok: #2dff9b;
     --p8-bad: #ff4f6d;
-    --p8-panel: linear-gradient(180deg, rgba(8, 18, 33, 0.92) 0%, rgba(5, 12, 24, 0.82) 100%);
+    --p8-panel: #050c18;
 }
 
 body {

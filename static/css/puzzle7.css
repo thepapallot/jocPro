@@ -3,7 +3,7 @@
     --p7-cyan: #45e6ff;
     --p7-soft: rgba(234, 252, 255, 0.72);
     --p7-ok: #2dff9b;
-    --p7-panel: linear-gradient(180deg, rgba(8, 18, 33, 0.92) 0%, rgba(5, 12, 24, 0.82) 100%);
+    --p7-panel: #050c18;
     --p7-body: #2b2f36;
     --p7-body-edge: #415469;
     --p7-window: #0c121a;
@@ -23,6 +23,7 @@ body::before,
 body::after {
     content: "";
     position: fixed;
+    display: none;
     pointer-events: none;
     z-index: 0;
 }
@@ -150,9 +151,7 @@ body::after {
     padding: 10px 8px 14px;
     border-radius: 22px;
     border: 1px solid rgba(69, 230, 255, 0.06);
-    background:
-        linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.008)),
-        radial-gradient(circle at 50% 12%, rgba(69, 230, 255, 0.08), transparent 28%);
+    background: #07101f;
     transition:
         transform 180ms ease,
         border-color 180ms ease,
