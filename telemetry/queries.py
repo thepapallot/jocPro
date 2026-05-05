@@ -205,8 +205,13 @@ class TelemetryQueries:
             SELECT
                 session_id,
                 name,
+                company,
                 expected_day,
-                expected_time
+                expected_time,
+                place,
+                players_num,
+                language,
+                notes
             FROM sessions
             WHERE ended_at IS NULL
             ORDER BY expected_day DESC, session_id DESC

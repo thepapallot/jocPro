@@ -559,6 +559,39 @@ def test_force_end():
     return jsonify({"status": "sent", "puzzle_id": puzzle_id, "end_payload": end_payload}), 200
 
 
+@app.route('/test/session/<int:session_id>', methods=['PATCH'])
+def test_session_update(session_id):
+    if _telemetry_writer is None:
+        return jsonify({'error': 'telemetry_unavailable'}), 503
+    data = request.get_json(silent=True) or {}
+    try:
+        _telemetry_writer.update_session_fields(
+            session_id=session_id,
+            company=str(data.get('company') or ''),
+            expected_day=str(data.get('expected_day') or ''),
+            name=data.get('name') or None,
+            expected_time=data.get('expected_time') or None,
+            place=data.get('place') or None,
+            players_num=int(data['players_num']) if data.get('players_num') else None,
+            language=data.get('language') or None,
+            notes=data.get('notes') or None,
+        )
+    except Exception as exc:
+        return jsonify({'error': 'update_failed', 'detail': str(exc)}), 500
+    return jsonify({'session_id': session_id}), 200
+
+
+@app.route('/test/session/<int:session_id>', methods=['DELETE'])
+def test_session_delete(session_id):
+    if _telemetry_writer is None:
+        return jsonify({'error': 'telemetry_unavailable'}), 503
+    try:
+        _telemetry_writer.delete_session(session_id)
+    except Exception as exc:
+        return jsonify({'error': 'delete_failed', 'detail': str(exc)}), 500
+    return jsonify({'session_id': session_id, 'deleted': True}), 200
+
+
 @app.route('/test/session/save', methods=['POST'])
 def test_session_save():
     if _telemetry_writer is None:

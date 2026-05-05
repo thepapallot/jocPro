@@ -254,6 +254,64 @@ class TelemetryWriter:
         except queue.Full:
             print("Warning: telemetry queue full, dropping event")
     
+    def update_session_fields(
+        self,
+        session_id: int,
+        company: str,
+        expected_day: str,
+        name: Optional[str] = None,
+        expected_time: Optional[str] = None,
+        place: Optional[str] = None,
+        players_num: Optional[int] = None,
+        language: Optional[str] = None,
+        notes: Optional[str] = None,
+    ) -> None:
+        """Update editable fields of an existing session row."""
+        with self._flush_lock:
+            self.db.execute(
+                """
+                UPDATE sessions
+                SET company = ?, name = ?, expected_day = ?, expected_time = ?,
+                    place = ?, players_num = ?, language = ?, notes = ?
+                WHERE session_id = ?
+                """,
+                (company, name, expected_day, expected_time, place, players_num, language, notes, session_id),
+            )
+            self.db.commit()
+
+    def delete_session(self, session_id: int) -> None:
+        """Delete a session and all dependent puzzle/event rows."""
+        with self._flush_lock:
+            # Drain queued event inserts first so delete order is deterministic.
+            self.flush()
+            try:
+                self.db.begin_transaction()
+                self.db.execute(
+                    """
+                    DELETE FROM events
+                    WHERE session_id = ?
+                    """,
+                    (session_id,),
+                )
+                self.db.execute(
+                    """
+                    DELETE FROM puzzles
+                    WHERE session_id = ?
+                    """,
+                    (session_id,),
+                )
+                self.db.execute(
+                    """
+                    DELETE FROM sessions
+                    WHERE session_id = ?
+                    """,
+                    (session_id,),
+                )
+                self.db.end_transaction()
+            except Exception:
+                self.db.rollback()
+                raise
+
     def end_session(self, session_id: int, ended_at: Optional[str] = None) -> None:
         """Update a session end timestamp immediately."""
         with self._flush_lock:

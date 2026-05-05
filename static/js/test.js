@@ -576,12 +576,11 @@
     headerSessionStatus: document.getElementById("gm-header-session-status"),
     sessionSummary: document.getElementById("gm-session-summary"),
     sessionList: document.getElementById("gm-session-list"),
-    loadSessionBtn: document.getElementById("gm-load-session-btn"),
     saveSessionBtn: document.getElementById("gm-save-session-btn"),
+    deleteSessionBtn: document.getElementById("gm-delete-session-btn"),
     newSessionBtn: document.getElementById("gm-new-session-btn"),
     duplicateSessionBtn: document.getElementById("gm-duplicate-session-btn"),
     confirmSessionBtn: document.getElementById("gm-confirm-session-btn"),
-    exportSessionBtn: document.getElementById("gm-export-session-btn"),
     preflightChecklist: document.getElementById("gm-preflight-checklist"),
     checkAllBtn: document.getElementById("gm-check-all-btn"),
     startSystemBtn: document.getElementById("gm-start-system-btn"),
@@ -608,6 +607,7 @@
   const gameStateKey = "gmPanelGameState";
   let selectedSessionId = null;
   let activeSession = null;
+  let _loadedDbSessionId = null;
   const puzzleRuntime = {
     statuses: {},
     gameStatus: "Preparado",
@@ -766,6 +766,7 @@
 
   function clearSessionForm() {
     selectedSessionId = null;
+    _loadedDbSessionId = null;
     document.getElementById("gm-session-form")?.reset();
     const lang = getSessionField("gameLanguage");
     if (lang) lang.value = "es";
@@ -799,12 +800,33 @@
       return;
     }
     els.sessionList.innerHTML = sessions.map((s) => {
-      const parts = [s.name || "Sesión sin nombre", s.expected_day, s.expected_time].filter(Boolean);
-      return `<div class="gm-session-item">
+      const isActive = s.session_id === _loadedDbSessionId;
+      return `<button type="button" class="gm-session-item${isActive ? " is-selected" : ""}" data-db-session-id="${escapeHtml(String(s.session_id))}">
         <strong>${escapeHtml(s.name || "Sesión sin nombre")}</strong>
         <span>${escapeHtml([s.expected_day, s.expected_time].filter(Boolean).join(" · ") || "Sin fecha")}</span>
-      </div>`;
+      </button>`;
     }).join("");
+    els.sessionList.querySelectorAll("[data-db-session-id]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dbId = parseInt(btn.dataset.dbSessionId, 10);
+        const session = sessions.find((s) => s.session_id === dbId);
+        if (!session) return;
+        _loadedDbSessionId = dbId;
+        // Map DB field names → form field names
+        getSessionField("sessionName") && (getSessionField("sessionName").value = session.name || "");
+        getSessionField("company") && (getSessionField("company").value = session.company || "");
+        getSessionField("date") && (getSessionField("date").value = session.expected_day || "");
+        getSessionField("time") && (getSessionField("time").value = session.expected_time || "");
+        getSessionField("place") && (getSessionField("place").value = session.place || "");
+        getSessionField("players") && (getSessionField("players").value = session.players_num ?? "");
+        getSessionField("gameLanguage") && (getSessionField("gameLanguage").value = session.language || "es");
+        getSessionField("additionalNotes") && (getSessionField("additionalNotes").value = session.notes || "");
+        // Refresh list to update is-selected highlight
+        renderDbSessionList(sessions);
+        addSimpleEvent("Sesión cargada");
+        setStatus("Sesión cargada — edita y guarda para actualizar");
+      });
+    });
   }
 
   async function refreshDbSessionList() {
@@ -819,7 +841,8 @@
     }
   }
 
-  async function saveSessionToDb(session) {
+  async function saveSessionToDb(session, options = {}) {
+    const forceInsert = Boolean(options.forceInsert);
     const body = {
       name: session.sessionName || null,
       company: session.company || "",
@@ -830,16 +853,29 @@
       language: session.gameLanguage || null,
       notes: session.additionalNotes || null,
     };
-    const response = await fetch("/test/session/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!forceInsert && _loadedDbSessionId !== null) {
+      // UPDATE existing row
+      const response = await fetch(`/test/session/${_loadedDbSessionId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    } else {
+      // INSERT new row
+      const response = await fetch("/test/session/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const result = await response.json();
+      _loadedDbSessionId = result.session_id ?? null;
+    }
     await refreshDbSessionList();
   }
 
-  function saveSession() {
+  function saveSession(options = {}) {
     const session = collectSessionForm();
     const sessions = readSessions();
     const index = sessions.findIndex((item) => item.id === session.id);
@@ -847,7 +883,7 @@
     else sessions.unshift(session);
     selectedSessionId = session.id;
     writeSessions(sessions);
-    saveSessionToDb(session).catch((err) => {
+    saveSessionToDb(session, options).catch((err) => {
       console.warn("[telemetry] saveSessionToDb failed:", err);
       setStatus("Sesión guardada (sin BD)");
     });
@@ -868,9 +904,11 @@
   }
 
   function duplicateSession() {
-    const source = selectedSessionId
-      ? readSessions().find((item) => item.id === selectedSessionId)
-      : collectSessionForm();
+    const source = collectSessionForm();
+    if (!source.sessionName && !source.company && !source.date) {
+      setStatus("Selecciona o completa una sesión para duplicar");
+      return;
+    }
     const duplicate = {
       ...(source || {}),
       id: `session_${Date.now()}`,
@@ -879,7 +917,27 @@
     };
     selectedSessionId = duplicate.id;
     fillSessionForm(duplicate);
-    saveSession();
+    saveSession({ forceInsert: true });
+  }
+
+  async function deleteSelectedSession() {
+    if (_loadedDbSessionId === null) {
+      setStatus("Selecciona una sesión guardada para eliminar");
+      return;
+    }
+
+    const response = await fetch(`/test/session/${_loadedDbSessionId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    clearSessionForm();
+    await refreshDbSessionList();
+    addSimpleEvent("Sesión eliminada");
+    setStatus("Sesión eliminada");
   }
 
   function confirmSession() {
@@ -4746,15 +4804,21 @@
       }
     });
     if (els.saveSessionBtn) els.saveSessionBtn.addEventListener("click", saveSession);
+    if (els.deleteSessionBtn) {
+      els.deleteSessionBtn.addEventListener("click", () => {
+        deleteSelectedSession().catch((err) => {
+          console.warn("[telemetry] deleteSelectedSession failed:", err);
+          setStatus("No se pudo eliminar la sesión");
+        });
+      });
+    }
     if (els.newSessionBtn) els.newSessionBtn.addEventListener("click", () => {
       clearSessionForm();
       refreshDbSessionList();
       setStatus("Nueva sesión preparada");
     });
     if (els.duplicateSessionBtn) els.duplicateSessionBtn.addEventListener("click", duplicateSession);
-    if (els.loadSessionBtn) els.loadSessionBtn.addEventListener("click", loadSelectedSession);
     if (els.confirmSessionBtn) els.confirmSessionBtn.addEventListener("click", confirmSession);
-    if (els.exportSessionBtn) els.exportSessionBtn.addEventListener("click", exportSessionResult);
     if (els.checkAllBtn) els.checkAllBtn.addEventListener("click", () => refreshPreflightStatus().catch((error) => appendLog({ error: String(error) })));
     if (els.startSystemBtn) els.startSystemBtn.addEventListener("click", () => initializeGameSystem().catch((error) => appendLog({ error: String(error) })));
     if (els.testMqttBtn) els.testMqttBtn.addEventListener("click", () => testMqtt().catch((error) => appendLog({ error: String(error) })));
