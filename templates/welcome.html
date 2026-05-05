@@ -3,8 +3,29 @@
 <head>
     <title>Welcome</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}">
+    {% set is_embed = request.args.get('embed') == '1' %}
+    {% if not is_embed %}
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #010208;
+        }
+
+        #game-shell-frame {
+            width: 100vw;
+            height: 100vh;
+            border: 0;
+            display: block;
+            background: #010208;
+        }
+    </style>
+    {% endif %}
 </head>
 <body>
+    {% if is_embed %}
     <div id="welcome-stage">
         <video id="welcome-video" autoplay loop muted>
             <source src="{{ url_for('static', filename='videos/Video_inicial.mp4') }}" type="video/mp4">
@@ -14,11 +35,70 @@
         <audio id="overlay-audio" src="{{ url_for('static', filename='audios/inicial/ESP_dividios.wav') }}"></audio>
     </div>
     <script>
+            if (window.self === window.top) {
+                    const cleanUrl = new URL(window.location.href);
+                    cleanUrl.searchParams.delete('embed');
+                    window.location.replace(cleanUrl.toString());
+            }
       window.REDIRECT_FLAG = "{{ redirect_flag }}";
       window.IDX_STR = "{{ idx }}";
       window.FINAL_PUZZLE_ID = {{ final_puzzle_id|tojson }};
       window.PLAY_VIDEO_INTRO_URL = {{ url_for('play_video_intro')|tojson }};
     </script>
     <script src="{{ url_for('static', filename='js/welcome.js') }}"></script>
+    {% else %}
+    <iframe id="game-shell-frame" title="La Piramide Shell"></iframe>
+
+    <script>
+        if (window.self !== window.top) {
+            const forcedEmbedUrl = new URL(window.location.href);
+            forcedEmbedUrl.searchParams.set('embed', '1');
+            window.location.replace(forcedEmbedUrl.toString());
+        }
+
+        window.BGM_CONTEXT = { mode: "medium" };
+
+        (function () {
+            const frame = document.getElementById('game-shell-frame');
+            if (!frame) return;
+
+            function syncShellTargetFromFrame() {
+                try {
+                    const frameLocation = frame.contentWindow && frame.contentWindow.location;
+                    if (!frameLocation) return;
+
+                    const target = `${frameLocation.pathname}${frameLocation.search}${frameLocation.hash}`;
+                    if (!target || !target.startsWith('/')) return;
+
+                    const shellUrl = new URL(window.location.href);
+                    shellUrl.searchParams.set('shell_target', target);
+                    window.history.replaceState({}, '', shellUrl.toString());
+                } catch (error) {
+                    // Ignore cross-frame access issues.
+                }
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const rawTarget = params.get('shell_target');
+            const fallbackUrl = new URL(window.location.href);
+            fallbackUrl.searchParams.set('embed', '1');
+            fallbackUrl.searchParams.delete('shell_target');
+
+            frame.addEventListener('load', syncShellTargetFromFrame);
+
+            if (rawTarget && rawTarget.startsWith('/') && !rawTarget.startsWith('//')) {
+                const targetUrl = new URL(rawTarget, window.location.origin);
+                if (targetUrl.pathname === '/' && targetUrl.searchParams.get('embed') !== '1') {
+                    targetUrl.searchParams.set('embed', '1');
+                }
+                frame.src = targetUrl.toString();
+                return;
+            }
+
+            frame.src = fallbackUrl.toString();
+        })();
+    </script>
+    <script src="{{ url_for('static', filename='js/bgm_layer.js') }}"></script>
+    {% endif %}
 </body>
 </html>

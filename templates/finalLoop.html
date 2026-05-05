@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Final Loop</title>
+    <script src="{{ url_for('static', filename='js/shell_guard.js') }}"></script>
     <style>
         html, body {
             margin: 0;
@@ -41,6 +42,10 @@
     <audio id="final-loop-audio" loop preload="auto">
         <source src="{{ url_for('static', filename='audios/effects/fondo_final.wav') }}" type="audio/wav">
     </audio>
+    <script>
+        window.BGM_CONTEXT = { mode: "mute" };
+    </script>
+    <script src="{{ url_for('static', filename='js/bgm_layer.js') }}"></script>
     <script>
         const stage = document.getElementById('final-stage');
         const finalLoopAudio = document.getElementById('final-loop-audio');

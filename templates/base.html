@@ -7,6 +7,7 @@
     <style>
         html, body { background: #02050b; }
     </style>
+    <script src="{{ url_for('static', filename='js/shell_guard.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -43,6 +44,10 @@
 
     {% block extra_js %}{% endblock %}
     {% block after_body %}{% endblock %}
+    <script>
+    window.BGM_CONTEXT = window.BGM_CONTEXT || { mode: "medium" };
+    </script>
+    <script src="{{ url_for('static', filename='js/bgm_layer.js') }}"></script>
     <script>
     (function () {
         const BASE_WIDTH = 1920;

@@ -78,6 +78,7 @@
 
 {% block extra_js %}
 <script>
+    window.BGM_CONTEXT = { mode: "mute" };
     window.NEXT_PUZZLE_ID = {{ next_puzzle_id|tojson|safe }};
 </script>
 <script src="{{ url_for('static', filename='js/puzzle4.js') }}"></script>
