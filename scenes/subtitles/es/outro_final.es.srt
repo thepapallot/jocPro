@@ -36,4 +36,4 @@ se puede llegar muy lejos.
 
 10
 00:00:30,399 --> 00:00:32,799
-Enhorabuena por el trabajo realizado en equipo.
+Enhorabuena por el trabajo realizado, equipo.

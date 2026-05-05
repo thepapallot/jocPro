@@ -144,7 +144,7 @@ To use them,
 
 37
 00:01:37,000 --> 00:01:39,000
-you must place them on the square mark
+you must hold them up on the square mark
 
 38
 00:01:39,000 --> 00:01:42,000
