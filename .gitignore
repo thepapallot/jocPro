@@ -9,3 +9,4 @@ data/db/*.sqlite3
 data/db/*.db
 data/db/*-wal
 data/db/*-shm
+.cache/

@@ -1048,6 +1048,46 @@ body {
     filter: drop-shadow(0 6px 18px rgba(64, 208, 255, 0.32)) !important;
 }
 
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="button-color-action"] .asset-grid--icons.asset-grid--icons-2 {
+    grid-template-columns: clamp(260px, 24vw, 520px) clamp(300px, 26vw, 560px) !important;
+    gap: clamp(14px, 1.4vw, 28px) !important;
+    align-items: center !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="button-color-action"] .asset-grid--icons.asset-grid--icons-2::after {
+    display: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="button-color-action"] .asset-grid--icons.asset-grid--icons-2 .asset-card {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="button-color-action"] .asset-grid--icons.asset-grid--icons-2 .asset-card__media {
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="button-color-action"] .asset-grid--icons.asset-grid--icons-2 .asset-card:nth-child(1) .asset-card__image {
+    width: clamp(240px, 20vw, 450px) !important;
+    max-height: min(66cqh, 700px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="button-color-action"] .asset-grid--icons.asset-grid--icons-2 .asset-card:nth-child(2) .asset-card__image {
+    width: clamp(260px, 22vw, 500px) !important;
+    max-height: min(68cqh, 720px) !important;
+}
+
 .player-root[data-scene-id^="scene_intro_"] .ui-screen[data-variant="immersive-strip"] .zone-card--top .asset-grid--icons.asset-grid--icons-1 .asset-card__image {
     width: clamp(620px, 58vw, 1280px) !important;
     max-width: min(92vw, 1400px) !important;

@@ -1,51 +1,51 @@
 1
-00:00:00,000 --> 00:00:05,120
-This challenge is not about strength, but about logic and coordination.
+00:00:00,000 --> 00:00:03,480
+This challenge requires logic, memory, and coordination.
 
 2
-00:00:05,120 --> 00:00:10,560
-Your goal will be to complete the color patterns shown on screen.
+00:00:04,080 --> 00:00:07,440
+Your objective is to complete the colors on each terminal.
 
 3
-00:00:10,560 --> 00:00:16,040
-You will see one pattern for each terminal, made up of different color segments.
+00:00:08,000 --> 00:00:10,560
+On screen, you will see ten color combinations.
 
 4
-00:00:16,040 --> 00:00:21,600
-To achieve this, you will use your tokens and the terminal buttons.
+00:00:11,080 --> 00:00:13,480
+Each combination belongs to one terminal.
 
 5
-00:00:21,600 --> 00:00:28,000
-Each token contains three hidden colors. To discover them, place the token on any terminal.
+00:00:14,040 --> 00:00:14,960
+How will you do it?
 
 6
-00:00:28,080 --> 00:00:31,760
-And press the black, red, and green buttons.
+00:00:15,520 --> 00:00:18,400
+First, bring your token close to any terminal.
 
 7
-00:00:31,760 --> 00:00:35,440
-Each button will light up one of that token's colors.
+00:00:18,960 --> 00:00:23,600
+Press the green, black, and red buttons to discover your three colors.
 
 8
-00:00:35,440 --> 00:00:40,080
-And those colors will always be the same, no matter where it is.
+00:00:24,200 --> 00:00:27,880
+That combination will always be the same, wherever you place it.
 
 9
-00:00:40,080 --> 00:00:45,120
-You will need to move between terminals, using each token where it is most useful.
+00:00:28,760 --> 00:00:31,560
+Then, use your colors wherever they are needed.
 
 10
-00:00:45,120 --> 00:00:49,120
-That is how you will complete the missing segments in each pattern.
+00:00:32,200 --> 00:00:37,040
+To complete a terminal, you will probably need to combine two or three different tokens.
 
 11
-00:00:49,120 --> 00:00:53,360
-Discover, combine, and coordinate quickly.
+00:00:37,960 --> 00:00:41,840
+When all three colors are correct, the terminal will be completed.
 
 12
-00:00:53,360 --> 00:00:57,280
-If time reaches zero, the phase will reset.
+00:00:42,760 --> 00:00:44,320
+Time is limited.
 
 13
-00:00:57,280 --> 00:00:59,950
-Understand the system and make it yours.
+00:00:44,960 --> 00:00:51,080
+Discover your colors, combine them well, and complete all ten terminals.

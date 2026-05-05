@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import unicodedata
 import wave
 from pathlib import Path
@@ -173,10 +174,18 @@ CONCEPT_ASSET_PREFERENCES = {
 SEGMENTS_PATTERN_CODES = [
     {"box": 0, "code": "042"},
     {"box": 1, "code": "414"},
+    {"box": 2, "code": "323"},
+    {"box": 3, "code": "104"},
+    {"box": 4, "code": "033"},
+    {"box": 5, "code": "431"},
+    {"box": 6, "code": "104"},
+    {"box": 7, "code": "222"},
+    {"box": 8, "code": "110"},
+    {"box": 9, "code": "423"},
 ]
 
 SEGMENTS_OBJECTIVE_MIN_TEXT_SECONDS = 5.4
-SEGMENTS_OBJECTIVE_TEXT = "COMPLETAR LOS PATRONES DE CADA TERMINAL"
+SEGMENTS_OBJECTIVE_TEXT = "COMPLETAR LOS COLORES DE CADA TERMINAL"
 DEFAULT_DISALLOWED_ASSET_PATH_FRAGMENTS = (
     "/old_pics/",
     "/legacy/",
@@ -416,7 +425,7 @@ def transcribe_subtitles_for_entry(
         whisper_models[cache_key] = model
 
     result = model.transcribe(
-        str(audio_path),
+        load_wav_audio_for_whisper(audio_path),
         language=whisper_language,
         task="transcribe",
         fp16=False,
@@ -512,6 +521,290 @@ def path_to_alt(src: str):
 
 def build_segments_pattern_codes():
     return [dict(item) for item in SEGMENTS_PATTERN_CODES]
+
+
+def _scene_asset(src: str, alt: str | None = None, **extra):
+    asset = {"src": src, "alt": alt or path_to_alt(src)}
+    asset.update(extra)
+    return asset
+
+
+def apply_segments_intro_manual_timeline(scene: dict):
+    subtitles = scene.get("subtitles") or []
+    if len(subtitles) < 13:
+        return
+
+    def start(index: int, fallback: float):
+        try:
+            return float(subtitles[index - 1].get("start", fallback))
+        except (TypeError, ValueError, IndexError):
+            return fallback
+
+    def end(index: int, fallback: float):
+        try:
+            return float(subtitles[index - 1].get("end", fallback))
+        except (TypeError, ValueError, IndexError):
+            return fallback
+
+    opening_end = 4.12
+    objective_start = opening_end
+    cero_question_start = start(5, 14.04)
+    visual_start = start(6, 15.52)
+    final_cero_start = 47.9
+    final_cero_end = end(13, 51.069)
+
+    scene["segments"] = [
+        {
+            "type": "character",
+            "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
+            "clip_start": 0,
+            "clip_end": opening_end,
+            "duration": round(opening_end, 3),
+            "label": "intro_estable",
+        },
+        {
+            "type": "fullscreen_ui",
+            "duration": round(max(0.2, cero_question_start - objective_start), 3),
+            "variant": "immersive-strip",
+            "phases": [
+                {
+                    "at": 0,
+                    "sfx": "objective",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "text": SEGMENTS_OBJECTIVE_TEXT,
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(3, 8.0) - objective_start), 3),
+                    "sfx": "objective",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "assets": [
+                            _scene_asset(
+                                "/static/images/shared/puzzle10/grid_completo_actual.png",
+                                "Pantalla completa de combinaciones",
+                            )
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(4, 11.08) - objective_start), 3),
+                    "sfx": "objective",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset(
+                                "/static/images/shared/puzzle10/patron_terminal_01.svg",
+                                "Patron de pantalla",
+                            ),
+                            _scene_asset("/static/images/shared/gameplay/terminal_box.png", "Terminal"),
+                        ],
+                    },
+                },
+            ],
+        },
+        {
+            "type": "character",
+            "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+            "clip_start": 0,
+            "clip_end": round(max(0.2, visual_start - cero_question_start), 3),
+            "duration": round(max(0.2, visual_start - cero_question_start), 3),
+            "label": "cero_pregunta",
+        },
+        {
+            "type": "fullscreen_ui",
+            "duration": round(max(0.2, final_cero_start - visual_start), 6),
+            "variant": "immersive-strip",
+            "phases": [
+                {
+                    "at": 0,
+                    "sfx": "token",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                            _scene_asset("/static/images/shared/gameplay/terminal_box.png", "Terminal"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(7, 18.96) - visual_start), 3),
+                    "sfx": "pulse",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "layout": "button-color-action",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/nuevos iconos/botones colores verde.png", "Boton verde"),
+                            _scene_asset("/static/images/shared/nuevos iconos/apretar boton.png", "Apretar boton"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(7, 18.96) - visual_start + 1.55), 3),
+                    "sfx": "pulse",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "layout": "button-color-action",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/nuevos iconos/botones colores negro.png", "Boton negro"),
+                            _scene_asset("/static/images/shared/nuevos iconos/apretar boton.png", "Apretar boton"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(7, 18.96) - visual_start + 3.1), 3),
+                    "sfx": "pulse",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "layout": "button-color-action",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/nuevos iconos/botones colores rojo.png", "Boton rojo"),
+                            _scene_asset("/static/images/shared/nuevos iconos/apretar boton.png", "Apretar boton"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(8, 24.2) - visual_start), 3),
+                    "sfx": "token",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/nuevos iconos/base nfc con token.png", "Base nfc con token"),
+                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01.svg", "Combinacion de patron"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(9, 28.76) - visual_start), 3),
+                    "sfx": "token",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "layout": "large-3",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01_lit_1.svg", "Patron con un tramo iluminado"),
+                            _scene_asset("/static/images/shared/puzzle10/terminal_segment_01_lit.svg", "Terminal con el mismo tramo iluminado"),
+                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(10, 32.2) - visual_start), 3),
+                    "sfx": "objective",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01_empty.svg", "Patron sin luces"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(10, 32.2) - visual_start + 1.2), 3),
+                    "sfx": "token",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01_lit_1.svg", "Primer tramo encendido"),
+                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(10, 32.2) - visual_start + 2.7), 3),
+                    "sfx": "token",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01_lit_2.svg", "Segundo tramo encendido"),
+                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(10, 32.2) - visual_start + 4.1), 3),
+                    "sfx": "objective",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01.svg", "Ultimo tramo encendido"),
+                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(11, 37.96) - visual_start), 3),
+                    "sfx": "objective",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/nuevos iconos/tira led.png", "Tira led"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(12, 42.76) - visual_start), 3),
+                    "sfx": "warning",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/nuevos iconos/temporizador.png", "Temporizador"),
+                        ],
+                    },
+                },
+                {
+                    "at": round(max(0.0, start(13, 44.96) - visual_start), 3),
+                    "sfx": "token",
+                    "variant": "immersive-strip",
+                    "top": {
+                        "variant": "immersive-strip",
+                        "show_equals": False,
+                        "assets": [
+                            _scene_asset("/static/images/shared/nuevos iconos/base nfc con token.png", "Base nfc con token"),
+                        ],
+                    },
+                },
+            ],
+        },
+        {
+            "type": "character",
+            "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+            "clip_start": 0,
+            "clip_end": round(max(0.2, final_cero_end - final_cero_start), 3),
+            "duration": round(max(0.2, final_cero_end - final_cero_start), 3),
+            "label": "cierre_suave",
+        },
+        {"type": "transition", "duration": 1, "variant": "countdown", "label": "3", "sfx": "countdown"},
+        {"type": "transition", "duration": 1, "variant": "countdown", "label": "2", "sfx": "countdown"},
+        {"type": "transition", "duration": 1, "variant": "countdown", "label": "1", "sfx": "countdown"},
+    ]
 
 
 def resolve_disallowed_asset_path_fragments(defaults: dict):
@@ -1039,6 +1332,41 @@ def read_wav_duration_seconds(path: Path):
         return None
 
 
+def load_wav_audio_for_whisper(path: Path):
+    if shutil.which("ffmpeg"):
+        return str(path)
+
+    if path.suffix.lower() != ".wav":
+        return str(path)
+
+    try:
+        import numpy as np
+    except ImportError:
+        return str(path)
+
+    with wave.open(str(path), "rb") as wav_file:
+        sample_rate = wav_file.getframerate()
+        channel_count = wav_file.getnchannels()
+        sample_width = wav_file.getsampwidth()
+        frames = wav_file.readframes(wav_file.getnframes())
+
+    if sample_width != 2:
+        return str(path)
+
+    audio = np.frombuffer(frames, dtype=np.int16).astype(np.float32) / 32768.0
+    if channel_count > 1:
+        audio = audio.reshape(-1, channel_count).mean(axis=1)
+
+    target_rate = 16000
+    if sample_rate != target_rate and len(audio) > 0:
+        original_axis = np.arange(audio.shape[0], dtype=np.float64) / sample_rate
+        target_length = int(round(audio.shape[0] * target_rate / sample_rate))
+        target_axis = np.arange(target_length, dtype=np.float64) / target_rate
+        audio = np.interp(target_axis, original_axis, audio).astype(np.float32)
+
+    return audio
+
+
 def is_countdown_segment(segment: dict):
     return (
         isinstance(segment, dict)
@@ -1436,6 +1764,8 @@ def build_scene(
             "type": "transition",
             "duration": round(segment_two_duration, 3),
             "variant": "puzzle10-patterns",
+            "kicker": "PANTALLA CENTRAL",
+            "title": "10 COMBINACIONES OBJETIVO",
             "patterns": build_segments_pattern_codes(),
             "sfx": "objective",
         }
@@ -1554,6 +1884,8 @@ def build_scene(
         if forced_phases:
             visual_phases = forced_phases
     scene["segments"][3]["phases"] = visual_phases
+    if scene_id == "scene_intro_segments":
+        apply_segments_intro_manual_timeline(scene)
 
     # Countdown has to start only after audio ends. We keep 3 transitions (3-2-1),
     # 1 second each, and trigger a countdown pip on each number.
