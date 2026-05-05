@@ -1,55 +1,31 @@
 1
-00:00:00,000 --> 00:00:04,160
-Listen carefully: not everything is solved with sight.
+00:00:00,000 --> 00:00:02,000
+Pay attention.
 
 2
-00:00:04,160 --> 00:00:08,560
-Your goal will be to correctly rebuild a musical sequence.
+00:00:02,000 --> 00:00:06,700
+Your goal will be to rebuild a song in the correct order.
 
 3
-00:00:08,560 --> 00:00:13,240
-To do that, you will use the tokens and the terminal buttons.
+00:00:06,700 --> 00:00:09,600
+At the start, the complete song will play.
 
 4
-00:00:13,240 --> 00:00:17,240
-At the start of each phase, you will hear a song fragment.
+00:00:09,600 --> 00:00:14,300
+Use your tokens to discover what each terminal hides.
 
 5
-00:00:17,240 --> 00:00:20,800
-Then you must reproduce that same fragment,
+00:00:14,300 --> 00:00:20,200
+When you know which parts you need, you must register them in the correct order.
 
 6
-00:00:20,800 --> 00:00:23,240
-by passing tokens through the terminals.
+00:00:20,200 --> 00:00:25,120
+To register a part, press the green button before passing the token.
 
 7
-00:00:23,240 --> 00:00:26,960
-You may listen to it again as many times as you need.
+00:00:25,120 --> 00:00:28,120
+Repeat this until the song is complete.
 
 8
-00:00:26,960 --> 00:00:29,840
-When you think you have found the correct sequence,
-
-9
-00:00:29,840 --> 00:00:31,440
-you will have to register it.
-
-10
-00:00:31,440 --> 00:00:34,560
-With the buttons you can listen, register,
-
-11
-00:00:34,560 --> 00:00:36,160
-or delete a sequence.
-
-12
-00:00:36,160 --> 00:00:38,160
-This test has two phases.
-
-13
-00:00:38,160 --> 00:00:39,520
-Tune your ear.
-
-14
-00:00:39,520 --> 00:00:41,360
-The music starts now.
+00:00:28,120 --> 00:00:33,646
+Listen carefully, remember the order, and rebuild the song.
