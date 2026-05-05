@@ -190,6 +190,20 @@ body::after {
         0 0 18px rgba(69, 230, 255, 0.08);
 }
 
+.led-card-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.led-card-icon {
+    height: clamp(2.6rem, 3.8vw, 4.2rem);
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(69, 230, 255, 0.24));
+}
+
 .led-rig {
     position: relative;
     flex: 1;

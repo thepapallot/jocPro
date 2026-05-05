@@ -28,7 +28,14 @@
 			] %}
 			{% for box, code in strips %}
 			<article class="led-card" data-box="{{ box }}" data-code="{{ code }}">
-				<div class="led-card-number">{{ box }}</div>
+				<div class="led-card-label">
+					<img
+						class="led-card-icon"
+						src="{{ url_for('static', filename='images/shared/gameplay/terminal_box.png') }}"
+						alt="Terminal box"
+					>
+					<div class="led-card-number">{{ box }}</div>
+				</div>
 				<div class="led-rig">
 					<div class="led-screw led-screw-top-left"></div>
 					<div class="led-screw led-screw-top-right"></div>
