@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Intro Video</title>
+    <script src="{{ url_for('static', filename='js/shell_guard.js') }}"></script>
     <style>
         body, html {
             margin: 0;
@@ -58,6 +59,10 @@
             Clica para reproducir el video
         </button>
     </div>
+    <script>
+        window.BGM_CONTEXT = { mode: "medium" };
+    </script>
+    <script src="{{ url_for('static', filename='js/bgm_layer.js') }}"></script>
     <script>
         const video = document.getElementById('intro');
         const overlay = document.getElementById('video-start-overlay');

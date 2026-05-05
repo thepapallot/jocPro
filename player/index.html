@@ -13,6 +13,7 @@
             overflow: hidden;
         }
     </style>
+    <script src="/static/js/shell_guard.js"></script>
     <link rel="stylesheet" href="/player/styles.css">
 </head>
 <body>
@@ -47,6 +48,19 @@
         </div>
     </div>
 
+    <script>
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+        const scene = params.get("scene") || "";
+        const muteScenes = new Set(["scene_final", "scene_video_final", "scene_outro_game"]);
+        const lowScenes = new Set(["scene_intro_game"]);
+
+        window.BGM_CONTEXT = {
+            mode: muteScenes.has(scene) ? "mute" : (lowScenes.has(scene) ? "low" : "medium")
+        };
+    })();
+    </script>
+    <script src="/static/js/bgm_layer.js"></script>
     <script type="module" src="/player/main.js"></script>
     <script>
     (function () {
@@ -70,3 +84,4 @@
     </script>
 </body>
 </html>
+ 
