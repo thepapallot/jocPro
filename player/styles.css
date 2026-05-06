@@ -972,6 +972,285 @@ body {
     max-height: min(78cqh, 920px) !important;
 }
 
+/* Segments intro: one screen pattern followed by the three matching terminal parts. */
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="pattern-terminals-3"] .asset-grid--icons.asset-grid--icons-4 {
+    grid-template-columns: clamp(190px, 16vw, 300px) repeat(3, clamp(260px, 20vw, 410px)) !important;
+    gap: clamp(14px, 1.5vw, 28px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="pattern-terminals-3"] .asset-grid--icons.asset-grid--icons-4 .asset-card {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="pattern-terminals-3"] .asset-grid--icons.asset-grid--icons-4 .asset-card__body {
+    display: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="pattern-terminals-3"] .asset-grid--icons.asset-grid--icons-4 .asset-card__media {
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="pattern-terminals-3"] .asset-grid--icons.asset-grid--icons-4 .asset-card:first-child .asset-card__image {
+    width: clamp(180px, 15vw, 280px) !important;
+    max-width: 100% !important;
+    max-height: min(74cqh, 800px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="pattern-terminals-3"] .asset-grid--icons.asset-grid--icons-4 .asset-card:not(:first-child) .asset-card__image {
+    width: clamp(250px, 19vw, 390px) !important;
+    max-width: 100% !important;
+    max-height: min(66cqh, 720px) !important;
+}
+
+/* Segments intro: pair each one-color terminal with the matching LED strip. */
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-segments-3"] .asset-grid--icons.asset-grid--icons-6 {
+    grid-template-columns: repeat(3, clamp(300px, 24vw, 520px)) !important;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 0.86fr);
+    gap: clamp(8px, 1vw, 18px) clamp(14px, 1.6vw, 28px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-segments-3"] .asset-grid--icons.asset-grid--icons-6 .asset-card {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-segments-3"] .asset-grid--icons.asset-grid--icons-6 .asset-card__body {
+    display: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-segments-3"] .asset-grid--icons.asset-grid--icons-6 .asset-card__media {
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-segments-3"] .asset-grid--icons.asset-grid--icons-6 .asset-card:nth-child(-n+3) .asset-card__image {
+    width: clamp(280px, 22vw, 490px) !important;
+    max-width: 100% !important;
+    max-height: min(40cqh, 430px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-segments-3"] .asset-grid--icons.asset-grid--icons-6 .asset-card:nth-child(n+4) .asset-card__image {
+    width: clamp(210px, 17vw, 340px) !important;
+    max-width: 100% !important;
+    max-height: min(34cqh, 360px) !important;
+}
+
+/* Segments intro: show a central LED strip while the token alternates sides. */
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-left"] .asset-grid--icons.asset-grid--icons-2,
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-right"] .asset-grid--icons.asset-grid--icons-2 {
+    grid-template-columns: minmax(150px, 0.72fr) minmax(260px, 1.25fr) minmax(150px, 0.72fr) !important;
+    gap: clamp(18px, 2.2vw, 46px) !important;
+    width: 100% !important;
+    max-width: min(1150px, 100%) !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-left"] .asset-grid--icons.asset-grid--icons-2 .asset-card,
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-right"] .asset-grid--icons.asset-grid--icons-2 .asset-card {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-left"] .asset-grid--icons.asset-grid--icons-2 .asset-card__body,
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-right"] .asset-grid--icons.asset-grid--icons-2 .asset-card__body {
+    display: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-left"] .asset-grid--icons.asset-grid--icons-2 .asset-card__media,
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-right"] .asset-grid--icons.asset-grid--icons-2 .asset-card__media {
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-left"] .asset-grid--icons.asset-grid--icons-2 .asset-card:nth-child(1) {
+    grid-column: 1;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-left"] .asset-grid--icons.asset-grid--icons-2 .asset-card:nth-child(2) {
+    grid-column: 2;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-right"] .asset-grid--icons.asset-grid--icons-2 .asset-card:nth-child(1) {
+    grid-column: 2;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-right"] .asset-grid--icons.asset-grid--icons-2 .asset-card:nth-child(2) {
+    grid-column: 3;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-left"] .asset-grid--icons.asset-grid--icons-2 .asset-card__image[src*="/token_card"],
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-right"] .asset-grid--icons.asset-grid--icons-2 .asset-card__image[src*="/token_card"] {
+    width: clamp(150px, 13vw, 250px) !important;
+    max-width: 100% !important;
+    max-height: min(42cqh, 390px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-left"] .asset-grid--icons.asset-grid--icons-2 .asset-card__image:not([src*="/token_card"]),
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-right"] .asset-grid--icons.asset-grid--icons-2 .asset-card__image:not([src*="/token_card"]) {
+    width: clamp(260px, 24vw, 430px) !important;
+    max-width: 100% !important;
+    max-height: min(62cqh, 640px) !important;
+}
+
+/* Segments intro: fixed token/LED/token stage so the LED appears to light up in place. */
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-stage"] .asset-grid--icons.asset-grid--icons-3 {
+    grid-template-columns: clamp(180px, 15vw, 300px) clamp(360px, 34vw, 620px) clamp(180px, 15vw, 300px) !important;
+    gap: clamp(20px, 2.6vw, 58px) !important;
+    width: 100% !important;
+    max-width: min(1280px, 100%) !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-stage"] .asset-grid--icons.asset-grid--icons-3 .asset-card {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-stage"] .asset-grid--icons.asset-grid--icons-3 .asset-card__body {
+    display: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-stage"] .asset-grid--icons.asset-grid--icons-3 .asset-card__media {
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-stage"] .asset-grid--icons.asset-grid--icons-3 .asset-card:nth-child(1) .asset-card__image,
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-stage"] .asset-grid--icons.asset-grid--icons-3 .asset-card:nth-child(3) .asset-card__image {
+    width: clamp(170px, 13vw, 270px) !important;
+    max-width: 100% !important;
+    max-height: min(42cqh, 380px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-stage"] .asset-grid--icons.asset-grid--icons-3 .asset-card:nth-child(2) .asset-card__image {
+    display: block !important;
+    width: clamp(360px, 34vw, 620px) !important;
+    min-width: clamp(360px, 34vw, 620px) !important;
+    max-width: clamp(360px, 34vw, 620px) !important;
+    height: auto !important;
+    max-height: min(72cqh, 760px) !important;
+    object-fit: contain !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-token-stage"] .asset-grid--icons.asset-grid--icons-3 .asset-card:nth-child(2).asset-card--enter {
+    animation: none !important;
+}
+
+/* Segments intro: written labels for the final equivalence. */
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-screen-equals"] .asset-grid--icons.asset-grid--icons-2.asset-grid--with-equals {
+    grid-template-columns: repeat(2, minmax(300px, 1fr)) !important;
+    gap: clamp(90px, 9vw, 150px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-screen-equals"] .asset-card {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-screen-equals"] .asset-card__media {
+    grid-template-rows: auto 1fr !important;
+    row-gap: clamp(14px, 1.4vw, 24px) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-screen-equals"] .asset-card__overline {
+    order: -1;
+    align-self: end;
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 1.9cqw, 2rem);
+    font-weight: 800;
+    color: rgba(234, 252, 255, 0.94);
+    text-transform: uppercase;
+    text-shadow: 0 0 18px rgba(87, 222, 245, 0.34);
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-screen-equals"] .asset-card__image {
+    max-width: min(38vw, 640px) !important;
+    max-height: min(50cqh, 620px) !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-progress-stage"] .asset-grid--icons.asset-grid--icons-1 {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-progress-stage"] .asset-grid--icons.asset-grid--icons-1 .asset-card {
+    width: min(86vw, 1260px) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-progress-stage"] .asset-grid--icons.asset-grid--icons-1 .asset-card__body {
+    display: none !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-progress-stage"] .asset-grid--icons.asset-grid--icons-1 .asset-card__media {
+    min-height: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-progress-stage"] .asset-grid--icons.asset-grid--icons-1 .asset-card__image {
+    display: block !important;
+    width: min(86vw, 1260px) !important;
+    max-width: 100% !important;
+    max-height: min(70cqh, 760px) !important;
+    object-fit: contain !important;
+}
+
+.player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="led-progress-stage"] .asset-grid--icons.asset-grid--icons-1 .asset-card--enter {
+    animation: none !important;
+}
+
 /* Segments intro: 3 terminals side-by-side with 2 smaller tokens over two boxes. */
 .player-root[data-scene-id="scene_intro_segments"] .ui-screen[data-variant="immersive-strip"] .zone-card--top[data-zone-layout="terminals-3-tokens-2"] .asset-grid--icons.asset-grid--icons-5 {
     grid-template-columns: repeat(3, clamp(260px, 24vw, 520px)) !important;
