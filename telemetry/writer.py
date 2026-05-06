@@ -28,6 +28,8 @@ class TelemetryWriter:
         self._queue = queue.Queue(maxsize=MAX_QUEUE_SIZE)
         self._shutdown = threading.Event()
         self._flush_lock = threading.Lock()
+        self._shutdown_once_lock = threading.Lock()
+        self._closed = False
         self._worker_thread = None
         self._start_worker()
     
@@ -35,7 +37,7 @@ class TelemetryWriter:
         """Start background worker thread for batch writes."""
         self._worker_thread = threading.Thread(
             target=self._worker_loop,
-            daemon=False,
+            daemon=True,
             name="TelemetryWriter-Worker",
         )
         self._worker_thread.start()
@@ -364,6 +366,11 @@ class TelemetryWriter:
         Args:
             timeout: Seconds to wait for worker thread to finish
         """
+        with self._shutdown_once_lock:
+            if self._closed:
+                return
+            self._closed = True
+
         self._shutdown.set()
         
         if self._worker_thread:

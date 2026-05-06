@@ -82,7 +82,7 @@ class MQTTClient:
             return len(self.puzzle_order) + 1
         return -1
 
-    def _record_puzzle_start_locked(self, puzzle_id: int):
+    def _record_puzzle_start_locked(self, puzzle_id: int, round_num: int = 1):
         self.active_puzzle_row_id = None
         self.active_puzzle_num = None
         if self.telemetry_writer is None or self.active_session_id is None:
@@ -96,13 +96,58 @@ class MQTTClient:
             puzzle_row_id = self.telemetry_writer.record_puzzle_start(
                 session_id=self.active_session_id,
                 puzzle_num=puzzle_id,
-                round_num=1,
+                round_num=round_num,
                 order=puzzle_order,
             )
             self.active_puzzle_row_id = puzzle_row_id
             self.active_puzzle_num = puzzle_id
         except Exception as e:
             print(f"[telemetry] record_puzzle_start failed: {e}")
+
+    def start_next_round(self, puzzle_id: int, round_num: int):
+        telemetry_writer = None
+        active_session_id = None
+        active_row_id = None
+        puzzle_order = -1
+
+        with self.lock:
+            if round_num <= 1:
+                return
+            if self.telemetry_writer is None or self.active_session_id is None:
+                return
+            if self.active_puzzle_num is not None and self.active_puzzle_num != puzzle_id:
+                return
+
+            telemetry_writer = self.telemetry_writer
+            active_session_id = self.active_session_id
+            active_row_id = self.active_puzzle_row_id
+            puzzle_order = self._resolve_puzzle_order(puzzle_id)
+
+        if puzzle_order < 0:
+            return
+
+        if active_row_id is not None:
+            try:
+                telemetry_writer.end_puzzle(active_row_id)
+            except Exception as e:
+                print(f"[telemetry] end_puzzle failed: {e}")
+
+        try:
+            puzzle_row_id = telemetry_writer.record_puzzle_start(
+                session_id=active_session_id,
+                puzzle_num=puzzle_id,
+                round_num=round_num,
+                order=puzzle_order,
+            )
+        except Exception as e:
+            print(f"[telemetry] record_puzzle_start failed: {e}")
+            return
+
+        with self.lock:
+            if self.active_session_id != active_session_id:
+                return
+            self.active_puzzle_row_id = puzzle_row_id
+            self.active_puzzle_num = puzzle_id
 
     def end_active_puzzle(self, puzzle_num: Optional[int] = None):
         with self.lock:

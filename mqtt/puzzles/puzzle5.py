@@ -208,6 +208,7 @@ class Puzzle5(BasePuzzle):
                         # Schedule next round with configured initial countdown
                         self.waiting = True
                         next_round = round_number + 1
+                        self.mqtt_client.start_next_round(self.id, next_round)
                         self.waiting_deadline = time.time() + self.initial_countdown_seconds
                         
                         self._push({

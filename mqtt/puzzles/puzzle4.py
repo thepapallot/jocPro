@@ -171,6 +171,8 @@ class Puzzle4(BasePuzzle):
             with self.lock:
                 temp_sequence = self.played_sequence.copy()
                 self.streak += 1
+                if self.streak < self.total_required:
+                    self.mqtt_client.start_next_round(self.id, self.streak + 1)
                 self.played_sequence = []
                 self.storing = False
                 self.current_progress = 0

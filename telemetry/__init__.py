@@ -4,6 +4,7 @@ Telemetry package for game event logging and analytics.
 Provides standalone SQLite-based storage for sessions, puzzle runs, and events.
 """
 
+import atexit
 from pathlib import Path
 from typing import Optional
 
@@ -23,6 +24,13 @@ __all__ = [
     "get_db_info",
     "get_journal_mode",
 ]
+
+
+def _shutdown_telemetry_writer(writer: TelemetryWriter) -> None:
+    try:
+        writer.shutdown(timeout=2)
+    except Exception as exc:
+        print(f"[telemetry] shutdown failed: {exc}")
 
 
 def init_telemetry(db_path: Optional[Path] = None) -> TelemetryWriter:
@@ -63,4 +71,6 @@ def init_telemetry(db_path: Optional[Path] = None) -> TelemetryWriter:
     init_schema(db_path)
     
     # Return ready writer
-    return TelemetryWriter(db_path)
+    writer = TelemetryWriter(db_path)
+    atexit.register(_shutdown_telemetry_writer, writer)
+    return writer
