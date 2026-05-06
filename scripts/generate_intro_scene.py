@@ -550,7 +550,7 @@ def apply_segments_intro_manual_timeline(scene: dict):
     objective_start = opening_end
     cero_question_start = start(5, 14.04)
     visual_start = start(6, 15.52)
-    final_cero_start = 47.9
+    final_cero_start = start(13, 44.96)
     final_cero_end = end(13, 51.069)
 
     scene["segments"] = [
@@ -644,7 +644,7 @@ def apply_segments_intro_manual_timeline(scene: dict):
                         "show_equals": False,
                         "assets": [
                             _scene_asset("/static/images/shared/nuevos iconos/botones colores verde.png", "Boton verde"),
-                            _scene_asset("/static/images/shared/nuevos iconos/apretar boton.png", "Apretar boton"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_segment_green.png", "Tira led con tramo verde"),
                         ],
                     },
                 },
@@ -658,7 +658,7 @@ def apply_segments_intro_manual_timeline(scene: dict):
                         "show_equals": False,
                         "assets": [
                             _scene_asset("/static/images/shared/nuevos iconos/botones colores negro.png", "Boton negro"),
-                            _scene_asset("/static/images/shared/nuevos iconos/apretar boton.png", "Apretar boton"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_segment_purple.png", "Tira led con tramo morado"),
                         ],
                     },
                 },
@@ -672,7 +672,7 @@ def apply_segments_intro_manual_timeline(scene: dict):
                         "show_equals": False,
                         "assets": [
                             _scene_asset("/static/images/shared/nuevos iconos/botones colores rojo.png", "Boton rojo"),
-                            _scene_asset("/static/images/shared/nuevos iconos/apretar boton.png", "Apretar boton"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_segment_red.png", "Tira led con tramo rojo"),
                         ],
                     },
                 },
@@ -684,8 +684,7 @@ def apply_segments_intro_manual_timeline(scene: dict):
                         "variant": "immersive-strip",
                         "show_equals": False,
                         "assets": [
-                            _scene_asset("/static/images/shared/nuevos iconos/base nfc con token.png", "Base nfc con token"),
-                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01.svg", "Combinacion de patron"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_pattern_01.png", "Tira led con combinacion fija"),
                         ],
                     },
                 },
@@ -695,12 +694,15 @@ def apply_segments_intro_manual_timeline(scene: dict):
                     "variant": "immersive-strip",
                     "top": {
                         "variant": "immersive-strip",
-                        "layout": "large-3",
+                        "layout": "terminals-segments-3",
                         "show_equals": False,
                         "assets": [
-                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01_lit_1.svg", "Patron con un tramo iluminado"),
-                            _scene_asset("/static/images/shared/puzzle10/terminal_segment_01_lit.svg", "Terminal con el mismo tramo iluminado"),
-                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                            _scene_asset("/static/images/shared/puzzle10/terminal_box_led_purple.png", "Terminal con tramo morado"),
+                            _scene_asset("/static/images/shared/puzzle10/terminal_box_led_green.png", "Terminal con tramo verde"),
+                            _scene_asset("/static/images/shared/puzzle10/terminal_box_led_red.png", "Terminal con tramo rojo"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_segment_purple.png", "Tira led con tramo morado"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_segment_green.png", "Tira led con tramo verde"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_segment_red.png", "Tira led con tramo rojo"),
                         ],
                     },
                 },
@@ -710,9 +712,12 @@ def apply_segments_intro_manual_timeline(scene: dict):
                     "variant": "immersive-strip",
                     "top": {
                         "variant": "immersive-strip",
+                        "layout": "led-token-stage",
                         "show_equals": False,
                         "assets": [
-                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01_empty.svg", "Patron sin luces"),
+                            _scene_asset("/static/images/shared/puzzle10/blank_token_slot.png", "", stable_key="p10-left-token"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_empty.png", "Tira led sin segmentos", stable_key="p10-led"),
+                            _scene_asset("/static/images/shared/puzzle10/blank_token_slot.png", "", stable_key="p10-right-token"),
                         ],
                     },
                 },
@@ -722,10 +727,12 @@ def apply_segments_intro_manual_timeline(scene: dict):
                     "variant": "immersive-strip",
                     "top": {
                         "variant": "immersive-strip",
+                        "layout": "led-token-stage",
                         "show_equals": False,
                         "assets": [
-                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01_lit_1.svg", "Primer tramo encendido"),
-                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token", stable_key="p10-left-token"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_segment_green.png", "Tira led con tramo verde", stable_key="p10-led"),
+                            _scene_asset("/static/images/shared/puzzle10/blank_token_slot.png", "", stable_key="p10-right-token"),
                         ],
                     },
                 },
@@ -735,10 +742,12 @@ def apply_segments_intro_manual_timeline(scene: dict):
                     "variant": "immersive-strip",
                     "top": {
                         "variant": "immersive-strip",
+                        "layout": "led-token-stage",
                         "show_equals": False,
                         "assets": [
-                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01_lit_2.svg", "Segundo tramo encendido"),
-                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                            _scene_asset("/static/images/shared/puzzle10/blank_token_slot.png", "", stable_key="p10-left-token"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_progress_green_red.png", "Tira led con tramos verde y rojo", stable_key="p10-led"),
+                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token", stable_key="p10-right-token"),
                         ],
                     },
                 },
@@ -748,10 +757,12 @@ def apply_segments_intro_manual_timeline(scene: dict):
                     "variant": "immersive-strip",
                     "top": {
                         "variant": "immersive-strip",
+                        "layout": "led-token-stage",
                         "show_equals": False,
                         "assets": [
-                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_01.svg", "Ultimo tramo encendido"),
-                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token"),
+                            _scene_asset("/static/images/shared/gameplay/token_card.png", "Token", stable_key="p10-left-token"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png", "Tira led completada con verde rojo y azul", stable_key="p10-led"),
+                            _scene_asset("/static/images/shared/puzzle10/blank_token_slot.png", "", stable_key="p10-right-token"),
                         ],
                     },
                 },
@@ -761,9 +772,10 @@ def apply_segments_intro_manual_timeline(scene: dict):
                     "variant": "immersive-strip",
                     "top": {
                         "variant": "immersive-strip",
-                        "show_equals": False,
+                        "show_equals": True,
                         "assets": [
-                            _scene_asset("/static/images/shared/nuevos iconos/tira led.png", "Tira led"),
+                            _scene_asset("/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png", "Tira led completada con verde rojo y azul"),
+                            _scene_asset("/static/images/shared/puzzle10/patron_terminal_green_red_blue.svg", "Patron de pantalla con verde rojo y azul"),
                         ],
                     },
                 },
@@ -779,25 +791,13 @@ def apply_segments_intro_manual_timeline(scene: dict):
                         ],
                     },
                 },
-                {
-                    "at": round(max(0.0, start(13, 44.96) - visual_start), 3),
-                    "sfx": "token",
-                    "variant": "immersive-strip",
-                    "top": {
-                        "variant": "immersive-strip",
-                        "show_equals": False,
-                        "assets": [
-                            _scene_asset("/static/images/shared/nuevos iconos/base nfc con token.png", "Base nfc con token"),
-                        ],
-                    },
-                },
             ],
         },
         {
             "type": "character",
-            "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+            "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
             "clip_start": 0,
-            "clip_end": round(max(0.2, final_cero_end - final_cero_start), 3),
+            "clip_end": 3.169,
             "duration": round(max(0.2, final_cero_end - final_cero_start), 3),
             "label": "cierre_suave",
         },
@@ -847,7 +847,7 @@ def apply_large_three_asset_layout(scene: dict):
             if not isinstance(top, dict):
                 continue
             assets = top.get("assets")
-            if isinstance(assets, list) and len(assets) == 3:
+            if isinstance(assets, list) and len(assets) == 3 and not top.get("layout"):
                 top["layout"] = "large-3"
 
 

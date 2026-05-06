@@ -138,7 +138,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_tilt.mp4",
+      "src": "/static/videos/characters/cero_bridge_neutral_a.mp4",
       "clip_start": 0,
       "clip_end": 1.48,
       "duration": 1.48,
@@ -146,7 +146,7 @@
     },
     {
       "type": "fullscreen_ui",
-      "duration": 32.38,
+      "duration": 29.44,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -182,8 +182,8 @@
                 "alt": "Boton verde"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
-                "alt": "Apretar boton"
+                "src": "/static/images/shared/puzzle10/tira_led_segment_green.png",
+                "alt": "Tira led con tramo verde"
               }
             ]
           }
@@ -202,8 +202,8 @@
                 "alt": "Boton negro"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
-                "alt": "Apretar boton"
+                "src": "/static/images/shared/puzzle10/tira_led_segment_purple.png",
+                "alt": "Tira led con tramo morado"
               }
             ]
           }
@@ -222,8 +222,8 @@
                 "alt": "Boton rojo"
               },
               {
-                "src": "/static/images/shared/nuevos iconos/apretar boton.png",
-                "alt": "Apretar boton"
+                "src": "/static/images/shared/puzzle10/tira_led_segment_red.png",
+                "alt": "Tira led con tramo rojo"
               }
             ]
           }
@@ -237,12 +237,8 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base nfc con token"
-              },
-              {
-                "src": "/static/images/shared/puzzle10/patron_terminal_01.svg",
-                "alt": "Combinacion de patron"
+                "src": "/static/images/shared/puzzle10/tira_led_pattern_01.png",
+                "alt": "Tira led con combinacion fija"
               }
             ]
           }
@@ -253,20 +249,32 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "layout": "large-3",
+            "layout": "terminals-segments-3",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/puzzle10/patron_terminal_01_lit_1.svg",
-                "alt": "Patron con un tramo iluminado"
+                "src": "/static/images/shared/puzzle10/terminal_box_led_purple.png",
+                "alt": "Terminal con tramo morado"
               },
               {
-                "src": "/static/images/shared/puzzle10/terminal_segment_01_lit.svg",
-                "alt": "Terminal con el mismo tramo iluminado"
+                "src": "/static/images/shared/puzzle10/terminal_box_led_green.png",
+                "alt": "Terminal con tramo verde"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "src": "/static/images/shared/puzzle10/terminal_box_led_red.png",
+                "alt": "Terminal con tramo rojo"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/tira_led_segment_purple.png",
+                "alt": "Tira led con tramo morado"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/tira_led_segment_green.png",
+                "alt": "Tira led con tramo verde"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/tira_led_segment_red.png",
+                "alt": "Tira led con tramo rojo"
               }
             ]
           }
@@ -277,11 +285,23 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "led-token-stage",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/puzzle10/patron_terminal_01_empty.svg",
-                "alt": "Patron sin luces"
+                "src": "/static/images/shared/puzzle10/blank_token_slot.png",
+                "alt": "Blank token slot",
+                "stable_key": "p10-left-token"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/tira_led_empty.png",
+                "alt": "Tira led sin segmentos",
+                "stable_key": "p10-led"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/blank_token_slot.png",
+                "alt": "Blank token slot",
+                "stable_key": "p10-right-token"
               }
             ]
           }
@@ -292,15 +312,23 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "led-token-stage",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/puzzle10/patron_terminal_01_lit_1.svg",
-                "alt": "Primer tramo encendido"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token",
+                "stable_key": "p10-left-token"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "src": "/static/images/shared/puzzle10/tira_led_segment_green.png",
+                "alt": "Tira led con tramo verde",
+                "stable_key": "p10-led"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/blank_token_slot.png",
+                "alt": "Blank token slot",
+                "stable_key": "p10-right-token"
               }
             ]
           }
@@ -311,15 +339,23 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "led-token-stage",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/puzzle10/patron_terminal_01_lit_2.svg",
-                "alt": "Segundo tramo encendido"
+                "src": "/static/images/shared/puzzle10/blank_token_slot.png",
+                "alt": "Blank token slot",
+                "stable_key": "p10-left-token"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/tira_led_progress_green_red.png",
+                "alt": "Tira led con tramos verde y rojo",
+                "stable_key": "p10-led"
               },
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "alt": "Token",
+                "stable_key": "p10-right-token"
               }
             ]
           }
@@ -330,15 +366,23 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "led-token-stage",
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/puzzle10/patron_terminal_01.svg",
-                "alt": "Ultimo tramo encendido"
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token",
+                "stable_key": "p10-left-token"
               },
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
+                "src": "/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+                "alt": "Tira led completada con verde rojo y azul",
+                "stable_key": "p10-led"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/blank_token_slot.png",
+                "alt": "Blank token slot",
+                "stable_key": "p10-right-token"
               }
             ]
           }
@@ -349,11 +393,15 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "show_equals": false,
+            "show_equals": true,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/tira led.png",
-                "alt": "Tira led"
+                "src": "/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+                "alt": "Tira led completada con verde rojo y azul"
+              },
+              {
+                "src": "/static/images/shared/puzzle10/patron_terminal_green_red_blue.svg",
+                "alt": "Patron de pantalla con verde rojo y azul"
               }
             ]
           }
@@ -372,30 +420,15 @@
               }
             ]
           }
-        },
-        {
-          "at": 29.44,
-          "sfx": "token",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/base nfc con token.png",
-                "alt": "Base nfc con token"
-              }
-            ]
-          }
         }
       ]
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_briefing_short_alt.mp4",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
       "clip_start": 0,
-      "clip_end": 3.169,
-      "duration": 3.169,
+      "clip_end": 5.041667,
+      "duration": 6.109,
       "label": "cierre_suave"
     },
     {

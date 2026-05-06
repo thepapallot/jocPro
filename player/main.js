@@ -319,6 +319,10 @@ function StepsList(steps = []) {
 }
 
 function getAssetItemKey(asset = {}) {
+    if (asset.stable_key) {
+        return String(asset.stable_key);
+    }
+
     return JSON.stringify({
         src: asset.src || "",
         label: asset.label || "",
@@ -331,6 +335,9 @@ function getAssetItemKey(asset = {}) {
 function AssetCard(asset = {}) {
     const card = createElement("article", "asset-card");
     card.dataset.itemKey = getAssetItemKey(asset);
+    if (asset.stable_key) {
+        card.dataset.stableKey = String(asset.stable_key);
+    }
     if (asset.frameless) {
         card.classList.add("asset-card--frameless");
     }
@@ -369,6 +376,10 @@ function AssetCard(asset = {}) {
         }
     }
 
+    if (asset.overline) {
+        media.appendChild(createElement("span", "asset-card__overline", asset.overline));
+    }
+
     card.appendChild(media);
 
     if (hasCopy) {
@@ -384,6 +395,46 @@ function AssetCard(asset = {}) {
     }
 
     return card;
+}
+
+function updateAssetCardMedia(card, asset = {}) {
+    if (!card || !asset) {
+        return;
+    }
+
+    card.dataset.itemKey = getAssetItemKey(asset);
+    if (asset.stable_key) {
+        card.dataset.stableKey = String(asset.stable_key);
+    } else {
+        delete card.dataset.stableKey;
+    }
+
+    const image = card.querySelector(".asset-card__image");
+    if (!image) {
+        return;
+    }
+
+    if (image.getAttribute("src") !== (asset.src || "")) {
+        image.src = asset.src || "";
+    }
+    image.alt = asset.alt || asset.label || "";
+
+    const currentOverline = card.querySelector(".asset-card__overline");
+    if (asset.overline) {
+        if (currentOverline) {
+            currentOverline.textContent = asset.overline;
+        } else {
+            image.before(createElement("span", "asset-card__overline", asset.overline));
+        }
+    } else if (currentOverline) {
+        currentOverline.remove();
+    }
+
+    if (asset.filter) {
+        image.style.filter = asset.filter;
+    } else {
+        image.style.removeProperty("filter");
+    }
 }
 
 function AssetsGrid(assets = [], { showEquals = false } = {}) {
@@ -865,6 +916,7 @@ function updateZoneSlot(card, zone, { animate = false } = {}) {
             if (currentKeys.length === nextKeys.length) {
                 zone.assets.forEach((asset, index) => {
                     if (currentKeys[index] === nextKeys[index]) {
+                        updateAssetCardMedia(currentItems[index], asset);
                         return;
                     }
                     const nextCard = AssetCard(asset);
