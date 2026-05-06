@@ -6,18 +6,25 @@ import random
 class Puzzle3(BasePuzzle):
     def __init__(self, mqtt_client):
         super().__init__(puzzle_id=3, mqtt_client=mqtt_client)
-        
-        # Import question bank
-        from data.puzzle3.puzzle3_questions import QUESTIONS as P3_QUESTIONS
-        self.question_bank = P3_QUESTIONS
-        
-        self.chosen_questions = []       # 10 randomly selected questions
+
+        # Import question banks and tag each question with its source
+        from data.puzzle3.easy_questions.easy_ESP import QUESTIONS as EASY_Q
+        from data.puzzle3.medium_questions.medium_ESP import QUESTIONS as MEDIUM_Q
+        from data.puzzle3.hard_questions.hard_ESP import QUESTIONS as HARD_Q
+        from data.puzzle3.company_questions.questions import QUESTIONS as COMPANY_Q
+
+        self.easy_bank    = [{**q, "_source": "easy"}    for q in EASY_Q]
+        self.medium_bank  = [{**q, "_source": "medium"}  for q in MEDIUM_Q]
+        self.hard_bank    = [{**q, "_source": "hard"}    for q in HARD_Q]
+        self.company_bank = [{**q, "_source": "company"} for q in COMPANY_Q]
+
+        self.chosen_questions = []       # 10 questions for the current set
         self.current_question_idx = 0    # index in chosen_questions (0..9)
         self.streak = 0                  # number of correctly answered questions in current run (0..10)
         self.total_required = 10         # need 10 correct in a row
         self.total_players = 10
         self.answered_players = {}       # {player: answer_idx}
-        self.correct_question_ids = set()  # questions solved correctly in this run
+        self.correct_question_ids = set()  # (source, id) tuples for questions solved correctly
 
     def _checkpoint_for_streak(self, streak):
         """Return the last unlocked checkpoint based on solved questions."""
@@ -28,39 +35,40 @@ class Puzzle3(BasePuzzle):
         return 0
         
     def _choose_new_set(self):
-        """Pick 10 questions prioritizing IDs 101..108 in every set."""
-        available_questions = [
-            q for q in self.question_bank
-            if q.get("id") not in self.correct_question_ids
-        ]
-        target_size = min(10, len(available_questions))
-        priority_ids = set(range(101, 109))
+        """Pick 10 questions: 3 easy (slots 0-2), 3 medium (slots 3-5), 4 hard (slots 6-9).
+        Company questions are injected with priority, at most one per difficulty tier."""
 
-        priority_questions = [
-            q for q in available_questions
-            if q.get("id") in priority_ids
-        ]
-        other_questions = [
-            q for q in available_questions
-            if q.get("id") not in priority_ids
-        ]
+        def available(bank):
+            return [q for q in bank if (q["_source"], q["id"]) not in self.correct_question_ids]
 
-        chosen = []
+        easy_pool    = available(self.easy_bank)
+        medium_pool  = available(self.medium_bank)
+        hard_pool    = available(self.hard_bank)
+        company_pool = available(self.company_bank)
 
-        # Always include prioritized questions when available.
-        if priority_questions and target_size > 0:
-            chosen.extend(
-                random.sample(priority_questions, min(len(priority_questions), target_size))
-            )
+        # Base selection per tier
+        easy_chosen   = random.sample(easy_pool,   min(3, len(easy_pool)))
+        medium_chosen = random.sample(medium_pool, min(3, len(medium_pool)))
+        hard_chosen   = random.sample(hard_pool,   min(4, len(hard_pool)))
 
-        # Fill the remaining slots with non-priority questions.
-        remaining = target_size - len(chosen)
-        if remaining > 0 and other_questions:
-            chosen.extend(
-                random.sample(other_questions, min(remaining, len(other_questions)))
-            )
+        chosen = easy_chosen + medium_chosen + hard_chosen  # ordered by difficulty
 
-        random.shuffle(chosen)
+        # Inject company questions: at most 1 per tier, spread across the set
+        if company_pool:
+            n_inject = min(len(company_pool), 3)
+            company_sample = random.sample(company_pool, n_inject)
+
+            # One replacement slot per tier zone
+            tier_ranges = [(0, 2), (3, 5), (6, len(chosen) - 1)]
+            for i, (lo, hi) in enumerate(tier_ranges):
+                if i >= len(company_sample):
+                    break
+                if lo >= len(chosen):
+                    break
+                hi = min(hi, len(chosen) - 1)
+                slot = random.randint(lo, hi)
+                chosen[slot] = company_sample[i]
+
         self.chosen_questions = chosen
         self.current_question_idx = 0
         self.streak = 0
@@ -111,14 +119,6 @@ class Puzzle3(BasePuzzle):
             self.correct_question_ids = set()
             self._choose_new_set()
             self._push_question()
-
-    '''        
-    def on_start(self):
-        """Called when puzzle becomes active"""
-        with self.lock:
-            self._choose_new_set()
-            self._push_question()
-    '''   
 
     def stop(self):
         """Cleanup on puzzle stop"""
@@ -206,7 +206,7 @@ class Puzzle3(BasePuzzle):
                 
                 if all_correct:
                     self.streak += 1
-                    self.correct_question_ids.add(q.get("id"))
+                    self.correct_question_ids.add((q.get("_source"), q.get("id")))
                 else:
                     # Failure: return to last unlocked checkpoint within current set.
                     checkpoint = self._checkpoint_for_streak(self.streak)
