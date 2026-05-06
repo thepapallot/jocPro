@@ -2051,9 +2051,32 @@ textarea[readonly] {
 }
 
 .gm-header-status {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(120px, 1fr));
+    display: flex;
+    align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
+}
+
+.gm-start-btn {
+    padding: 6px 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    background: var(--gm-green, #22c55e);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: opacity 0.15s;
+}
+
+.gm-start-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.gm-start-btn:not(:disabled):hover {
+    opacity: 0.85;
 }
 
 .gm-status-ok {

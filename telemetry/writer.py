@@ -312,6 +312,19 @@ class TelemetryWriter:
                 self.db.rollback()
                 raise
 
+    def start_session(self, session_id: int, started_at: Optional[str] = None) -> None:
+        """Fill started_at for a session only if it has not been set yet (idempotent)."""
+        with self._flush_lock:
+            self.db.execute(
+                """
+                UPDATE sessions
+                SET started_at = COALESCE(?, CURRENT_TIMESTAMP)
+                WHERE session_id = ? AND started_at IS NULL
+                """,
+                (started_at, session_id),
+            )
+            self.db.commit()
+
     def end_session(self, session_id: int, ended_at: Optional[str] = None) -> None:
         """Update a session end timestamp immediately."""
         with self._flush_lock:

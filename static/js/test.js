@@ -548,7 +548,7 @@
     messageField: document.getElementById("test-message-field"),
     messageSelect: document.getElementById("test-message-select"),
     messageEditor: document.getElementById("test-message-editor"),
-    startBtn: document.getElementById("test-start-btn"),
+    puzzleStartBtn: document.getElementById("test-start-btn"),
     restartBtn: document.getElementById("test-restart-btn"),
     viewBtn: document.getElementById("test-view-btn"),
     solveBtn: document.getElementById("test-solve-btn"),
@@ -581,6 +581,8 @@
     newSessionBtn: document.getElementById("gm-new-session-btn"),
     duplicateSessionBtn: document.getElementById("gm-duplicate-session-btn"),
     confirmSessionBtn: document.getElementById("gm-confirm-session-btn"),
+    updateSessionBtn: document.getElementById("gm-update-session-btn"),
+    gmStartBtn: document.getElementById("gm-start-btn"),
     preflightChecklist: document.getElementById("gm-preflight-checklist"),
     checkAllBtn: document.getElementById("gm-check-all-btn"),
     startSystemBtn: document.getElementById("gm-start-system-btn"),
@@ -936,34 +938,84 @@
 
     clearSessionForm();
     await refreshDbSessionList();
+    await syncConfirmedSession();
     addSimpleEvent("Sesión eliminada");
     setStatus("Sesión eliminada");
   }
 
-  function confirmSession() {
-    const session = saveSession();
-    activeSession = { ...session, confirmedAt: new Date().toISOString(), status: "confirmed" };
+  async function confirmSession(options = {}) {
+    const silent = Boolean(options.silent);
+
+    if (_loadedDbSessionId === null) {
+      if (!silent) {
+        setStatus("Selecciona una sessio per confirmar-la");
+      }
+      return;
+    }
+
+    const response = await fetch("/test/session/confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: _loadedDbSessionId }),
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(result.error || "confirm_session_failed");
+    }
+
+    const session = result.session || {};
+    activeSession = {
+      id: activeSession?.id || `session_${session.session_id}`,
+      dbSessionId: session.session_id,
+      sessionName: session.name || "",
+      company: session.company || "",
+      date: session.expected_day || "",
+      time: session.expected_time || "",
+      place: session.place || "",
+      players: session.players_num != null ? String(session.players_num) : "",
+      gameLanguage: session.language || "es",
+      additionalNotes: session.notes || "",
+      confirmedAt: new Date().toISOString(),
+      status: "confirmed",
+    };
+
     window.localStorage.setItem(activeSessionKey, JSON.stringify(activeSession));
     renderActiveSession();
-    addSimpleEvent("Sesión confirmada");
-    setStatus("Sesión confirmada");
+    resetGameState();
+
+    if (!silent) {
+      addSimpleEvent("Sesión confirmada");
+      setStatus("Sesión confirmada");
+    }
+    // Sync against backend to keep state authoritative
+    syncConfirmedSession().catch(console.warn);
   }
 
   function loadActiveSession() {
+    let saved = null;
     try {
-      activeSession = JSON.parse(window.localStorage.getItem(activeSessionKey) || "null");
+      saved = JSON.parse(window.localStorage.getItem(activeSessionKey) || "null");
     } catch (error) {
-      activeSession = null;
+      saved = null;
     }
-    if (activeSession) {
-      selectedSessionId = activeSession.id;
-      fillSessionForm(activeSession);
+    // Restore form data so fields are pre-filled, but do NOT restore confirmed state.
+    // The user must click "Confirmar" again each time the page is opened.
+    if (saved) {
+      fillSessionForm(saved);
+      if (saved.dbSessionId != null) {
+        _loadedDbSessionId = Number(saved.dbSessionId) || null;
+      }
     }
+    // Clear persisted confirmed state so the session shows as unconfirmed on load.
+    activeSession = null;
+    window.localStorage.removeItem(activeSessionKey);
     renderActiveSession();
   }
 
   function renderActiveSession() {
     const s = activeSession;
+    const sessionStarted = Boolean(puzzleRuntime.startedAt);
     const line = s
       ? `${s.sessionName || "Sesión"} · ${s.company || "Sin empresa"} · ${s.date || "Sin fecha"} ${s.time || ""} | Lugar: ${s.place || "--"} | Idioma: ${languageLabel(s.gameLanguage)} | Jugadores: ${s.players || "--"} | Sesión confirmada`
       : "Sin sesión confirmada";
@@ -971,6 +1023,9 @@
     if (els.headerSessionStatus) {
       els.headerSessionStatus.textContent = s ? "Sesión confirmada" : "No confirmada";
       els.headerSessionStatus.className = s ? "gm-status-ok" : "gm-status-muted";
+    }
+    if (els.gmStartBtn) {
+      els.gmStartBtn.disabled = !(s && !sessionStarted);
     }
     const pairs = {
       "gm-summary-company": s?.company || "--",
@@ -984,6 +1039,86 @@
       const node = document.getElementById(id);
       if (node) node.textContent = value;
     });
+  }
+
+  function parseBackendTimestamp(value) {
+    if (!value || typeof value !== "string") return null;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    // SQLite CURRENT_TIMESTAMP is UTC ("YYYY-MM-DD HH:MM:SS").
+    const utcCandidate = trimmed.includes("T") ? trimmed : `${trimmed.replace(" ", "T")}Z`;
+    let parsed = Date.parse(utcCandidate);
+    if (!Number.isFinite(parsed)) {
+      parsed = Date.parse(trimmed.replace(" ", "T"));
+    }
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  function syncTimerFromBackendSession(session) {
+    const startedMs = parseBackendTimestamp(session?.started_at);
+
+    if (!startedMs) {
+      return;
+    }
+
+    const changed = puzzleRuntime.startedAt !== startedMs || puzzleRuntime.elapsedBeforePause !== 0;
+    puzzleRuntime.startedAt = startedMs;
+    puzzleRuntime.elapsedBeforePause = 0;
+    if (puzzleRuntime.gameStatus === "Preparado") {
+      puzzleRuntime.gameStatus = "En juego";
+    }
+
+    if (changed) {
+      saveGameState();
+    }
+
+    startGameTimer();
+  }
+
+  async function syncConfirmedSession() {
+    let result;
+    try {
+      const resp = await fetch("/test/session/active");
+      result = await resp.json();
+    } catch (_err) {
+      return; // Network error — leave current state intact
+    }
+
+    if (!result.active) {
+      // Backend has no confirmed session; clear local state if we thought we had one
+      if (activeSession !== null) {
+        activeSession = null;
+        window.localStorage.removeItem(activeSessionKey);
+        _loadedDbSessionId = null;
+        resetGameState();
+        renderActiveSession();
+      }
+      return;
+    }
+
+    // Backend has an active session — sync local state from it
+    const session = result.session || {};
+    const newDbId = session.session_id;
+
+    activeSession = {
+      id: activeSession?.id || `session_${newDbId}`,
+      dbSessionId: newDbId,
+      sessionName: session.name || "",
+      company: session.company || "",
+      date: session.expected_day || "",
+      time: session.expected_time || "",
+      place: session.place || "",
+      players: session.players_num != null ? String(session.players_num) : "",
+      gameLanguage: session.language || "es",
+      additionalNotes: session.notes || "",
+      startedAt: session.started_at || null,
+      status: "confirmed",
+    };
+    _loadedDbSessionId = newDbId;
+    window.localStorage.setItem(activeSessionKey, JSON.stringify(activeSession));
+    syncTimerFromBackendSession(session);
+    renderActiveSession();
   }
 
   function addSimpleEvent(message, detail = "") {
@@ -3486,9 +3621,6 @@
 	      ? `${config.label} reiniciado`
 	      : `${config.label} arrancado`);
     puzzleRuntime.gameStatus = "En juego";
-    if (!puzzleRuntime.startedAt) {
-      startGameTimer();
-    }
     setPuzzleStatus(els.puzzleSelect.value, "playing");
     addSimpleEvent(restart ? "Puzzle reiniciado" : "Partida/puzzle arrancado", config.label);
     saveGameState();
@@ -4106,6 +4238,21 @@
     }));
   }
 
+  function resetGameState() {
+    window.clearInterval(puzzleRuntime.timerId);
+    puzzleRuntime.timerId = null;
+    puzzleRuntime.startedAt = null;
+    puzzleRuntime.elapsedBeforePause = 0;
+    puzzleRuntime.gameStatus = "Preparado";
+    puzzleRuntime.statuses = {};
+    window.localStorage.removeItem(gameStateKey);
+    if (els.gameTime) els.gameTime.textContent = "--";
+    if (els.gameStatus) els.gameStatus.textContent = "Preparado";
+    if (els.gmCurrentPuzzle) els.gmCurrentPuzzle.textContent = "--";
+    if (els.gmProgress) els.gmProgress.textContent = "--";
+    renderPuzzleProgress();
+  }
+
   function loadGameState() {
     try {
       const saved = JSON.parse(window.localStorage.getItem(gameStateKey) || "{}");
@@ -4719,7 +4866,7 @@
         appendLog({ error: String(error) });
       });
     });
-    els.startBtn.addEventListener("click", () => {
+    els.puzzleStartBtn.addEventListener("click", () => {
       startPuzzle(false).catch((error) => appendLog({ error: String(error) }));
     });
     if (els.restartBtn) {
@@ -4818,7 +4965,36 @@
       setStatus("Nueva sesión preparada");
     });
     if (els.duplicateSessionBtn) els.duplicateSessionBtn.addEventListener("click", duplicateSession);
-    if (els.confirmSessionBtn) els.confirmSessionBtn.addEventListener("click", confirmSession);
+    if (els.confirmSessionBtn) {
+      els.confirmSessionBtn.addEventListener("click", async () => {
+        try {
+          await confirmSession();
+        } catch (error) {
+          console.warn("[telemetry] confirmSession failed:", error);
+          setStatus("No se pudo confirmar la sesión");
+        }
+      });
+    }
+    if (els.updateSessionBtn) {
+      els.updateSessionBtn.addEventListener("click", async () => {
+        try {
+          await syncConfirmedSession();
+          setStatus("Sesión actualizada");
+        } catch (error) {
+          console.warn("[telemetry] syncConfirmedSession failed:", error);
+          setStatus("No se pudo actualizar la sesión");
+        }
+      });
+    }
+    if (els.gmStartBtn) {
+      els.gmStartBtn.addEventListener("click", async () => {
+        if (!activeSession || puzzleRuntime.startedAt) return;
+        renderActiveSession();
+        addSimpleEvent("Partida lanzada");
+        setStatus("Partida lanzada");
+        window.open("/", "_blank", "noopener");
+      });
+    }
     if (els.checkAllBtn) els.checkAllBtn.addEventListener("click", () => refreshPreflightStatus().catch((error) => appendLog({ error: String(error) })));
     if (els.startSystemBtn) els.startSystemBtn.addEventListener("click", () => initializeGameSystem().catch((error) => appendLog({ error: String(error) })));
     if (els.testMqttBtn) els.testMqttBtn.addEventListener("click", () => testMqtt().catch((error) => appendLog({ error: String(error) })));
@@ -4831,8 +5007,9 @@
     if (els.finishGameBtn) els.finishGameBtn.addEventListener("click", finishGame);
   }
 
-  loadGameState();
+  resetGameState();
   loadActiveSession();
+  syncConfirmedSession().catch(console.warn);
   refreshDbSessionList();
   renderPreflightChecklist();
   renderPuzzleProgress();

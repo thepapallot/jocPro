@@ -1,11 +1,14 @@
 import paho.mqtt.client as mqtt
 import json
 import threading
+from typing import Optional
 
 class MQTTClient:
     def __init__(self, app, puzzle_order):
         self.app = app
         self.puzzle_order = puzzle_order
+        self.tutorial_puzzle_id = None
+        self.final_puzzle_id = None
         self.puzzles = {}
         self.current_puzzle_id = None
         self.current_puzzle_index = 0
@@ -13,6 +16,10 @@ class MQTTClient:
         self.lock = threading.Lock()
         self.connected = False
         self.last_connect_rc = None
+        self.telemetry_writer = None
+        self.active_session_id = None
+        self.active_puzzle_row_id = None
+        self.active_puzzle_num = None
         
         # MQTT setup
         self.client = mqtt.Client()
@@ -49,6 +56,69 @@ class MQTTClient:
     def register_puzzle(self, puzzle):
         with self.lock:
             self.puzzles[puzzle.id] = puzzle
+
+    def set_special_puzzle_ids(self, tutorial_puzzle_id: Optional[int] = None, final_puzzle_id: Optional[int] = None):
+        with self.lock:
+            self.tutorial_puzzle_id = tutorial_puzzle_id
+            self.final_puzzle_id = final_puzzle_id
+
+    def set_telemetry_writer(self, telemetry_writer):
+        with self.lock:
+            self.telemetry_writer = telemetry_writer
+
+    def set_active_session_id(self, session_id: Optional[int]):
+        with self.lock:
+            self.active_session_id = session_id
+            if session_id is None:
+                self.active_puzzle_row_id = None
+                self.active_puzzle_num = None
+
+    def _resolve_puzzle_order(self, puzzle_id: int) -> int:
+        if puzzle_id in self.puzzle_order:
+            return self.puzzle_order.index(puzzle_id) + 1
+        if self.tutorial_puzzle_id is not None and puzzle_id == self.tutorial_puzzle_id:
+            return 0
+        if self.final_puzzle_id is not None and puzzle_id == self.final_puzzle_id:
+            return len(self.puzzle_order) + 1
+        return -1
+
+    def _record_puzzle_start_locked(self, puzzle_id: int):
+        self.active_puzzle_row_id = None
+        self.active_puzzle_num = None
+        if self.telemetry_writer is None or self.active_session_id is None:
+            return
+
+        puzzle_order = self._resolve_puzzle_order(puzzle_id)
+        if puzzle_order < 0:
+            return
+
+        try:
+            puzzle_row_id = self.telemetry_writer.record_puzzle_start(
+                session_id=self.active_session_id,
+                puzzle_num=puzzle_id,
+                round_num=1,
+                order=puzzle_order,
+            )
+            self.active_puzzle_row_id = puzzle_row_id
+            self.active_puzzle_num = puzzle_id
+        except Exception as e:
+            print(f"[telemetry] record_puzzle_start failed: {e}")
+
+    def end_active_puzzle(self, puzzle_num: Optional[int] = None):
+        with self.lock:
+            if self.active_puzzle_row_id is None or self.telemetry_writer is None:
+                return
+            if puzzle_num is not None and self.active_puzzle_num is not None and puzzle_num != self.active_puzzle_num:
+                return
+
+            puzzle_row_id = self.active_puzzle_row_id
+            self.active_puzzle_row_id = None
+            self.active_puzzle_num = None
+
+        try:
+            self.telemetry_writer.end_puzzle(puzzle_row_id)
+        except Exception as e:
+            print(f"[telemetry] end_puzzle failed: {e}")
             
     def start_puzzle(self, puzzle_id):
         with self.lock:
@@ -57,6 +127,7 @@ class MQTTClient:
             self.stop_current_puzzle()
             self.current_puzzle_id = puzzle_id
             self.puzzles[puzzle_id].reset()
+            self._record_puzzle_start_locked(puzzle_id)
             self.send_message("FROM_FLASK", f"P{puzzle_id}Start")
             
     def stop_current_puzzle(self):
