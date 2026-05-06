@@ -1,4 +1,5 @@
 from .base import BasePuzzle
+import importlib
 import threading
 import time
 import random
@@ -7,16 +8,11 @@ class Puzzle3(BasePuzzle):
     def __init__(self, mqtt_client):
         super().__init__(puzzle_id=3, mqtt_client=mqtt_client)
 
-        # Import question banks and tag each question with its source
-        from data.puzzle3.easy_questions.easy_ESP import QUESTIONS as EASY_Q
-        from data.puzzle3.medium_questions.medium_ESP import QUESTIONS as MEDIUM_Q
-        from data.puzzle3.hard_questions.hard_ESP import QUESTIONS as HARD_Q
-        from data.puzzle3.company_questions.questions import QUESTIONS as COMPANY_Q
-
-        self.easy_bank    = [{**q, "_source": "easy"}    for q in EASY_Q]
-        self.medium_bank  = [{**q, "_source": "medium"}  for q in MEDIUM_Q]
-        self.hard_bank    = [{**q, "_source": "hard"}    for q in HARD_Q]
-        self.company_bank = [{**q, "_source": "company"} for q in COMPANY_Q]
+        self.easy_bank = []
+        self.medium_bank = []
+        self.hard_bank = []
+        self.company_bank = []
+        self._load_question_banks()
 
         self.chosen_questions = []       # 10 questions for the current set
         self.current_question_idx = 0    # index in chosen_questions (0..9)
@@ -25,6 +21,58 @@ class Puzzle3(BasePuzzle):
         self.total_players = 10
         self.answered_players = {}       # {player: answer_idx}
         self.correct_question_ids = set()  # (source, id) tuples for questions solved correctly
+
+    def _active_session_language(self):
+        return self.mqtt_client.get_active_session_language()
+
+    def _language_suffix_candidates(self):
+        language = self._active_session_language()
+        if language in ("ca", "cat"):
+            return ["CAT", "ESP"]
+        if language in ("eng", "en"):
+            # Keep ENY candidate for compatibility with requested naming,
+            # then fall back to current ENG files.
+            return ["ENY", "ENG", "ESP"]
+        if language in ("es", "esp"):
+            return ["ESP"]
+        return ["ESP"]
+
+    def _import_questions(self, base_module, suffix_candidates):
+        for suffix in suffix_candidates:
+            module_name = f"{base_module}_{suffix}"
+            try:
+                module = importlib.import_module(module_name)
+                return module.QUESTIONS
+            except ModuleNotFoundError:
+                continue
+        return []
+
+    def _load_question_banks(self):
+        suffix_candidates = self._language_suffix_candidates()
+
+        easy_questions = self._import_questions(
+            "data.puzzle3.easy_questions.easy", suffix_candidates
+        )
+        medium_questions = self._import_questions(
+            "data.puzzle3.medium_questions.medium", suffix_candidates
+        )
+        hard_questions = self._import_questions(
+            "data.puzzle3.hard_questions.hard", suffix_candidates
+        )
+
+        if not easy_questions:
+            from data.puzzle3.easy_questions.easy_ESP import QUESTIONS as easy_questions
+        if not medium_questions:
+            from data.puzzle3.medium_questions.medium_ESP import QUESTIONS as medium_questions
+        if not hard_questions:
+            from data.puzzle3.hard_questions.hard_ESP import QUESTIONS as hard_questions
+
+        from data.puzzle3.company_questions.questions import QUESTIONS as company_questions
+
+        self.easy_bank = [{**q, "_source": "easy"} for q in easy_questions]
+        self.medium_bank = [{**q, "_source": "medium"} for q in medium_questions]
+        self.hard_bank = [{**q, "_source": "hard"} for q in hard_questions]
+        self.company_bank = [{**q, "_source": "company"} for q in company_questions]
 
     def _checkpoint_for_streak(self, streak):
         """Return the last unlocked checkpoint based on solved questions."""
@@ -116,6 +164,7 @@ class Puzzle3(BasePuzzle):
         """Full reset to start"""
         super().reset()
         with self.lock:
+            self._load_question_banks()
             self.correct_question_ids = set()
             self._choose_new_set()
             self._push_question()
