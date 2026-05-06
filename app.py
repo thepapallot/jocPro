@@ -34,6 +34,7 @@ mqtt_client.set_special_puzzle_ids(
     final_puzzle_id=PUZZLE_FINAL,
 )
 mqtt_client.set_telemetry_writer(_telemetry_writer)
+mqtt_client.set_telemetry_queries(_telemetry_queries)
 
 # Active confirmed game session (Phase: session confirmation only)
 _active_game_lock = threading.Lock()
@@ -489,12 +490,16 @@ def test_puzzle3_solution():
     if state.get("puzzle_id") != 3 or question_id is None:
         return jsonify({"error": "puzzle3_not_active"}), 404
 
-    from data.puzzle3_questions import QUESTIONS as P3_QUESTIONS
+    puzzle3 = mqtt_client.puzzles.get(3)
+    if puzzle3 is None:
+        return jsonify({"error": "puzzle3_not_found"}), 404
 
-    question_map = {item["id"]: item for item in P3_QUESTIONS}
-    current = question_map.get(question_id)
-    if not current:
-        return jsonify({"error": "question_not_found"}), 404
+    with puzzle3.lock:
+        idx = puzzle3.current_question_idx
+        chosen = puzzle3.chosen_questions
+        if idx >= len(chosen):
+            return jsonify({"error": "question_not_found"}), 404
+        current = chosen[idx]
 
     correct_index = current.get("correct")
     answers = current.get("answers", [])

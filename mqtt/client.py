@@ -17,6 +17,7 @@ class MQTTClient:
         self.connected = False
         self.last_connect_rc = None
         self.telemetry_writer = None
+        self.telemetry_queries = None
         self.active_session_id = None
         self.active_puzzle_row_id = None
         self.active_puzzle_num = None
@@ -66,12 +67,40 @@ class MQTTClient:
         with self.lock:
             self.telemetry_writer = telemetry_writer
 
+    def set_telemetry_queries(self, telemetry_queries):
+        with self.lock:
+            self.telemetry_queries = telemetry_queries
+
     def set_active_session_id(self, session_id: Optional[int]):
         with self.lock:
             self.active_session_id = session_id
             if session_id is None:
                 self.active_puzzle_row_id = None
                 self.active_puzzle_num = None
+
+    def get_active_session_language(self) -> Optional[str]:
+        # Read without acquiring the lock: this method is called from puzzle.reset()
+        # which is itself called from inside start_puzzle() while holding self.lock,
+        # so taking the lock here would deadlock. CPython's GIL makes plain attribute
+        # reads on simple types atomic, so this is safe.
+        session_id = self.active_session_id
+        telemetry_queries = self.telemetry_queries
+
+        if session_id is None or telemetry_queries is None:
+            return None
+
+        try:
+            session = telemetry_queries.get_session_stats(session_id)
+        except Exception:
+            return None
+
+        if not session:
+            return None
+
+        language = session.get("language")
+        if language is None:
+            return None
+        return str(language).strip().lower()
 
     def _resolve_puzzle_order(self, puzzle_id: int) -> int:
         if puzzle_id in self.puzzle_order:
