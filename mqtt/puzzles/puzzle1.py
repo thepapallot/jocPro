@@ -140,6 +140,7 @@ class Puzzle1(BasePuzzle):
                                 # Start next round
                                 with self.lock:
                                     self.round = next_round
+                                    self.mqtt_client.start_next_round(self.id, self.round)
                                     self.processing_wrong_result = False
                                     self.countdown_next_round_active = False
                                     self._reset_operations()

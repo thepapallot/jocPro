@@ -411,6 +411,7 @@ class Puzzle8(BasePuzzle):
                 
                 if success and self.round < self.round_total:
                     self.round += 1
+                    self.mqtt_client.start_next_round(self.id, self.round)
                     
                 self._schedule(self._show_numbers, 5)
                 
