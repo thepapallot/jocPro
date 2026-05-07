@@ -133,26 +133,33 @@ def get_display_level(puzzle_id):
     return sequence_index if sequence_index is not None else 1
 
 
-def resolve_subtitle_lang():
-    lang = str(SUBTITLE_LANG or "es").strip().lower()
-    if lang == "en":
+def normalize_subtitle_lang(raw_lang):
+    lang = str(raw_lang or "es").strip().lower()
+    if lang in ("en", "eng"):
         return "eng"
-    return "eng" if lang == "eng" else "es"
+    return "es"
 
 
-DEFAULT_SUBTITLE_LANG = resolve_subtitle_lang()
+def resolve_active_subtitle_lang():
+    session_lang = mqtt_client.get_active_session_language()
+    if session_lang:
+        return normalize_subtitle_lang(session_lang)
+    return DEFAULT_SUBTITLE_LANG
+
+
+DEFAULT_SUBTITLE_LANG = normalize_subtitle_lang(SUBTITLE_LANG)
 
 @app.context_processor
 def inject_player_defaults():
     return {
-        "default_subtitle_lang": DEFAULT_SUBTITLE_LANG,
+        "default_subtitle_lang": resolve_active_subtitle_lang(),
     }
 
 
 def build_scene_player_target(scene_id, next_url="", **extra_query):
     query = {
         "scene": scene_id,
-        "lang": DEFAULT_SUBTITLE_LANG,
+        "lang": resolve_active_subtitle_lang(),
     }
     if next_url:
         query["next"] = next_url
