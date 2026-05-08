@@ -58,13 +58,13 @@
       "type": "character",
       "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
       "clip_start": 0,
-      "clip_end": 4.12,
-      "duration": 4.12,
+      "clip_end": 2.5,
+      "duration": 2.5,
       "label": "intro_estable"
     },
     {
       "type": "fullscreen_ui",
-      "duration": 12.999,
+      "duration": 14.619,
       "variant": "immersive-strip",
       "phases": [
         {
@@ -77,7 +77,7 @@
           }
         },
         {
-          "at": 2.58,
+          "at": 4.2,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -85,23 +85,10 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/memoria.png",
-                "alt": "Escuchar y recordar"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/repetir.png",
-                "alt": "Cancion completa"
+                "src": "/static/images/shared/nuevos iconos/altavoz.png",
+                "alt": "Altavoz"
               }
             ]
-          }
-        },
-        {
-          "at": 5.48,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "text": "DESCUBRID QUÉ ESCONDE CADA TERMINAL"
           }
         },
         {
@@ -124,7 +111,7 @@
           }
         },
         {
-          "at": 9.82,
+          "at": 11.8,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
@@ -132,12 +119,8 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/checklist.png",
-                "alt": "Partes necesarias"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/progreso_objetivo.png",
-                "alt": "Orden correcto"
+                "src": "/static/images/shared/nuevos iconos/secuencia_audios.png",
+                "alt": "Secuencia de audios"
               }
             ]
           }
@@ -177,39 +160,6 @@
           }
         },
         {
-          "at": 2.15,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "text": "VERDE ANTES DE PASAR EL TOKEN"
-          }
-        },
-        {
-          "at": 4.3,
-          "sfx": "objective",
-          "variant": "immersive-strip",
-          "top": {
-            "variant": "immersive-strip",
-            "layout": "large-3",
-            "show_equals": false,
-            "assets": [
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores azul.png",
-                "alt": "Boton azul muestra completa"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores rojo.png",
-                "alt": "Boton rojo detener registro"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/botones colores negro.png",
-                "alt": "Boton negro resetear intento"
-              }
-            ]
-          }
-        },
-        {
           "at": 6.65,
           "sfx": "objective",
           "variant": "immersive-strip",
@@ -218,12 +168,8 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/nuevos iconos/repetir.png",
-                "alt": "Repetir"
-              },
-              {
-                "src": "/static/images/shared/nuevos iconos/veredicto_ok.png",
-                "alt": "Cancion completada"
+                "src": "/static/images/shared/nuevos iconos/racha_aciertos.png",
+                "alt": "Racha de aciertos"
               }
             ]
           }
@@ -232,7 +178,7 @@
     },
     {
       "type": "character",
-      "src": "/static/videos/characters/cero_close_short_a.mp4",
+      "src": "/static/videos/characters/cero_neutral_close_a.mp4",
       "clip_start": 0,
       "clip_end": 3.169,
       "duration": 3.169,
