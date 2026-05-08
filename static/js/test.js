@@ -657,6 +657,28 @@
       .replace(/\s+/g, " ");
   }
 
+  const resolverVisibilityByAlias = {
+    simulacro: { phase: true, skip: false, allCorrect: false },
+    memory: { phase: true, skip: true, allCorrect: true },
+    trivial: { phase: true, skip: false, allCorrect: false },
+    segments: { phase: true, skip: false, allCorrect: false },
+    sumas: { phase: true, skip: true, allCorrect: true },
+    sumes: { phase: true, skip: true, allCorrect: true },
+    cronometro: { phase: true, skip: true, allCorrect: false },
+    "apreta botons": { phase: true, skip: true, allCorrect: false },
+    musica: { phase: true, skip: true, allCorrect: true },
+    energia: { phase: true, skip: false, allCorrect: false }
+  };
+
+  function getResolverVisibility(puzzleId) {
+    const normalizedAlias = normalizeAlias(getAliasForPuzzle(puzzleId));
+    return resolverVisibilityByAlias[normalizedAlias] || {
+      phase: true,
+      skip: true,
+      allCorrect: true
+    };
+  }
+
   function resolveIntroSceneForPuzzle(puzzleId) {
     const alias = normalizeAlias(getAliasForPuzzle(puzzleId));
     if (!alias) {
@@ -1381,6 +1403,47 @@
 	    }
 	  }
 
+    function resetResolverState() {
+      simState.skipFollowingPhases = false;
+      simState.allCorrectMode = false;
+      simState.autoSkipMarker = null;
+      simState.autoSkipPuzzleId = null;
+      simState.autoSkipInFlight = false;
+    }
+
+    function getSelectedPuzzleIdForBackend() {
+      const selectedPuzzle = String(els.puzzleSelect.value || "");
+      if (selectedPuzzle === "-1") {
+        return Number(finalPuzzleMqttId || 6);
+      }
+      return Number(selectedPuzzle);
+    }
+
+    async function setSelectedPuzzleControlFlags(patch) {
+      const puzzleIdForBackend = getSelectedPuzzleIdForBackend();
+      if (!Number.isFinite(puzzleIdForBackend)) {
+        throw new Error("invalid_puzzle");
+      }
+
+      const response = await fetch("/test/puzzle_flags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          puzzle_id: puzzleIdForBackend,
+          ...patch
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "puzzle_flags_failed");
+      }
+
+      simState.skipFollowingPhases = !!data.saltarPuzzle;
+      simState.allCorrectMode = !!data.alwaysCorrect;
+      return data;
+    }
+
   function updateTopicHelp() {
     if (!els.topicHelp) {
       return;
@@ -1426,11 +1489,7 @@
 
   function renderForm() {
     const config = getSelectedConfig();
-    simState.skipFollowingPhases = false;
-    simState.allCorrectMode = false;
-    simState.autoSkipMarker = null;
-    simState.autoSkipPuzzleId = null;
-    simState.autoSkipInFlight = false;
+    resetResolverState();
     renderSelectedPuzzleSummary();
 	    els.formBuilder.innerHTML = "";
 	    els.referenceOutput.textContent = config.reference || "Sin referencia disponible.";
@@ -1515,67 +1574,88 @@
     const actionsByScope = getResolverActions(els.puzzleSelect.value);
     const phaseAction = (actionsByScope.phase || [])[0] || null;
     const puzzleId = String(els.puzzleSelect.value || "");
-    const canSkipFollowing = puzzleId !== "6" && puzzleId !== "-1";
+    const canAutoForceEnd = puzzleId !== "6" && puzzleId !== "-1";
     const puzzleLabel = getSelectedPuzzleLabel();
+    const resolverVisibility = getResolverVisibility(puzzleId);
+    const phaseMarkup = resolverVisibility.phase
+      ? `
+        <article class="gm-resolver-card gm-resolver-card--action gm-resolver-card--good">
+          ${phaseAction
+            ? `<button type="button" class="gm-resolver-action primary-action" data-resolver-phase>
+                 <strong>Dar por buena la fase</strong>
+               </button>`
+            : '<div class="gm-resolver-empty">No hay acción de fase definida para este puzzle</div>'}
+        </article>`
+      : "";
+    const skipMarkup = resolverVisibility.skip
+      ? `
+        <article class="gm-resolver-card gm-resolver-card--skip">
+          <label class="gm-resolver-toggle">
+            <input type="checkbox" id="test-skip-following" ${simState.skipFollowingPhases ? "checked" : ""}>
+            <span>Saltar resto del puzzle</span>
+          </label>
+        </article>`
+      : "";
+    const allCorrectMarkup = resolverVisibility.allCorrect
+      ? `
+        <article class="gm-resolver-card gm-resolver-card--all-correct">
+          <label class="gm-resolver-toggle">
+            <input type="checkbox" id="test-all-correct-mode" ${simState.allCorrectMode ? "checked" : ""}>
+            <span>Todo correcto</span>
+          </label>
+        </article>`
+      : "";
 
 	    els.resolverHub.innerHTML = `
       <section class="gm-resolver-strip" aria-label="Control de fase">
         <article class="gm-resolver-card gm-resolver-card--context">
           <strong class="gm-resolver-mode">${escapeHtml(puzzleLabel)}</strong>
         </article>
-        <article class="gm-resolver-card gm-resolver-card--action gm-resolver-card--good">
-	          ${phaseAction
-	            ? `<button type="button" class="gm-resolver-action primary-action" data-resolver-phase>
-	                 <strong>Dar por buena la fase</strong>
-	               </button>`
-	            : '<div class="gm-resolver-empty">No hay acción de fase definida para este puzzle</div>'}
-	        </article>
-	        <article class="gm-resolver-card gm-resolver-card--skip">
-	          <label class="gm-resolver-toggle${canSkipFollowing ? "" : " is-disabled"}">
-	            <input type="checkbox" id="test-skip-following" ${simState.skipFollowingPhases ? "checked" : ""} ${canSkipFollowing ? "" : "disabled"}>
-	            <span>Saltar resto del puzzle</span>
-	          </label>
-	        </article>
-	        <article class="gm-resolver-card gm-resolver-card--all-correct">
-	          <label class="gm-resolver-toggle">
-	            <input type="checkbox" id="test-all-correct-mode" ${simState.allCorrectMode ? "checked" : ""}>
-	            <span>Todo correcto</span>
-	          </label>
-	        </article>
-	        <article class="gm-resolver-card gm-resolver-card--restart">
-	          <button type="button" class="gm-resolver-action danger-action" data-resolver-restart>
-	            <strong>Reiniciar puzzle</strong>
-	          </button>
-	        </article>
+        ${phaseMarkup}
+        ${skipMarkup}
+        ${allCorrectMarkup}
       </section>
     `;
 
     const skipInput = document.getElementById("test-skip-following");
     if (skipInput) {
-      skipInput.addEventListener("change", () => {
-        simState.skipFollowingPhases = !!skipInput.checked;
+      skipInput.addEventListener("change", async () => {
+        const desiredValue = !!skipInput.checked;
+        try {
+          await setSelectedPuzzleControlFlags({ saltarPuzzle: desiredValue });
+          setStatus(simState.skipFollowingPhases ? "Saltar resto activado" : "Saltar resto desactivado");
+          appendLog({ local: true, action: "saltar_puzzle", enabled: simState.skipFollowingPhases });
+        } catch (error) {
+          setStatus(`Saltar resto del puzzle · ${error.message || "error"}`);
+          appendLog({ error: String(error), resolver_action: "set_saltar_puzzle" });
+        }
         renderResolverHub();
       });
     }
 
     const allCorrectInput = document.getElementById("test-all-correct-mode");
     if (allCorrectInput) {
-      allCorrectInput.addEventListener("change", () => {
-        // UI-only for now. Backend wiring will later make every input count as valid.
-        simState.allCorrectMode = !!allCorrectInput.checked;
-        setStatus(simState.allCorrectMode ? "Todo correcto activado" : "Todo correcto desactivado");
-        appendLog({ local: true, action: "all_correct_mode", enabled: simState.allCorrectMode });
+      allCorrectInput.addEventListener("change", async () => {
+        const desiredValue = !!allCorrectInput.checked;
+        try {
+          await setSelectedPuzzleControlFlags({ alwaysCorrect: desiredValue });
+          setStatus(simState.allCorrectMode ? "Todo correcto activado" : "Todo correcto desactivado");
+          appendLog({ local: true, action: "all_correct_mode", enabled: simState.allCorrectMode });
+        } catch (error) {
+          setStatus(`Todo correcto · ${error.message || "error"}`);
+          appendLog({ error: String(error), resolver_action: "set_always_correct" });
+        }
         renderResolverHub();
       });
     }
 
     const phaseButton = els.resolverHub.querySelector("[data-resolver-phase]");
-    if (phaseButton && phaseAction) {
+    if (phaseButton && phaseAction && resolverVisibility.phase) {
       phaseButton.addEventListener("click", async () => {
         try {
           phaseButton.disabled = true;
           await runResolverAction(phaseAction);
-          if (canSkipFollowing && simState.skipFollowingPhases) {
+          if (canAutoForceEnd && simState.skipFollowingPhases) {
             await forceEndCurrentPuzzle();
           }
           renderResolverHub();
@@ -1588,12 +1668,6 @@
       });
     }
 
-    const restartButton = els.resolverHub.querySelector("[data-resolver-restart]");
-    if (restartButton) {
-      restartButton.addEventListener("click", () => {
-        startPuzzle(true).catch((error) => appendLog({ error: String(error) }));
-      });
-    }
   }
 
   function getSelectedPuzzleEndPayload() {
@@ -1608,10 +1682,7 @@
   }
 
   async function forceEndCurrentPuzzle() {
-    const selectedPuzzle = String(els.puzzleSelect.value || "");
-    const puzzleIdForBackend = selectedPuzzle === "-1"
-      ? Number(finalPuzzleMqttId || 6)
-      : Number(selectedPuzzle);
+    const puzzleIdForBackend = getSelectedPuzzleIdForBackend();
     if (!Number.isFinite(puzzleIdForBackend)) {
       return;
     }
@@ -1825,9 +1896,23 @@
         phase: [{
           id: "p4-solve-sequence",
           label: "Resolver secuencia actual",
-          detail: "Usa la fase musical activa",
+          detail: "Completa los sonidos pendientes",
           tone: "primary",
-          getPayloads: getPuzzle4RoundPayloads
+          run: async () => {
+            const data = await fetchCurrentStateForPuzzle(4);
+            const streak = Number(data.streak || 0);
+            const fullOrder = p4StreakOrders[streak];
+            if (!Array.isArray(fullOrder) || !fullOrder.length) {
+              throw new Error("sin_secuencia_para_este_streak");
+            }
+            const alreadyStored = Array.isArray(data.played_sequence) ? data.played_sequence.length : 0;
+            const remaining = fullOrder.slice(alreadyStored);
+            if (!remaining.length) {
+              throw new Error("secuencia_ya_completa");
+            }
+            const payloads = remaining.flatMap((song) => ["P4,3,0", `P4,0,${song}`]);
+            await runToFlask(() => sendPayloads(payloads));
+          }
         }],
         all: [{
           id: "p4-solve-all",
@@ -1961,11 +2046,22 @@
           getPayloads: getPuzzle10SelectedPayloads
         }],
         phase: [{
-          id: "p10-solve-all",
-          label: "Resolver ronda de cajas",
-          detail: "Los 10 códigos",
+          id: "p10-solve-unsolved",
+          label: "Resolver cajas pendientes",
+          detail: "Solo las no resueltas aún",
           tone: "primary",
-          getPayloads: () => Object.entries(p10TargetsByBox).map(([box, code]) => `P10,${box},${code}`)
+          run: async () => {
+            const data = await fetchCurrentStateForPuzzle(10);
+            const solvedBoxes = new Set(Array.isArray(data.solved_boxes) ? data.solved_boxes : []);
+            const boxTargets = data.box_targets || {};
+            const payloads = Object.entries(boxTargets)
+              .filter(([box]) => !solvedBoxes.has(Number(box)))
+              .map(([box, code]) => `P10,${box},${code}`);
+            if (payloads.length === 0) {
+              throw new Error("no_cajas_pendientes");
+            }
+            await sendPayloads(payloads);
+          }
         }],
         all: [{
           id: "p10-solve-all-confirm",
@@ -2105,17 +2201,13 @@
     if (!Array.isArray(order) || !order.length) {
       return [];
     }
-    return ["P4,2,0", "P4,3,0", ...order.map((song) => `P4,0,${song}`)];
+    return order.flatMap((song) => ["P4,3,0", `P4,0,${song}`]);
   }
 
   function getPuzzle4AllPayloads() {
     return [
-      "P4,2,0",
-      "P4,3,0",
-      ...p4StreakOrders[0].map((song) => `P4,0,${song}`),
-      "P4,2,0",
-      "P4,3,0",
-      ...p4StreakOrders[1].map((song) => `P4,0,${song}`)
+      ...p4StreakOrders[0].flatMap((song) => ["P4,3,0", `P4,0,${song}`]),
+      ...p4StreakOrders[1].flatMap((song) => ["P4,3,0", `P4,0,${song}`])
     ];
   }
 
@@ -3620,6 +3712,8 @@
 	    setStatus(restart
 	      ? `${config.label} reiniciado`
 	      : `${config.label} arrancado`);
+    resetResolverState();
+    renderResolverHub();
     puzzleRuntime.gameStatus = "En juego";
     setPuzzleStatus(els.puzzleSelect.value, "playing");
     addSimpleEvent(restart ? "Puzzle reiniciado" : "Partida/puzzle arrancado", config.label);

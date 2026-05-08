@@ -380,7 +380,12 @@ class Puzzle8(BasePuzzle):
                                  cs[0] == s[i] and cc[0] == c.get(s[i]))
                                  
         success = all(box_results.values())
-        
+
+        # alwaysCorrect: override evaluation — display real inputs but mark everything correct
+        if self.alwaysCorrect:
+            success = True
+            box_results = {i: True for i in range(10)}
+
         # Show results in separate thread
         def _flow():
             time.sleep(2)
@@ -396,7 +401,9 @@ class Puzzle8(BasePuzzle):
             time.sleep(5)
             
             with self.lock:
-                if success and self.round >= self.round_total:
+                # saltarPuzzle: treat round 1 success as a full win
+                saltar = self.saltarPuzzle
+                if success and (self.round >= self.round_total or saltar):
                     # Puzzle solved!
                     self.solved = True
                     self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
@@ -467,7 +474,7 @@ class Puzzle8(BasePuzzle):
             # Capacity rule: allow up to required entries
             if len(cols) >= required:
                 return
-                
+
             # Append in order
             syms.append(symbol_name)
             cols.append(color_name)

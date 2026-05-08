@@ -30,10 +30,10 @@ class Puzzle12(BasePuzzle):
 
     def reset(self):
         print("Starting Puzzle 12")
+        super().reset()
         with self.lock:
             self.current_streak = 1
             self.current_giff = self.get_giff()
-            self.solved = False
             self._push({
                 "puzzle_id": self.id,
                 "startRound": True,
@@ -110,7 +110,7 @@ class Puzzle12(BasePuzzle):
 
             print(f"Streak {self.current_streak} solved!")
 
-            if self.current_streak >= self.streaks:
+            if self.current_streak >= self.streaks or self.saltarPuzzle:
                 self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
                 time.sleep(3)  # Brief pause before declaring puzzle solved
                 self.solved = True

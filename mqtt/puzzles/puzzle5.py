@@ -197,7 +197,7 @@ class Puzzle5(BasePuzzle):
             
             with self.lock:
                 if success:
-                    if round_number >= self.total_rounds:
+                    if round_number >= self.total_rounds or self.saltarPuzzle:
                         # Puzzle completed!
                         self.solved = True
                         self.mqtt_client.send_message("FROM_FLASK", "P5_End")

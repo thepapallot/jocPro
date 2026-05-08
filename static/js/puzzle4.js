@@ -4,6 +4,7 @@
     const PHASE_POPUP_VISIBLE_MS = 3000;
     const INTER_ROUND_PAUSE_MS = PHASE_POPUP_DELAY_MS + PHASE_POPUP_VISIBLE_MS;
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
+    const REMOVE_SOUND_URL = "/static/audios/effects/remove.wav";
     const FASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
@@ -354,9 +355,9 @@
         });
     }
 
-    function maybePlayTrack(trackPayload, streak, playedSequence) {
+    function maybePlayTrack(trackPayload, onComplete) {
         if (!trackPayload || !trackPayload.url || solved) return;
-        playTrack(trackPayload.url);
+        playTrack(trackPayload.url, onComplete);
     }
 
     function handleUpdate(d) {
@@ -368,6 +369,7 @@
         }
 
         const wasStoring = lastKnownStoring;
+        let deferIdleUntilTrackEnd = false;
         if (typeof d.storing === 'boolean') {
             lastKnownStoring = d.storing;
         }
@@ -378,8 +380,9 @@
             showActionFeedback('action-blue', 'Reproduciendo cancion completa', 'action-blue');
         } else if (d.storing === true) {
             showActionFeedback('action-green', 'Registrando secuencia', 'action-green');
-        } else if (d.user_stopped) {
-            showActionFeedback('action-red', 'Registro detenido', 'action-red');
+        } else if (d.removed_last) {
+            showActionFeedback('action-red', 'Ultima pista eliminada', 'action-red');
+            playSound(REMOVE_SOUND_URL);
         }
 
         if (typeof d.playing_sample === 'boolean') {
@@ -425,7 +428,13 @@
         }
 
         if (d.play) {
-            maybePlayTrack(d.play, d.streak, d.played_sequence);
+            deferIdleUntilTrackEnd = !!(wasStoring && d.storing === false && d.play && d.play.url);
+            maybePlayTrack(d.play, () => {
+                if (solved || showingCompletion) return;
+                if (deferIdleUntilTrackEnd) {
+                    setStatus('Esperando muestras', 'idle');
+                }
+            });
         }
 
         if (d.validation_feedback !== undefined) {
@@ -479,7 +488,7 @@
             } else if (d.storing === true) {
                 playSound(BTN_SOUND_URL);
                 setStatus('Registrando secuencia', 'storing');
-            } else if (d.storing === false) {
+            } else if (d.storing === false && !deferIdleUntilTrackEnd) {
                 setStatus('Esperando muestras', 'idle');
             }
         }
