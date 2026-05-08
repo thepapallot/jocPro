@@ -73,37 +73,71 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
-            "text": "CÓDIGO SONORO"
+            "text": "RECONSTRUIR LA CANCIÓN EN ORDEN"
           }
         },
         {
-          "at": 5.48,
-          "sfx": "token",
+          "at": 2.58,
+          "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "src": "/static/images/shared/nuevos iconos/memoria.png",
+                "alt": "Escuchar y recordar"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/repetir.png",
+                "alt": "Cancion completa"
               }
             ]
           }
         },
         {
-          "at": 6.48,
+          "at": 5.48,
           "sfx": "objective",
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "text": "DESCUBRID QUÉ ESCONDE CADA TERMINAL"
+          }
+        },
+        {
+          "at": 7.1,
+          "sfx": "token",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
             "assets": [
               {
                 "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token card"
+                "alt": "Token"
               },
               {
                 "src": "/static/images/shared/gameplay/terminal_box.png",
-                "alt": "Terminal box"
+                "alt": "Terminal"
+              }
+            ]
+          }
+        },
+        {
+          "at": 9.82,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/checklist.png",
+                "alt": "Partes necesarias"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/progreso_objetivo.png",
+                "alt": "Orden correcto"
               }
             ]
           }
@@ -132,10 +166,23 @@
             "show_equals": false,
             "assets": [
               {
-                "src": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-                "alt": "Buttons panel front"
+                "src": "/static/images/shared/nuevos iconos/botones colores verde.png",
+                "alt": "Boton verde"
+              },
+              {
+                "src": "/static/images/shared/gameplay/token_card.png",
+                "alt": "Token"
               }
             ]
+          }
+        },
+        {
+          "at": 2.15,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "text": "VERDE ANTES DE PASAR EL TOKEN"
           }
         },
         {
@@ -144,11 +191,39 @@
           "variant": "immersive-strip",
           "top": {
             "variant": "immersive-strip",
+            "layout": "large-3",
             "show_equals": false,
             "assets": [
               {
+                "src": "/static/images/shared/nuevos iconos/botones colores azul.png",
+                "alt": "Boton azul muestra completa"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores rojo.png",
+                "alt": "Boton rojo detener registro"
+              },
+              {
+                "src": "/static/images/shared/nuevos iconos/botones colores negro.png",
+                "alt": "Boton negro resetear intento"
+              }
+            ]
+          }
+        },
+        {
+          "at": 6.65,
+          "sfx": "objective",
+          "variant": "immersive-strip",
+          "top": {
+            "variant": "immersive-strip",
+            "show_equals": false,
+            "assets": [
+              {
+                "src": "/static/images/shared/nuevos iconos/repetir.png",
+                "alt": "Repetir"
+              },
+              {
                 "src": "/static/images/shared/nuevos iconos/veredicto_ok.png",
-                "alt": "Veredicto ok"
+                "alt": "Cancion completada"
               }
             ]
           }
