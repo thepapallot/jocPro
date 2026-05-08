@@ -171,7 +171,8 @@ class Puzzle4(BasePuzzle):
             with self.lock:
                 temp_sequence = self.played_sequence.copy()
                 self.streak += 1
-                if self.streak < self.total_required:
+                saltar = self.saltarPuzzle
+                if self.streak < self.total_required and not saltar:
                     self.mqtt_client.start_next_round(self.id, self.streak + 1)
                 self.played_sequence = []
                 self.storing = False
@@ -193,7 +194,7 @@ class Puzzle4(BasePuzzle):
                     "total_required": total_required
                 })
 
-            if streak >= total_required:
+            if streak >= total_required or saltar:
                 time.sleep(2)
                 
                 with self.lock:
@@ -312,18 +313,24 @@ class Puzzle4(BasePuzzle):
 
             # Button 1: Delete last stored track
             if button == 1:
+                removed = False
                 if self.played_sequence:
                     self.played_sequence.pop()
+                    removed = True
 
                 self.storing = False
                 self.current_progress = len(self.played_sequence)
-                self._push({
+                payload = {
                     "storing": False,
                     "streak": self.streak,
                     "total_required": self.total_required,
                     "current_progress": self.current_progress,
                     "played_sequence": self.played_sequence.copy()
-                })
+                }
+                if removed:
+                    payload["removed_last"] = True
+
+                self._push(payload)
                 return
 
             # Button 2: Not used
@@ -362,7 +369,7 @@ class Puzzle4(BasePuzzle):
                     # Check if sequence complete
                     if len(self.played_sequence) >= len(required_order):
                         self.validating = True
-                        is_correct = self.played_sequence == required_order
+                        is_correct = self.played_sequence == required_order or self.alwaysCorrect
                         
                         print(f"[Puzzle4] Validating: Expected={required_order}, "
                               f"Got={self.played_sequence}, Correct={is_correct}")

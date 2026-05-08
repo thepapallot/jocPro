@@ -7,6 +7,8 @@ class BasePuzzle(ABC):
         self.mqtt_client = mqtt_client
         self.lock = threading.Lock()
         self.solved = False
+        self.saltarPuzzle = False
+        self.alwaysCorrect = False
         
     @abstractmethod
     def handle_message(self, parts):
@@ -22,6 +24,26 @@ class BasePuzzle(ABC):
         """Reset puzzle to initial state"""
         with self.lock:
             self.solved = False
+            self.saltarPuzzle = False
+            self.alwaysCorrect = False
+
+    def set_control_flags(self, saltar_puzzle=None, always_correct=None):
+        with self.lock:
+            if saltar_puzzle is not None:
+                self.saltarPuzzle = bool(saltar_puzzle)
+            if always_correct is not None:
+                self.alwaysCorrect = bool(always_correct)
+            return {
+                "saltarPuzzle": self.saltarPuzzle,
+                "alwaysCorrect": self.alwaysCorrect,
+            }
+
+    def get_control_flags(self):
+        with self.lock:
+            return {
+                "saltarPuzzle": self.saltarPuzzle,
+                "alwaysCorrect": self.alwaysCorrect,
+            }
             
     def stop(self):
         """Stop any running timers/threads"""

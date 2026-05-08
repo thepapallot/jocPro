@@ -16,9 +16,9 @@ class Puzzle9(BasePuzzle):
         self._good_timer_running = False
 
     def reset(self):
+        super().reset()
         with self.lock:
             self.box_tokens = {i: None for i in range(0,10)}
-            self.solved = False
             self._good_timer_running = False
             self._push({
                 "box_tokens": self.box_tokens.copy(),

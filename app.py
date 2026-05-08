@@ -537,6 +537,60 @@ def test_puzzle6_solve():
     return jsonify({"status": "ok", "puzzle_id": 6, "solvePuzzle": solve_puzzle}), 200
 
 
+def _parse_test_bool(value):
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value != 0
+    text = str(value).strip().lower()
+    if text in ("1", "true", "yes", "on"):
+        return True
+    if text in ("0", "false", "no", "off", ""):
+        return False
+    raise ValueError(f"invalid_bool:{value}")
+
+
+@app.route('/test/puzzle_flags', methods=['POST'])
+def test_set_puzzle_flags():
+    data = request.get_json(silent=True) or {}
+
+    puzzle_id = data.get("puzzle_id")
+    if puzzle_id is None:
+        puzzle_id = mqtt_client.current_puzzle_id
+
+    try:
+        puzzle_id = int(puzzle_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "invalid_puzzle"}), 400
+
+    puzzle = mqtt_client.puzzles.get(puzzle_id)
+    if puzzle is None:
+        return jsonify({"error": "puzzle_not_found"}), 404
+
+    has_saltar = "saltarPuzzle" in data
+    has_always = "alwaysCorrect" in data
+    if not has_saltar and not has_always:
+        return jsonify({"error": "no_flags_provided"}), 400
+
+    try:
+        saltar_value = _parse_test_bool(data.get("saltarPuzzle")) if has_saltar else None
+        always_value = _parse_test_bool(data.get("alwaysCorrect")) if has_always else None
+    except ValueError:
+        return jsonify({"error": "invalid_flag_value"}), 400
+
+    flags = puzzle.set_control_flags(
+        saltar_puzzle=saltar_value,
+        always_correct=always_value,
+    )
+
+    return jsonify({
+        "status": "ok",
+        "puzzle_id": puzzle_id,
+        "saltarPuzzle": bool(flags.get("saltarPuzzle", False)),
+        "alwaysCorrect": bool(flags.get("alwaysCorrect", False)),
+    }), 200
+
+
 @app.route('/test/system_status', methods=['GET'])
 def test_system_status():
     """Operational health for the GM panel.

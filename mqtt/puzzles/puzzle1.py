@@ -113,7 +113,7 @@ class Puzzle1(BasePuzzle):
                     
                     # Check if round is complete
                     if all(o[2] == "Y" for o in self.operations_with_metadata):
-                        if self.round < self.total_rounds:
+                        if self.round < self.total_rounds and not self.saltarPuzzle:
                             # Advance to next round with countdown
                             next_round = self.round + 1
                             
@@ -165,7 +165,10 @@ class Puzzle1(BasePuzzle):
                     return
                 break
                     
-            # Incorrect answer
+            # Incorrect answer — silently ignore when alwaysCorrect is active
+            if self.alwaysCorrect:
+                return
+
             self.processing_wrong_result = True
             if matching_operation is None:
                 reason = "Suma no existente"
