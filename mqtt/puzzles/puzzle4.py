@@ -298,45 +298,36 @@ class Puzzle4(BasePuzzle):
             if button == 3:
                 if self.storing:
                     return
-                    
+
                 self.storing = True
-                self.current_progress = 0
-                self.played_sequence = []
+                self.current_progress = len(self.played_sequence)
                 self._push({
                     "storing": True,
                     "streak": self.streak,
                     "total_required": self.total_required,
-                    "current_progress": 0,
-                    "played_sequence": []
+                    "current_progress": self.current_progress,
+                    "played_sequence": self.played_sequence.copy()
                 })
                 return
-                
-            # Button 1: Stop storing
+
+            # Button 1: Delete last stored track
             if button == 1:
+                if self.played_sequence:
+                    self.played_sequence.pop()
+
                 self.storing = False
-                self.current_progress = 0
-                self.played_sequence = []
+                self.current_progress = len(self.played_sequence)
                 self._push({
                     "storing": False,
-                    "user_stopped": True,
                     "streak": self.streak,
                     "total_required": self.total_required,
-                    "current_progress": 0,
-                    "played_sequence": []
+                    "current_progress": self.current_progress,
+                    "played_sequence": self.played_sequence.copy()
                 })
                 return
-                
-            # Button 2: Reset attempt
+
+            # Button 2: Not used
             if button == 2:
-                self.current_progress = 0
-                self.played_sequence = []
-                self._push({
-                    "reset_attempt": True,
-                    "streak": self.streak,
-                    "total_required": self.total_required,
-                    "current_progress": 0,
-                    "played_sequence": []
-                })
                 return
                 
             # Button 0: Play track
@@ -363,6 +354,10 @@ class Puzzle4(BasePuzzle):
                 if self.storing:
                     if len(self.played_sequence) < len(required_order):
                         self.played_sequence.append(str(song))
+
+                    # One-shot recording: disarm after capturing one track.
+                    self.storing = False
+                    self.current_progress = len(self.played_sequence)
                         
                     # Check if sequence complete
                     if len(self.played_sequence) >= len(required_order):
@@ -381,7 +376,8 @@ class Puzzle4(BasePuzzle):
                                 "url": f"/static/{rel_path_full}",
                                 "duration": self._get_audio_duration(rel_path_full)
                             },
-                            "current_progress": len(self.played_sequence),
+                            "current_progress": self.current_progress,
+                            "storing": False,
                             "streak": self.streak,
                             "total_required": self.total_required,
                             "played_sequence": self.played_sequence.copy()
@@ -405,7 +401,8 @@ class Puzzle4(BasePuzzle):
                         "url": f"/static/{rel_path_full}",
                         "duration": self._get_audio_duration(rel_path_full)
                     },
-                    "current_progress": len(self.played_sequence),
+                    "current_progress": self.current_progress,
+                    "storing": self.storing,
                     "streak": self.streak,
                     "total_required": self.total_required,
                     "played_sequence": self.played_sequence.copy()
