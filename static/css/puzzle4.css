@@ -353,6 +353,45 @@ body::after {
         inset 0 0 20px rgba(45, 255, 155, 0.1);
 }
 
+/* ── Efecte verd mentre s'enregistra (contingut als contenidors) ── */
+@keyframes p4RecordingGlow {
+    0%   { box-shadow: inset 0 0 20px rgba(45,255,155,0.10), 0 0 18px rgba(45,255,155,0.18); border-color: rgba(45,255,155,0.45); }
+    50%  { box-shadow: inset 0 0 40px rgba(45,255,155,0.28), 0 0 40px rgba(45,255,155,0.50); border-color: rgba(45,255,155,0.90); }
+    100% { box-shadow: inset 0 0 20px rgba(45,255,155,0.10), 0 0 18px rgba(45,255,155,0.18); border-color: rgba(45,255,155,0.45); }
+}
+
+#puzzle4-shell.is-recording #status-section {
+    animation: p4RecordingGlow 2s ease-in-out infinite;
+    background: #073a24;
+}
+
+#puzzle4-shell.is-recording .streak-container.is-active {
+    animation: p4RecordingGlow 2s ease-in-out infinite;
+    background: #073a24;
+}
+
+/* ── Caixa "següent registre": brillo molt més intens ── */
+/* Truc: s'aplica a tots els slots buits, però el selector de germà el cancel·la
+   en tots els que tinguin un germà buit anterior — deixant-lo actiu només al primer buit */
+@keyframes p4NextSlotPulse {
+    0%   { box-shadow: 0 0 14px rgba(45,255,155,0.30), inset 0 0 14px rgba(45,255,155,0.14); border-color: rgba(45,255,155,0.55); background: var(--p4-terminal-icon) 50% 50% / 42px auto no-repeat, #073a24; }
+    50%  { box-shadow: 0 0 44px rgba(45,255,155,0.85), inset 0 0 28px rgba(45,255,155,0.40); border-color: rgba(45,255,155,1.00); background: var(--p4-terminal-icon) 50% 50% / 42px auto no-repeat, #0d5c38; }
+    100% { box-shadow: 0 0 14px rgba(45,255,155,0.30), inset 0 0 14px rgba(45,255,155,0.14); border-color: rgba(45,255,155,0.55); background: var(--p4-terminal-icon) 50% 50% / 42px auto no-repeat, #073a24; }
+}
+
+/* Aplica glow a tots els slots buits (sense .filled) */
+#puzzle4-shell.is-recording .streak-container.is-active .note-slot:not(.filled)::after {
+    animation: p4NextSlotPulse 2s ease-in-out infinite;
+}
+
+/* Cancel·la el glow als que tinguin un germà buit anterior (tots excepte el primer buit) */
+#puzzle4-shell.is-recording .streak-container.is-active .note-slot:not(.filled) ~ .note-slot:not(.filled)::after {
+    animation: none;
+    box-shadow: 0 0 18px rgba(69, 230, 255, 0.12);
+    border-color: rgba(69, 230, 255, 0.34);
+    background: var(--p4-terminal-icon) 50% 50% / 42px auto no-repeat, #081423;
+}
+
 #status-section.action-red {
     border-color: rgba(255, 79, 109, 0.5);
     background: #3d0d1a;

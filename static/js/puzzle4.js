@@ -374,6 +374,11 @@
             lastKnownStoring = d.storing;
         }
 
+        const shellEl = document.getElementById('puzzle4-shell');
+        if (typeof d.storing === 'boolean' && shellEl) {
+            shellEl.classList.toggle('is-recording', d.storing);
+        }
+
         if (d.reset_attempt) {
             showActionFeedback('action-white', 'Reseteando', 'action-white');
         } else if (d.play_mostra) {
