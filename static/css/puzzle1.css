@@ -45,7 +45,7 @@
     box-sizing: border-box;
     color: #ffffff;
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(1.8rem, 5.2vw, 5rem);
+    font-size: clamp(1.98rem, 5.45vw, 5.25rem);
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -53,8 +53,9 @@
     line-height: 1.05;
     text-align: center;
     white-space: nowrap;
-    max-width: 88%;
-    overflow: hidden;
+    padding-inline: clamp(6px, 1vw, 12px);
+    max-width: 96%;
+    overflow: visible;
 }
 
 .p1-solved-banner {
