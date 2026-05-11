@@ -1,18 +1,20 @@
 {
-  "repo_root": "/home/agusti/Documentos/repositori/piramide/jocPro",
-  "images_total": 114,
+  "repo_root": "/home/agusti/Documentos/repositori/jocPro",
+  "images_total": 176,
   "images_by_bucket": {
-    "old_pics": 52,
-    "shared": 22,
-    "puzzleFinal": 16,
+    "shared": 84,
+    "old_pics": 49,
+    "puzzle12": 19,
     "puzzle2": 12,
     "puzzle8": 10,
     "piramidetrans.png": 1,
     "puzzle3": 1
   },
   "images_by_subfolder": {
+    "shared/nuevos iconos": 38,
+    "shared/puzzle10": 24,
     "old_pics/puzzle7": 22,
-    "puzzleFinal/imatges": 16,
+    "puzzle12/imatges": 16,
     "shared/terminal_3d": 15,
     "puzzle2/symbols": 10,
     "old_pics/puzzle2": 6,
@@ -21,9 +23,11 @@
     "old_pics/puzzle9": 5,
     "shared/warnings": 4,
     "old_pics/puzzle1": 3,
-    "old_pics/puzzleFinal": 3,
     "old_pics/puzzle6": 2,
     "shared/gameplay": 2,
+    "puzzle12/good.png": 1,
+    "puzzle12/wait.png": 1,
+    "puzzle12/wrong.png": 1,
     "puzzle2/Laberint.png": 1,
     "puzzle2/LaberintVermell.png": 1,
     "puzzle3/intro": 1,
@@ -41,59 +45,127 @@
   },
   "top_referenced_image_urls": [
     {
-      "url": "/static/images/shared/gameplay/token_card.png",
-      "count": 49
+      "url": "/static/images/shared/nuevos",
+      "count": 159
     },
     {
-      "url": "/static/images/shared/warnings/restart_button.png",
-      "count": 38
+      "url": "/static/images/shared/gameplay/token_card.png",
+      "count": 60
     },
     {
       "url": "/static/images/shared/gameplay/terminal_box.png",
-      "count": 24
-    },
-    {
-      "url": "/static/images/shared/warnings/operation_error.png",
-      "count": 13
+      "count": 31
     },
     {
       "url": "/static/images/shared/terminal_3d/buttons_panel_front.png",
-      "count": 13
-    },
-    {
-      "url": "/static/images/shared/warnings/repeated_operation.png",
-      "count": 12
-    },
-    {
-      "url": "/static/images/shared/warnings/timeout.png",
-      "count": 12
-    },
-    {
-      "url": "/static/images/shared/terminal_3d/scanner_bar_off.png",
-      "count": 6
+      "count": 16
     },
     {
       "url": "/static/images/shared/terminal_3d/scanner_bar_on.png",
-      "count": 4
-    },
-    {
-      "url": "/static/images/puzzle2/symbols/symbol_6.png",
-      "count": 4
+      "count": 14
     },
     {
       "url": "/static/images/puzzle8/alpha.svg",
-      "count": 4
+      "count": 11
     },
     {
-      "url": "/static/images/shared/branding/logo_adn.png",
-      "count": 3
+      "url": "/static/images/shared/terminal_3d/scanner_bar_off.png",
+      "count": 10
     },
     {
-      "url": "/static/images/puzzle2/Laberint.png",
-      "count": 2
+      "url": "/static/images/shared/puzzle10/blank_token_slot.png",
+      "count": 10
+    },
+    {
+      "url": "/static/images/shared/warnings/restart_button.png",
+      "count": 9
     },
     {
       "url": "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+      "count": 6
+    },
+    {
+      "url": "/static/images/puzzle2/symbols/symbol_6.png",
+      "count": 6
+    },
+    {
+      "url": "/static/images/shared/puzzle10/tira_led_segment_green.png",
+      "count": 6
+    },
+    {
+      "url": "/static/images/shared/warnings/operation_error.png",
+      "count": 5
+    },
+    {
+      "url": "/static/images/shared/warnings/repeated_operation.png",
+      "count": 5
+    },
+    {
+      "url": "/static/images/shared/warnings/timeout.png",
+      "count": 5
+    },
+    {
+      "url": "/static/images/puzzle2/Laberint.png",
+      "count": 5
+    },
+    {
+      "url": "/static/images/puzzle2/LaberintVermell.png",
+      "count": 4
+    },
+    {
+      "url": "/static/images/shared/puzzle10/tira_led_segment_purple.png",
+      "count": 4
+    },
+    {
+      "url": "/static/images/shared/puzzle10/tira_led_segment_red.png",
+      "count": 4
+    },
+    {
+      "url": "/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+      "count": 4
+    },
+    {
+      "url": "/static/images/puzzle8/beta.svg",
+      "count": 3
+    },
+    {
+      "url": "/static/images/puzzle8/sigma.svg",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/grid_completo_actual.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/patron_terminal_01.svg",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/tira_led_pattern_01.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/terminal_box_led_purple.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/terminal_box_led_green.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/terminal_box_led_red.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/tira_led_empty.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/tira_led_progress_green_red.png",
+      "count": 2
+    },
+    {
+      "url": "/static/images/shared/puzzle10/patron_terminal_green_red_blue.svg",
       "count": 2
     },
     {
@@ -101,11 +173,11 @@
       "count": 2
     },
     {
-      "url": "/static/images/shared/warnings/",
+      "url": "/static/images/puzzle8/${item.symbol}.svg",
       "count": 1
     },
     {
-      "url": "/static/images/puzzle8/${item.symbol}.svg",
+      "url": "/static/images/shared/warnings/",
       "count": 1
     },
     {
@@ -113,81 +185,53 @@
       "count": 1
     },
     {
-      "url": "/static/images/puzzle2/LaberintVermell.png",
+      "url": "/static/images/shared/branding/logo_adn.png",
       "count": 1
     },
     {
-      "url": "/static/images/puzzle2/symbols/symbol_9.png",
+      "url": "/static/images/puzzle12/imatges/fase1_1.gif",
       "count": 1
     },
     {
-      "url": "/static/images/puzzle8/beta.svg",
+      "url": "/static/images/shared/terminal_3d/terminal_box_buttons_numbers_front.png",
+      "count": 1
+    },
+    {
+      "url": "/static/images/...",
       "count": 1
     },
     {
       "url": "/static/images/puzzle8/delta.svg",
       "count": 1
-    },
-    {
-      "url": "/static/images/puzzle8/epsilon.svg",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzle8/gamma.svg",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzle8/lambda.svg",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzle8/mu.svg",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzle8/omega.svg",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzle8/pi.svg",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzle8/sigma.svg",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzle2/symbols/symbol_${index}.png",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzleFinal/imatges/fase${streakId}_${giffIndex}.gif",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzleFinal/imatges/fase4_1.gif",
-      "count": 1
     }
   ],
   "dynamic_or_prefix_references": [
     {
-      "url": "/static/images/puzzle8/${safeSymbol}.svg",
-      "count": 2
+      "url": "/static/images/shared/nuevos",
+      "count": 159
     },
     {
-      "url": "/static/images/shared/warnings/",
-      "count": 1
+      "url": "/static/images/puzzle8/${safeSymbol}.svg",
+      "count": 2
     },
     {
       "url": "/static/images/puzzle8/${item.symbol}.svg",
       "count": 1
     },
     {
-      "url": "/static/images/puzzle2/symbols/symbol_${index}.png",
+      "url": "/static/images/shared/warnings/",
       "count": 1
     },
     {
-      "url": "/static/images/puzzleFinal/imatges/fase${streakId}_${giffIndex}.gif",
+      "url": "/static/images/...",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle12/imatges/fase${streakId}_${giffIndex}.gif",
+      "count": 1
+    },
+    {
+      "url": "/static/images/puzzle2/symbols/symbol_${index}.png",
       "count": 1
     }
   ],
@@ -216,6 +260,134 @@
       ]
     },
     {
+      "file": "scenes/catalog/image_semantics.json",
+      "references": [
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+        "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+        "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/operation_error.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/restart_button.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/repeated_operation.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/shared/warnings/timeout.png",
+        "/static/images/puzzle2/Laberint.png",
+        "/static/images/puzzle2/Laberint.png",
+        "/static/images/puzzle2/Laberint.png",
+        "/static/images/puzzle2/LaberintVermell.png",
+        "/static/images/puzzle2/LaberintVermell.png",
+        "/static/images/puzzle2/LaberintVermell.png",
+        "/static/images/puzzle2/symbols/symbol_6.png",
+        "/static/images/puzzle2/symbols/symbol_6.png",
+        "/static/images/puzzle2/symbols/symbol_6.png",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos"
+      ]
+    },
+    {
       "file": "scenes/catalog/intro_catalog.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
@@ -229,137 +401,194 @@
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_cronometro_v2/config.json",
+      "file": "scenes/source/intros/intro/scene_intro_simulacro/config.json",
       "references": [
-        "/static/images/shared/gameplay/token_card.png",
-        "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_energia_v2/config.json",
+      "file": "scenes/source/intros/intro_inicio/scene_intro_game/config.json",
       "references": [
-        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/branding/logo_adn.png",
         "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_laberinto_v2/config.json",
+      "file": "scenes/source/intros/intropuzzles/scene_intro_apreta_botons/config.json",
       "references": [
-        "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/nuevos",
+        "/static/images/puzzle12/imatges/fase1_1.gif",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_memory_v2/config.json",
+      "file": "scenes/source/intros/intropuzzles/scene_intro_cronometro/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
-        "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_musica_v2/config.json",
+      "file": "scenes/source/intros/intropuzzles/scene_intro_energia/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
-        "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_segments_v2/config.json",
+      "file": "scenes/source/intros/intropuzzles/scene_intro_laberinto/config.json",
       "references": [
-        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/puzzle2/Laberint.png",
         "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/puzzle2/LaberintVermell.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/puzzle2/symbols/symbol_6.png"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_sumas_cover_v2/config.json",
+      "file": "scenes/source/intros/intropuzzles/scene_intro_memory/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/nuevos",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/puzzle8/beta.svg",
+        "/static/images/puzzle8/alpha.svg",
+        "/static/images/puzzle8/beta.svg",
+        "/static/images/puzzle8/sigma.svg"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_sumas_v2/config.json",
+      "file": "scenes/source/intros/intropuzzles/scene_intro_musica/config.json",
+      "references": [
+        "/static/images/shared/nuevos",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/nuevos"
+      ]
+    },
+    {
+      "file": "scenes/source/intros/intropuzzles/scene_intro_segments/config.json",
+      "references": [
+        "/static/images/shared/puzzle10/grid_completo_actual.png",
+        "/static/images/shared/puzzle10/patron_terminal_01.svg",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/puzzle10/tira_led_segment_green.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/puzzle10/tira_led_segment_purple.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/puzzle10/tira_led_segment_red.png",
+        "/static/images/shared/puzzle10/tira_led_pattern_01.png",
+        "/static/images/shared/puzzle10/terminal_box_led_purple.png",
+        "/static/images/shared/puzzle10/terminal_box_led_green.png",
+        "/static/images/shared/puzzle10/terminal_box_led_red.png",
+        "/static/images/shared/puzzle10/tira_led_segment_purple.png",
+        "/static/images/shared/puzzle10/tira_led_segment_green.png",
+        "/static/images/shared/puzzle10/tira_led_segment_red.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/puzzle10/tira_led_empty.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/puzzle10/tira_led_segment_green.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/puzzle10/tira_led_progress_green_red.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+        "/static/images/shared/puzzle10/patron_terminal_green_red_blue.svg",
+        "/static/images/shared/nuevos"
+      ]
+    },
+    {
+      "file": "scenes/source/intros/intropuzzles/scene_intro_simulacro/config.json",
+      "references": [
+        "/static/images/shared/nuevos",
+        "/static/images/shared/gameplay/terminal_box.png"
+      ]
+    },
+    {
+      "file": "scenes/source/intros/intropuzzles/scene_intro_sumas/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_token_a_lloc_v2/config.json",
+      "file": "scenes/source/intros/intropuzzles/scene_intro_token_a_lloc/config.json",
       "references": [
-        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
         "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/gameplay/token_card.png"
       ]
     },
     {
-      "file": "scenes/generated/intro/scene_intro_trivial_v2/config.json",
+      "file": "scenes/source/intros/intropuzzles/scene_intro_trivial/config.json",
       "references": [
-        "/static/images/shared/gameplay/token_card.png",
-        "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/repeated_operation.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/shared/warnings/timeout.png",
-        "/static/images/shared/warnings/restart_button.png"
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos"
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_cronometro/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_cronometro/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/token_card.png",
@@ -371,7 +600,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_energia/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_energia/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/terminal_3d/scanner_bar_off.png",
@@ -385,18 +614,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_game/config.json",
-      "references": [
-        "/static/images/shared/branding/logo_adn.png",
-        "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/gameplay/token_card.png",
-        "/static/images/shared/gameplay/terminal_box.png",
-        "/static/images/shared/gameplay/token_card.png"
-      ]
-    },
-    {
-      "file": "scenes/source/intro/scene_intro_laberinto/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_laberinto/config.json",
       "references": [
         "/static/images/puzzle2/symbols/symbol_6.png",
         "/static/images/shared/gameplay/token_card.png",
@@ -406,21 +624,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_laberinto_cover/config.json",
-      "references": [
-        "/static/images/puzzle2/symbols/symbol_6.png",
-        "/static/images/shared/gameplay/token_card.png",
-        "/static/images/puzzle2/Laberint.png",
-        "/static/images/puzzle2/LaberintVermell.png",
-        "/static/images/shared/warnings/restart_button.png",
-        "/static/images/puzzle2/symbols/symbol_6.png",
-        "/static/images/puzzle2/symbols/symbol_9.png",
-        "/static/images/shared/warnings/operation_error.png",
-        "/static/images/shared/warnings/restart_button.png"
-      ]
-    },
-    {
-      "file": "scenes/source/intro/scene_intro_memory/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_memory/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/puzzle8/alpha.svg",
@@ -434,7 +638,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_musica/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_musica/config.json",
       "references": [
         "/static/images/shared/terminal_3d/buttons_panel_front.png",
         "/static/images/shared/gameplay/token_card.png",
@@ -445,7 +649,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_segments/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_segments/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/terminal_3d/buttons_panel_front.png",
@@ -459,7 +663,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_sumas/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_sumas/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/token_card.png",
@@ -469,7 +673,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_sumas_cover/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_sumas_cover/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/terminal_box.png",
@@ -482,7 +686,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_token_a_lloc/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_token_a_lloc/config.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/terminal_box.png",
@@ -492,7 +696,7 @@
       ]
     },
     {
-      "file": "scenes/source/intro/scene_intro_trivial/config.json",
+      "file": "scenes/source/old/intro_20260417_123014/scene_intro_trivial/config.json",
       "references": [
         "/static/images/shared/terminal_3d/buttons_panel_front.png",
         "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
@@ -502,26 +706,92 @@
       ]
     },
     {
-      "file": "scenes/source/outro/scene_outro_game/config.json",
-      "references": [
-        "/static/images/shared/branding/logo_adn.png",
-        "/static/images/shared/branding/logo_adn.png"
-      ]
-    },
-    {
-      "file": "scenes/source/outro/scene_video_final/config.json",
-      "references": [
-        "/static/images/shared/terminal_3d/buttons_panel_front.png",
-        "/static/images/shared/terminal_3d/buttons_panel_front.png"
-      ]
-    },
-    {
       "file": "scenes/templates/intro/puzzle_intro_template.json",
       "references": [
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/token_card.png",
         "/static/images/shared/gameplay/terminal_box.png",
         "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png"
+      ]
+    },
+    {
+      "file": "scripts/README.md",
+      "references": [
+        "/static/images/..."
+      ]
+    },
+    {
+      "file": "scripts/generate_intro_scene.py",
+      "references": [
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+        "/static/images/shared/terminal_3d/scanner_bar_off.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/puzzle10/grid_completo_actual.png",
+        "/static/images/shared/puzzle10/patron_terminal_01.svg",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/puzzle10/tira_led_segment_green.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/puzzle10/tira_led_segment_purple.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/puzzle10/tira_led_segment_red.png",
+        "/static/images/shared/puzzle10/tira_led_pattern_01.png",
+        "/static/images/shared/puzzle10/terminal_box_led_purple.png",
+        "/static/images/shared/puzzle10/terminal_box_led_green.png",
+        "/static/images/shared/puzzle10/terminal_box_led_red.png",
+        "/static/images/shared/puzzle10/tira_led_segment_purple.png",
+        "/static/images/shared/puzzle10/tira_led_segment_green.png",
+        "/static/images/shared/puzzle10/tira_led_segment_red.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/puzzle10/tira_led_empty.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/puzzle10/tira_led_segment_green.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/puzzle10/tira_led_progress_green_red.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+        "/static/images/shared/puzzle10/blank_token_slot.png",
+        "/static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+        "/static/images/shared/puzzle10/patron_terminal_green_red_blue.svg",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/gameplay/token_card.png",
+        "/static/images/shared/terminal_3d/buttons_panel_front.png",
+        "/static/images/shared/terminal_3d/scanner_bar_on.png",
+        "/static/images/shared/gameplay/terminal_box.png",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/nuevos",
+        "/static/images/shared/terminal_3d/terminal_box_buttons_numbers_front.png"
+      ]
+    },
+    {
+      "file": "static/css/puzzle4.css",
+      "references": [
         "/static/images/shared/gameplay/terminal_box.png"
       ]
     },
@@ -541,10 +811,9 @@
       ]
     },
     {
-      "file": "static/js/puzzleFinal.js",
+      "file": "static/js/puzzle12.js",
       "references": [
-        "/static/images/puzzleFinal/imatges/fase${streakId}_${giffIndex}.gif",
-        "/static/images/puzzleFinal/imatges/fase4_1.gif"
+        "/static/images/puzzle12/imatges/fase${streakId}_${giffIndex}.gif"
       ]
     },
     {
@@ -609,10 +878,26 @@
     "static/images/old_pics/puzzle9/half.png",
     "static/images/old_pics/puzzle9/start.png",
     "static/images/old_pics/puzzle9/wrong.png",
-    "static/images/old_pics/puzzleFinal/good.png",
-    "static/images/old_pics/puzzleFinal/wait.png",
-    "static/images/old_pics/puzzleFinal/wrong.png",
     "static/images/piramidetrans.png",
+    "static/images/puzzle12/good.png",
+    "static/images/puzzle12/imatges/fase1_1.gif",
+    "static/images/puzzle12/imatges/fase1_2.gif",
+    "static/images/puzzle12/imatges/fase1_3.gif",
+    "static/images/puzzle12/imatges/fase1_4.gif",
+    "static/images/puzzle12/imatges/fase1_5.gif",
+    "static/images/puzzle12/imatges/fase2_1.gif",
+    "static/images/puzzle12/imatges/fase2_2.gif",
+    "static/images/puzzle12/imatges/fase2_3.gif",
+    "static/images/puzzle12/imatges/fase2_4.gif",
+    "static/images/puzzle12/imatges/fase2_5.gif",
+    "static/images/puzzle12/imatges/fase3_1.gif",
+    "static/images/puzzle12/imatges/fase3_2.gif",
+    "static/images/puzzle12/imatges/fase3_3.gif",
+    "static/images/puzzle12/imatges/fase3_4.gif",
+    "static/images/puzzle12/imatges/fase3_5.gif",
+    "static/images/puzzle12/imatges/fase4_1.gif",
+    "static/images/puzzle12/wait.png",
+    "static/images/puzzle12/wrong.png",
     "static/images/puzzle2/Laberint.png",
     "static/images/puzzle2/LaberintVermell.png",
     "static/images/puzzle2/symbols/symbol_0.png",
@@ -636,25 +921,71 @@
     "static/images/puzzle8/omega.svg",
     "static/images/puzzle8/pi.svg",
     "static/images/puzzle8/sigma.svg",
-    "static/images/puzzleFinal/imatges/fase1_1.gif",
-    "static/images/puzzleFinal/imatges/fase1_2.gif",
-    "static/images/puzzleFinal/imatges/fase1_3.gif",
-    "static/images/puzzleFinal/imatges/fase1_4.gif",
-    "static/images/puzzleFinal/imatges/fase1_5.gif",
-    "static/images/puzzleFinal/imatges/fase2_1.gif",
-    "static/images/puzzleFinal/imatges/fase2_2.gif",
-    "static/images/puzzleFinal/imatges/fase2_3.gif",
-    "static/images/puzzleFinal/imatges/fase2_4.gif",
-    "static/images/puzzleFinal/imatges/fase2_5.gif",
-    "static/images/puzzleFinal/imatges/fase3_1.gif",
-    "static/images/puzzleFinal/imatges/fase3_2.gif",
-    "static/images/puzzleFinal/imatges/fase3_3.gif",
-    "static/images/puzzleFinal/imatges/fase3_4.gif",
-    "static/images/puzzleFinal/imatges/fase3_5.gif",
-    "static/images/puzzleFinal/imatges/fase4_1.gif",
     "static/images/shared/branding/logo_adn.png",
     "static/images/shared/gameplay/terminal_box.png",
     "static/images/shared/gameplay/token_card.png",
+    "static/images/shared/nuevos iconos/alerta.png",
+    "static/images/shared/nuevos iconos/altavoz.png",
+    "static/images/shared/nuevos iconos/apretar boton.png",
+    "static/images/shared/nuevos iconos/base nfc con token.png",
+    "static/images/shared/nuevos iconos/base nfc.png",
+    "static/images/shared/nuevos iconos/botones colores amarillo.png",
+    "static/images/shared/nuevos iconos/botones colores azul.png",
+    "static/images/shared/nuevos iconos/botones colores blanco.png",
+    "static/images/shared/nuevos iconos/botones colores negro.png",
+    "static/images/shared/nuevos iconos/botones colores rojo.png",
+    "static/images/shared/nuevos iconos/botones colores verde.png",
+    "static/images/shared/nuevos iconos/botones colores.png",
+    "static/images/shared/nuevos iconos/checklist.png",
+    "static/images/shared/nuevos iconos/decision_rapida.png",
+    "static/images/shared/nuevos iconos/equipo_consenso.png",
+    "static/images/shared/nuevos iconos/error atencion.png",
+    "static/images/shared/nuevos iconos/flecha.png",
+    "static/images/shared/nuevos iconos/letra griega roja.png",
+    "static/images/shared/nuevos iconos/letra griega.png",
+    "static/images/shared/nuevos iconos/memoria.png",
+    "static/images/shared/nuevos iconos/panel numeros.png",
+    "static/images/shared/nuevos iconos/pregunta.png",
+    "static/images/shared/nuevos iconos/progreso_objetivo.png",
+    "static/images/shared/nuevos iconos/racha_aciertos.png",
+    "static/images/shared/nuevos iconos/reloj tiempo.png",
+    "static/images/shared/nuevos iconos/repetir.png",
+    "static/images/shared/nuevos iconos/reproducir_musica.svg",
+    "static/images/shared/nuevos iconos/reset.png",
+    "static/images/shared/nuevos iconos/respuesta_correcta.png",
+    "static/images/shared/nuevos iconos/respuesta_incorrecta.png",
+    "static/images/shared/nuevos iconos/resultado_pantalla.png",
+    "static/images/shared/nuevos iconos/secuencia_audios.png",
+    "static/images/shared/nuevos iconos/simbolo_mas.svg",
+    "static/images/shared/nuevos iconos/temporizador.png",
+    "static/images/shared/nuevos iconos/termial con token.png",
+    "static/images/shared/nuevos iconos/tira led.png",
+    "static/images/shared/nuevos iconos/veredicto_error.png",
+    "static/images/shared/nuevos iconos/veredicto_ok.png",
+    "static/images/shared/puzzle10/blank_token_slot.png",
+    "static/images/shared/puzzle10/equiv_screen_pattern_green_red_blue.png",
+    "static/images/shared/puzzle10/equiv_terminal_led_green_red_blue.png",
+    "static/images/shared/puzzle10/grid_completo_actual.png",
+    "static/images/shared/puzzle10/patron_terminal_01.svg",
+    "static/images/shared/puzzle10/patron_terminal_01_empty.svg",
+    "static/images/shared/puzzle10/patron_terminal_01_lit_1.svg",
+    "static/images/shared/puzzle10/patron_terminal_01_lit_2.svg",
+    "static/images/shared/puzzle10/patron_terminal_green_red_blue.svg",
+    "static/images/shared/puzzle10/terminal_box_led_green.png",
+    "static/images/shared/puzzle10/terminal_box_led_purple.png",
+    "static/images/shared/puzzle10/terminal_box_led_red.png",
+    "static/images/shared/puzzle10/terminal_segment_01_lit.svg",
+    "static/images/shared/puzzle10/tira_led_empty.png",
+    "static/images/shared/puzzle10/tira_led_pattern_01.png",
+    "static/images/shared/puzzle10/tira_led_progress_green_red.png",
+    "static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+    "static/images/shared/puzzle10/tira_led_segment_green.png",
+    "static/images/shared/puzzle10/tira_led_segment_purple.png",
+    "static/images/shared/puzzle10/tira_led_segment_red.png",
+    "static/images/shared/puzzle10/tira_led_stage_empty.png",
+    "static/images/shared/puzzle10/tira_led_stage_green_left.png",
+    "static/images/shared/puzzle10/tira_led_stage_green_red_blue_left.png",
+    "static/images/shared/puzzle10/tira_led_stage_green_red_right.png",
     "static/images/shared/terminal_3d/buttons_panel_front.png",
     "static/images/shared/terminal_3d/buttons_panel_perspective.png",
     "static/images/shared/terminal_3d/display_plate_blank_dark.png",
