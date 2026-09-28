@@ -16,7 +16,7 @@ class Puzzle8(BasePuzzle):
         self.token_numbers = [18, 14, 17, 5, 20, 10, 13, 31, 35, 22]
         
         # Round configuration
-        self.round_total = 2 #You can set this to 1, 2, or 3 for different difficulty levels
+        self.round_total = 1 #You can set this to 1, 2, or 3 for different difficulty levels
         self.round = 0
         self.phase = "idle"
         self._timers = []

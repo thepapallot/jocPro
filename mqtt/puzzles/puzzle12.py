@@ -12,7 +12,7 @@ class Puzzle12(BasePuzzle):
         self.processing_wrong_result = False
         self.current_giff = 0
         self.current_streak = 0
-        self.streaks = 2 #You can set this to 1, 2, or 3 for different difficulty levels
+        self.streaks = 1 #You can set this to 1, 2, or 3 for different difficulty levels
         self.counters = [
             { "id": 1, "duration": 30, "num_giff": 5 },
             { "id": 2, "duration": 45, "num_giff": 5 },

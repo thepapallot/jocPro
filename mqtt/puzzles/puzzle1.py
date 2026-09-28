@@ -15,7 +15,7 @@ class Puzzle1(BasePuzzle):
         self.processing_wrong_result = False
         self.countdown_next_round_active = False
         self.round = 1
-        self.round_sizes = {1: 8, 2: 15}
+        self.round_sizes = {1: 15}
         self.total_rounds = len(self.round_sizes)
         self.incorrect_feedback_seconds = 5
         
