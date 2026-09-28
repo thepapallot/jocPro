@@ -1,6 +1,7 @@
 (function() {
     const PHASE_POPUP_DELAY_MS = 500;
     const PHASE_POPUP_VISIBLE_MS = 3000;
+    const puzzleShellEl = document.getElementById('puzzle5-shell');
     const objectiveCardEl = document.getElementById('objective-card');
     const briefObjectiveEl = document.getElementById('brief-objective');
     const briefObjectiveValueEl = document.getElementById('brief-objective-value');
@@ -72,10 +73,15 @@
     }
 
     function setDisplayMode(mode = 'play') {
-        if (!objectiveCardEl) return;
-        objectiveCardEl.classList.toggle('is-countdown', mode === 'countdown');
+        const isCountdown = mode === 'countdown';
+        if (puzzleShellEl) {
+            puzzleShellEl.classList.toggle('is-countdown', isCountdown);
+        }
+        if (objectiveCardEl) {
+            objectiveCardEl.classList.toggle('is-countdown', isCountdown);
+        }
         if (briefObjectiveEl) {
-            briefObjectiveEl.classList.toggle('is-hidden', mode === 'countdown');
+            briefObjectiveEl.classList.toggle('is-hidden', isCountdown);
         }
     }
 
@@ -286,6 +292,10 @@
             if (timeEl) {
                 timeEl.textContent = '';
             }
+            const errorEl = box.querySelector('.box-error');
+            if (errorEl) {
+                errorEl.textContent = '';
+            }
         });
         
         // Fill boxes for players who submitted times
@@ -306,6 +316,13 @@
                         // Display objective + error time
                         const totalTime = objective + item.time;
                         timeEl.textContent = `${totalTime.toFixed(1)}`;
+                    }
+
+                    const errorEl = box.querySelector('.box-error');
+                    if (errorEl) {
+                        // The shared margin sums absolute errors, so show the
+                        // same positive contribution for this terminal.
+                        errorEl.textContent = `ERROR: ${Math.abs(item.time).toFixed(1)} S`;
                     }
                 }
             });

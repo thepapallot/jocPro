@@ -8,13 +8,22 @@
 
 {% block top_right %}
 <div id="streak-panel">
-    <div id="streak">1/2</div>
+    <div id="streak">1/1</div>
 </div>
 {% endblock %}
 
 {% block puzzle_content %}
 <div id="puzzle5-shell">
     <aside id="time-brief" class="time-panel">
+        <div id="p5-clock-display" aria-hidden="true">
+            <div class="p5-clock-aura"></div>
+            <div class="p5-clock-face">
+                <span class="p5-clock-hand p5-clock-hand-hour"></span>
+                <span class="p5-clock-hand p5-clock-hand-minute"></span>
+                <span class="p5-clock-core"></span>
+            </div>
+        </div>
+
         <div id="brief-objective">
             <div class="brief-objective-glow" aria-hidden="true"></div>
             <div class="brief-objective-rings" aria-hidden="true">
@@ -28,19 +37,6 @@
             </div>
         </div>
 
-        <div id="round-rail">
-            <div class="rail-header">
-                <span class="rail-meta">2 fases</span>
-            </div>
-            <div id="round-steps">
-                <div class="round-step is-current" data-round-step="1">
-                    <span class="step-time">10 s</span>
-                </div>
-                <div class="round-step" data-round-step="2">
-                    <span class="step-time">30 s</span>
-                </div>
-            </div>
-        </div>
     </aside>
 
     <section id="chrono-stage" class="time-panel">
@@ -70,6 +66,7 @@
                     <div class="time-ring"></div>
                     <div class="box-time"></div>
                 </div>
+                <div class="box-error" aria-label="Error individual"></div>
             </div>
             {% endfor %}
         </div>
