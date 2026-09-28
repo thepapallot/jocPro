@@ -32,7 +32,6 @@ class Puzzle2(BasePuzzle):
         self.alarm_timer = None
         self.input_blocked = False
         self.block_until = 0
-        self.errorsToReset = 3
         self.error_counter = 0
         
     def _snapshot(self):
@@ -224,45 +223,14 @@ class Puzzle2(BasePuzzle):
             else:
                 # Wrong symbol - increment shared error counter
                 self.error_counter += 1
-                print(f"[Puzzle2] Error by player {player}, counter {self.error_counter}/{self.errorsToReset}")
+                print(f"[Puzzle2] Error by player {player}, counter {self.error_counter}")
 
-                if self.error_counter >= self.errorsToReset:
-                    # Threshold reached: reset all non-finished players
-                    self.error_counter = 0
-                    for p in self.progress:
-                        if self.progress[p] < 5:
-                            self.progress[p] = 0
-
-                    # Block input during error animation (4 seconds)
-                    self.input_blocked = True
-                    self.block_until = time.time() + 4
-
-                    self._push({
-                        "players": self._snapshot(),
-                        "error_reset": {
-                            "player": player,
-                            "symbol": symbol,
-                            "expected": expected
-                        },
-                        "error_counter": 0
-                    })
-
-                    # Unblock after 4 seconds
-                    def _unblock_later():
-                        time.sleep(4)
-                        with self.lock:
-                            self.input_blocked = False
-                            print(f"[Puzzle2] Error flash finished, input unblocked")
-
-                    threading.Thread(target=_unblock_later, daemon=True).start()
-
-                else:
-                    # Counter not yet at threshold: flash the erroring player only
-                    self._push({
-                        "error_increment": {
-                            "player": player,
-                            "symbol": symbol,
-                            "expected": expected
-                        },
-                        "error_counter": self.error_counter
-                    })
+                # Report errors without resetting progress or blocking input.
+                self._push({
+                    "error_increment": {
+                        "player": player,
+                        "symbol": symbol,
+                        "expected": expected
+                    },
+                    "error_counter": self.error_counter
+                })
