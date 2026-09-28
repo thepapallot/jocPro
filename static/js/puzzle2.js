@@ -13,16 +13,10 @@
     const CORRECT_SOUND_URL = "/static/audios/effects/correcte.wav";
     const INCORRECT_SOUND_URL = "/static/audios/effects/incorrecte.wav";
     const PHASE_COMPLETE_SOUND_URL = "/static/audios/effects/fase_completada.wav";
-    const PHASE_RESET_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
     const progressByPlayer = {};
     const errorsByPlayer = {};
     let sharedErrorCounter = 0;
-    let holdErrorCounterAtMax = false;
-    const prevProgress = {}; // keep only for snapshot rendering after error flash
-    let errorBlockUntil = 0;
-    const activeErrorPlayers = new Set();
-    let queuedSnapshot = null;
     let alarmFlashTimeout = null;
 
     // NEW: alarm flash toggler during transition
@@ -64,8 +58,7 @@
 
     function updateErrorsHud() {
         if (errorCounterEl) {
-            errorCounterEl.textContent = `${sharedErrorCounter}/3`;
-            errorCounterEl.classList.toggle("is-critical", holdErrorCounterAtMax || sharedErrorCounter >= 3);
+            errorCounterEl.textContent = String(sharedErrorCounter);
         }
 
         for (let player = 1; player <= PLAYER_COUNT; player++) {
@@ -82,14 +75,7 @@
             errorsByPlayer[player] = (errorsByPlayer[player] || 0) + 1;
         }
         if (typeof counterValue === "number") {
-            if (counterValue === 0) {
-                // Keep 3/3 visible during the reset flash until progress is reapplied.
-                holdErrorCounterAtMax = true;
-                sharedErrorCounter = 3;
-            } else {
-                holdErrorCounterAtMax = false;
-                sharedErrorCounter = counterValue;
-            }
+            sharedErrorCounter = counterValue;
         }
         updateErrorsHud();
     }
@@ -132,7 +118,6 @@
         const el = document.getElementById(`bar-player-${player}`);
         if (!el) return;
         progressByPlayer[player] = progress;
-        prevProgress[player] = progress; // update cache for later snapshots
         el.classList.toggle("has-progress", progress > 0);
         el.dataset.progress = String(progress);
         el.querySelectorAll(".progress-cell").forEach((cell, index) => {
@@ -149,7 +134,6 @@
 
     function applySnapshot(players) {
         players.forEach(p => {
-            prevProgress[p.player] = p.progress;
             setProgress(p.player, p.progress);
         });
     }
@@ -170,51 +154,6 @@
     function playSound(url) {
         const audio = new Audio(url);
         audio.play().catch(err => console.warn("Audio play failed:", err));
-    }
-
-    function startErrorFlash(player) {
-        errorBlockUntil = Date.now() + 4000;
-        activeErrorPlayers.add(player);
-        const barInner = document.getElementById(`bar-player-${player}`);
-        const row = document.querySelector(`.player-row[data-player="${player}"]`);
-        const errorRow = document.querySelector(`.error-row[data-player="${player}"]`);
-        const barOuter = row ? row.querySelector('.bar-outer') : null;
-        const label = row ? row.querySelector('.player-label') : null;
-
-        if (barInner) barInner.classList.add("error-flash");
-        if (barOuter) barOuter.classList.add("error-flash");
-        if (label) label.classList.add("error-flash");
-        if (row) row.classList.add("error-flash");
-        if (errorRow) errorRow.classList.add("error-flash");
-
-        setTimeout(() => {
-            const elInner = document.getElementById(`bar-player-${player}`);
-            const elRow = document.querySelector(`.player-row[data-player="${player}"]`);
-            const elErrorRow = document.querySelector(`.error-row[data-player="${player}"]`);
-            const elOuter = elRow ? elRow.querySelector('.bar-outer') : null;
-            const elLabel = elRow ? elRow.querySelector('.player-label') : null;
-
-            if (elInner) elInner.classList.remove("error-flash");
-            if (elOuter) elOuter.classList.remove("error-flash");
-            if (elLabel) elLabel.classList.remove("error-flash");
-            if (elRow) elRow.classList.remove("error-flash");
-            if (elErrorRow) elErrorRow.classList.remove("error-flash");
-
-            activeErrorPlayers.delete(player);
-            if (activeErrorPlayers.size === 0) {
-                errorBlockUntil = 0;
-                if (queuedSnapshot) {
-                    playSound(PHASE_RESET_SOUND_URL);
-                    applySnapshot(queuedSnapshot);
-                    queuedSnapshot = null;
-                    if (holdErrorCounterAtMax) {
-                        holdErrorCounterAtMax = false;
-                        sharedErrorCounter = 0;
-                        updateErrorsHud();
-                    }
-                }
-            }
-        }, 4000);
     }
 
     function startErrorFlashOnly(player) {
@@ -248,36 +187,16 @@
     function handleUpdate(data) {
         if (data.puzzle_id !== 2) return;
 
-        if (typeof data.error_counter === "number" && !(holdErrorCounterAtMax && data.error_counter === 0)) {
+        if (typeof data.error_counter === "number") {
             sharedErrorCounter = data.error_counter;
             updateErrorsHud();
         }
 
-        const inErrorBlock = errorBlockUntil && Date.now() < errorBlockUntil;
-        if (inErrorBlock) {
-            if (data.players) queuedSnapshot = data.players;
-            if (data.puzzle_solved && !redirected) {
-                redirected = true;
-                playSound(PUZZLE_COMPLETE_SOUND_URL); // NEW
-                setTimeout(() => { window.location.href = `/puzzleSuperat/2`; }, 1000);
-            }
-            return;
-        }
-
-        // Error increment (counter not yet at threshold): flash erroring player only, no reset
+        // Count every error and flash the player without resetting progress.
         if (data.error_increment) {
             registerError(data.error_increment.player, data.error_counter);
             playSound(INCORRECT_SOUND_URL);
             startErrorFlashOnly(data.error_increment.player);
-            return;
-        }
-
-        // Error reset (counter reached threshold): queue reset snapshot and flash
-        if (data.error_reset) {
-            registerError(data.error_reset.player, data.error_counter);
-            playSound(INCORRECT_SOUND_URL);
-            if (data.players) queuedSnapshot = data.players;
-            startErrorFlash(data.error_reset.player);
             return;
         }
 
@@ -369,16 +288,11 @@
                     }))
                 });
             },
-            error(player = 1, progressList = null) {
+            error(player = 1) {
                 handleUpdate({
                     puzzle_id: 2,
-                    error_reset: { player },
-                    players: progressList
-                        ? progressList.map((progress, index) => ({
-                            player: index + 1,
-                            progress
-                        }))
-                        : undefined
+                    error_increment: { player },
+                    error_counter: sharedErrorCounter + 1
                 });
             },
             alarm(on = true) {
@@ -408,7 +322,7 @@
             },
             demoError() {
                 this.snapshot([2, 3, 1, 4, 2, 0, 3, 1, 2, 4]);
-                setTimeout(() => this.error(4, [2, 3, 1, 0, 2, 0, 3, 1, 2, 4]), 300);
+                setTimeout(() => this.error(4), 300);
             },
             demoSolved() {
                 this.snapshot([5, 5, 5, 5, 5, 5, 5, 5, 5, 5]);
@@ -424,7 +338,6 @@
                 if (!data || data.puzzle_id !== 2) return;
                 if (data.players) applySnapshot(data.players);
                 if (typeof data.error_counter === "number") {
-                    holdErrorCounterAtMax = false;
                     sharedErrorCounter = data.error_counter;
                     updateErrorsHud();
                 }
@@ -442,7 +355,6 @@
             setProgress(player, 0);
             errorsByPlayer[player] = 0;
         }
-        holdErrorCounterAtMax = false;
         sharedErrorCounter = 0;
         updateErrorsHud();
         updateHudState();
