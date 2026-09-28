@@ -9,8 +9,8 @@ class Puzzle5(BasePuzzle):
         self.initial_countdown_seconds = 5
         
         # Round configuration
-        self.round_objectives = {1: 10, 2: 30}  # Target times per round (seconds)
-        self.round_limits = {1: 15, 2: 25}      # Maximum total error allowed per round
+        self.round_objectives = {1: 30}  # Target times per round (seconds)
+        self.round_limits = {1: 20}      # Maximum total error allowed per round
         self.total_rounds = len(self.round_objectives)
         
         # State
