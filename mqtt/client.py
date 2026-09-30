@@ -201,7 +201,10 @@ class MQTTClient:
             self.stop_current_puzzle()
             self.current_puzzle_id = puzzle_id
             self.puzzles[puzzle_id].reset()
-            self._record_puzzle_start_locked(puzzle_id)
+            initial_round = getattr(self.puzzles[puzzle_id], "round", 1)
+            if not isinstance(initial_round, int) or initial_round < 1:
+                initial_round = 1
+            self._record_puzzle_start_locked(puzzle_id, round_num=initial_round)
             self.send_message("FROM_FLASK", f"P{puzzle_id}Start")
             
     def stop_current_puzzle(self):
