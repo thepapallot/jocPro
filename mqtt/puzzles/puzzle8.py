@@ -15,8 +15,12 @@ class Puzzle8(BasePuzzle):
         # Token numbers for each box
         self.token_numbers = [18, 14, 17, 5, 20, 10, 13, 31, 35, 22]
         
-        # Round configuration
-        self.round_total = 1 #You can set this to 1, 2, or 3 for different difficulty levels
+        # Configure which original rounds are played, in order.
+        # Examples: [1, 2], [2, 3], [2]
+        self.active_rounds = self._normalize_active_rounds([2])
+        self.round_total = len(self.active_rounds)
+        self.visible_rounds = self.active_rounds[:]
+        self.current_round_index = 0
         self.round = 0
         self.phase = "idle"
         self._timers = []
@@ -48,8 +52,24 @@ class Puzzle8(BasePuzzle):
         self.number_to_code_map = {number: code for code, number in self.numbers_code_map.items()}
         self.color_name_to_code = {name: code for code, name in self.color_code_map.items()}
 
+    def _normalize_active_rounds(self, rounds):
+        normalized = []
+        seen = set()
+        for round_num in rounds:
+            if round_num not in (1, 2, 3) or round_num in seen:
+                continue
+            normalized.append(round_num)
+            seen.add(round_num)
+        if not normalized:
+            raise ValueError("Puzzle8 requires at least one unique round between 1 and 3")
+        return normalized
+
     def _push(self, data):
-        payload = {"round_total": self.round_total}
+        payload = {
+            "round_total": self.round_total,
+            "visible_rounds": self.visible_rounds[:],
+            "round_index": self.current_round_index + 1,
+        }
         payload.update(data)
         super()._push(payload)
         
@@ -73,7 +93,8 @@ class Puzzle8(BasePuzzle):
         super().reset()
         with self.lock:
             self._cancel_timers()
-            self.round = 1
+            self.current_round_index = 0
+            self.round = self.active_rounds[self.current_round_index]
             self.phase = "idle"
             self.target_symbols_order = []
             self.target_colors_per_symbol = {}
@@ -167,6 +188,8 @@ class Puzzle8(BasePuzzle):
             state = {
                 "puzzle_id": self.id,
                 "round_total": self.round_total,
+                "visible_rounds": self.visible_rounds[:],
+                "round_index": self.current_round_index + 1,
                 "round": self.round,
                 "phase": self.phase,
                 "puzzle_solved": self.solved
@@ -180,7 +203,12 @@ class Puzzle8(BasePuzzle):
                 
             elif self.phase == "tokens":
                 # Serve currently displayed part
-                if self.target_sets:
+                if self.round == 2 and len(self.target_sets) == 2:
+                    state["symbol_sets"] = [target_set["symbols"][:] for target_set in self.target_sets]
+                    state["color_sets"] = [target_set["colors"].copy() for target_set in self.target_sets]
+                    state["symbols"] = self.target_sets[0]["symbols"][:]
+                    state["colors"] = self.target_sets[0]["colors"].copy()
+                elif self.target_sets:
                     part = max(0, min(self._tokens_part, len(self.target_sets) - 1))
                     current = self.target_sets[part]
                     state["symbols"] = current["symbols"][:]
@@ -274,8 +302,15 @@ class Puzzle8(BasePuzzle):
                 self.target_symbols_order = symbols1[:]
                 self.target_colors_per_symbol = colors1.copy()
                 
-                self._push({"round": self.round, "phase": self.phase,"symbols": symbols1, "colors": colors1})
-                self._schedule(self._show_tokens_part2, 3)
+                self._push({
+                    "round": self.round,
+                    "phase": self.phase,
+                    "symbols": symbols1,
+                    "colors": colors1,
+                    "symbol_sets": [symbols1, symbols2],
+                    "color_sets": [colors1, colors2],
+                })
+                self._schedule(self._enter_input_phase, 6)
                 
             # Round 1: Single set (5s)
             else:
@@ -403,7 +438,8 @@ class Puzzle8(BasePuzzle):
             with self.lock:
                 # saltarPuzzle: treat round 1 success as a full win
                 saltar = self.saltarPuzzle
-                if success and (self.round >= self.round_total or saltar):
+                is_last_round = self.current_round_index >= self.round_total - 1
+                if success and (is_last_round or saltar):
                     # Puzzle solved!
                     self.solved = True
                     self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
@@ -416,8 +452,9 @@ class Puzzle8(BasePuzzle):
                 self.player_symbols.clear()
                 self._push({"clear": True})
                 
-                if success and self.round < self.round_total:
-                    self.round += 1
+                if success and not is_last_round:
+                    self.current_round_index += 1
+                    self.round = self.active_rounds[self.current_round_index]
                     self.mqtt_client.start_next_round(self.id, self.round)
                     
                 self._schedule(self._show_numbers, 5)

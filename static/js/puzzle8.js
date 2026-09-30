@@ -7,12 +7,16 @@
     let solved = false;
     let totalRounds = 3;
     let activeRound = 1;
-    let completedRounds = 0;
+    let activeRoundIndex = 1;
     let phasePopupTimer = null;
     let phasePopupDelayTimer = null;
     const roundCards = Array.from(document.querySelectorAll('.round-card'));
     const grid = document.getElementById('p8-grid');
     const roundsContainer = document.getElementById('p8-rounds');
+    let visibleRounds = roundCards
+        .map(card => Number(card.dataset.roundCard))
+        .filter(round => Number.isInteger(round) && round >= 1);
+    const completedRoundNumbers = new Set();
     let phasePopupEl = null;
     let phasePopupTextEl = null;
 
@@ -111,6 +115,32 @@
         });
     }
 
+    function renderSymbolSets(symbolSets, colorSets) {
+        if (!Array.isArray(symbolSets) || symbolSets.length === 0) return;
+        const slots = document.querySelectorAll('#p8-grid .p8-slot');
+        slots.forEach(slot => {
+            const idx = Number(slot.getAttribute('data-index'));
+            slot.innerHTML = '';
+            slot.classList.remove('p8-duo', 'p8-trio');
+
+            symbolSets.forEach((symbols, setIndex) => {
+                if (!Array.isArray(symbols)) return;
+                const name = symbols[idx];
+                if (!name) return;
+                const el = createSymbolElement(name);
+                const colors = Array.isArray(colorSets) ? colorSets[setIndex] : null;
+                const color = colors && typeof colors === 'object' ? colors[name] : null;
+                if (typeof color === 'string' && color) {
+                    el.classList.add(`${COLOR_PREFIX}${color}`);
+                }
+                slot.appendChild(el);
+            });
+
+            if (slot.children.length === 2) slot.classList.add('p8-duo');
+            if (slot.children.length === 3) slot.classList.add('p8-trio');
+        });
+    }
+
     // Render or reuse a symbol in a slot on demand
     function ensureSymbolAt(boxIndex, symbolOverride) {
         const slot = document.querySelector(`#p8-grid .p8-slot[data-index="${boxIndex}"]`);
@@ -156,6 +186,23 @@
         el.classList.add(`${COLOR_PREFIX}${color}`);
     }
 
+    function refreshRoundCards() {
+        roundCards.forEach(card => {
+            const cardRound = Number(card.dataset.roundCard);
+            const isVisible = visibleRounds.includes(cardRound) && cardRound <= totalRounds;
+            card.hidden = !isVisible;
+            card.classList.remove('is-active', 'is-complete');
+            if (!isVisible) {
+                return;
+            }
+            if (completedRoundNumbers.has(cardRound)) {
+                card.classList.add('is-complete');
+            } else if (cardRound === activeRound) {
+                card.classList.add('is-active');
+            }
+        });
+    }
+
     function setRoundTotal(nextTotal) {
         if (!Number.isInteger(nextTotal) || nextTotal < 1) return;
         totalRounds = nextTotal;
@@ -163,34 +210,37 @@
             roundsContainer.dataset.roundTotal = String(totalRounds);
             roundsContainer.classList.remove('is-pending');
         }
-        roundCards.forEach(card => {
-            const cardRound = Number(card.dataset.roundCard);
-            card.hidden = cardRound > totalRounds;
-        });
+        refreshRoundCards();
     }
 
-    // NEW: update top-right streak
-    function updateStreak(round) {
+    function setVisibleRounds(nextRounds) {
+        if (!Array.isArray(nextRounds)) return;
+        const parsedRounds = nextRounds
+            .map(round => Number(round))
+            .filter(round => Number.isInteger(round) && round >= 1);
+        if (!parsedRounds.length) return;
+        visibleRounds = parsedRounds;
+        refreshRoundCards();
+    }
+
+    function getRoundIndex(round) {
+        if (!Number.isInteger(round)) return null;
+        const index = visibleRounds.indexOf(round);
+        return index >= 0 ? index + 1 : null;
+    }
+
+    function updateStreak(roundIndex, roundLabel) {
         const el = document.getElementById('streak');
-        if (Number.isInteger(round) && round >= 1) {
-            activeRound = Math.min(round, totalRounds);
-            completedRounds = Math.max(completedRounds, Math.max(0, activeRound - 1));
+        if (Number.isInteger(roundIndex) && roundIndex >= 1) {
+            activeRoundIndex = Math.min(roundIndex, totalRounds);
+        }
+        if (Number.isInteger(roundLabel) && roundLabel >= 1) {
+            activeRound = roundLabel;
         }
         if (el) {
-            el.textContent = `${activeRound}/${totalRounds}`;
+            el.textContent = `${activeRoundIndex}/${totalRounds}`;
         }
-        roundCards.forEach(card => {
-            const cardRound = Number(card.dataset.roundCard);
-            card.classList.remove('is-active', 'is-complete');
-            if (cardRound > totalRounds) {
-                return;
-            }
-            if (cardRound <= completedRounds) {
-                card.classList.add('is-complete');
-            } else if (cardRound === activeRound) {
-                card.classList.add('is-active');
-            }
-        });
+        refreshRoundCards();
     }
 
     // Short effect player
@@ -215,6 +265,9 @@
 
         if (Number.isInteger(d.round_total)) {
             setRoundTotal(d.round_total);
+        }
+        if (Array.isArray(d.visible_rounds)) {
+            setVisibleRounds(d.visible_rounds);
         }
 
         const entersInputPhase = d.phase === 'input' || (d.clear === true && Array.isArray(d.symbols));
@@ -245,15 +298,15 @@
 
         // NEW: reflect current round
         if (Number.isInteger(d.round)) {
-            updateStreak(d.round);
+            updateStreak(
+                Number.isInteger(d.round_index) ? d.round_index : getRoundIndex(d.round),
+                d.round
+            );
         }
 
         // Explicit clear (beginning of idle phase)
         if (d.clear) {
             clearGrid();
-            if (!Number.isInteger(d.round)) {
-                updateStreak(Math.min(completedRounds + 1, totalRounds));
-            }
             // Play start-of-phase sound for idle
             playSound(LLETRES_SOUND_URL);
         }
@@ -262,6 +315,13 @@
         if (Array.isArray(d.token_numbers)) {
             renderNumbers(d.token_numbers);
             // Play start-of-phase sound for numbers
+            playSound(LLETRES_SOUND_URL);
+            return;
+        }
+
+        if (d.phase === 'tokens' && Array.isArray(d.symbol_sets)) {
+            symbolsOrder = Array.isArray(d.symbol_sets[0]) ? d.symbol_sets[0].slice() : [];
+            renderSymbolSets(d.symbol_sets, d.color_sets);
             playSound(LLETRES_SOUND_URL);
             return;
         }
@@ -327,10 +387,19 @@
                 });
             }
             if (d.input_result.success === true && Number.isInteger(d.round) && d.round >= 1) {
-                completedRounds = Math.max(completedRounds, Math.min(d.round, totalRounds));
-                updateStreak(Math.min(completedRounds + 1, totalRounds));
-                // Only show popup if NOT last round (round < totalRounds)
-                if (d.round < totalRounds) {
+                completedRoundNumbers.add(d.round);
+                const currentRoundIndex = Number.isInteger(d.round_index)
+                    ? d.round_index
+                    : getRoundIndex(d.round);
+                const hasNextRound = Number.isInteger(currentRoundIndex) && currentRoundIndex < totalRounds;
+                const nextRoundLabel = hasNextRound
+                    ? visibleRounds[currentRoundIndex]
+                    : d.round;
+                updateStreak(
+                    hasNextRound ? currentRoundIndex + 1 : currentRoundIndex,
+                    nextRoundLabel
+                );
+                if (hasNextRound) {
                     showPhasePopup('Primera fase superada');
                 }
             }
