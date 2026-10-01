@@ -1,7 +1,7 @@
 (function() {
     const PHASE_POPUP_DELAY_MS = 500;
     const PHASE_POPUP_VISIBLE_MS = 3000;
-    const totalRounds = 2;
+    const totalRounds = 1;
     const puzzleContainer = document.getElementById('puzzle-container');
     const bottomArea = document.getElementById('bottom-area');
 
@@ -16,11 +16,10 @@
     if (!roundIndicator) {
         roundIndicator = document.createElement('div');
         roundIndicator.id = 'round-indicator';
-        roundIndicator.setAttribute('aria-label', 'Fase actual');
+        roundIndicator.setAttribute('aria-label', 'Ronda única');
         roundIndicator.innerHTML = `
             <span class="phase-step is-active"></span>
-            <span class="phase-link"></span>
-            <span class="phase-step"></span>
+            <span id="p1-progress" role="status" aria-live="polite" aria-atomic="true">0/16 COMPLETADOS</span>
         `;
 
         const objectivePanel = document.getElementById('objective-panel');
@@ -32,6 +31,7 @@
     }
 
     const timerElement = document.getElementById('timer');
+    const progressElement = document.getElementById('p1-progress');
     const objectivePanel = document.getElementById('objective-panel');
     const objectiveFormula = document.getElementById('objective-formula');
     const formulaLeftImage = document.getElementById('formula-left-image');
@@ -93,6 +93,15 @@
 
     function clearSolvedContainer() {
         solvedContainer.innerHTML = '';
+    }
+
+    function updateProgress() {
+        const completed = puzzleContainer.querySelectorAll('.op.correct').length;
+        const total = puzzleContainer.querySelectorAll('.op').length || currentRoundSize || 16;
+        if (progressElement) {
+            const label = `${completed}/${total} COMPLETADOS`;
+            if (progressElement.textContent !== label) progressElement.textContent = label;
+        }
     }
 
     function setDangerScreenActive(isActive) {
@@ -309,6 +318,7 @@
                 const tickClass = String(result) === recentSolvedResult ? 'tick is-new' : 'tick';
                 opDiv.innerHTML = `<span class="${tickClass}">✓</span>`;
                 opDiv.classList.add('correct');
+                if (String(result) === recentSolvedResult) opDiv.classList.add('is-latest');
             } else {
                 opDiv.innerHTML = `<span>${result}</span>`;
             }
@@ -317,7 +327,8 @@
             puzzleContainer.appendChild(wrapper);
         });
 
-        animateGridIn();
+        updateProgress();
+        if (!recentSolvedResult) animateGridIn();
         pendingSolvedResult = null;
     }
 
@@ -359,6 +370,8 @@
             console.log('Received data from state_queue:', data);
 
             if (data.puzzle_solved) {
+                if (data.operations) renderOperations(data.operations);
+                updateProgress();
                 playEffect('nivel_completado.wav');
                 clearInterval(timerInterval);
                 timerRunning = false;
@@ -398,9 +411,9 @@
                 renderStatus('success');
 
                 playEffect('fase_completada.wav');
-                // Only show popup if NOT last phase (round < 2, since total is 2)
+                // Only show the phase popup when another round follows.
                 const popupRound = Number(data.round) || Number(currentRound) || null;
-                if (popupRound && popupRound < 2) {
+                if (popupRound && popupRound < totalRounds) {
                     showPhasePopup('Primera fase superada');
                 }
 
@@ -445,6 +458,7 @@
             }
 
             if (data.solved) {
+                puzzleContainer.querySelectorAll('.is-latest').forEach(op => op.classList.remove('is-latest'));
                 clearSolvedContainer();
                 setObjectiveMessage('');
                 setObjectiveFormula(data.solved.text, 'success', false);
@@ -454,9 +468,10 @@
                 if (solvedOperation) {
                     solvedOperation.innerHTML = '<span class="tick is-new">✓</span>';
                     solvedOperation.classList.remove('incorrect');
-                    solvedOperation.classList.add('correct');
+                    solvedOperation.classList.add('correct', 'is-latest');
                     animateCorrect(solvedOperation);
                 }
+                updateProgress();
 
                 const roundTarget = currentRoundSize;
                 const completedCount = document.querySelectorAll('.op.correct').length;
@@ -540,7 +555,7 @@
                 const defaultOperations = {
                     1: [[5, 1, 'N'], [8, 2, 'N'], [12, 3, 'N'], [17, 4, 'N']],
                     2: [[6, 1, 'N'], [9, 2, 'N'], [14, 3, 'N'], [18, 4, 'N'], [21, 5, 'N'], [24, 6, 'N'], [29, 7, 'N']],
-                    3: [[5, 1, 'N'], [6, 2, 'N'], [7, 3, 'N'], [8, 4, 'N'], [9, 5, 'N'], [10, 6, 'N'], [11, 7, 'N'], [12, 8, 'N'], [13, 9, 'N'], [14, 10, 'N'], [15, 11, 'N'], [16, 12, 'N'], [17, 13, 'N'], [18, 14, 'N'], [20, 15, 'N']]
+                    3: [[5, 1, 'N'], [6, 2, 'N'], [7, 3, 'N'], [8, 4, 'N'], [9, 5, 'N'], [10, 6, 'N'], [11, 7, 'N'], [12, 8, 'N'], [13, 9, 'N'], [14, 10, 'N'], [15, 11, 'N'], [16, 12, 'N'], [17, 13, 'N'], [18, 14, 'N'], [20, 15, 'N'], [21, 16, 'N']]
                 };
                 handleUpdate({
                     puzzle_id: 1,

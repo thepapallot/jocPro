@@ -7,47 +7,41 @@
 {% endblock %}
 
 {% block top_right %}
-<div id="streak-panel">
-    <div id="streak">--/--</div>
+<div id="p8-instruction" data-phase="numbers">
+    <span id="p8-instruction-step">PASO 1 DE 3 · PREPARACIÓN</span>
+    <div class="p8-instruction-heading">
+        <span id="p8-instruction-title" aria-live="polite">BUSCA TU TOKEN</span>
+        <span id="p8-countdown" role="timer" aria-live="off">
+            <span id="p8-countdown-value">5</span><span class="p8-countdown-unit">s</span>
+        </span>
+    </div>
+    <span id="p8-instruction-detail">Prepárate: aparecerán dos formas</span>
+    <div id="p8-time-track" aria-hidden="true"><span id="p8-time-fill"></span></div>
 </div>
 {% endblock %}
 
 {% block puzzle_content %}
 <div id="p8-shell">
     <section id="p8-stage" class="p8-panel">
-        <div id="p8-rounds" class="is-pending" data-round-total="3">
-            <div class="round-card" data-round-card="1">
-                <div class="round-name round-name-1" aria-label="Ronda 1">
-                    <span class="round-dot"></span>
-                </div>
-            </div>
-            <div class="round-card" data-round-card="2">
-                <div class="round-name round-name-2" aria-label="Ronda 2">
-                    <span class="round-dot"></span>
-                    <span class="round-dot"></span>
-                </div>
-            </div>
-            <div class="round-card" data-round-card="3">
-                <div class="round-name round-name-3" aria-label="Ronda 3">
-                    <span class="round-dot"></span>
-                    <span class="round-dot"></span>
-                    <span class="round-dot"></span>
-                </div>
-            </div>
-        </div>
-
         <div id="p8-grid-wrap">
-            <div id="p8-grid">
-                <div class="p8-frame"><div class="p8-slot" data-index="0"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="1"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="2"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="3"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="4"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="5"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="6"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="7"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="8"></div></div>
-                <div class="p8-frame"><div class="p8-slot" data-index="9"></div></div>
+            <div id="p8-grid" data-phase="numbers">
+                {% for index in range(10) %}
+                <div class="p8-frame" data-token="{{ token_numbers[index] }}" aria-label="Token {{ token_numbers[index] }}">
+                    <div class="p8-token">
+                        <span class="p8-number">{{ token_numbers[index] }}</span>
+                        <img class="p8-token-icon" src="{{ url_for('static', filename='images/shared/gameplay/token_card.png') }}" alt="Token" width="108" height="108">
+                    </div>
+                    <div class="p8-slot" data-index="{{ index }}">
+                        {% for step in range(2) %}
+                        <div class="p8-answer" aria-label="Forma pendiente">
+                            <div class="p8-answer-content">
+                                <span class="p8-placeholder" aria-hidden="true"><span class="p8-terminal-mark"></span></span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -62,11 +56,6 @@
 {% endblock %}
 
 {% block after_body %}
-<div id="p8-phase-popup" class="p8-phase-popup hidden" aria-live="polite">
-    <div id="p8-phase-popup-line1" class="p8-phase-popup-line">Primera fase</div>
-    <div id="p8-phase-popup-line2" class="p8-phase-popup-line">superada</div>
-    <div class="p8-phase-popup-note">ATENCIÓN: En la fase 2 hay dos elementos a recordar</div>
-</div>
 <div id="p8-solved-banner" class="p8-solved-banner hidden">
     <div class="p8-solved-text">NIVEL COMPLETADO</div>
 </div>

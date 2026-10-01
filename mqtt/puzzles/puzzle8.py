@@ -1,9 +1,13 @@
 from .base import BasePuzzle
+from collections import Counter
 import threading
 import time
 import random
 
 class Puzzle8(BasePuzzle):
+    NUMBERS_DURATION_SECONDS = 5
+    TOKENS_DURATION_SECONDS = 6
+
     def __init__(self, mqtt_client):
         super().__init__(puzzle_id=8, mqtt_client=mqtt_client)
         
@@ -16,10 +20,12 @@ class Puzzle8(BasePuzzle):
         self.token_numbers = [18, 14, 17, 5, 20, 10, 13, 31, 35, 22]
         
         # Round configuration
-        self.round_total = 1 #You can set this to 1, 2, or 3 for different difficulty levels
+        self.round_total = 1
         self.round = 0
         self.phase = "idle"
         self._timers = []
+        self._phase_duration_ms = 0
+        self._phase_deadline = None
         
         # Target data shown during "tokens" phase
         self.target_symbols_order = []      # Box order symbols (round 1 compatibility)
@@ -49,9 +55,23 @@ class Puzzle8(BasePuzzle):
         self.color_name_to_code = {name: code for code, name in self.color_code_map.items()}
 
     def _push(self, data):
-        payload = {"round_total": self.round_total}
+        payload = {"round_total": self.round_total, "token_numbers": self.token_numbers[:]}
+        payload.update(self._phase_timing_locked())
         payload.update(data)
         super()._push(payload)
+
+    def _set_phase_timing_locked(self, seconds):
+        self._phase_duration_ms = seconds * 1000
+        self._phase_deadline = time.monotonic() + seconds if seconds else None
+
+    def _phase_timing_locked(self):
+        remaining_ms = 0
+        if self._phase_deadline is not None:
+            remaining_ms = max(0, round((self._phase_deadline - time.monotonic()) * 1000))
+        return {
+            "phase_duration_ms": self._phase_duration_ms,
+            "phase_remaining_ms": min(self._phase_duration_ms, remaining_ms),
+        }
         
     def _schedule(self, fn, delay):
         """Schedule a function to run after delay seconds"""
@@ -74,26 +94,15 @@ class Puzzle8(BasePuzzle):
         with self.lock:
             self._cancel_timers()
             self.round = 1
-            self.phase = "idle"
-            self.target_symbols_order = []
-            self.target_colors_per_symbol = {}
-            self.target_sets = []
-            self._tokens_part = 0
-            self.player_colors = {}
-            self.player_symbols = {}
             self.solved = False
-            
-            # Clear frames
-            self._push({"clear": True})
-
-            # Wait 5s then show numbers
-            self._schedule(self._show_numbers, 5)
+            self._show_numbers_locked()
             
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:
             self._cancel_timers()
             self.phase = "idle"
+            self._set_phase_timing_locked(0)
             self.player_colors.clear()
             self.player_symbols.clear()
 
@@ -124,36 +133,25 @@ class Puzzle8(BasePuzzle):
         return rows
 
     def _build_input_status_locked(self, required):
-        """Return per-box input status compared against the expected prefix."""
+        """Match unordered symbol/color pairs, preserving duplicate counts."""
         status = {}
         for box in range(10):
-            expected_symbols = []
-            expected_colors = []
-            for pos in range(min(required, len(self.target_sets))):
-                target_set = self.target_sets[pos]
+            expected = Counter()
+            for target_set in self.target_sets[:required]:
                 if box >= len(target_set.get("symbols", [])):
                     continue
                 symbol_name = target_set["symbols"][box]
-                expected_symbols.append(symbol_name)
-                expected_colors.append(target_set["colors"].get(symbol_name))
+                expected[(symbol_name, target_set["colors"].get(symbol_name))] += 1
 
             actual_symbols = self.player_symbols.get(box, [])
             actual_colors = self.player_colors.get(box, [])
             count = min(len(actual_symbols), len(actual_colors))
+            actual = Counter(zip(actual_symbols, actual_colors))
 
-            wrong = False
-            for pos in range(count):
-                if (
-                    pos >= len(expected_symbols) or
-                    actual_symbols[pos] != expected_symbols[pos] or
-                    actual_colors[pos] != expected_colors[pos]
-                ):
-                    wrong = True
-                    break
-
-            if wrong:
+            # Any unexpected pair or extra repetition is still incorrect.
+            if actual - expected:
                 status[box] = "wrong"
-            elif count >= required and required > 0:
+            elif count == required and required > 0 and actual == expected:
                 status[box] = "complete"
             elif count > 0:
                 status[box] = "partial"
@@ -169,8 +167,10 @@ class Puzzle8(BasePuzzle):
                 "round_total": self.round_total,
                 "round": self.round,
                 "phase": self.phase,
+                "token_numbers": self.token_numbers[:],
                 "puzzle_solved": self.solved
             }
+            state.update(self._phase_timing_locked())
 
             if self.target_sets:
                 state["solution_rows"] = self._build_solution_rows_locked()
@@ -179,12 +179,17 @@ class Puzzle8(BasePuzzle):
                 state["token_numbers"] = self.token_numbers
                 
             elif self.phase == "tokens":
-                # Serve currently displayed part
                 if self.target_sets:
-                    part = max(0, min(self._tokens_part, len(self.target_sets) - 1))
-                    current = self.target_sets[part]
-                    state["symbols"] = current["symbols"][:]
-                    state["colors"] = current["colors"].copy()
+                    state["symbol_sets"] = [
+                        {
+                            "symbols": target_set["symbols"][:],
+                            "colors": target_set["colors"].copy()
+                        }
+                        for target_set in self.target_sets
+                    ]
+                    # Keep the original fields for older displays and tools.
+                    state["symbols"] = self.target_sets[0]["symbols"][:]
+                    state["colors"] = self.target_sets[0]["colors"].copy()
                 else:
                     state["symbols"] = self.target_symbols_order[:]
                     state["colors"] = self.target_colors_per_symbol.copy()
@@ -202,10 +207,21 @@ class Puzzle8(BasePuzzle):
                 flat_symbols = {box: syms[-1] for box, syms in self.player_symbols.items() if syms}
                 state["input_colors"] = flat_colors
                 state["input_symbols"] = flat_symbols
-                state["input_required"] = max(1, min(self.round, len(self.target_sets)))
+                state["input_required"] = max(1, len(self.target_sets))
                 state["input_counts"] = {
                     box: min(len(self.player_symbols.get(box, [])), len(self.player_colors.get(box, [])))
                     for box in range(10)
+                }
+                state["input_entries"] = {
+                    box: [
+                        {"symbol": symbol, "color": color}
+                        for symbol, color in zip(
+                            self.player_symbols.get(box, []),
+                            self.player_colors.get(box, [])
+                        )
+                    ]
+                    for box in range(10)
+                    if self.player_symbols.get(box) and self.player_colors.get(box)
                 }
                 state["input_status"] = self._build_input_status_locked(state["input_required"])
             else:
@@ -214,80 +230,69 @@ class Puzzle8(BasePuzzle):
             return state
             
     def _show_numbers(self):
-        """Phase 1: Show token numbers for 3 seconds"""
+        """Phase 1: Let players locate their token for five seconds."""
         with self.lock:
             if self.mqtt_client.current_puzzle_id != self.id:
                 return
-                
-            self.phase = "numbers"
-            self._push({"round": self.round, "phase": self.phase,"token_numbers": self.token_numbers})
-            self._schedule(self._show_tokens, 3)
+            self._show_numbers_locked()
+
+    def _show_numbers_locked(self):
+        """Start or retry immediately, without an empty-screen interval."""
+        self.phase = "numbers"
+        self.target_symbols_order = []
+        self.target_colors_per_symbol = {}
+        self.target_sets = []
+        self._tokens_part = 0
+        self.player_colors = {}
+        self.player_symbols = {}
+        self._set_phase_timing_locked(self.NUMBERS_DURATION_SECONDS)
+        self._push({
+            "clear": True,
+            "round": self.round,
+            "phase": self.phase,
+            "token_numbers": self.token_numbers
+        })
+        self._schedule(self._show_tokens, self.NUMBERS_DURATION_SECONDS)
             
     def _show_tokens(self):
-        """Phase 2: Show symbol/color combinations"""
+        """Phase 2: Show both symbol/color combinations at the same time."""
         with self.lock:
             if self.mqtt_client.current_puzzle_id != self.id:
                 return
                 
             self.phase = "tokens"
             self._tokens_part = 0
-            self.target_sets = []
-            
-            # Round 3: Three sequential sets (3s each)
-            if self.round == 3:
-                symbols1 = random.sample(self.symbols, len(self.symbols))
-                colors1 = {s: random.choice(self.palette) for s in symbols1}
-                
+            symbols1 = random.sample(self.symbols, len(self.symbols))
+
+            # Avoid showing the same Greek letter twice on a single token.
+            symbols2 = random.sample(self.symbols, len(self.symbols))
+            while any(first == second for first, second in zip(symbols1, symbols2)):
                 symbols2 = random.sample(self.symbols, len(self.symbols))
-                colors2 = {s: random.choice(self.palette) for s in symbols2}
-                
-                symbols3 = random.sample(self.symbols, len(self.symbols))
-                colors3 = {s: random.choice(self.palette) for s in symbols3}
-                
-                self.target_sets = [
-                    {"symbols": symbols1, "colors": colors1},
-                    {"symbols": symbols2, "colors": colors2},
-                    {"symbols": symbols3, "colors": colors3}
-                ]
-                
-                # Compatibility fields
-                self.target_symbols_order = symbols1[:]
-                self.target_colors_per_symbol = colors1.copy()
-                
-                # Show part 1
-                self._push({"round": self.round, "phase": self.phase,"symbols": symbols1, "colors": colors1})
-                self._schedule(self._show_tokens_part2, 3)
-                
-            # Round 2: Two sequential sets (3s each)
-            elif self.round == 2:
-                symbols1 = random.sample(self.symbols, len(self.symbols))
-                colors1 = {s: random.choice(self.palette) for s in symbols1}
-                
-                symbols2 = random.sample(self.symbols, len(self.symbols))
-                colors2 = {s: random.choice(self.palette) for s in symbols2}
-                
-                self.target_sets = [
-                    {"symbols": symbols1, "colors": colors1},
-                    {"symbols": symbols2, "colors": colors2}
-                ]
-                
-                self.target_symbols_order = symbols1[:]
-                self.target_colors_per_symbol = colors1.copy()
-                
-                self._push({"round": self.round, "phase": self.phase,"symbols": symbols1, "colors": colors1})
-                self._schedule(self._show_tokens_part2, 3)
-                
-            # Round 1: Single set (5s)
-            else:
-                symbols = random.sample(self.symbols, len(self.symbols))
-                colors = {s: random.choice(self.palette) for s in symbols}
-                
-                self.target_sets = [{"symbols": symbols, "colors": colors}]
-                self.target_symbols_order = symbols[:]
-                self.target_colors_per_symbol = colors.copy()
-                
-                self._push({"round": self.round, "phase": self.phase,"symbols": symbols, "colors": colors})
-                self._schedule(self._enter_input_phase, 5)
+
+            colors1 = {symbol: random.choice(self.palette) for symbol in symbols1}
+            colors2 = {symbol: random.choice(self.palette) for symbol in symbols2}
+            self.target_sets = [
+                {"symbols": symbols1, "colors": colors1},
+                {"symbols": symbols2, "colors": colors2}
+            ]
+            self.target_symbols_order = symbols1[:]
+            self.target_colors_per_symbol = colors1.copy()
+
+            symbol_sets = [
+                {"symbols": symbols1, "colors": colors1},
+                {"symbols": symbols2, "colors": colors2}
+            ]
+            self._set_phase_timing_locked(self.TOKENS_DURATION_SECONDS)
+            self._push({
+                "round": self.round,
+                "phase": self.phase,
+                "symbol_sets": symbol_sets,
+                # Compatibility fields for the simulator and older clients.
+                "symbols": symbols1,
+                "colors": colors1
+            })
+            # Preserve the previous six-second memorisation time.
+            self._schedule(self._enter_input_phase, self.TOKENS_DURATION_SECONDS)
                 
     def _show_tokens_part2(self):
         """Show second set of symbols/colors"""
@@ -331,17 +336,22 @@ class Puzzle8(BasePuzzle):
                 return
                 
             self.phase = "input"
+            self._set_phase_timing_locked(0)
             self.player_colors = {}
             self.player_symbols = {}
             
             base_symbols = (self.target_sets[0]["symbols"] if self.target_sets 
                           else self.target_symbols_order[:])
-            self._push({"clear": True, "symbols": base_symbols})
+            self._push({
+                "clear": True,
+                "round": self.round,
+                "phase": self.phase,
+                "symbols": base_symbols
+            })
             
     def _evaluate_inputs_locked(self):
         """Evaluate player inputs when all boxes filled"""
-        # Required entries per box equals round number (1, 2, or 3)
-        required = max(1, min(self.round, len(self.target_sets)))
+        required = max(1, len(self.target_sets))
         
         # Ensure all boxes have required entries
         for i in range(10):
@@ -349,35 +359,9 @@ class Puzzle8(BasePuzzle):
                 len(self.player_symbols.get(i, [])) < required):
                 return
                 
-        # Build per-box results
-        box_results = {}
-        
-        if required >= 2:
-            # Multi-part: compare each position against corresponding set
-            for i in range(10):
-                cs = self.player_symbols.get(i, [])
-                cc = self.player_colors.get(i, [])
-                ok = True
-                
-                for pos in range(required):
-                    s_list = self.target_sets[pos]["symbols"]
-                    c_map = self.target_sets[pos]["colors"]
-                    
-                    if cs[pos] != s_list[i] or cc[pos] != c_map.get(s_list[i]):
-                        ok = False
-                        break
-                        
-                box_results[i] = ok
-        else:
-            # Single-part: simple comparison
-            s = self.target_sets[0]["symbols"]
-            c = self.target_sets[0]["colors"]
-            
-            for i in range(10):
-                cs = self.player_symbols.get(i, [])
-                cc = self.player_colors.get(i, [])
-                box_results[i] = (len(cs) >= 1 and len(cc) >= 1 and 
-                                 cs[0] == s[i] and cc[0] == c.get(s[i]))
+        # Use the same unordered matching for the simulator and final result.
+        input_status = self._build_input_status_locked(required)
+        box_results = {box: status == "complete" for box, status in input_status.items()}
                                  
         success = all(box_results.values())
 
@@ -401,6 +385,8 @@ class Puzzle8(BasePuzzle):
             time.sleep(5)
             
             with self.lock:
+                if self.mqtt_client.current_puzzle_id != self.id:
+                    return
                 # saltarPuzzle: treat round 1 success as a full win
                 saltar = self.saltarPuzzle
                 if success and (self.round >= self.round_total or saltar):
@@ -410,17 +396,11 @@ class Puzzle8(BasePuzzle):
                     self._push({"puzzle_solved": True})
                     return
                     
-                # Reset for next round or retry
-                self.phase = "idle"
-                self.player_colors.clear()
-                self.player_symbols.clear()
-                self._push({"clear": True})
-                
                 if success and self.round < self.round_total:
                     self.round += 1
                     self.mqtt_client.start_next_round(self.id, self.round)
-                    
-                self._schedule(self._show_numbers, 5)
+
+                self._show_numbers_locked()
                 
         threading.Thread(target=_flow, daemon=True).start()
         
@@ -468,14 +448,14 @@ class Puzzle8(BasePuzzle):
             syms = self.player_symbols.setdefault(box, [])
             cols = self.player_colors.setdefault(box, [])
             
-            # Required entries per box = round number
-            required = max(1, min(self.round, len(self.target_sets)))
+            # The single round requires both displayed associations.
+            required = len(self.target_sets)
             
             # Capacity rule: allow up to required entries
             if len(cols) >= required:
                 return
 
-            # Append in order
+            # Preserve arrival order for display; correctness is order-independent.
             syms.append(symbol_name)
             cols.append(color_name)
             

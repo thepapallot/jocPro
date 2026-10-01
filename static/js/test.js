@@ -746,6 +746,7 @@
 	      section.classList.toggle("is-active", isActive);
 	      section.hidden = !isActive;
 	    });
+	    if (panelId === "control") refreshPuzzle1Board();
 	  }
 
   function languageLabel(value) {
@@ -1174,6 +1175,11 @@
   const simState = {
     puzzle1A: "4",
     puzzle1B: "4",
+    puzzle1State: null,
+    puzzle1Busy: false,
+    puzzle1Cancel: false,
+    puzzle1Refreshing: false,
+    puzzle1Notice: "Cargando objetivos…",
     puzzle2Token: "1",
     puzzle2Alarm: false,
     puzzle2Progress: {
@@ -1829,7 +1835,7 @@
           label: "Resolver ronda actual",
           detail: "Completa operaciones pendientes",
           tone: "primary",
-          getPayloads: getPuzzle1RoundPayloads
+          run: () => solvePuzzle1Targets()
         }],
         all: [{
           id: "p1-solve-visible",
@@ -1837,7 +1843,7 @@
           detail: "Todas las operaciones pendientes",
           tone: "danger",
           confirm: true,
-          getPayloads: getPuzzle1RoundPayloads
+          run: () => solvePuzzle1Targets()
         }]
       };
     }
@@ -2156,11 +2162,119 @@
     return data;
   }
 
-  async function getPuzzle1RoundPayloads() {
-    const data = await fetchCurrentStateForPuzzle(1);
-    return (Array.isArray(data.operations) ? data.operations : [])
-      .filter((item) => Array.isArray(item) && item[2] === "N")
-      .map((item) => `P1,0,${item[0]}`);
+  function puzzle1Operations(data) {
+    if (String(data?.puzzle_id) !== "1") return [];
+    return (Array.isArray(data.operations) ? data.operations : []).filter(item =>
+      Array.isArray(item) && Number.isInteger(Number(item[0])) &&
+      Number.isInteger(Number(item[1])) && ["N", "Y"].includes(item[2]));
+  }
+
+  function puzzle1BoardKey(data) {
+    return JSON.stringify([data.round, puzzle1Operations(data).map(([value, position]) => [value, position])]);
+  }
+
+  function puzzle1AutomaticPayload(result) {
+    // A mathematical pair for GM assistance; manual mode uses actual device values.
+    const token = Math.floor(Number(result) / 2);
+    return `P1,${token},${Number(result) - token}`;
+  }
+
+  async function readPuzzle1State() {
+    const response = await fetch("/current_state", { cache: "no-store" });
+    if (!response.ok) throw new Error("No se pudo consultar la partida.");
+    const data = await response.json();
+    simState.puzzle1State = data;
+    updatePuzzle1Board();
+    if (els.puzzleSelect.value === "1") renderGMState(data);
+    return data;
+  }
+
+  async function refreshPuzzle1Board() {
+    const controlPanel = document.querySelector('[data-gm-panel="control"]');
+    if (document.hidden || !controlPanel || controlPanel.hidden || !controlPanel.classList.contains("is-active")) return;
+    if (els.puzzleSelect.value !== "1" || simState.puzzle1Busy || simState.puzzle1Refreshing) return;
+    simState.puzzle1Refreshing = true;
+    try {
+      await readPuzzle1State();
+    } catch (error) {
+      simState.puzzle1State = null;
+      simState.puzzle1Notice = error.message;
+      updatePuzzle1Board();
+    } finally {
+      simState.puzzle1Refreshing = false;
+    }
+  }
+
+  function updatePuzzle1Board() {
+    if (els.puzzleSelect.value !== "1") return;
+    const board = els.simContent.querySelector("[data-sim-p1-board]");
+    if (!board) return;
+    const operations = puzzle1Operations(simState.puzzle1State);
+    const completed = operations.filter(item => item[2] === "Y").length;
+    const positions = [[1,1],[1,2],[1,3],[1,4],[1,5],[2,5],[3,5],[4,5],[5,5],[5,4],[5,3],[5,2],[5,1],[4,1],[3,1],[2,1]];
+    const signature = JSON.stringify([operations, simState.puzzle1Busy]);
+    if (board.dataset.signature !== signature) {
+      board.dataset.signature = signature;
+      board.innerHTML = operations.map(([value, position, status], index) => {
+        const [row, column] = positions[index] || [6 + Math.floor((index - 16) / 5), index % 5 + 1];
+        const solved = status === "Y";
+        return `<button type="button" class="sim-p1-target${solved ? " is-complete" : ""}" style="grid-row:${row};grid-column:${column}" data-p1-position="${Number(position)}" data-p1-result="${Number(value)}" ${solved || simState.puzzle1Busy ? "disabled" : ""} aria-label="Posición ${Number(position)}, ${solved ? "completada" : `resolver ${Number(value)}`}" title="${solved ? "Completado" : puzzle1AutomaticPayload(value)}"><small>${Number(position)}</small><strong>${solved ? "✓" : Number(value)}</strong></button>`;
+      }).join("") + `<div class="sim-p1-board-center"><strong>${completed}/${operations.length || 16}</strong><span>completados</span><p>${operations.length ? "Pulsa un número para resolverlo" : "Inicia el puzzle de sumas para ver sus objetivos"}</p></div>`;
+    }
+    const allButton = els.simContent.querySelector("[data-sim-p1-all]");
+    allButton.disabled = simState.puzzle1Busy || !operations.some(item => item[2] === "N");
+    els.simContent.querySelector("[data-sim-p1-stop]").hidden = !simState.puzzle1Busy;
+    els.simContent.querySelector("[data-sim-p1-send]").disabled = simState.puzzle1Busy || !operations.length;
+    const notice = els.simContent.querySelector("[data-sim-p1-notice]");
+    const message = operations.length ? (simState.puzzle1Notice === "Cargando objetivos…" ? "Estado sincronizado con la partida." : simState.puzzle1Notice) : "Sumas no está activo o no hay conexión. Los controles están desactivados.";
+    if (notice.textContent !== message) notice.textContent = message;
+  }
+
+  async function solvePuzzle1Targets(target = null) {
+    if (simState.puzzle1Busy) return;
+    simState.puzzle1Busy = true;
+    simState.puzzle1Cancel = false;
+    simState.puzzle1Notice = "Comprobando los objetivos actuales…";
+    updatePuzzle1Board();
+    try {
+      const initial = await readPuzzle1State();
+      const operations = puzzle1Operations(initial);
+      if (!operations.length) throw new Error("El puzzle de sumas no está activo.");
+      const key = puzzle1BoardKey(initial);
+      const targets = target ? operations.filter(item => Number(item[1]) === target.position && Number(item[0]) === target.result && item[2] === "N") : operations.filter(item => item[2] === "N");
+      if (!targets.length || (target?.boardKey && target.boardKey !== key)) throw new Error("El objetivo ya está completado o ha cambiado. Revisa la cuadrícula.");
+      let sent = 0;
+      for (const [value, position] of targets) {
+        if (simState.puzzle1Cancel || els.puzzleSelect.value !== "1") throw new Error("Envío detenido.");
+        const latest = await readPuzzle1State();
+        if (String(latest.puzzle_id) !== "1" || puzzle1BoardKey(latest) !== key) throw new Error("La cuadrícula ha cambiado. Envío detenido.");
+        if (puzzle1Operations(latest).find(item => item[1] === position)?.[2] === "Y") continue;
+        const payload = puzzle1AutomaticPayload(value);
+        simState.puzzle1Notice = `Enviando ${payload.split(",").slice(1).join(" + ")} = ${value} · esperando confirmación…`;
+        updatePuzzle1Board();
+        await sendPayloads([payload], "TO_FLASK");
+        appendLog({ local: true, payload, simulated: "puzzle1_target", position });
+        let confirmed = false;
+        for (let attempt = 0; attempt < 15; attempt++) {
+          await new Promise(resolve => window.setTimeout(resolve, 200));
+          const state = await readPuzzle1State();
+          if (String(state.puzzle_id) !== "1" || puzzle1BoardKey(state) !== key) throw new Error("El puzzle o sus objetivos han cambiado. Envío detenido.");
+          if (puzzle1Operations(state).find(item => item[1] === position)?.[2] === "Y") {
+            confirmed = true;
+            break;
+          }
+        }
+        if (!confirmed) throw new Error("Sin confirmación de acierto. Comprueba MQTT o espera al reinicio; no se ha reenviado la suma.");
+        sent++;
+      }
+      simState.puzzle1Notice = `${sent} objetivo(s) resuelto(s) y confirmado(s).`;
+    } catch (error) {
+      simState.puzzle1Notice = error.message || "Error enviando la suma.";
+      setStatus(simState.puzzle1Notice);
+    } finally {
+      simState.puzzle1Busy = false;
+      updatePuzzle1Board();
+    }
   }
 
   async function getPuzzle2Payloads(mode) {
@@ -2405,12 +2519,25 @@
     const result = Number(simState.puzzle1A || 0) + Number(simState.puzzle1B || 0);
 
     els.simContent.innerHTML = `
+      <div class="sim-p1-gm">
+        <div class="sim-note">Ayuda GM · misma distribución que la pantalla del juego. Cada botón envía una suma automática y espera el acierto.</div>
+        <div class="sim-p1-board" data-sim-p1-board aria-label="Objetivos del juego de sumas"></div>
+        <div class="sim-actions">
+          <button type="button" class="sim-button primary-action" data-sim-p1-all disabled>Resolver todos los pendientes</button>
+          <button type="button" class="sim-button" data-sim-p1-stop hidden>Detener envío</button>
+          <button type="button" class="sim-button" data-sim-p1-refresh>Actualizar</button>
+        </div>
+        <p class="sim-note" data-sim-p1-notice role="status" aria-live="polite">Cargando objetivos…</p>
+      </div>
+      <details class="sim-p1-manual">
+      <summary>Simular lectura: acercar token al terminal</summary>
+      <p class="sim-note">Introduce los valores del token y del terminal. Permite probar sumas correctas, inexistentes y repetidas. Simula el mensaje recibido; no la lectura NFC física.</p>
       <div class="sim-p1-layout">
         <div class="sim-p1-piece">
-          <div class="field-label">Tarjeta</div>
+          <div class="field-label">Valor del token</div>
           <div class="sim-p1-card">
             <img src="/static/images/shared/gameplay/token_card.png" alt="" aria-hidden="true">
-            <input id="sim-p1-a" class="sim-p1-input sim-p1-card-input" type="number" value="${simState.puzzle1A}" aria-label="Valor tarjeta">
+            <input id="sim-p1-a" class="sim-p1-input sim-p1-card-input" type="number" step="1" value="${simState.puzzle1A}" aria-label="Valor del token">
           </div>
         </div>
 
@@ -2434,9 +2561,25 @@
         </div>
       </div>
       <div class="sim-actions">
-	        <button type="button" class="sim-button primary-action" data-sim-p1-send>Enviar acción</button>
+	        <button type="button" class="sim-button primary-action" data-sim-p1-send disabled>Acercar token al terminal</button>
       </div>
+      </details>
     `;
+
+    els.simContent.querySelector("[data-sim-p1-board]").addEventListener("click", event => {
+      const button = event.target.closest("[data-p1-position]");
+      if (!button || button.disabled) return;
+      solvePuzzle1Targets({ position: Number(button.dataset.p1Position), result: Number(button.dataset.p1Result), boardKey: puzzle1BoardKey(simState.puzzle1State) });
+    });
+    els.simContent.querySelector("[data-sim-p1-all]").addEventListener("click", () => solvePuzzle1Targets());
+    els.simContent.querySelector("[data-sim-p1-stop]").addEventListener("click", () => {
+      simState.puzzle1Cancel = true;
+      simState.puzzle1Notice = "Deteniendo: la suma ya enviada puede completarse.";
+      updatePuzzle1Board();
+    });
+    els.simContent.querySelector("[data-sim-p1-refresh]").addEventListener("click", refreshPuzzle1Board);
+    updatePuzzle1Board();
+    refreshPuzzle1Board();
 
     ["a", "b"].forEach((key) => {
       const input = els.simContent.querySelector(`#sim-p1-${key}`);
@@ -2445,23 +2588,29 @@
     });
 
     els.simContent.querySelector("[data-sim-p1-send]").addEventListener("click", async () => {
-      const payload = `P1,${simState.puzzle1A},${simState.puzzle1B}`;
+      if (simState.puzzle1Busy) return;
+      const values = [simState.puzzle1A, simState.puzzle1B].map(Number);
+      if (!values.every(Number.isSafeInteger)) {
+        simState.puzzle1Notice = "Introduce dos números enteros.";
+        updatePuzzle1Board();
+        return;
+      }
+      const payload = `P1,${values.join(",")}`;
+      simState.puzzle1Busy = true;
+      updatePuzzle1Board();
       try {
-        const previousTopic = els.topicSelect.value;
-        els.topicSelect.value = "TO_FLASK";
-        updateTopicHelp();
-        updateSendModeUI();
-        syncPuzzle1FormAndEditor();
-
-        await sendPayloads([payload]);
+        const current = await readPuzzle1State();
+        if (!puzzle1Operations(current).length) throw new Error("El puzzle de sumas no está activo.");
+        await sendPayloads([payload], "TO_FLASK");
         appendLog({ local: true, payload, simulated: "puzzle1" });
-
-        if (previousTopic !== "TO_FLASK") {
-          els.topicSelect.value = previousTopic;
-          syncEditorForTopic();
-        }
+        simState.puzzle1Notice = `Lectura enviada: ${values[0]} + ${values[1]} = ${values[0] + values[1]}. Esperando el estado de la partida.`;
       } catch (error) {
+        simState.puzzle1Notice = error.message || "Error enviando la lectura.";
         setStatus(`Puzzle 1 · ${error.message || "error"}`);
+      } finally {
+        simState.puzzle1Busy = false;
+        updatePuzzle1Board();
+        refreshPuzzle1Board();
       }
     });
 
@@ -4025,6 +4174,16 @@
   function renderPuzzleHelp() {
     if (!els.puzzleHelp) return;
     const id = String(els.puzzleSelect?.value || "");
+    if (id === "1") {
+      els.puzzleHelp.innerHTML = `<div class="gm-help-grid">
+        <section><h3>Objetivo</h3><p>Completar los 16 números antes de que termine el tiempo.</p></section>
+        <section><h3>Qué hacen los jugadores</h3><p>Acercan un token al terminal: sus dos valores deben sumar un número pendiente.</p></section>
+        <section><h3>Ayuda del GM</h3><p>Pulsa una posición para resolverla, o resuelve todos los pendientes. Los ✓ se confirman con el estado del juego.</p></section>
+        <section><h3>Prueba manual</h3><p>Introduce los valores físicos en «Simular lectura». Repite una suma completada o envía una inexistente para comprobar el error y el reinicio.</p></section>
+        <section><h3>Si cambia el tablero</h3><p>La cuadrícula se actualiza automáticamente. Si falta confirmación, comprueba MQTT y espera al reinicio antes de volver a enviar.</p></section>
+      </div>`;
+      return;
+    }
     const name = id === "-1" ? "Final" : getPuzzleDisplayName(id);
     const reference = getSelectedConfig()?.reference || "Sin solución manual documentada.";
     els.puzzleHelp.innerHTML = `
@@ -4927,6 +5086,10 @@
     try {
       const response = await fetch("/current_state");
       const data = await response.json();
+      if (els.puzzleSelect.value === "1") {
+        simState.puzzle1State = data;
+        updatePuzzle1Board();
+      }
       if (String(data.puzzle_id) === "2" && els.puzzleSelect.value === "2") {
         applyPuzzle2State(data);
         renderPuzzle2Simulator();
@@ -5124,4 +5287,8 @@
   window.setInterval(() => {
     autoSkipMonitorTick();
   }, 1800);
+  window.setInterval(refreshPuzzle1Board, 1000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshPuzzle1Board();
+  });
 })();
