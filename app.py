@@ -370,7 +370,14 @@ def puzzle(puzzle_id):
             next_puzzle_id = PUZZLE_FINAL
             
     display_level = get_display_level(puzzle_id)
-    return render_template(f'puzzle{puzzle_id}.html', current_level=display_level, next_puzzle_id=next_puzzle_id)
+    puzzle_context = {}
+    if puzzle_id == 8:
+        # Show the token identities on the first paint, before the event stream opens.
+        puzzle_context["token_numbers"] = mqtt_client.puzzles[8].token_numbers[:]
+    return render_template(
+        f'puzzle{puzzle_id}.html', current_level=display_level,
+        next_puzzle_id=next_puzzle_id, **puzzle_context
+    )
 
 @app.route('/puzzle4_sample_finished', methods=['POST'])
 def puzzle4_sample_finished():
