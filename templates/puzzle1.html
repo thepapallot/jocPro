@@ -6,50 +6,52 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle1.css') }}">
 {% endblock %}
 
-{% block top_right %}
-<div id="timer">02:00</div>
-{% endblock %}
+{% block top_right %}{% endblock %}
 
 {% block puzzle_content %}
-<div id="objective-panel">
-    <div id="round-indicator" aria-label="Fase actual">
-        <span class="phase-step is-active"></span>
-        <span class="phase-link"></span>
-        <span class="phase-step"></span>
-    </div>
+<div id="p1-arena">
+    <div id="puzzle-container" class="round-1" aria-label="16 números objetivo"></div>
 
-    <div id="objective-formula">
-        <div class="formula-item" id="formula-left">
-            <img
-                id="formula-left-image"
-                src="{{ url_for('static', filename='images/shared/gameplay/token_card.png') }}"
-                alt="Elemento 1"
-            >
-            <span id="formula-left-value" class="formula-value">--</span>
+    <section id="objective-panel" aria-label="Temporizador y operación actual">
+        <div id="round-indicator" aria-label="Ronda única">
+            <span class="phase-step is-active"></span>
+            <span id="p1-progress" role="status" aria-live="polite" aria-atomic="true">0/16 COMPLETADOS</span>
         </div>
 
-        <span>+</span>
+        <div class="p1-timer-caption">TIEMPO RESTANTE</div>
+        <div id="timer" role="timer" aria-live="off">00:45</div>
 
-        <div class="formula-item" id="formula-right">
-            <img
-                id="formula-right-image"
-                src="{{ url_for('static', filename='images/shared/gameplay/terminal_box.png') }}"
-                alt="Elemento 2"
-            >
-            <span id="formula-right-value" class="formula-value">--</span>
+        <div id="objective-formula">
+            <div class="formula-item" id="formula-left">
+                <img
+                    id="formula-left-image"
+                    src="{{ url_for('static', filename='images/piramidetrans.png') }}"
+                    alt="Pirámide"
+                >
+                <span id="formula-left-value" class="formula-value">--</span>
+            </div>
+
+            <span>+</span>
+
+            <div class="formula-item" id="formula-right">
+                <img
+                    id="formula-right-image"
+                    src="{{ url_for('static', filename='images/shared/gameplay/terminal_box.png') }}"
+                    alt="Terminal"
+                >
+                <span id="formula-right-value" class="formula-value">--</span>
+            </div>
+
+            <span class="formula-equals">=</span>
+
+            <span id="formula-result-value" class="formula-result-value">--</span>
         </div>
 
-        <span>=</span>
-
-        <span id="formula-result-value" class="formula-result-value">--</span>
-    </div>
-
-    <div id="objective-message" aria-live="polite"></div>
+        <div id="objective-message" aria-live="polite"></div>
+        <div id="solved-container"></div>
+    </section>
 </div>
 
-<div id="solved-container"></div>
-
-<div id="puzzle-container" class="round-1"></div>
 {% endblock %}
 
 {% block extra_js %}

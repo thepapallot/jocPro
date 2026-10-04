@@ -116,9 +116,8 @@ body::after {
 #puzzle3-shell {
     position: relative;
     z-index: 2;
-    display: grid;
-    grid-template-columns: clamp(260px, 24%, 420px) minmax(0, 1fr);
-    gap: 18px;
+    display: block;
+    width: 100%;
     height: 100%;
     padding: 22px 28px 28px;
     min-height: 0;
@@ -147,11 +146,6 @@ body::after {
     pointer-events: none;
 }
 
-#quiz-dashboard {
-    gap: 14px;
-    padding: 16px;
-    min-height: 0;
-}
 
 .panel-head {
     position: relative;
@@ -549,9 +543,10 @@ body::after {
 }
 
 #quiz-stage {
-    gap: 12px;
-    padding: 16px;
-    min-height: 0;
+    gap: 18px;
+    padding: clamp(18px, 2.4vw, 28px);
+    min-height: 100%;
+    height: 100%;
 }
 
 #question-area {
@@ -584,22 +579,22 @@ body::after {
     z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 8px;
     flex: 1;
     min-height: 0;
     align-content: stretch;
-    grid-auto-rows: 1fr;
+    grid-auto-rows: minmax(74px, 1fr);
 }
 
 .answer-row {
     display: grid;
-    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-columns: 48px minmax(0, 1fr);
     align-items: center;
-    gap: 16px;
+    gap: 10px;
     min-height: 0;
     height: 100%;
-    padding: 14px 16px;
-    border-radius: 20px;
+    padding: 8px 12px;
+    border-radius: 16px;
     border: 1px solid rgba(69, 230, 255, 0.1);
     background: #07101f;
     box-shadow:
@@ -614,15 +609,15 @@ body::after {
 .answer-index {
     display: grid;
     place-items: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     border: 1px solid rgba(69, 230, 255, 0.24);
     background:
         radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)),
         linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
     color: #dff6ff;
-    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    font-size: clamp(1.1rem, 1.8vw, 1.6rem);
     font-weight: 800;
     box-shadow:
         inset 0 0 12px rgba(69, 230, 255, 0.05),
@@ -634,10 +629,10 @@ body::after {
 
 .answer-text {
     color: #f4fcff;
-    font-size: clamp(2.2rem, 3.2vw, 2.7rem);
+    font-size: clamp(1.1rem, 1.8vw, 1.8rem);
     font-weight: 700;
-    line-height: 1.14;
-    padding-left: 12px;
+    line-height: 1.12;
+    padding-left: 6px;
 }
 @media (min-width: 2000px) {
     #question-text {
@@ -651,6 +646,7 @@ body::after {
     }
 }
 
+.answer-row.green,
 .answer-row.correct {
     border-color: rgba(45, 255, 155, 0.95);
     background:
@@ -661,9 +657,9 @@ body::after {
         0 0 26px rgba(45, 255, 155, 0.4),
         0 0 54px rgba(45, 255, 155, 0.3);
     transform: translateY(-2px) scale(1.01);
-    animation: p3CorrectPulse 650ms ease-out 1;
 }
 
+.answer-row.green .answer-index,
 .answer-row.correct .answer-index {
     border-color: rgba(45, 255, 155, 0.95);
     background:
@@ -678,6 +674,7 @@ body::after {
         0 0 22px rgba(45, 255, 155, 0.5);
 }
 
+.answer-row.green .answer-text,
 .answer-row.correct .answer-text {
     color: #ffffff;
     text-shadow:
@@ -705,6 +702,7 @@ body::after {
     }
 }
 
+.answer-row.red,
 .answer-row.wrong {
     border-color: rgba(255, 79, 109, 0.95);
     background:
@@ -717,6 +715,7 @@ body::after {
     transform: translateY(-2px) scale(1.01);
 }
 
+.answer-row.red .answer-index,
 .answer-row.wrong .answer-index {
     border-color: rgba(255, 79, 109, 0.95);
     background:
@@ -731,6 +730,7 @@ body::after {
         0 0 22px rgba(255, 79, 109, 0.5);
 }
 
+.answer-row.red .answer-text,
 .answer-row.wrong .answer-text {
     color: #fff4f7;
     text-shadow:

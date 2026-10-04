@@ -1,0 +1,9 @@
+QUESTIONS = [
+    {"id": 1, "q": "While the Challenger Deep is the lowest point in the ocean, what is the lowest point on dry land (not covered by ocean or ice)?", "answers": ["The Dead Sea Shore", "Death Valley", "The Caspian Sea", "Lake Eyre", "The Denman Glacier Bedrock", "The Bentley Subglacial Trench"], "correct": 1},
+    {"id": 2, "q": "What is the largest desert in the world?", "answers": ["Rubʿ al-Khali (Saudi Arabia)", "Kalahari Desert (Southern Africa)", "Gobi Desert (Mongolia+China)", "Sahara Desert (Northern Africa)", "Antarctic Desert (South Pole)", "Wadi Rum (Levant)"], "correct": 5},
+    {"id": 3, "q": "Which of these came first?", "answers": ["Instagram", "You Tube", "Facebook", "Twitter", "LinkedIn", "Tik Tok"], "correct": 5},
+    {"id": 4, "q": "What does “Wi-Fi” stand for?", "answers": ["Wireless Fidelity", "Wide Frequency Internet", "Wireless File Integration", "Nothing -just a brand name", "Wireless Find", "Wide Internet File"], "correct": 4},
+    {"id": 5, "q": "Which city is known as the birthplace of Portugal?", "answers": ["Guimarães", "Porto", "Lisboa", "Coimbra", "Braga", "Aveiro"], "correct": 1},
+    {"id": 6, "q": "What traditional Portuguese music style is known for its emotional and melancholic tone?", "answers": ["Flamenco", "Fado", "Rancho", "Samba", "Tango", "Lambada"], "correct": 2},
+    {"id": 7, "q": "Cisco portfolio is wide. Chose a device Cisco never had:", "answers": ["LCD TV Screen", "Compact camera working on AA batteries", "Furniture (like wood tables)", "Cheap Wi-Fi routers for home", "Routers for usage in outer space", "Switches for usage under the water"], "correct": 6},
+    {"id": 8, "q": "What's the name of the Cisco meeting room to take naps?", "answers": ["Tarragona", "Alella", "Terra Alta", "Empordà", "Terra Baixa", "Girona"], "correct": 1}]

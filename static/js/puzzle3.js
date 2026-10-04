@@ -40,8 +40,19 @@
         return Math.max(0, Math.min(target, streak));
     }
 
+    function getDisplayQuestionNumber(data, fallbackQuestionNumber, target) {
+        if (Number.isInteger(data && data.question_number)) {
+            return Math.max(1, Math.min(target, data.question_number));
+        }
+        if (Number.isInteger(data && data.current_question_idx)) {
+            return Math.max(1, Math.min(target, data.current_question_idx + 1));
+        }
+        return Math.max(1, Math.min(target, fallbackQuestionNumber || 1));
+    }
+
     function initPlayers(count = totalPlayers) {
         totalPlayers = count;
+        if (!playerStatusEl) return;
         playerStatusEl.innerHTML = "";
         for (let i = 0; i < totalPlayers; i++) {
             const chip = document.createElement('div');
@@ -90,15 +101,25 @@
 
     function applyAnsweredMap(map) {
         if (!map) return;
-        Object.keys(map).forEach(p => updatePlayerAnswered(parseInt(p,10)));
+        Object.entries(map).forEach(([p, v]) => {
+            const index = parseInt(p, 10);
+            updatePlayerAnswered(index);
+            colorAnswerRowByValue(index, v);
+        });
     }
 
-    function renderQuestion(qObj, streak, target, answeredPlayers = [], answeredMap = {}) {
+    function renderQuestion(qObj, streak, target, answeredPlayers = [], answeredMap = {}, questionNumber = null) {
+        const normalizedTarget = Number.isInteger(target) && target > 0 ? target : 6;
         // Play content appears sound on new question
         playSound(APAREIX_SOUND_URL);
 
         currentQuestionId = qObj.id;
-        activeQuestionNumber = getDisplayStreak(streak, target);
+        const explicitQuestion = Number.isInteger(questionNumber) ? questionNumber : null;
+        activeQuestionNumber = getDisplayQuestionNumber(
+            { question_number: explicitQuestion },
+            explicitQuestion || 1,
+            normalizedTarget
+        );
         questionTextEl.textContent = qObj.q;
         answerAreaEl.innerHTML = ""; // clear answer area
         (qObj.answers || []).forEach((ans, idx) => {
@@ -107,7 +128,7 @@
             row.dataset.answerIndex = idx; // store 0-based for comparison
             const indexSpan = document.createElement('div');
             indexSpan.className = 'answer-index';
-            indexSpan.textContent = idx + 1; // display 1-6
+            indexSpan.textContent = idx; // display 0-9
             const textSpan = document.createElement('div');
             textSpan.className = 'answer-text';
             textSpan.textContent = ans;
@@ -115,16 +136,22 @@
             row.appendChild(textSpan);
             answerAreaEl.appendChild(row); // append to answer-area
         });
-        streakEl.textContent = `${getDisplayStreak(streak, target)}/${target}`;
+        streakEl.textContent = `${activeQuestionNumber}/${normalizedTarget}`;
         feedbackEl.textContent = '';
         feedbackEl.className = "";
         resetPlayerChips(answeredPlayers); // Reset all chip styling first
         applyAnsweredMap(answeredMap);
     }
 
-    function setStreak(streak, target) {
-        streakEl.textContent = `${getDisplayStreak(streak, target)}/${target}`;
-        updateSecurityLevels(streak, target);
+    function setStreak(streak, target, questionNumber = null) {
+        const normalizedTarget = Number.isInteger(target) && target > 0 ? target : 6;
+        const displayNumber = getDisplayQuestionNumber(
+            { question_number: questionNumber },
+            questionNumber || activeQuestionNumber || 1,
+            normalizedTarget
+        );
+        streakEl.textContent = `${displayNumber}/${normalizedTarget}`;
+        updateSecurityLevels(streak, normalizedTarget);
         updateCheckpointNodes(streak);
 
         if (hasStreakBaseline) {
@@ -231,39 +258,78 @@
         }, SOLVED_GREEN_DELAY_MS);
     }
 
+    function normalizeAnswerValue(value) {
+        if (typeof value === 'string') {
+            const v = value.trim().toLowerCase();
+            if (['green', 'g', '5', 'yes', 'y'].includes(v)) return 5;
+            if (['red', 'r', '1', 'no', 'n'].includes(v)) return 1;
+            return null;
+        }
+        if (typeof value === 'boolean') return value ? 5 : 1;
+        if (typeof value === 'number' && Number.isInteger(value) && (value === 1 || value === 5)) return value;
+        return null;
+    }
+
+    function colorAnswerRowByValue(slot, value) {
+        const row = answerAreaEl.querySelector(`.answer-row[data-answer-index="${slot}"]`);
+        if (!row) return;
+
+        row.classList.remove('green', 'red', 'correct', 'wrong');
+        const normalized = normalizeAnswerValue(value);
+        if (normalized === 5) {
+            row.classList.add('green');
+        } else if (normalized === 1) {
+            row.classList.add('red');
+        }
+    }
+
     function showResult(result, streak, target) {
         if (!result) return;
-        const { success, correct_answer, player_answers } = result;
+
+        const playerAnswers = result.player_answers || {};
+        const expectedValues = Array.isArray(result.correct_answers)
+            ? result.correct_answers
+            : (Array.isArray(result.correct_answer) ? result.correct_answer : []);
+        const expectedAnswer = normalizeAnswerValue(result.correct_answer);
+
         // Color answer rows
         const rows = answerAreaEl.querySelectorAll('.answer-row');
         rows.forEach(r => {
-            const idx = parseInt(r.dataset.answerIndex,10);
-            if (success && (idx + 1) === correct_answer) {
+            const idx = parseInt(r.dataset.answerIndex, 10);
+            const expected = expectedValues.length > idx ? normalizeAnswerValue(expectedValues[idx]) : expectedAnswer;
+            const submitted = normalizeAnswerValue(playerAnswers[idx]);
+
+            r.classList.remove('green', 'red', 'correct', 'wrong');
+            if (submitted !== null && expected !== null && submitted === expected) {
                 r.classList.add('correct');
-            } else if (Object.values(player_answers).includes(idx+1)) {
-                // some player chose this wrong one
-                if ((idx + 1) !== correct_answer) {
-                    r.classList.add('wrong');
-                }
+            } else if (submitted !== null && expected !== null && submitted !== expected) {
+                r.classList.add('wrong');
+            } else if (submitted === 5) {
+                r.classList.add('green');
+            } else if (submitted === 1) {
+                r.classList.add('red');
             }
         });
+
         // Color player chips
-        Object.entries(player_answers).forEach(([p, ansIdx]) => {
+        Object.entries(playerAnswers).forEach(([p, ansIdx]) => {
             const chip = document.getElementById('pchip-' + p);
             if (!chip) return;
             chip.classList.remove('answered');
-            if (ansIdx === correct_answer) {
+            const normalizedCandidate = normalizeAnswerValue(ansIdx);
+            const normalizedExpected = expectedValues.length > parseInt(p, 10)
+                ? normalizeAnswerValue(expectedValues[parseInt(p, 10)])
+                : expectedAnswer;
+            if (normalizedCandidate !== null && normalizedExpected !== null && normalizedCandidate === normalizedExpected) {
                 chip.classList.add('correct');
             } else {
                 chip.classList.add('wrong');
             }
         });
-        if (success) {
-            // Play correct sound and block 500ms to hear it well
+        if (result.success) {
             playSoundAndBlock(CORRECT_SOUND_URL, 500);
             showQuestionComplete(streak, target);
         } else {
-            // Play incorrect sound and block 500ms to hear it well
             playSoundAndBlock(INCORRECT_SOUND_URL, 500);
             showWrong();
         }
@@ -278,18 +344,20 @@
             renderQuestion(
                 data.question,
                 data.streak || 0,
-                data.target || 10,
+                data.target || 6,
                 data.answered_players || [],
-                data.answered_map || {}
+                data.answered_map || {},
+                data.question_number || null
             );
-            setStreak(data.streak || 0, data.target || 10);
+            setStreak(data.streak || 0, data.target || 6, data.question_number || null);
         }
         if (data.player_answer) {
             updatePlayerAnswered(data.player_answer.player);
+            colorAnswerRowByValue(data.player_answer.player, data.player_answer.answer);
         }
         if (data.question_result) {
-            showResult(data.question_result, data.streak || 0, data.target || 10);
-            setStreak(data.streak || 0, data.target || 10);
+            showResult(data.question_result, data.streak || 0, data.target || 6);
+            setStreak(data.streak || 0, data.target || 6, data.question_number || null);
         }
         if (data.puzzle_solved) {
             showSolved();
@@ -307,11 +375,12 @@
                     renderQuestion(
                         d.question,
                         d.streak || 0,
-                        d.target || 10,
+                        d.target || 6,
                         d.answered_players || [],
-                        d.answered_map || {}
+                        d.answered_map || {},
+                        d.question_number || null
                     );
-                    setStreak(d.streak || 0, d.target || 10);
+                    setStreak(d.streak || 0, d.target || 6, d.question_number || null);
                 }
             })
             .catch(() => {});
@@ -403,7 +472,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initPlayers();
-        setStreak(0, 10);
+        setStreak(0, 6);
         installDebugHelpers();
         initSSE();
     });

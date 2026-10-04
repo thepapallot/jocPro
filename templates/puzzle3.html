@@ -9,29 +9,12 @@
 {% block top_right %}
 <div id="streak-panel">
     <div class="hud-label">Progreso</div>
-    <div id="streak">1/10</div>
+    <div id="streak">1/6</div>
 </div>
 {% endblock %}
 
 {% block puzzle_content %}
 <div id="puzzle3-shell">
-    <section id="quiz-dashboard" class="quiz-panel">
-        <div class="panel-head">
-            <div id="box-headmark">
-                <img
-                    id="box-headmark-icon"
-                    src="{{ url_for('static', filename='images/shared/gameplay/terminal_box.png') }}"
-                    alt="Caja"
-                >
-            </div>
-            <div id="player-summary">0/10</div>
-        </div>
-
-        <div id="player-status"></div>
-
-        <div id="feedback" aria-live="polite"></div>
-    </section>
-
     <section id="quiz-stage" class="quiz-panel">
         <div id="security-panel">
             <div id="security-levels">
