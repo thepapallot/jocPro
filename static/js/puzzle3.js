@@ -5,9 +5,6 @@
     const playerStatusEl = document.getElementById('player-status');
     const feedbackEl = document.getElementById('feedback');
     const playerSummaryEl = document.getElementById('player-summary');
-    const securityLevels = Array.from(document.querySelectorAll('.security-level'));
-    const checkpointNodes = Array.from(document.querySelectorAll('.checkpoint-node'));
-    const checkpointThresholds = [3, 6];
 
     // Consistent sound helper (same as puzzles 1 and 2)
     function playSound(url) {
@@ -32,8 +29,6 @@
     let currentQuestionId = null;
     let activeQuestionNumber = 1;
     let solvedSequenceStarted = false;
-    let hasStreakBaseline = false;
-    let previousStreak = 0;
 
     function getDisplayStreak(streak, target) {
         // Mostra el nombre real de respostes correctes (començant per 0)
@@ -151,70 +146,11 @@
             normalizedTarget
         );
         streakEl.textContent = `${displayNumber}/${normalizedTarget}`;
-        updateSecurityLevels(streak, normalizedTarget);
-        updateCheckpointNodes(streak);
-
-        if (hasStreakBaseline) {
-            checkpointThresholds.forEach((checkpoint) => {
-                if (previousStreak < checkpoint && streak >= checkpoint) {
-                    triggerCheckpointHit(checkpoint);
-                }
-            });
-        }
-
-        previousStreak = streak;
-        hasStreakBaseline = true;
     }
 
     function updatePlayerSummary(answeredCount) {
         if (!playerSummaryEl) return;
         playerSummaryEl.textContent = `${answeredCount}/${totalPlayers}`;
-    }
-
-    function updateSecurityLevels(streak, target) {
-        const ranges = [
-            { level: 1, start: 0, end: 3, size: 3 },
-            { level: 2, start: 3, end: 6, size: 3 },
-            { level: 3, start: 6, end: 10, size: 4 }
-        ];
-
-        securityLevels.forEach((el, index) => {
-            const range = ranges[index];
-            if (!range) return;
-
-            const fill = el.querySelector('.security-fill');
-            const localProgress = Math.max(0, Math.min(range.size, streak - range.start));
-            const percentage = (localProgress / range.size) * 100;
-            const isComplete = streak >= range.end;
-            const isActive = streak >= range.start && streak < range.end;
-
-            el.classList.toggle('is-complete', isComplete);
-            el.classList.toggle('is-active', isActive);
-
-            if (fill) {
-                fill.style.width = `${isComplete ? 100 : percentage}%`;
-            }
-        });
-    }
-
-    function updateCheckpointNodes(streak) {
-        checkpointNodes.forEach((node) => {
-            const checkpoint = parseInt(node.dataset.checkpoint, 10);
-            if (Number.isNaN(checkpoint)) return;
-            node.classList.toggle('unlocked', streak >= checkpoint);
-        });
-    }
-
-    function triggerCheckpointHit(checkpoint) {
-        const node = checkpointNodes.find(
-            (el) => parseInt(el.dataset.checkpoint, 10) === checkpoint
-        );
-        if (!node) return;
-
-        node.classList.remove('hit');
-        // Force reflow so animation can replay if needed.
-        void node.offsetWidth;
-        node.classList.add('hit');
     }
 
     function showWrong() {

@@ -16,41 +16,24 @@
 {% block puzzle_content %}
 <div id="puzzle3-shell">
     <section id="quiz-stage" class="quiz-panel">
-        <div id="security-panel">
-            <div id="security-levels">
-                <div class="security-level" data-level="1">
-                    <div class="security-level-top">
-                        <span class="security-target">3</span>
-                    </div>
-                    <div class="security-track"><div class="security-fill"></div></div>
-                </div>
-
-                <div class="checkpoint-node" data-checkpoint="3" aria-label="Checkpoint 3">
-                    <span class="checkpoint-core" aria-hidden="true"></span>
-                </div>
-
-                <div class="security-level" data-level="2">
-                    <div class="security-level-top">
-                        <span class="security-target">6</span>
-                    </div>
-                    <div class="security-track"><div class="security-fill"></div></div>
-                </div>
-
-                <div class="checkpoint-node" data-checkpoint="6" aria-label="Checkpoint 6">
-                    <span class="checkpoint-core" aria-hidden="true"></span>
-                </div>
-
-                <div class="security-level" data-level="3">
-                    <div class="security-level-top">
-                        <span class="security-target">10</span>
-                    </div>
-                    <div class="security-track"><div class="security-fill"></div></div>
-                </div>
-            </div>
-        </div>
-
         <div id="question-area">
             <div id="question-text"></div>
+            <div class="answer-reminder" role="note" aria-label="Hay 4 respuestas correctas y 6 incorrectas. Marca las correctas con verde y las incorrectas con rojo.">
+                <div class="answer-reminder-badge answer-reminder-badge--correct">
+                    <span class="answer-reminder-count">4</span>
+                    <div class="answer-reminder-copy">
+                        <strong>CORRECTAS</strong>
+                        <span>Botón verde <span aria-hidden="true">✓</span></span>
+                    </div>
+                </div>
+                <div class="answer-reminder-badge answer-reminder-badge--incorrect">
+                    <span class="answer-reminder-count">6</span>
+                    <div class="answer-reminder-copy">
+                        <strong>INCORRECTAS</strong>
+                        <span>Botón rojo <span aria-hidden="true">✕</span></span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="answer-area"></div>
