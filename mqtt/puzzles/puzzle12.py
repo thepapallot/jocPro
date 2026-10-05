@@ -11,8 +11,10 @@ class Puzzle12(BasePuzzle):
         self.solved = False
         self.processing_wrong_result = False
         self.current_giff = 0
-        self.current_streak = 0
-        self.streaks = 1 #You can set this to 1, 2, or 3 for different difficulty levels
+        self.active_streaks = [2]
+        self.current_active_index = 0
+        self.current_streak = self.active_streaks[self.current_active_index]
+        self.streaks = len(self.active_streaks)
         self.counters = [
             { "id": 1, "duration": 30, "num_giff": 5 },
             { "id": 2, "duration": 45, "num_giff": 5 },
@@ -28,18 +30,27 @@ class Puzzle12(BasePuzzle):
                         ((4,4,4,4,5,4),(4,3,5,2,6,5),(1,4,6,4,8,2),(6,2,2,8,4,3),(4,5,5,3,4,4)))
                         #((0,4,4,4,4,2),(0,3,6,5,2,2),(0,5,3,2,3,5),(0,3,5,6,2,2),(0,2,2,4,8,2)))
 
+    def _display_round(self):
+        return self.current_active_index + 1
+
+    def _set_active_round(self, index):
+        self.current_active_index = index
+        self.current_streak = self.active_streaks[index]
+
     def reset(self):
         print("Starting Puzzle 12")
         super().reset()
         with self.lock:
-            self.current_streak = 1
+            self._set_active_round(0)
             self.current_giff = self.get_giff()
             self._push({
                 "puzzle_id": self.id,
                 "startRound": True,
-                "round": self.current_streak,
+                "round": self._display_round(),
                 "total_rounds": self.streaks,
+                "level_id": self.current_streak,
                 "num_giff": self.current_giff,
+                "target": list(self.botons[self.current_streak - 1][self.current_giff - 1]),
                 "duration": self.counters[self.current_streak - 1]["duration"]
             })
 
@@ -110,7 +121,7 @@ class Puzzle12(BasePuzzle):
 
             print(f"Streak {self.current_streak} solved!")
 
-            if self.current_streak >= self.streaks or self.saltarPuzzle:
+            if self.current_active_index >= self.streaks - 1 or self.saltarPuzzle:
                 self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
                 time.sleep(3)  # Brief pause before declaring puzzle solved
                 self.solved = True
@@ -120,7 +131,7 @@ class Puzzle12(BasePuzzle):
                 })
             else:
                 time.sleep(4)  # Brief pause before next round
-                self.current_streak += 1
+                self._set_active_round(self.current_active_index + 1)
                 self.mqtt_client.start_next_round(self.id, self.current_streak)
                 self.current_giff = self.get_giff()
                 if self.current_streak == 4:
@@ -129,25 +140,28 @@ class Puzzle12(BasePuzzle):
                 self._push({
                     "puzzle_id": self.id,
                     "startRound": True,
-                    "round": self.current_streak,
+                    "round": self._display_round(),
                     "total_rounds": self.streaks,
+                    "level_id": self.current_streak,
                     "num_giff": self.current_giff,
+                    "target": list(self.botons[self.current_streak - 1][self.current_giff - 1]),
                     "duration": self.counters[self.current_streak - 1]["duration"]
                 })
 
     def get_state(self):
         with self.lock:
             target = None
-            if 1 <= self.current_streak <= self.streaks and self.current_giff:
+            if 1 <= self.current_streak <= len(self.counters) and self.current_giff:
                 target = list(self.botons[self.current_streak - 1][self.current_giff - 1])
 
             return {
                 "puzzle_id": self.id,
                 "puzzle_solved": self.solved,
-                "round": self.current_streak,
+                "round": self._display_round(),
                 "total_rounds": self.streaks,
+                "level_id": self.current_streak,
                 "num_giff": self.current_giff,
-                "duration": self.counters[self.current_streak - 1]["duration"] if 1 <= self.current_streak <= self.streaks else None,
+                "duration": self.counters[self.current_streak - 1]["duration"] if 1 <= self.current_streak <= len(self.counters) else None,
                 "target": target,
                 "box_states": self.box_states.copy()
             }
@@ -182,9 +196,11 @@ class Puzzle12(BasePuzzle):
                     self._push({
                         "puzzle_id": self.id,
                         "startRound": True,
-                        "round": self.current_streak,
+                        "round": self._display_round(),
                         "total_rounds": self.streaks,
+                        "level_id": self.current_streak,
                         "num_giff": self.current_giff,
+                        "target": list(self.botons[self.current_streak - 1][self.current_giff - 1]),
                         "duration": self.counters[self.current_streak - 1]["duration"]
                     })
 

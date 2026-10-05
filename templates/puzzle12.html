@@ -6,22 +6,19 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle12.css') }}">
 {% endblock %}
 
-{% block top_right %}
-<div id="final-top-hud">
-    <div id="timer-overlay">00:00</div>
-</div>
-{% endblock %}
+{% block top_right %}{% endblock %}
 
 {% block puzzle_content %}
 <div id="final-shell">
     <section id="final-stage" class="final-panel">
-        <div id="final-levels"></div>
-
         <div id="final-main">
             <div id="final-viewport-wrap">
                 <div id="final-viewport">
-                    <img id="fase-gif" src="" alt="Secuencia final" style="display:none;">
-                    <img id="wrong-img" src="{{ url_for('static', filename='images/puzzle12/wrong.png') }}" alt="wrong" style="display:none;">
+                    <div id="button-pattern" role="group" aria-label="Botons que cal prémer per color" style="display:none;"></div>
+                    <div id="timer-overlay" role="timer" aria-label="Temps restant" aria-live="off" style="display:none;">00:00</div>
+                    <div id="wrong-img" role="status" aria-live="assertive" style="display:none;">
+                        <span class="p12-timeout-text">TIEMPO AGOTADO</span>
+                    </div>
                     <img id="good-img" src="{{ url_for('static', filename='images/puzzle12/good.png') }}" alt="good" style="display:none;">
 
                     <div id="wait-screen">
