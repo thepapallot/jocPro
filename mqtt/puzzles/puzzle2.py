@@ -34,13 +34,30 @@ class Puzzle2(BasePuzzle):
         self.block_until = 0
         self.error_counter = 0
         
+    def _sequence_for_player(self, player, alarm_mode=None):
+        """Return the current sequence for one player, optionally transformed by alarm mode."""
+        if player not in self.sequences:
+            return []
+        active_alarm = self.alarm_mode if alarm_mode is None else bool(alarm_mode)
+        mapping = self.alarmChanges if active_alarm else {}
+        return [mapping.get(symbol, symbol) for symbol in self.sequences[player]]
+
+    def get_player_sequence(self, player, alarm_mode=None):
+        """Public helper used by the frontend state contract."""
+        return self._sequence_for_player(player, alarm_mode=alarm_mode)
+
     def _snapshot(self):
         """Return player progress snapshot"""
         return [
-            {"player": p, "progress": self.progress[p], "total": 5}
+            {
+                "player": p,
+                "progress": self.progress[p],
+                "total": 5,
+                "sequence": self.get_player_sequence(p),
+            }
             for p in sorted(self.progress.keys())
         ]
-        
+
     def reset(self):
         """Full reset of puzzle"""
         super().reset()
@@ -50,18 +67,23 @@ class Puzzle2(BasePuzzle):
             self.alarm_mode = False
             self.input_blocked = False
             self.block_until = 0
-            
+
             if self.alarm_timer:
                 print(f"[Puzzle2] Cancelling existing alarm timer")
                 self.alarm_timer.cancel()
                 self.alarm_timer = None
-                
+
+            sequences = {
+                p: self.get_player_sequence(p)
+                for p in sorted(self.sequences.keys())
+            }
             self._push({
                 "players": self._snapshot(),
+                "sequences": sequences,
                 "alarm_mode": False,
                 "error_counter": 0
             })
-            
+
             # Schedule new alarm
             alarm_delay = random.randint(20, 40)
             print(f"[Puzzle2] Rescheduling alarm mode in {alarm_delay} seconds after reset")
@@ -84,9 +106,14 @@ class Puzzle2(BasePuzzle):
     def get_state(self):
         """Return current puzzle state"""
         with self.lock:
+            sequences = {
+                p: self.get_player_sequence(p)
+                for p in sorted(self.sequences.keys())
+            }
             return {
                 "puzzle_id": self.id,
                 "players": self._snapshot(),
+                "sequences": sequences,
                 "alarm_mode": self.alarm_mode,
                 "error_counter": self.error_counter
             }
@@ -102,12 +129,19 @@ class Puzzle2(BasePuzzle):
         with self.lock:
             self.input_blocked = True
             self.block_until = time.time() + 5
-            
+
+            sequences = {
+                p: self.get_player_sequence(p)
+                for p in sorted(self.sequences.keys())
+            }
+
             # Play alarm sound
             self._push({
                 "play_alarm_sound": {
                     "url": "/static/audios/effects/canvi_laberint.wav"
-                }
+                },
+                "sequences": sequences,
+                "alarm_mode": self.alarm_mode,
             })
             
         # Activate alarm mode after 5s
@@ -117,9 +151,16 @@ class Puzzle2(BasePuzzle):
                 self.alarm_mode = True
                 self.input_blocked = False
                 print(f"[Puzzle2] Alarm mode ACTIVE, pushing update to frontend")
-                
-                self._push({"alarm_mode": True})
-                
+
+                sequences = {
+                    p: self.get_player_sequence(p)
+                    for p in sorted(self.sequences.keys())
+                }
+                self._push({
+                    "alarm_mode": True,
+                    "sequences": sequences,
+                })
+
                 # Schedule exit after 20-40s
                 alarm_duration = random.randint(20, 40)
                 print(f"[Puzzle2] Scheduling alarm exit in {alarm_duration} seconds")
@@ -152,9 +193,16 @@ class Puzzle2(BasePuzzle):
                 self.alarm_mode = False
                 self.input_blocked = False
                 print(f"[Puzzle2] Alarm mode INACTIVE, pushing update to frontend")
-                
-                self._push({"alarm_mode": False})
-                
+
+                sequences = {
+                    p: self.get_player_sequence(p)
+                    for p in sorted(self.sequences.keys())
+                }
+                self._push({
+                    "alarm_mode": False,
+                    "sequences": sequences,
+                })
+
                 # Schedule next alarm entry after 20-40s
                 alarm_delay = random.randint(20, 40)
                 print(f"[Puzzle2] Scheduling next alarm mode in {alarm_delay} seconds")
