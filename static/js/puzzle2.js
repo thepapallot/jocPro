@@ -1,262 +1,308 @@
 (function () {
     const TOTAL = 5;
     const PLAYER_COUNT = 10;
-    let redirected = false;
-    const imgEl = document.querySelector("#image-area img");
-    const progressReadoutEl = document.getElementById("p2-progress-readout");
-    const errorCounterEl = document.getElementById("p2-error-counter");
-    const statusCopyEl = document.getElementById("p2-status-copy");
-    const completeOverlayEl = document.getElementById("p2-complete-overlay");
-    const completeCopyEl = document.getElementById("p2-complete-copy");
-    const normalImg = imgEl.src;
-    const alarmImg = normalImg.replace("Laberint.png", "LaberintVermell.png");
-    const CORRECT_SOUND_URL = "/static/audios/effects/correcte.wav";
-    const INCORRECT_SOUND_URL = "/static/audios/effects/incorrecte.wav";
-    const PHASE_COMPLETE_SOUND_URL = "/static/audios/effects/fase_completada.wav";
-    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
-    const progressByPlayer = {};
-    const errorsByPlayer = {};
-    let sharedErrorCounter = 0;
-    let alarmFlashTimeout = null;
+    const CELL_SIZE = 48;
+    const TOKEN_BY_PLAYER = [5, 13, 17, 22, 10, 20, 35, 31, 14, 18];
+    const DEFAULT_SEQUENCES = {
+        1: [5, 0, 9, 6, 2],
+        2: [4, 3, 9, 0, 7],
+        3: [8, 1, 7, 2, 4],
+        4: [0, 4, 8, 1, 3],
+        5: [6, 7, 8, 4, 9],
+        6: [3, 5, 1, 9, 0],
+        7: [2, 6, 3, 7, 8],
+        8: [9, 2, 5, 7, 1],
+        9: [0, 8, 2, 5, 6],
+        10: [1, 4, 6, 3, 5],
+    };
+    const ALARM_MAP = {
+        0: 2, 1: 3, 2: 0, 3: 1, 4: 5,
+        5: 4, 6: 8, 7: 9, 8: 6, 9: 7,
+    };
 
-    // NEW: alarm flash toggler during transition
-    let alarmFlashInterval = null;
-    function startAlarmFlash(durationMs = 5000) {
-        stopAlarmFlash();
-        let on = true;
-        // immediate toggle kick
-        setAlarmMode(on);
-        alarmFlashInterval = setInterval(() => {
-            on = !on;
-            setAlarmMode(on);
-        }, 1000);
-        // stop after duration
-        alarmFlashTimeout = setTimeout(() => stopAlarmFlash(), durationMs);
-    }
-    function stopAlarmFlash() {
-        if (alarmFlashInterval) {
-            clearInterval(alarmFlashInterval);
-            alarmFlashInterval = null;
-        }
-        if (alarmFlashTimeout) {
-            clearTimeout(alarmFlashTimeout);
-            alarmFlashTimeout = null;
-        }
+    let redirected = false;
+    let alarmMode = false;
+    const progressByPlayer = {};
+    const snakePositions = new Map();
+    let movementTimer = null;
+
+    const snakeStageEl = document.getElementById('p2-snake-stage');
+    const completeOverlayEl = document.getElementById('p2-complete-overlay');
+    const completeCopyEl = document.getElementById('p2-complete-copy');
+
+    function getSequence(player) {
+        const sequence = DEFAULT_SEQUENCES[player] || [];
+        return sequence.map((symbol) => (alarmMode ? (ALARM_MAP[symbol] ?? symbol) : symbol));
     }
 
     function getCompletedPlayers() {
-        return Object.values(progressByPlayer).filter(progress => progress >= TOTAL).length;
+        return Object.values(progressByPlayer).filter((progress) => progress >= TOTAL).length;
     }
 
-    function updateSecuredRoutes() {
-        document.querySelectorAll("#p2-secured-list .secured-route").forEach((routeEl) => {
-            const player = Number(routeEl.dataset.player);
-            const secured = (progressByPlayer[player] || 0) >= TOTAL;
-            routeEl.classList.toggle("active", secured);
-        });
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch((err) => console.warn('Audio play failed:', err));
     }
 
-    function updateErrorsHud() {
-        if (errorCounterEl) {
-            errorCounterEl.textContent = String(sharedErrorCounter);
-        }
-
-        for (let player = 1; player <= PLAYER_COUNT; player++) {
-            const valueEl = document.getElementById(`error-player-${player}`);
-            if (!valueEl) continue;
-            const errorCount = errorsByPlayer[player] || 0;
-            valueEl.textContent = String(errorCount);
-            valueEl.classList.toggle("has-errors", errorCount > 0);
-        }
-    }
-
-    function registerError(player, counterValue) {
-        if (typeof player === "number") {
-            errorsByPlayer[player] = (errorsByPlayer[player] || 0) + 1;
-        }
-        if (typeof counterValue === "number") {
-            sharedErrorCounter = counterValue;
-        }
-        updateErrorsHud();
+    function setAlarmMode(active) {
+        alarmMode = !!active;
+        document.body.classList.toggle('alarm-mode', alarmMode);
+        document.body.classList.toggle('p2-alarm-active', alarmMode);
+        renderSnakes();
+        updateHudState();
     }
 
     function updateHudState() {
         const completed = getCompletedPlayers();
         const solved = completed >= PLAYER_COUNT;
-        updateSecuredRoutes();
-
-        if (progressReadoutEl) {
-            progressReadoutEl.textContent = `${completed}/${PLAYER_COUNT}`;
-        }
-
-        if (statusCopyEl) {
-            if (solved) {
-                statusCopyEl.textContent = "Sincronizacion completa";
-            } else if (document.body.classList.contains("alarm-mode")) {
-                statusCopyEl.textContent = "Alarma activa";
-            } else if (completed > 0) {
-                statusCopyEl.textContent = "Rutas aseguradas";
-            } else {
-                statusCopyEl.textContent = "Laberinto estable";
-            }
-        }
-
-        document.body.classList.toggle("p2-solved", solved);
 
         if (completeOverlayEl) {
-            completeOverlayEl.setAttribute("aria-hidden", solved ? "false" : "true");
+            completeOverlayEl.setAttribute('aria-hidden', solved ? 'false' : 'true');
+            completeOverlayEl.classList.toggle('visible', solved);
         }
 
         if (completeCopyEl) {
             completeCopyEl.textContent = solved
-                ? "Todos los equipos han completado su secuencia."
+                ? 'Todos los equipos han completado su secuencia.'
                 : `${PLAYER_COUNT - completed} rutas pendientes de sincronizar.`;
+        }
+
+        document.body.classList.toggle('p2-solved', solved);
+    }
+
+    function renderSnakes() {
+        if (!snakeStageEl) return;
+
+        for (let player = 1; player <= PLAYER_COUNT; player++) {
+            const progress = progressByPlayer[player] || 0;
+            const sequence = getSequence(player);
+            let snake = snakeStageEl.querySelector(`.snake-player[data-player="${player}"]`);
+            if (!snake) {
+                snake = document.createElement('div');
+                snake.className = 'snake-player';
+                snake.dataset.player = String(player);
+
+                const head = document.createElement('div');
+                head.className = 'snake-head';
+                head.textContent = String(TOKEN_BY_PLAYER[player - 1]);
+                snake.appendChild(head);
+
+                sequence.forEach((symbol) => {
+                    const segment = document.createElement('img');
+                    segment.className = 'snake-segment';
+                    segment.alt = `Símbolo ${symbol}`;
+                    snake.appendChild(segment);
+                });
+
+                snakeStageEl.appendChild(snake);
+                snakePositions.set(player, createSnakeState(player));
+            }
+
+            const segments = snake.querySelectorAll('.snake-segment');
+
+            sequence.forEach((symbol, index) => {
+                const segment = segments[index];
+                segment.src = `/static/images/puzzle2/symbols/symbol_${symbol}.png`;
+                segment.alt = `Símbolo ${symbol}`;
+                segment.classList.remove('complete', 'active', 'pending');
+
+                if (index < progress) {
+                    segment.classList.add('complete');
+                } else if (index === progress && progress < TOTAL) {
+                    segment.classList.add('active');
+                } else {
+                    segment.classList.add('pending');
+                }
+
+            });
+        }
+        renderSnakePositions();
+    }
+
+    function getGridBounds() {
+        return {
+            columns: Math.max(3, Math.floor(snakeStageEl.clientWidth / CELL_SIZE)),
+            rows: Math.max(3, Math.floor(snakeStageEl.clientHeight / CELL_SIZE)),
+        };
+    }
+
+    function createSnakeState(player) {
+        const { columns, rows } = getGridBounds();
+        const directions = [
+            { x: 1, y: 0 },
+            { x: 0, y: 1 },
+            { x: -1, y: 0 },
+            { x: 0, y: -1 },
+        ];
+        const direction = directions[(player - 1) % directions.length];
+        const head = {
+            x: 1 + ((player * 3) % Math.max(1, columns - 2)),
+            y: 1 + ((player * 5) % Math.max(1, rows - 2)),
+        };
+        const trail = [head];
+
+        for (let index = 1; index <= TOTAL; index++) {
+            trail.push({
+                x: Math.max(0, Math.min(columns - 1, head.x - direction.x * index)),
+                y: Math.max(0, Math.min(rows - 1, head.y - direction.y * index)),
+            });
+        }
+
+        return { trail, direction, ticks: 0 };
+    }
+
+    function renderSnakePositions() {
+        if (!snakeStageEl) return;
+        for (let player = 1; player <= PLAYER_COUNT; player++) {
+            const snake = snakeStageEl.querySelector(`.snake-player[data-player="${player}"]`);
+            const state = snakePositions.get(player);
+            if (!snake || !state) continue;
+
+            const parts = [snake.querySelector('.snake-head'), ...snake.querySelectorAll('.snake-segment')];
+            parts.forEach((part, index) => {
+                const point = state.trail[index];
+                if (!part || !point) return;
+                part.style.left = `${point.x * CELL_SIZE + CELL_SIZE / 2}px`;
+                part.style.top = `${point.y * CELL_SIZE + CELL_SIZE / 2}px`;
+            });
         }
     }
 
-    function setProgress(player, progress) {
-        const el = document.getElementById(`bar-player-${player}`);
-        if (!el) return;
-        progressByPlayer[player] = progress;
-        el.classList.toggle("has-progress", progress > 0);
-        el.dataset.progress = String(progress);
-        el.querySelectorAll(".progress-cell").forEach((cell, index) => {
-            cell.classList.toggle("active", index < progress);
-            cell.classList.toggle("complete", progress >= TOTAL);
-        });
-        if (progress >= TOTAL) {
-            el.classList.add("complete");
-        } else {
-            el.classList.remove("complete");
+    function moveSnakes() {
+        if (!snakeStageEl) return;
+        const { columns, rows } = getGridBounds();
+        const directions = [
+            { x: 1, y: 0 },
+            { x: -1, y: 0 },
+            { x: 0, y: 1 },
+            { x: 0, y: -1 },
+        ];
+
+        for (let player = 1; player <= PLAYER_COUNT; player++) {
+            const state = snakePositions.get(player);
+            if (!state) continue;
+
+            const head = state.trail[0];
+            const canMove = (direction) => {
+                const x = head.x + direction.x;
+                const y = head.y + direction.y;
+                return x >= 0 && x < columns && y >= 0 && y < rows;
+            };
+            const isReverse = (direction) => (
+                direction.x === -state.direction.x && direction.y === -state.direction.y
+            );
+            const isStraight = (direction) => (
+                direction.x === state.direction.x && direction.y === state.direction.y
+            );
+            let nextDirection = state.direction;
+            const needsTurn = !canMove(state.direction) || Math.random() < 0.12;
+
+            if (needsTurn) {
+                const turns = directions.filter((direction) => (
+                    !isReverse(direction) && !isStraight(direction) && canMove(direction)
+                ));
+                if (turns.length) {
+                    nextDirection = turns[Math.floor(Math.random() * turns.length)];
+                }
+            }
+
+            if (!canMove(nextDirection)) {
+                const alternatives = directions.filter((direction) => (
+                    !isReverse(direction) && canMove(direction)
+                ));
+                if (alternatives.length) {
+                    nextDirection = alternatives[Math.floor(Math.random() * alternatives.length)];
+                } else {
+                    continue;
+                }
+            }
+
+            const nextHead = {
+                x: head.x + nextDirection.x,
+                y: head.y + nextDirection.y,
+            };
+            state.direction = nextDirection;
+            state.ticks += 1;
+            state.trail.unshift(nextHead);
+            state.trail.length = TOTAL + 1;
         }
+
+        renderSnakePositions();
+    }
+
+    function setProgress(player, progress) {
+        progressByPlayer[player] = progress;
+        renderSnakes();
         updateHudState();
     }
 
     function applySnapshot(players) {
-        players.forEach(p => {
-            setProgress(p.player, p.progress);
+        players.forEach((entry) => {
+            if (entry && typeof entry.player === 'number') {
+                setProgress(entry.player, entry.progress || 0);
+            }
         });
-    }
-
-    function setAlarmMode(active) {
-        if (active) {
-            imgEl.src = alarmImg;
-            document.body.classList.add("alarm-mode");
-            document.body.classList.add("p2-alarm-active");
-        } else {
-            imgEl.src = normalImg;
-            document.body.classList.remove("alarm-mode");
-            document.body.classList.remove("p2-alarm-active");
-        }
-        updateHudState();
-    }
-
-    function playSound(url) {
-        const audio = new Audio(url);
-        audio.play().catch(err => console.warn("Audio play failed:", err));
-    }
-
-    function startErrorFlashOnly(player) {
-        const barInner = document.getElementById(`bar-player-${player}`);
-        const row = document.querySelector(`.player-row[data-player="${player}"]`);
-        const errorRow = document.querySelector(`.error-row[data-player="${player}"]`);
-        const barOuter = row ? row.querySelector('.bar-outer') : null;
-        const label = row ? row.querySelector('.player-label') : null;
-
-        if (barInner) barInner.classList.add("error-flash");
-        if (barOuter) barOuter.classList.add("error-flash");
-        if (label) label.classList.add("error-flash");
-        if (row) row.classList.add("error-flash");
-        if (errorRow) errorRow.classList.add("error-flash");
-
-        setTimeout(() => {
-            const elInner = document.getElementById(`bar-player-${player}`);
-            const elRow = document.querySelector(`.player-row[data-player="${player}"]`);
-            const elErrorRow = document.querySelector(`.error-row[data-player="${player}"]`);
-            const elOuter = elRow ? elRow.querySelector('.bar-outer') : null;
-            const elLabel = elRow ? elRow.querySelector('.player-label') : null;
-
-            if (elInner) elInner.classList.remove("error-flash");
-            if (elOuter) elOuter.classList.remove("error-flash");
-            if (elLabel) elLabel.classList.remove("error-flash");
-            if (elRow) elRow.classList.remove("error-flash");
-            if (elErrorRow) elErrorRow.classList.remove("error-flash");
-        }, 4000);
     }
 
     function handleUpdate(data) {
         if (data.puzzle_id !== 2) return;
 
-        if (typeof data.error_counter === "number") {
-            sharedErrorCounter = data.error_counter;
-            updateErrorsHud();
+        if (data.sequences) {
+            Object.entries(data.sequences).forEach(([player, sequence]) => {
+                if (Array.isArray(sequence)) {
+                    DEFAULT_SEQUENCES[Number(player)] = sequence.slice();
+                }
+            });
         }
 
-        // Count every error and flash the player without resetting progress.
         if (data.error_increment) {
-            registerError(data.error_increment.player, data.error_counter);
-            playSound(INCORRECT_SOUND_URL);
-            startErrorFlashOnly(data.error_increment.player);
+            playSound('/static/audios/effects/incorrecte.wav');
             return;
         }
 
-        // Use player_update directly to trigger sounds and render
         if (data.player_update) {
-            const p = data.player_update.player;
-            const prog = data.player_update.progress;
-            // Play correcte.wav on any valid progress update
-            if (prog > 0 && prog < TOTAL) {
-                playSound(CORRECT_SOUND_URL);
+            const player = data.player_update.player;
+            const progress = data.player_update.progress;
+            if (progress > 0 && progress < TOTAL) {
+                playSound('/static/audios/effects/correcte.wav');
             }
-            // Play fase_completada.wav when the bar reaches TOTAL
-            if (prog === TOTAL) {
-                playSound(PHASE_COMPLETE_SOUND_URL);
+            if (progress >= TOTAL) {
+                playSound('/static/audios/effects/fase_completada.wav');
             }
-            setProgress(p, prog);
+            setProgress(player, progress);
         }
 
-        if (data.players) applySnapshot(data.players);
+        if (data.players) {
+            applySnapshot(data.players);
+        }
 
-        // Play alarm sound and start flashing alarm mode every second during the transition
         if (data.play_alarm_sound) {
             playSound(data.play_alarm_sound.url);
-            startAlarmFlash(5000); // flash for 5s while sound plays
+            document.body.classList.add('alarm-flash');
+            setTimeout(() => document.body.classList.remove('alarm-flash'), 900);
         }
 
-        // Play normal sound; stop flashing (final state comes via alarm_mode)
         if (data.play_normal_sound) {
             playSound(data.play_normal_sound.url);
-            stopAlarmFlash(); // stop any previous flash
+            document.body.classList.remove('alarm-flash');
         }
 
-        // Honor explicit alarm_mode state (stop any flashing and set final state)
         if (data.alarm_mode !== undefined) {
-            stopAlarmFlash();
             setAlarmMode(!!data.alarm_mode);
         }
 
         if (data.puzzle_solved && !redirected) {
-            updateHudState();
             redirected = true;
-            playSound(PUZZLE_COMPLETE_SOUND_URL); // NEW
-            // Show solved banner and flash
+            playSound('/static/audios/effects/nivel_completado.wav');
             const banner = document.getElementById('p2-solved-banner');
             if (banner) banner.classList.remove('hidden');
             document.body.classList.add('p2-solved-flash');
-            setTimeout(function () {
-                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                    ? NEXT_PUZZLE_ID : 1;
-                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                    .then(function (response) {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            window.location.href = '/videoPuzzles/' + nextId;
-                        }
-                    })
-                    .catch(function () {
-                        window.location.href = '/videoPuzzles/' + nextId;
-                    });
+
+            setTimeout(() => {
+                const nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
+                    ? NEXT_PUZZLE_ID
+                    : 1;
+                window.location.href = '/videoPuzzles/' + nextId;
             }, 1800);
         }
     }
@@ -267,111 +313,80 @@
                 handleUpdate({ puzzle_id: 2, ...payload });
             },
             reset() {
-                const players = Array.from({ length: 10 }, (_, index) => ({
-                    player: index + 1,
-                    progress: 0
-                }));
-                handleUpdate({ puzzle_id: 2, players });
+                handleUpdate({
+                    puzzle_id: 2,
+                    players: Array.from({ length: 10 }, (_, index) => ({
+                        player: index + 1,
+                        progress: 0,
+                    })),
+                });
             },
             progress(player = 1, progress = 1) {
                 handleUpdate({
                     puzzle_id: 2,
-                    player_update: { player, progress }
-                });
-            },
-            snapshot(progressList = []) {
-                handleUpdate({
-                    puzzle_id: 2,
-                    players: progressList.map((progress, index) => ({
-                        player: index + 1,
-                        progress
-                    }))
-                });
-            },
-            error(player = 1) {
-                handleUpdate({
-                    puzzle_id: 2,
-                    error_increment: { player },
-                    error_counter: sharedErrorCounter + 1
+                    player_update: { player, progress },
                 });
             },
             alarm(on = true) {
-                handleUpdate({
-                    puzzle_id: 2,
-                    alarm_mode: on
-                });
+                handleUpdate({ puzzle_id: 2, alarm_mode: on });
             },
             solved() {
-                const previousRedirected = redirected;
-                redirected = false;
-                handleUpdate({
-                    puzzle_id: 2,
-                    puzzle_solved: true
-                });
-                redirected = previousRedirected;
+                handleUpdate({ puzzle_id: 2, puzzle_solved: true });
             },
-            demoProgress() {
-                this.reset();
-                const steps = [
-                    [1, 1], [2, 2], [3, 1], [4, 3], [5, 2],
-                    [6, 4], [7, 3], [8, 5], [9, 4], [10, 5]
-                ];
-                steps.forEach(([player, progress], index) => {
-                    setTimeout(() => this.progress(player, progress), index * 450);
-                });
-            },
-            demoError() {
-                this.snapshot([2, 3, 1, 4, 2, 0, 3, 1, 2, 4]);
-                setTimeout(() => this.error(4), 300);
-            },
-            demoSolved() {
-                this.snapshot([5, 5, 5, 5, 5, 5, 5, 5, 5, 5]);
-                setTimeout(() => this.solved(), 800);
-            }
         };
     }
 
     function loadCurrentState() {
-        fetch("/current_state")
-            .then(response => response.json())
-            .then(data => {
+        fetch('/current_state')
+            .then((response) => response.json())
+            .then((data) => {
                 if (!data || data.puzzle_id !== 2) return;
-                if (data.players) applySnapshot(data.players);
-                if (typeof data.error_counter === "number") {
-                    sharedErrorCounter = data.error_counter;
-                    updateErrorsHud();
+                if (data.sequences) {
+                    Object.entries(data.sequences).forEach(([player, sequence]) => {
+                        if (Array.isArray(sequence)) {
+                            DEFAULT_SEQUENCES[Number(player)] = sequence.slice();
+                        }
+                    });
+                }
+                if (data.players) {
+                    applySnapshot(data.players);
                 }
                 if (data.alarm_mode !== undefined) {
-                    stopAlarmFlash();
                     setAlarmMode(!!data.alarm_mode);
                 }
+                renderSnakes();
             })
-            .catch(err => console.warn("Failed to load current state for puzzle 2:", err));
+            .catch((err) => console.warn('Failed to load current state for puzzle 2:', err));
     }
 
     function initSSE() {
-        
         for (let player = 1; player <= PLAYER_COUNT; player++) {
-            setProgress(player, 0);
-            errorsByPlayer[player] = 0;
+            progressByPlayer[player] = 0;
         }
-        sharedErrorCounter = 0;
-        updateErrorsHud();
+        renderSnakes();
         updateHudState();
-
         loadCurrentState();
 
-        const es = new EventSource("/state_stream");
+        if (movementTimer) clearInterval(movementTimer);
+        movementTimer = setInterval(moveSnakes, 240);
+        window.addEventListener('resize', () => {
+            snakeStageEl.innerHTML = '';
+            snakePositions.clear();
+            renderSnakes();
+        });
+
+        const es = new EventSource('/state_stream');
         es.onopen = () => {
-            fetch("/start_puzzle/2", { method: "POST" })
-                .catch(err => console.warn("Failed to start puzzle 2:", err));
+            fetch('/start_puzzle/2', { method: 'POST' }).catch((err) => {
+                console.warn('Failed to start puzzle 2:', err);
+            });
         };
         es.onmessage = (evt) => {
             try {
                 const data = JSON.parse(evt.data);
                 handleUpdate(data);
-            } catch (e) {
-                console.warn("Bad SSE data", e);
+            } catch (error) {
+                console.warn('Bad SSE data', error);
             }
         };
         es.onerror = () => {
@@ -380,200 +395,8 @@
         };
     }
 
-    function resetSecuredListStyles(securedList, securedRoutes) {
-        securedList.style.position = '';
-        securedList.style.top = '';
-        securedList.style.height = '';
-        securedList.style.left = '';
-        securedList.style.right = '';
-        securedList.style.zIndex = '';
-        securedList.style.display = '';
-        securedList.style.margin = '';
-
-        securedRoutes.forEach(route => {
-            route.style.position = '';
-            route.style.top = '';
-            route.style.height = '';
-            route.style.left = '';
-            route.style.right = '';
-            route.style.transform = '';
-            route.style.display = '';
-            route.style.alignItems = '';
-            route.style.justifyContent = '';
-            route.style.zIndex = '';
-        });
-    }
-
-    function resetErrorListStyles(errorList, errorRows) {
-        errorList.style.position = '';
-        errorList.style.top = '';
-        errorList.style.height = '';
-        errorList.style.left = '';
-        errorList.style.right = '';
-        errorList.style.zIndex = '';
-        errorList.style.display = '';
-        errorList.style.margin = '';
-
-        errorRows.forEach((row) => {
-            row.style.position = '';
-            row.style.top = '';
-            row.style.height = '';
-            row.style.left = '';
-            row.style.right = '';
-            row.style.transform = '';
-            row.style.zIndex = '';
-        });
-    }
-
-    function syncMazeFrame() {
-        const imageArea = document.getElementById('image-area');
-        const mazeFrame = document.getElementById('p2-maze-frame');
-        if (!imageArea || !mazeFrame) return;
-
-        const availableWidth = imageArea.clientWidth;
-        const availableHeight = imageArea.clientHeight;
-        if (!availableWidth || !availableHeight) return;
-
-        const size = Math.max(0, Math.min(availableWidth, availableHeight));
-        mazeFrame.style.width = `${size}px`;
-        mazeFrame.style.height = `${size}px`;
-    }
-
-    function syncSecuredList() {
-        const securedArea = document.getElementById('p2-secured-area');
-        const securedList = document.getElementById('p2-secured-list');
-        const playersList = document.getElementById('players');
-        const playerRows = document.querySelectorAll('#players .player-row');
-        const securedRoutes = document.querySelectorAll('#p2-secured-list .secured-route');
-        if (!securedArea || !securedList || !playersList || !playerRows.length || !securedRoutes.length) return;
-
-        // Keep mobile using CSS layout to avoid overly tall side panels.
-        if (window.matchMedia('(max-width: 640px)').matches) {
-            resetSecuredListStyles(securedList, securedRoutes);
-            return;
-        }
-
-        resetSecuredListStyles(securedList, securedRoutes);
-
-        const areaRect = securedArea.getBoundingClientRect();
-        const playersRect = playersList.getBoundingClientRect();
-
-        if (!areaRect.height || !playersRect.height) return;
-
-        securedList.style.position = 'absolute';
-        securedList.style.left = '0';
-        securedList.style.right = '0';
-        securedList.style.top = `${Math.max(0, playersRect.top - areaRect.top)}px`;
-        securedList.style.height = `${playersRect.height}px`;
-        securedList.style.display = 'block';
-        securedList.style.margin = '0';
-        securedList.style.zIndex = '1';
-
-        const listRect = securedList.getBoundingClientRect();
-        if (!listRect.height) return;
-
-        securedRoutes.forEach((route) => {
-            const player = Number(route.dataset.player);
-            const row = document.querySelector(`#players .player-row[data-player="${player}"]`);
-            if (!row) return;
-
-            const rowRect = row.getBoundingClientRect();
-            const centerY = rowRect.top + (rowRect.height / 2);
-            const yPercent = ((centerY - listRect.top) / listRect.height) * 100;
-
-            route.style.position = 'absolute';
-            route.style.left = '50%';
-            route.style.top = `${Math.max(0, Math.min(100, yPercent))}%`;
-            route.style.transform = 'translate(-50%, -50%)';
-            route.style.display = 'flex';
-            route.style.alignItems = 'center';
-            route.style.justifyContent = 'center';
-            route.style.zIndex = '1';
-        });
-    }
-
-    function syncErrorList() {
-        const errorsArea = document.getElementById('p2-errors-area');
-        const errorList = document.getElementById('p2-error-list');
-        const playersList = document.getElementById('players');
-        const playerRows = document.querySelectorAll('#players .player-row');
-        const errorRows = document.querySelectorAll('#p2-error-list .error-row');
-        if (!errorsArea || !errorList || !playersList || !playerRows.length || !errorRows.length) return;
-
-        // Keep mobile on CSS flow layout.
-        if (window.matchMedia('(max-width: 640px)').matches) {
-            resetErrorListStyles(errorList, errorRows);
-            return;
-        }
-
-        resetErrorListStyles(errorList, errorRows);
-
-        const areaRect = errorsArea.getBoundingClientRect();
-        const playersRect = playersList.getBoundingClientRect();
-
-        if (!areaRect.height || !playersRect.height) return;
-
-        errorList.style.position = 'absolute';
-        errorList.style.left = '10px';
-        errorList.style.right = '10px';
-        errorList.style.top = `${Math.max(0, playersRect.top - areaRect.top)}px`;
-        errorList.style.height = `${playersRect.height}px`;
-        errorList.style.display = 'block';
-        errorList.style.margin = '0';
-        errorList.style.zIndex = '1';
-
-        const listRect = errorList.getBoundingClientRect();
-        if (!listRect.height) return;
-
-        errorRows.forEach((errorRow) => {
-            const player = Number(errorRow.dataset.player);
-            const row = document.querySelector(`#players .player-row[data-player="${player}"]`);
-            if (!row) return;
-
-            const rowRect = row.getBoundingClientRect();
-            const centerY = rowRect.top + (rowRect.height / 2);
-            const yPercent = ((centerY - listRect.top) / listRect.height) * 100;
-
-            errorRow.style.position = 'absolute';
-            errorRow.style.left = '0';
-            errorRow.style.right = '0';
-            errorRow.style.top = `${Math.max(0, Math.min(100, yPercent))}%`;
-            errorRow.style.height = `${Math.max(26, rowRect.height)}px`;
-            errorRow.style.transform = 'translateY(-50%)';
-            errorRow.style.zIndex = '1';
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener('DOMContentLoaded', () => {
         installDebugHelpers();
         initSSE();
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-            syncMazeFrame();
-            syncSecuredList();
-            syncErrorList();
-        }));
-        window.addEventListener('load', () => requestAnimationFrame(() => {
-            syncMazeFrame();
-            syncSecuredList();
-            syncErrorList();
-        }));
-        window.addEventListener('resize', () => {
-            syncMazeFrame();
-            syncSecuredList();
-            syncErrorList();
-        });
-        if (window.ResizeObserver) {
-            const ro = new ResizeObserver(() => requestAnimationFrame(() => {
-                syncMazeFrame();
-                syncSecuredList();
-                syncErrorList();
-            }));
-            const pa = document.getElementById('progress-area');
-            const ia = document.getElementById('image-area');
-            const ea = document.getElementById('p2-errors-area');
-            if (pa) ro.observe(pa);
-            if (ia) ro.observe(ia);
-            if (ea) ro.observe(ea);
-        }
     });
 })();
