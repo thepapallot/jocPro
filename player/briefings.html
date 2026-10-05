@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La Piràmide · Presentaciones de los juegos</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080e14;color:#e8eff1;font-family:Arial,sans-serif}header{display:flex;align-items:center;gap:12px;padding:12px 18px;flex-wrap:wrap;border-bottom:1px solid #38505d}header strong{margin-right:auto;font-size:18px}button,select{font:inherit;border:1px solid #526b78;border-radius:6px;color:#e8eff1;background:#182b36;padding:9px 14px}button{cursor:pointer}button:disabled{opacity:.35;cursor:default}button.primary{background:#71e7db;color:#0a1922;font-weight:bold}button:focus-visible,select:focus-visible{outline:3px solid #edb970;outline-offset:2px}iframe{display:block;width:100%;height:calc(100vh - 120px);min-height:240px;border:0}footer{padding:10px 18px;font-size:14px;color:#b0c1cb;display:flex;gap:15px;justify-content:space-between}a{color:#71e7db}
+</style>
+</head>
+<body>
+<header><strong>La Piràmide · Presentaciones</strong><select id="puzzle" aria-label="Juego"></select><select id="language" aria-label="Idioma"><option value="es">Español</option><option value="ca">Català</option><option value="eng">English</option></select><button id="repeat">Repetir</button><button id="previous">← Anterior</button><button id="next" class="primary">Mostrar terminales →</button></header>
+<iframe id="screen" title="Presentación gráfica del juego"></iframe>
+<footer><span id="status">Objetivo → terminales y tokens → interacción</span><a href="/test?panel=juego">Abrir Control de juego</a></footer>
+<script>
+const names={11:'Práctica',2:'Laberinto',3:'Trivial',8:'Memory',1:'Sumas',5:'Cronómetro',12:'Botones',4:'Música',6:'Energía'};
+const params=new URLSearchParams(location.search),screen=document.getElementById('screen'),puzzle=document.getElementById('puzzle'),language=document.getElementById('language');
+puzzle.innerHTML=[11,2,3,8,1,5,12,4,6].map(id=>`<option value="${id}">${names[id]}</option>`).join('');puzzle.value=Object.hasOwn(names,params.get('puzzle'))?params.get('puzzle'):'11';language.value=['ca','es','eng'].includes(params.get('lang'))?params.get('lang'):'es';
+function send(action){screen.contentWindow.postMessage({type:'pyramid-presentation-command',action},location.origin)}
+function load(){screen.src=`/presentacio/${puzzle.value}?embed=1&lang=${language.value}`;history.replaceState(null,'',`?puzzle=${puzzle.value}&lang=${language.value}`);document.getElementById('next').disabled=true;document.getElementById('previous').disabled=true;}
+puzzle.onchange=load;language.onchange=load;document.getElementById('repeat').onclick=()=>send('restart');document.getElementById('previous').onclick=()=>send('previous');document.getElementById('next').onclick=()=>send('next');
+window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==screen.contentWindow||event.data?.type!=='pyramid-presentation-state')return;const s=event.data;document.getElementById('status').textContent=`${s.name} · ${s.step+1} / ${s.labels.length} · ${s.labels[s.step]}${s.step===2?' · Esquema completo':''}`;document.getElementById('next').disabled=!s.canNext;document.getElementById('next').textContent=s.canNext?s.nextLabel:'Esquema completo ✓';document.getElementById('previous').disabled=s.step===0;});
+screen.onload=()=>send('sync');load();
+</script>
+</body>
+</html>

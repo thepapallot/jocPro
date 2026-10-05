@@ -1,0 +1,246 @@
+/* Automatic opening, then GM-led briefings. Starting a puzzle is always explicit. */
+(() => {
+  const page=window.PYRAMID_PAGE;
+  const flow = window.PyramidFlow;
+  let sceneIndex = page ? flow.findIndex(c=>page.sceneId==='puzzle'?c.puzzleId===page.puzzleId:c.id===page.sceneId) : 0;
+  if(sceneIndex<0)throw new Error('Presentation not configured: '+page.sceneId);
+  let config = flow[sceneIndex];
+  const run=page&&window.parent!==window?window.parent.PyramidRun:null;
+  if(run&&config.kind==='opening')run.reset(window);
+  function restoreProgress(){
+    if(!run||['welcome','opening'].includes(config.kind))return;
+    const snapshot=run.snapshot(),ids=[...page.order,page.finalId];
+    config.completed=snapshot.completedIds.filter(id=>ids.includes(id)).length;
+    config.previous=snapshot.previousIds.filter(id=>ids.includes(id)).length;
+    if(config.kind==='success'&&snapshot.lastCompleted!==config.afterPuzzle)config.previous=config.completed;
+    config.actualProgress=true;
+  }
+  const $ = id => document.getElementById(id);
+  const stage = $('p-stage'), viewport = $('p-viewport');
+  const params = new URLSearchParams(location.search);
+  const normalizeLanguage = value => value === 'en' ? 'eng' : Object.hasOwn(config.copy, value) ? value : 'ca';
+  let language = normalizeLanguage(page?.language||params.get('lang'));
+  let mode = page ? 'live' : params.get('mode') === 'live' && location.protocol !== 'file:' ? 'live' : 'preview';
+  let step = page?.initialStep||0, revealed = false, phase = 'slides', countdownStart = 0, countdownTimer = null, lastCount = null;
+  let openingTimer=null,autoPaused=false,autoDeadline=0,autoRemaining=null,leaving=false;
+  const text = () => config.copy[language];
+  function stopOpening(){if(openingTimer!==null)clearTimeout(openingTimer);openingTimer=null;}
+  function scheduleOpening(){
+    stopOpening();
+    const duration=autoRemaining??config.autoAdvanceMs?.[step];
+    if(phase==='slides'&&!autoPaused&&duration>0){autoDeadline=performance.now()+duration;openingTimer=setTimeout(()=>{openingTimer=null;autoRemaining=null;next();},duration);}
+  }
+  function toggleAutoplay(){
+    if(phase!=='slides'||!config.autoAdvanceMs?.[step])return;
+    if(autoPaused){autoPaused=false;scheduleOpening();}else{autoRemaining=Math.max(1,autoDeadline-performance.now());autoPaused=true;stopOpening();}
+    updateControls();
+  }
+  const logo = (className = '') => PyramidLogo.markup({className, progress:flow && config.kind !== 'welcome' ? 100*(config.completed||0)/(config.total||1) : 0, cyan:'#39d6e5', pink:'#dc68a7', bloom:.28});
+
+  function header(label) {
+    return `<header class="p-head"><div class="p-kicker">${label}</div><div class="p-brand">${logo()}<span>${text().brand}</span></div></header>`;
+  }
+  function footer(label) {
+    return `<footer class="p-footer"><span>${label}</span><span class="p-step-track" aria-hidden="true">${config.steps.map((_,i)=>`<i class="${i<=step?'active':''}"></i>`).join('')}</span></footer>`;
+  }
+  function targets(completed = false) {
+    return config.example.targets.map((number,i)=>`<div class="p-target ${completed&&i===0?'is-completed':''}"><span class="p-target-number">${number}</span>${completed?`${i===0?'<span class="p-target-check" aria-hidden="true">✓</span>':''}<span class="p-target-status">${i===0?text().solved:text().pending}</span>`:''}</div>`).join('');
+  }
+  function body() {
+    const t = text(), screen = config.steps[step], example = config.example;
+    const custom = window.PyramidVisuals?.body(config,screen,t,language,revealed);
+    if (custom) return custom;
+    if (screen === 'cover') return `<div class="p-body p-cover"><div class="p-cover-copy"><div class="p-kicker">${t.slogan}</div><h1 class="p-cover-title">${t.coverTitle}</h1><p>${t.coverLead}</p></div>${logo('p-hero')}</div>`;
+    if (screen === 'objective') return `<div class="p-body p-objective"><div><h1 class="p-objective-title">${t.objectiveTitle}</h1><p class="p-subtitle">${t.objectiveLead}</p></div><div><p class="p-target-label">${t.targetLabel}</p><div class="p-target-grid">${targets()}</div></div></div>`;
+    if (screen === 'example') return `<h1 class="p-title">${t.exampleTitle}<span class="p-example-badge">${t.exampleLabel}</span></h1><p class="p-subtitle">${t.exampleLead}</p><div class="p-equation"><div class="p-term"><div class="p-object"><img class="p-token" src="${config.assets.token}" alt="Token"><span class="p-operand">${example.token}</span></div><p class="p-term-label">${t.token}</p></div><span class="p-operator" aria-hidden="true">+</span><div class="p-term"><div class="p-object"><img class="p-terminal" src="${config.assets.terminal}" alt="Terminal"><span class="p-operand p-terminal-value">${example.terminal}</span></div><p class="p-term-label">${t.terminal}</p></div><span class="p-operator" aria-hidden="true">=</span><div class="p-term"><div class="p-object"><div class="p-result ${revealed?'is-revealed':''}">${revealed?example.result:'?'}</div></div><p class="p-term-label">${t.result}</p></div></div>`;
+    if (screen === 'coordination') return `<div class="p-coordination"><h1 class="p-title">${t.coordinateTitle}</h1><p class="p-subtitle">${t.coordinateLead}</p><div class="p-target-row">${targets(true)}</div><p class="p-rule">${t.warning}</p></div>`;
+    return `<div class="p-body p-ready"><div><h1 class="p-ready-title">${t.readyTitle}</h1><p class="p-subtitle">${t.readyLead}</p></div>${logo('p-hero')}</div>`;
+  }
+  function updateControls() {
+    $('p-announcement').textContent = phase === 'game' ? text().name : `${text().name}. ${text().stepLabels[step]}`;
+    const host=page&&window.parent!==window?window.parent:window.opener;
+    if (host && !host.closed) host.postMessage({
+      type: 'pyramid-presentation-state', realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
+      incremental:!!config.incremental,nextLabel:config.incremental?(step===0?'Mostrar terminales y tokens →':'Mostrar interacción →'):null,
+      name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
+      labels: text().stepLabels, kind: config.kind || 'puzzle',
+      sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
+      canNext: flow ? (phase==='game' ? mode==='preview' : phase==='slides' && (step<config.steps.length-1 || (config.kind!=='puzzle' && (page ? !!page.nextUrl : sceneIndex<flow.length-1)))) : phase==='slides' && step<config.steps.length-1,
+      note: phase === 'game' ? (mode === 'live' ? 'Partida real abierta. Al completar la prueba se muestra la transición; el GM avanza a la siguiente presentación.' : 'Ensayo del recorrido: esta vista no reproduce la lógica del juego. Pulsa Siguiente para simular la prueba superada.') : config.kind==='welcome' ? 'Pantalla de espera. Cuando todo el grupo esté en su sitio, pulsa Comenzar presentación inicial.' : text().notes[step]
+    }, location.origin);
+  }
+  function render() {
+    restoreProgress();
+    stage.hidden = false;
+    stage.dataset.flow = String(!!flow);
+    stage.dataset.kind = config.kind || 'puzzle';
+    stage.dataset.step = config.steps[step];
+    stage.dataset.language = language;
+    viewport.querySelector('.p-game-frame')?.remove();
+    document.documentElement.lang = language === 'eng' ? 'en' : language;
+    stage.dataset.scene=config.id;
+    stage.style.setProperty('--act-colour',config.act?.colour||'#39d6e5');
+    const immersive=flow&&['welcome','opening','success','closing'].includes(config.kind);
+    // Keep the same diagram nodes in place while revealing the next layer.
+    const current=stage.querySelector('.p-screen:not(.j-leaving)');
+    const persistent=config.incremental&&phase==='slides'&&current?.dataset.scene===config.id&&current.dataset.language===language&&current.querySelector('.j-blueprint');
+    if(persistent){
+      PyramidBriefing.reveal(persistent,step);
+      current.querySelector('.p-footer').innerHTML=footer(text().footers[step]).replace(/^<footer[^>]*>|<\/footer>$/g,'');
+      updateControls();size();scheduleOpening();return;
+    }
+    const section=document.createElement('section');section.className='p-screen'+(immersive?' j-immersive':'');
+    section.dataset.scene=config.id;section.dataset.language=language;
+    section.innerHTML=`${immersive?'':header((config.act?config.act.name[language]+' · ':'')+text().name)}${body()}${immersive?'':footer(text().footers[step])}`;
+    const old=stage.querySelector('.p-screen:not(.j-leaving)');
+    stage.querySelectorAll('.j-leaving').forEach(node=>node.remove());
+    if(old){old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
+    stage.append(section);
+    if(config.incremental&&section.querySelector('.j-blueprint'))PyramidBriefing.reveal(section.querySelector('.j-blueprint'),step);
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      section.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:750,easing:'cubic-bezier(.2,.7,.2,1)'});
+      if(old)old.animate([{opacity:1},{opacity:0}],{duration:450,fill:'forwards'}).finished.then(()=>old.remove());
+    }else old?.remove();
+    updateControls();
+    size();
+    scheduleOpening();
+  }
+  function size() {
+    const height = innerHeight;
+    viewport.style.height = height+'px';
+    stage.style.transform = `translate(-50%,-50%) scale(${Math.min(viewport.clientWidth/1920,height/1080)})`;
+  }
+  function stopCountdown() {
+    if (countdownTimer !== null) clearInterval(countdownTimer);
+    countdownTimer = null;
+    lastCount = null;
+  }
+  function choose(index) {
+    if (flow && phase==='game' && mode==='live') return;
+    if(leaving)return;
+    stopCountdown();stopOpening();autoPaused=false;autoRemaining=null;
+    phase = 'slides';
+    step = Math.max(0,Math.min(config.steps.length-1,index));
+    render();
+  }
+  function navigatePage(path) {
+    if(!path||leaving)return;
+    const url=new URL(path,location.origin);url.searchParams.set('lang',language);
+    if(url.origin!==location.origin)return;
+    leaving=true;stopOpening();stopCountdown();
+    const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:300;
+    stage.animate([{opacity:1},{opacity:0}],{duration,fill:'forwards'});
+    setTimeout(()=>location.assign(url.href),duration);
+  }
+  function routeForScene(c) { return page?.routes[c.kind==='puzzle'?'puzzle-'+c.puzzleId:c.id]; }
+  function loadScene(index) {
+    if (!flow || phase==='countdown' || (phase==='game' && mode==='live')) return;
+    if(page) {const target=flow[Math.max(0,Math.min(flow.length-1,index))];navigatePage(routeForScene(target));return;}
+    stopCountdown(); sceneIndex=Math.max(0,Math.min(flow.length-1,index));
+    config=flow[sceneIndex]; revealed=false; choose(0);
+  }
+  function completedGame() {
+    if (!flow || phase!=='game') return;
+    // After a completed game, the next briefing waits for the GM.
+    phase='slides'; loadScene(sceneIndex+1);
+  }
+  function next() {
+    if (flow && phase==='game' && mode==='preview') { completedGame(); return; }
+    if (phase !== 'slides'||leaving) return;
+    if (step<config.steps.length-1) choose(step+1);
+    else if (page) navigatePage(page.nextUrl);
+    else if (flow && config.kind!=='puzzle') loadScene(sceneIndex+1);
+  }
+  function previous() {
+    if (phase === 'countdown') return;
+    if (phase==='game' && mode==='live' && flow) return;
+    if (flow && phase==='slides' && step===0 && sceneIndex>0) {loadScene(sceneIndex-1); choose(config.steps.length-1);}
+    else choose(phase==='game'?config.steps.length-1:step-1);
+  }
+  function reveal() {
+    if (phase !== 'slides' || config.steps[step] !== 'example') return;
+    revealed = !revealed;
+    render();
+  }
+  function enterGame() {
+    stopCountdown();
+    if(page){navigatePage(page.nextUrl);return;}
+    phase = 'game';
+    if (mode==='preview') {
+      stage.hidden=false;
+      const sample = window.PyramidVisuals.body(config,'objective',text(),language,false);
+      stage.innerHTML=`<section class="p-screen">${header(text().name)}${sample}${footer(language==='ca'?'Assaig del recorregut':language==='es'?'Ensayo del recorrido':'Journey rehearsal')}</section>`;
+      updateControls();size();return;
+    }
+    stage.hidden = true;
+    const frame = document.createElement('iframe');
+    frame.className = 'p-game-frame';
+    frame.title = text().name + (mode==='live'?' · partida real':' · assaig');
+    // Keep the projector/fullscreen container alive; the existing shell guard
+    // already supports puzzles inside a same-origin iframe.
+    frame.src = new URL(config.gamePath,location.href).href;
+    if (flow && mode==='live') { const url=new URL(frame.src);url.searchParams.set('presentation_flow','1');frame.src=url.href; }
+    viewport.appendChild(frame);
+    updateControls();
+    size();
+  }
+  function tickCountdown() {
+    const elapsed = performance.now()-countdownStart;
+    if (elapsed >= 3400) { enterGame(); return; }
+    const count = Math.max(0,3-Math.floor(elapsed/1000));
+    if (count === lastCount) return;
+    lastCount = count;
+    stage.dataset.step = 'countdown';
+    stage.innerHTML = `<section class="p-screen">${header(text().name)}<div class="p-countdown"><div class="p-kicker">${text().countdownLabel}</div><div class="p-count-number ${count===0?'go':''}">${count||text().go}</div><div class="p-pulse" aria-hidden="true">${[3,2,1].map(n=>`<i class="${n>=count?'active':''}"></i>`).join('')}</div></div>${footer(text().readyLead)}</section>`;
+    $('p-announcement').textContent = count ? String(count) : text().go;
+  }
+  function start() {
+    if (phase !== 'slides' || step !== config.steps.length-1 || (flow && config.kind!=='puzzle')) return;
+    phase = 'countdown';
+    countdownStart = performance.now();
+    lastCount = null;
+    updateControls();
+    tickCountdown();
+    countdownTimer = setInterval(tickCountdown,100);
+  }
+  async function fullscreen() {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await viewport.requestFullscreen();
+    } catch {
+      // F11 remains available if the browser denies fullscreen.
+    }
+  }
+  // Only the same-origin GM window that opened this screen may control it.
+  window.addEventListener('message', e => {
+    if (e.origin !== location.origin) return;
+    if (e.data?.type==='pyramid-game-complete' && flow && mode==='live' && phase==='game' && e.source===viewport.querySelector('.p-game-frame')?.contentWindow && e.data.puzzleId===config.puzzleId) { completedGame(); return; }
+    const host=page&&window.parent!==window?window.parent:window.opener;
+    if (e.source !== host || e.data?.type !== 'pyramid-presentation-command') return;
+    const {action, value} = e.data;
+    if (action === 'sync') { updateControls(); return; }
+    if (action === 'pause') {toggleAutoplay();return;}
+    if (action === 'cancel' && phase === 'countdown') choose(config.steps.length-1);
+    if (phase === 'countdown') return;
+    if (action === 'scene' && Number.isInteger(value)) loadScene(value);
+    if (action === 'step' && Number.isInteger(value)) choose(value);
+    if (action === 'previous') previous();
+    if (action === 'next') next();
+    if (action === 'reveal') reveal();
+    if (action === 'start') start();
+    if (action === 'restart') { if(page){revealed=false;choose(0);}else if(flow){loadScene(0);}else {revealed=false; choose(0);} }
+    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); render(); }
+    if (action === 'mode' && !page && phase === 'slides') { mode=value==='live' && location.protocol !== 'file:' ? 'live' : 'preview'; render(); }
+  });
+  // Fullscreen needs a gesture in the player window. A click only expands it;
+  // slide navigation and game start remain on the GM panel.
+  viewport.addEventListener('click', () => { if(page&&window.parent!==window)window.parent.postMessage({type:'pyramid-fullscreen'},location.origin);else if (!document.fullscreenElement) fullscreen(); });
+  document.addEventListener('keydown', e => {
+    if (e.key.toLowerCase() === 'f') { e.preventDefault(); if(page&&window.parent!==window)window.parent.postMessage({type:'pyramid-fullscreen'},location.origin);else fullscreen(); }
+  });
+  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&phase==='countdown')choose(config.steps.length-1);size();});
+  addEventListener('resize',size);
+  addEventListener('pagehide',()=>{stopCountdown();stopOpening();});
+  render();
+  document.fonts.ready.then(size);
+})();

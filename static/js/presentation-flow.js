@@ -1,0 +1,158 @@
+/* Full player journey. Each puzzle owns its copy and visual example.
+   Default order mirrors config.py; /test passes its configured order in the URL. */
+(() => {
+  const params = new URLSearchParams(location.search);
+  const page=window.PYRAMID_PAGE;
+  const scriptURL = document.currentScript.src;
+  const asset = path => new URL('../images/' + path, scriptURL).href;
+  const sums = {
+    id: 'sumas',
+    puzzleId: 1,
+    gamePath: '/puzzle/1',
+    steps: ['cover', 'objective', 'example', 'coordination', 'ready'],
+    example: Object.freeze({token: 13, terminal: 5, result: 18, targets: [18, 23, 31, 40]}),
+    assets: Object.freeze({token: asset('shared/gameplay/token_card.png'), terminal: asset('shared/gameplay/terminal_box.png')}),
+    copy: {
+      ca: {
+        name: 'Càlcul extrem', nextChallenge: 'La següent prova', brand: 'La Piràmide',
+        coverTitle: 'CÀLCUL<br>EXTREM', slogan: 'El repte és de tots.', coverLead: 'Combineu els vostres valors.<br>Completeu el repte junts.',
+        objectiveTitle: 'UN OBJECTIU<br>COMPARTIT.', objectiveLead: 'Completeu tots els resultats<br>que apareixen a la pantalla.', targetLabel: 'Resultats de mostra',
+        exampleTitle: 'COM FUNCIONA?', exampleLead: 'El valor del token + el valor del terminal.', exampleLabel: 'Exemple', token: 'El vostre token', terminal: 'Un terminal', result: 'Un resultat objectiu',
+        coordinateTitle: 'COORDINEU-VOS.', coordinateLead: 'Cada resultat, una sola vegada.', solved: 'Ja completat', pending: 'Pendent', warning: 'Una suma incorrecta o repetida reinicia els objectius.',
+        readyTitle: 'TOTHOM<br>PREPARAT?', readyLead: 'Deu terminals. Un únic equip.', readyFooter: 'El GM dona el senyal de sortida.',
+        countdownLabel: 'Comencem tots alhora', go: 'JA!',
+        footers: ['Escolteu el Game Master.', 'Busqueu les combinacions que necessiteu.', 'Relacioneu el token amb el terminal.', 'Parleu-vos. Compartiu les combinacions.', 'El GM dona el senyal de sortida.'],
+        stepLabels: ['Presentació', 'Objectiu', 'Exemple', 'Coordinació', 'Preparats'],
+        notes: [
+          'Presenta el nom de la prova i el repte compartit. Aquesta pantalla es manté fins que decideixis avançar.',
+          'Explica que cal completar tots els resultats de la pantalla. Els quatre números són només una mostra visual; no són la partida.',
+          'Mostra el token 13 i el terminal 5. Prem «Mostrar resultat» per descobrir el 18 i repeteix l’exemple si cal.',
+          'Explica la coordinació i les condicions actuals de Sumes: una suma incorrecta o repetida reinicia els objectius.',
+          'Comprova que els jugadors estan preparats. Només «Començar» o Enter activa el compte enrere i l’entrada al joc.'
+        ]
+      },
+      es: {
+        name: 'Cálculo extremo', nextChallenge: 'La siguiente prueba', brand: 'La Pirámide',
+        coverTitle: 'CÁLCULO<br>EXTREMO', slogan: 'El reto es de todos.', coverLead: 'Combinad vuestros valores.<br>Completad el reto juntos.',
+        objectiveTitle: 'UN OBJETIVO<br>COMPARTIDO.', objectiveLead: 'Completad todos los resultados<br>que aparecen en la pantalla.', targetLabel: 'Resultados de ejemplo',
+        exampleTitle: '¿CÓMO FUNCIONA?', exampleLead: 'El valor del token + el valor del terminal.', exampleLabel: 'Ejemplo', token: 'Vuestro token', terminal: 'Un terminal', result: 'Un resultado objetivo',
+        coordinateTitle: 'COORDINAOS.', coordinateLead: 'Cada resultado, una sola vez.', solved: 'Ya completado', pending: 'Pendiente', warning: 'Una suma incorrecta o repetida reinicia los objetivos.',
+        readyTitle: '¿TODOS<br>PREPARADOS?', readyLead: 'Diez terminales. Un único equipo.', readyFooter: 'El GM da la señal de salida.',
+        countdownLabel: 'Empezamos todos a la vez', go: '¡YA!',
+        footers: ['Escuchad al Game Master.', 'Buscad las combinaciones que necesitáis.', 'Relacionad el token con el terminal.', 'Hablad. Compartid las combinaciones.', 'El GM da la señal de salida.'],
+        stepLabels: ['Presentación', 'Objetivo', 'Ejemplo', 'Coordinación', 'Preparados'],
+        notes: [
+          'Presenta el nombre de la prueba y el reto compartido. Esta pantalla espera hasta que decidas avanzar.',
+          'Explica que hay que completar todos los resultados de la pantalla. Los cuatro números son una muestra visual; no son la partida.',
+          'Muestra el token 13 y el terminal 5. Pulsa «Mostrar resultat» para descubrir el 18 y repite el ejemplo si hace falta.',
+          'Explica la coordinación y las condiciones actuales de Sumes: una suma incorrecta o repetida reinicia los objetivos.',
+          'Comprueba que los jugadores están preparados. Solo «Començar» o Enter activa la cuenta atrás y la entrada al juego.'
+        ]
+      },
+      eng: {
+        name: 'Extreme calculation', nextChallenge: 'The next challenge', brand: 'La Piràmide',
+        coverTitle: 'EXTREME<br>CALCULATION', slogan: 'One team. One shared challenge.', coverLead: 'Combine your values.<br>Complete the challenge together.',
+        objectiveTitle: 'ONE SHARED<br>OBJECTIVE.', objectiveLead: 'Complete every target number<br>shown on the screen.', targetLabel: 'Example targets',
+        exampleTitle: 'HOW DOES IT WORK?', exampleLead: 'The token value + the terminal value.', exampleLabel: 'Example', token: 'Your token', terminal: 'A terminal', result: 'A target number',
+        coordinateTitle: 'WORK TOGETHER.', coordinateLead: 'Complete each target only once.', solved: 'Completed', pending: 'Pending', warning: 'An incorrect or repeated sum resets the targets.',
+        readyTitle: 'EVERYONE<br>READY?', readyLead: 'Ten terminals. One team.', readyFooter: 'The GM gives the starting signal.',
+        countdownLabel: 'We start together', go: 'GO!',
+        footers: ['Listen to the Game Master.', 'Find the combinations you need.', 'Match a token with a terminal.', 'Talk. Share your combinations.', 'The GM gives the starting signal.'],
+        stepLabels: ['Introduction', 'Objective', 'Example', 'Coordination', 'Ready'],
+        notes: [
+          'Introduce the challenge and the shared goal. This screen waits until you advance.',
+          'Explain that every target on the screen must be completed. These four numbers are an illustration, not the live game.',
+          'Show token 13 and terminal 5. Use «Mostrar resultat» to reveal 18 and repeat the example if needed.',
+          'Explain the current Sumes rules: an incorrect or repeated sum resets the targets.',
+          'Check that everyone is ready. Only «Començar» or Enter starts the countdown and enters the game.'
+        ]
+      }
+    }
+  };
+  const local = (ca,es,eng) => ({ca,es,eng});
+  const common = {
+    ca: {nextChallenge:'La següent prova',brand:'La Piràmide',slogan:'El repte és de tots.',readyTitle:'TOTHOM<br>PREPARAT?',readyLead:'Deu terminals. Un únic equip.',countdownLabel:'Comencem tots alhora',go:'JA!',stepLabels:['Presentació','Objectiu','Exemple','Coordinació','Preparats'],footers:['Escolteu el Game Master.','Un objectiu compartit.','Exemple: no és la partida.','Parleu-vos. Organitzeu-vos.','El GM dona el senyal de sortida.'],solved:'Ja completat',pending:'Pendent',exampleLabel:'Exemple'},
+    es: {nextChallenge:'La siguiente prueba',brand:'La Pirámide',slogan:'El reto es de todos.',readyTitle:'¿TODOS<br>PREPARADOS?',readyLead:'Diez terminales. Un único equipo.',countdownLabel:'Empezamos todos a la vez',go:'¡YA!',stepLabels:['Presentación','Objetivo','Ejemplo','Coordinación','Preparados'],footers:['Escuchad al Game Master.','Un objetivo compartido.','Ejemplo: no es la partida.','Hablad. Organizaos.','El GM da la señal de salida.'],solved:'Completado',pending:'Pendiente',exampleLabel:'Ejemplo'},
+    eng: {nextChallenge:'The next challenge',brand:'La Piràmide',slogan:'One team. One shared challenge.',readyTitle:'EVERYONE<br>READY?',readyLead:'Ten terminals. One team.',countdownLabel:'We start together',go:'GO!',stepLabels:['Introduction','Objective','Example','Coordination','Ready'],footers:['Listen to the Game Master.','One shared goal.','Example: not the live game.','Talk. Organise yourselves.','The GM gives the starting signal.'],solved:'Completed',pending:'Pending',exampleLabel:'Example'}
+  };
+  // No fixed round counts, time limits or penalties copied from obsolete voiceovers.
+  const puzzles = [
+    {id:11,key:'practice',title:local('PRIMER<br>CONTACTE','PRIMER<br>CONTACTO','FIRST<br>CONTACT'),name:local('Pràctica inicial','Práctica inicial','Practice'),goal:local('CONEIXEU<br>EL SISTEMA.','CONOCED<br>EL SISTEMA.','LEARN<br>THE SYSTEM.'),lead:local('Seguiu les accions de la pantalla, pas a pas.','Seguid las acciones de la pantalla, paso a paso.','Follow the actions on screen, step by step.'),demo:local('Token → terminal → botó indicat','Token → terminal → botón indicado','Token → terminal → indicated button'),team:local('OBSERVEU.<br>APRENEU.','OBSERVAD.<br>APRENDED.','WATCH.<br>LEARN.'),rule:local('Mentre una persona actua, les altres segueixen la seqüència.','Mientras una persona actúa, las demás siguen la secuencia.','While one person acts, everyone else follows the sequence.')},
+    {id:2,key:'maze',title:local('UN CAMÍ<br>COMPARTIT','UN CAMINO<br>COMPARTIDO','A SHARED<br>PATH'),name:local('Laberint','Laberinto','Maze'),goal:local('ARRIBEU<br>AL CENTRE.','LLEGAD<br>AL CENTRO.','REACH<br>THE CENTRE.'),lead:local('La vostra entrada és el número del token. Seguiu els símbols.','Vuestra entrada es el número del token. Seguid los símbolos.','Your token number identifies your entrance. Follow the symbols.'),demo:local('Normal: mateix símbol. Alarma: símbol contrari.','Normal: mismo símbolo. Alarma: símbolo contrario.','Normal: matching symbol. Alarm: opposite symbol.'),team:local('ADAPTEU<br>EL CAMÍ.','ADAPTAD<br>EL CAMINO.','ADAPT<br>YOUR PATH.'),rule:local('Quan s’activa l’alarma, canvia la correspondència dels símbols.','Cuando se activa la alarma, cambia la correspondencia de los símbolos.','When the alarm starts, the symbol mapping changes.')},
+    {id:3,key:'quiz',title:local('DECIDIU<br>JUNTS','DECIDID<br>JUNTOS','DECIDE<br>TOGETHER'),name:local('Trivial','Trivial','Quiz'),goal:local('CLASSIFIQUEU<br>LES OPCIONS.','CLASIFICAD<br>LAS OPCIONES.','CLASSIFY<br>THE OPTIONS.'),lead:local('Cada número correspon a un terminal. Decidiu si la seva opció compleix la pregunta.','Cada número corresponde a un terminal. Decidid si su opción cumple la pregunta.','Each number corresponds to a terminal. Decide whether its option matches the question.'),demo:local('Terminal 3: verd si l’opció encaixa; vermell si no.','Terminal 3: verde si la opción encaja; rojo si no.','Terminal 3: green if the option matches; red if it does not.'),team:local('COMPARTIU<br>EL QUE SABEU.','COMPARTID<br>LO QUE SABÉIS.','SHARE<br>WHAT YOU KNOW.'),rule:local('Cada terminal respon la seva opció. Ajudeu-vos abans de prémer.','Cada terminal responde su opción. Ayudaos antes de pulsar.','Each terminal answers its own option. Help each other before pressing.')},
+    {id:8,key:'memory',title:local('RECORDEU<br>JUNTS','RECORDAD<br>JUNTOS','REMEMBER<br>TOGETHER'),name:local('Memory','Memory','Memory'),goal:local('MEMORITZEU<br>LES DUES FORMES.','MEMORIZAD<br>LAS DOS FORMAS.','REMEMBER<br>BOTH SHAPES.'),lead:local('Localitzeu el vostre token i recordeu les dues formes amb els seus colors.','Localizad vuestro token y recordad las dos formas con sus colores.','Find your token and remember both shapes and their colours.'),demo:local('Token → dues formes i colors → dos terminals','Token → dos formas y colores → dos terminales','Token → two shapes and colours → two terminals'),team:local('OBSERVEU.<br>RECORDEU.','OBSERVAD.<br>RECORDAD.','WATCH.<br>REMEMBER.'),rule:local('Quan desapareguin, passeu el vostre token pels dos terminals corresponents, en qualsevol ordre.','Cuando desaparezcan, pasad vuestro token por los dos terminales correspondientes, en cualquier orden.','Once they disappear, scan your token at the two matching terminals, in either order.')},
+    {id:10,key:'segments',title:local('COLORS<br>EN EQUIP','COLORES<br>EN EQUIPO','COLOURS<br>AS A TEAM'),name:local('Segments','Segmentos','Segments'),goal:local('COMPLETEU<br>ELS COLORS.','COMPLETAD<br>LOS COLORES.','COMPLETE<br>THE COLOURS.'),lead:local('Cada terminal té una combinació objectiu.','Cada terminal tiene una combinación objetivo.','Each terminal has a target combination.'),demo:local('Descobriu els vostres colors i aporteu-los on calgui.','Descubrid vuestros colores y aportadlos donde hagan falta.','Discover your colours and use them where they are needed.'),team:local('COMBINEU<br>ELS TOKENS.','COMBINAD<br>LOS TOKENS.','COMBINE<br>YOUR TOKENS.'),rule:local('Un mateix terminal pot necessitar l’aportació de diferents tokens.','Un mismo terminal puede necesitar la aportación de distintos tokens.','One terminal may need contributions from several tokens.')},
+    {id:5,key:'time',title:local('EL TEMPS<br>A LES MANS','EL TIEMPO<br>EN LAS MANOS','TIME<br>IN YOUR HANDS'),name:local('Cronòmetre','Cronómetro','Timing'),goal:local('COMPTEU<br>AMB PRECISIÓ.','CONTAD<br>CON PRECISIÓN.','COUNT<br>PRECISELY.'),lead:local('Mesureu mentalment el temps indicat a la pantalla.','Medid mentalmente el tiempo indicado en la pantalla.','Count the time shown on screen in your head.'),demo:local('Llum encesa → compteu → passeu el token','Luz encendida → contad → pasad el token','Light on → count → scan your token'),team:local('CADA TERMINAL.<br>EL SEU SENYAL.','CADA TERMINAL.<br>SU SEÑAL.','EACH TERMINAL.<br>ITS OWN SIGNAL.'),rule:local('Comenceu quan s’encengui la vostra llum. L’error se suma al de l’equip.','Empezad cuando se encienda vuestra luz. El error se suma al del equipo.','Start when your light turns on. Your error adds to the team total.')},
+    {id:12,key:'buttons',title:local('PREMEU<br>JUNTS','PULSAD<br>JUNTOS','PRESS<br>TOGETHER'),name:local('Botons','Botones','Buttons'),goal:local('REPRODUÏU<br>EL PATRÓ.','REPRODUCID<br>EL PATRÓN.','MATCH<br>THE PATTERN.'),lead:local('Cada bola representa un botó premut del mateix color.','Cada bola representa un botón pulsado del mismo color.','Each ball represents a pressed button of the same colour.'),demo:local('Dues boles blaves → dos botons blaus premuts','Dos bolas azules → dos botones azules pulsados','Two blue balls → two blue buttons held'),team:local('REPARTIU.<br>MANTENIU.','REPARTID.<br>MANTENED.','DISTRIBUTE.<br>HOLD.'),rule:local('Repartiu els botons i manteniu el patró fins que es validi.','Repartid los botones y mantened el patrón hasta que se valide.','Distribute the buttons and hold the pattern until it is validated.')},
+    {id:4,key:'music',title:local('UN SOL<br>RITME','UN SOLO<br>RITMO','ONE SHARED<br>RHYTHM'),name:local('Música','Música','Music'),goal:local('RECONSTRUÏU<br>LA CANÇÓ.','RECONSTRUID<br>LA CANCIÓN.','REBUILD<br>THE SONG.'),lead:local('Escolteu, localitzeu els fragments i ordeneu-los.','Escuchad, localizad los fragmentos y ordenadlos.','Listen, find the fragments and put them in order.'),demo:local('Per registrar: botó verd → token → següent fragment','Para registrar: botón verde → token → siguiente fragmento','To register: green button → token → next fragment'),team:local('ESCOLTEU.<br>ORDENEU.','ESCUCHAD.<br>ORDENAD.','LISTEN.<br>ORDER.'),rule:local('Diferencieu escoltar un fragment de registrar-lo en la seqüència.','Diferenciad escuchar un fragmento de registrarlo en la secuencia.','Distinguish listening to a fragment from registering it in the sequence.')},
+    {id:6,key:'energy',title:local('L’ÚLTIM<br>IMPULS','EL ÚLTIMO<br>IMPULSO','THE FINAL<br>PUSH'),name:local('Energia','Energía','Energy'),goal:local('MANTENIU<br>L’ENERGIA.','MANTENED<br>LA ENERGÍA.','KEEP<br>THE ENERGY.'),lead:local('Eviteu que s’apaguin les llums dels terminals.','Evitad que se apaguen las luces de los terminales.','Keep the terminal lights from going out.'),demo:local('El vostre color s’encén → aneu al terminal → passeu el token','Se enciende vuestro color → id al terminal → pasad el token','Your colour lights up → reach the terminal → scan your token'),team:local('ATENCIÓ.<br>MOVIMENT.','ATENCIÓN.<br>MOVIMIENTO.','ATTENTION.<br>MOVEMENT.'),rule:local('Cada token té un color assignat. Estigueu pendents dels terminals.','Cada token tiene un color asignado. Estad pendientes de los terminales.','Each token has an assigned colour. Watch the terminals.')}
+  ];
+  const notes = local('El GM explica aquesta pantalla. L’exemple és il·lustratiu. Confirmeu les regles abans de la sessió si s’ha modificat el joc.','El GM explica esta pantalla. El ejemplo es ilustrativo. Confirmad las reglas antes de la sesión si se ha modificado el juego.','The GM explains this screen. The example is illustrative. Confirm the rules before the session if the game has changed.');
+  const readyNotes=local('Comprova que tothom està preparat abans de començar la prova.','Comprueba que todos estén preparados antes de comenzar la prueba.','Check everyone is ready before starting the challenge.');
+  function puzzle(data) {
+    const copy={};
+    for(const lang of ['ca','es','eng']) copy[lang]={...common[lang],name:data.name[lang],coverTitle:data.title[lang],coverLead:data.lead[lang],objectiveTitle:data.goal[lang],objectiveLead:data.lead[lang],exampleTitle:lang==='ca'?'COM FUNCIONA?':lang==='es'?'¿CÓMO FUNCIONA?':'HOW DOES IT WORK?',exampleLead:data.demo[lang],coordinateTitle:data.team[lang],coordinateLead:data.rule[lang],warning:data.rule[lang],notes:[notes[lang],data.lead[lang],data.demo[lang],data.rule[lang],readyNotes[lang]]};
+    return {id:data.key,puzzleId:data.id,kind:'puzzle',gamePath:'/puzzle/'+data.id,steps:['cover','objective','example','coordination','ready'],copy,assets:sums.assets,visual:data.key,example:sums.example};
+  }
+  const byId=new Map(puzzles.map(p=>[p.id,puzzle(p)])); byId.set(1,{...sums,kind:'puzzle',visual:'sumas'});
+  function scene(id,kind,title,lead,steps=['cover']) {
+    const copy={};for(const lang of ['ca','es','eng']) copy[lang]={...common[lang],name:common[lang].brand,coverTitle:title[lang],coverLead:lead[lang],stepLabels:steps.map((s,i)=>kind==='opening'?(lang==='ca'?['Un únic equip','Tokens i terminals'][i]:lang==='es'?['Un único equipo','Tokens y terminales'][i]:['One team','Tokens and terminals'][i]):kind==='closing'?(lang==='ca'?['Repte completat','Tancament'][i]:lang==='es'?['Reto completado','Cierre'][i]:['Challenge completed','Closing'][i]):title[lang].replaceAll('<br>',' ')),notes:steps.map(()=>lead[lang]),footers:steps.map(()=>common[lang].slogan)};
+    // Provisional opening timings; replace with narration cues when audio is ready.
+    const autoAdvanceMs=kind==='opening'?[6000,6500,8500,6000]:null;
+    return {id,kind,steps,copy,assets:sums.assets,example:sums.example,autoAdvanceMs};
+  }
+  const requested=(page?.order?.join(',')||params.get('order')||'2,3,8,1,5,12,4').split(',').map(Number);
+  const tutorialId=page?.tutorialId||11,finalId=page?.finalId||6;
+  const order=[...new Set(requested.filter(id=>byId.has(id)&&id!==finalId&&id!==tutorialId))];
+  const flow=[scene('welcome','welcome',local('LA<br>PIRÀMIDE','LA<br>PIRÁMIDE','LA<br>PIRÀMIDE'),local('Deu terminals. Un únic equip.','Diez terminales. Un único equipo.','Ten terminals. One team.')),
+    scene('opening','opening',local('EL REPTE<br>ÉS DE TOTS.','EL RETO<br>ES DE TODOS.','ONE TEAM.<br>ONE CHALLENGE.'),local('Compartiu informació. Combineu les vostres habilitats.','Compartid información. Combinad vuestras habilidades.','Share information. Combine your skills.'),['mission','team','equipment','launch'])];
+  const acts=[
+    {id:1,colour:'#39d6e5',name:local('Descobrir','Descubrir','Discover'),role:local('Repartiu qui observa, qui comunica i qui actua.','Repartid quién observa, quién comunica y quién actúa.','Share observing, communicating and acting.')},
+    {id:2,colour:'#dc68a7',name:local('Organitzar-se','Organizarse','Organise'),role:local('Canvieu els papers perquè tothom tingui una aportació.','Cambiad los papeles para que todos tengan una aportación.','Switch roles so everyone has a part to play.')},
+    {id:3,colour:'#edb970',name:local('Actuar junts','Actuar juntos','Act together'),role:local('Confirmeu el pla junts abans d’actuar.','Confirmad el plan juntos antes de actuar.','Agree on the plan before acting.')}
+  ];
+  const actFor=id=>acts[[tutorialId,2,3].includes(id)?0:[8,1,5].includes(id)?1:2];
+  for(const lang of ['ca','es','eng'])byId.get(1).copy[lang].name=local('Sumes','Sumas','Sums')[lang];
+  let completed=0;
+  const total=order.length+1; // The final challenge earns the summit; practice earns confidence.
+  for(const id of [tutorialId,...order,finalId]) {
+    const intro=byId.get(id);intro.completed=completed;intro.total=total;
+    intro.act=actFor(id);intro.isFinal=id===finalId;
+    intro.steps=['objective','tools','interaction'];
+    intro.incremental=true;
+    for(const lang of ['ca','es','eng']) {
+      const t=intro.copy[lang];
+      if(id===1)t.name=local('Sumes','Sumas','Sums')[lang];
+      const rule=t.warning||t.coordinateLead;
+      t.stepLabels=[local('Objectiu','Objetivo','Goal')[lang],local('Terminals i tokens','Terminales y tokens','Terminals and tokens')[lang],local('Interacció','Interacción','Interaction')[lang]];
+      t.notes=[t.objectiveLead,t.exampleLead,rule];
+      t.footers=[local('Observeu el repte.','Observad el reto.','Look at the challenge.')[lang],local('Aquestes són les vostres eines.','Estas son vuestras herramientas.','These are your tools.')[lang],intro.act.role[lang]];
+      t.guidance={role:intro.act.role[lang],hints:[t.objectiveLead,t.exampleLead,rule],rhythm:local('Doneu temps per pensar. Si el grup no sap què fer, oferiu una ajuda; si està provant un pla, deixeu-lo jugar.','Dad tiempo para pensar. Si el grupo no sabe qué hacer, ofreced una ayuda; si está probando un plan, dejadlo jugar.','Allow thinking time. Offer a hint if the group does not know what to do; let them play if they are testing a plan.')[lang]};
+    }
+    flow.push(intro);
+    if(id===finalId)break;
+    const previous=completed;
+    if(id!==tutorialId)completed++;
+    const following=[...order,finalId][id===tutorialId?0:order.indexOf(id)+1];
+    const beforeFinal=following===finalId;
+    const success=scene('success-'+id,'success',id===tutorialId?local('JA SOU<br>UN EQUIP.','YA SOIS<br>UN EQUIPO.','YOU ARE<br>A TEAM.'):beforeFinal?local('LA CIMA<br>US ESPERA.','LA CIMA<br>OS ESPERA.','THE SUMMIT<br>IS WAITING.'):local('UN PAS<br>MÉS AMUNT.','UN PASO<br>MÁS ARRIBA.','ONE STEP<br>HIGHER.'),local('Cada aportació compta.','Cada aportación cuenta.','Every contribution counts.'));
+    success.completed=completed;success.previous=previous;success.total=total;success.afterPuzzle=id;success.nextPuzzleId=following;success.act=actFor(following);success.beforeFinal=beforeFinal;
+    for(const lang of ['ca','es','eng']){
+      const t=success.copy[lang];t.name=local('Assoliment','Logro','Achievement')[lang]+' · '+intro.copy[lang].name;
+      t.nextName=byId.get(following).copy[lang].name;t.footers=[success.act.role[lang]];
+      t.notes=[id===tutorialId?local('Primera victòria. Celebreu l’aprenentatge; la piràmide s’omple amb els reptes següents.','Primera victoria. Celebrad el aprendizaje; la pirámide se llena con los siguientes retos.','First win. Celebrate learning; the following challenges fill the pyramid.')[lang]:success.act.role[lang]];
+    }
+    flow.push(success);
+  }
+  const closing=scene('closing','closing',local('LA PIRÀMIDE<br>ÉS VOSTRA.','LA PIRÁMIDE<br>ES VUESTRA.','THE PYRAMID<br>IS YOURS.'),local('Ho heu aconseguit junts.','Lo habéis conseguido juntos.','You achieved it together.'),['cover','thanks']);
+  closing.completed=total;closing.previous=total-1;closing.total=total;closing.act=acts[2];closing.autoAdvanceMs=[11000,0];
+  for(const lang of ['ca','es','eng'])closing.copy[lang].notes=[local('Celebreu-ho amb el grup. El tancament passa sol a la pantalla de foto.','Celebradlo con el grupo. El cierre pasa solo a la pantalla de foto.','Celebrate with the group. The finale continues automatically to the photo screen.')[lang],local('Pantalla de foto. Pregunteu: què heu aconseguit perquè heu treballat junts?','Pantalla de foto. Preguntad: ¿qué habéis conseguido porque habéis trabajado juntos?','Photo screen. Ask: what did working together make possible?')[lang]];
+  flow.push(closing);
+  for(const lang of ['ca','es','eng']) {
+    const t=flow[1].copy[lang];
+    t.stepLabels=[local('Una meta','Una meta','One goal')[lang],local('Un equip','Un equipo','One team')[lang],local('Les vostres eines','Vuestras herramientas','Your tools')[lang],local('Comença el repte','Empieza el reto','The challenge begins')[lang]];
+    t.notes=t.stepLabels.map(()=>local('Obertura automàtica. Pots pausar-la o repetir-la; el grup no ha d’actuar encara.','Apertura automática. Puedes pausarla o repetirla; el grupo todavía no debe actuar.','Automatic opening. You can pause or replay it; the group does not act yet.')[lang]);
+  }
+  window.PyramidActs=acts;
+  window.PyramidFlow=flow;
+})();

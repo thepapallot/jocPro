@@ -1,0 +1,51 @@
+/* Shared corner identity for every puzzle; functional counters stay visible. */
+.pyramid-game.game-surface{--surface-accent:#39d6e5;background:#0a1016}
+.game-surface #game-stage{background:radial-gradient(ellipse at 75% 90%,#20333d44,transparent 65%),#0a1016}
+.game-surface #game-frame,.game-surface #top-area{display:none!important}
+.pyramid-game.game-surface #bottom-area{height:100%;padding:0}
+.game-corner-hud{position:absolute;inset:14px 28px auto;z-index:20;display:flex;align-items:center;justify-content:space-between;pointer-events:none;height:46px}
+.game-corner-identity{display:flex;align-items:center;gap:20px;min-width:0}
+.game-corner-identity h1{font:900 33px/1.3 PiramideDisplay,'Arial Narrow',Arial,sans-serif;text-transform:uppercase;color:#f3eee4;letter-spacing:.025em;margin:0}
+.game-corner-step{font:700 17px/1.2 Arial,sans-serif;letter-spacing:.07em;color:var(--surface-accent);border-left:2px solid var(--surface-accent);padding-left:18px;text-transform:uppercase}
+.game-corner-progress{display:flex;align-items:center;gap:12px;color:#bbccd4;font:700 19px/1.2 Arial,sans-serif;font-variant-numeric:tabular-nums}
+.game-corner-progress .pyramid-vector{width:62px;height:46px;display:block}
+.game-surface[data-puzzle="2"] #puzzle2-container{padding:70px 24px 24px}
+.game-surface[data-puzzle="2"] :is(#maze-stage,#image-area,#p2-snake-stage){background:transparent}
+.game-surface[data-puzzle="2"] #maze-stage::before{display:none}
+.game-surface[data-puzzle="2"] .snake-head{background:#edb970;color:#0a1016;border-color:#edb970;box-shadow:none;font-family:Arial,sans-serif;font-weight:900;border-radius:6px}
+.game-surface[data-puzzle="2"] #p2-complete-overlay{background:#14232cef;border:1px solid #71e7db66;border-radius:8px;box-shadow:none}
+.game-surface[data-puzzle="2"] .panel-title{color:#f3eee4;text-shadow:none}
+.game-surface[data-puzzle="8"]{--surface-accent:#dc68a7;--p8-cyan:#71e7db;--p8-line:#5d74825e}
+.game-surface[data-puzzle="8"] #p8-shell{padding:92px 24px 24px;display:flex;flex-direction:column;gap:0}
+.game-surface[data-puzzle="8"] #p8-stage{flex:1;min-height:0;height:auto;background:transparent;border:0}
+.game-surface[data-puzzle="8"] #p8-instruction{position:absolute;top:14px;left:360px;right:360px;width:auto;display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:39px 23px 3px;grid-template-areas:'step heading spare' 'detail detail detail' 'track track track';height:71px;flex:none;gap:3px;align-items:center;justify-items:center;text-align:center}
+.game-surface[data-puzzle="8"] #p8-instruction-step{grid-area:step;justify-self:start;font-size:16px;line-height:1.2;letter-spacing:.07em}
+.game-surface[data-puzzle="8"] .p8-instruction-heading{grid-area:heading;gap:16px}
+.game-surface[data-puzzle="8"] #p8-instruction-title{font:900 33px/1.25 PiramideDisplay,'Arial Narrow',Arial,sans-serif;color:#f3eee4}
+.game-surface[data-puzzle="8"] #p8-countdown{font-size:35px;padding-left:16px}
+.game-surface[data-puzzle="8"] .p8-countdown-unit{font-size:19px}
+.game-surface[data-puzzle="8"] #p8-instruction-detail{grid-area:detail;font-size:22px;line-height:1.2;color:#bbccd4}
+.game-surface[data-puzzle="8"] #p8-time-track{grid-area:track;width:560px;height:3px;background:#4e667355}
+.game-surface[data-puzzle="8"] #p8-grid{gap:16px}
+.game-surface[data-puzzle="8"] .p8-frame{border:1px solid #5d748280;border-radius:8px;background:linear-gradient(155deg,#1b2e39,#101c25);box-shadow:none;padding:14px 12px 12px}
+.game-surface[data-puzzle="8"] .p8-token{flex:0 0 76px;flex-direction:row;justify-content:center;align-items:center;gap:12px;padding-bottom:8px}
+.game-surface[data-puzzle="8"] .p8-number{font:900 54px/1.25 PiramideDisplay,'Arial Narrow',Arial,sans-serif;color:#f3eee4;text-shadow:none}
+.game-surface[data-puzzle="8"] .p8-token-icon{width:66px;height:66px;filter:none}
+.game-surface[data-puzzle="8"] .p8-answer{border-radius:5px}
+.game-surface[data-puzzle="8"] .p8-placeholder{border-color:#8ba2b147;border-radius:5px;background:#adc4d403}
+.game-surface[data-puzzle="8"] .p8-answer.is-filled{background:radial-gradient(ellipse,#b9cbd42b,transparent 75%);border-color:#6e87935e}
+.game-surface :is(.p2-solved-banner,.p8-solved-banner){background:#112b2cf5;border:0;border-radius:0;box-shadow:none;animation:surface-success .45s ease-out}
+.game-surface :is(.p2-solved-text,.p8-solved-text){font:900 96px/1.3 PiramideDisplay,'Arial Narrow',Arial,sans-serif;color:#71e7db;text-shadow:none;letter-spacing:.015em}
+@keyframes surface-success{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.game-surface :is(.p2-solved-banner,.p8-solved-banner){animation:none}}
+.game-surface[data-puzzle="2"] #puzzle2-container{background:transparent}
+.game-surface[data-puzzle="2"].alarm-mode{--surface-accent:#f15c68}
+.game-surface[data-puzzle="2"].alarm-mode .snake-head{background:#f15c68;border-color:#f15c68;color:#0a1016;box-shadow:none}
+
+/* The approved corner HUD leaves 986px of game height on the 1080p canvas. */
+.pyramid-game.game-surface:not([data-puzzle="2"]):not([data-puzzle="8"]) #bottom-area{height:100%;padding:70px 24px 24px;display:block}
+.game-surface :is(#puzzle3-shell,#puzzle4-shell,#puzzle5-shell,#puzzle6-shell,#puzzle7-shell,#p9-shell,#puzzle10-shell,#p11-shell,#final-shell){height:100%;min-height:0;padding:0}
+.game-corner-status{position:absolute;left:540px;right:300px;top:0;height:46px;display:flex;align-items:center;justify-content:center;gap:16px;color:#f3eee4}
+.game-corner-status :is(#streak-panel,#final-top-hud){display:flex;flex-direction:row;align-items:center;justify-content:center;gap:14px}
+.game-corner-status .hud-label{font:700 18px/1.2 Arial,sans-serif;color:#bbccd4;text-transform:uppercase;letter-spacing:.06em}
+.game-corner-status :is(#streak,#timer,#timer-overlay){font:900 36px/1.2 PiramideDisplay,'Arial Narrow',Arial,sans-serif;color:#edb970;text-shadow:none;font-variant-numeric:tabular-nums}

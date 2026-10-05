@@ -2936,6 +2936,38 @@ textarea {
 }
 
 /* Final GM layout fixes for the reorganized /test flow. */
+.gm-control-live-state {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    padding: 12px 14px;
+    border: 1px solid var(--gm-line);
+    border-radius: 8px;
+    background: #e7f3fa;
+    color: var(--gm-ink);
+}
+
+.gm-control-live-state strong { font-size: 1rem; }
+.gm-control-live-state span { color: var(--gm-muted); }
+.gm-control-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.gm-control-actions .gm-resolver-action {
+    width: auto;
+    min-width: 190px;
+    min-height: 48px;
+    border: 1px solid var(--gm-line);
+    border-radius: 8px;
+    box-shadow: none;
+}
+.gm-control-actions .gm-resolver-action.danger-action {
+    border-color: var(--gm-red);
+    background: #fde9e9;
+    color: #7f2323;
+}
+.gm-control-actions .gm-resolver-action:disabled { cursor: not-allowed; }
+.gm-control-action-hint { margin: 8px 0 0; color: var(--gm-muted); }
+#test-sim-content[inert] { opacity: 0.6; pointer-events: none; }
+
 .gm-header-status {
     grid-template-columns: repeat(5, minmax(120px, 1fr));
 }
@@ -2999,3 +3031,15 @@ textarea {
         grid-template-columns: 1fr;
     }
 }
+
+.presentation-guide{margin-top:18px;padding:16px;border:1px solid #425e6c;border-radius:8px;background:#0c1922}.presentation-guide summary{cursor:pointer;font-weight:700}.presentation-guide p{line-height:1.5;color:#bfd1da}.presentation-guide #presentation-role{color:#edb970}.presentation-guide #presentation-hint-copy{border-left:3px solid #39d6e5;padding-left:12px}
+
+/* Explicit start confirmation stays available even when browser dialogs are blocked. */
+.director-confirm{margin:auto;width:min(540px,calc(100vw - 32px));padding:28px;border:1px solid #4f6674;border-radius:12px;background:#f3f6f8;color:#14232c;box-shadow:0 20px 80px #0005}
+.director-confirm::backdrop{background:#0a1016a8}
+.director-confirm h2{margin:0 0 14px;font-size:24px}
+.director-confirm p{margin:0 0 24px;line-height:1.5}
+.director-confirm .action-row{justify-content:flex-end;gap:12px}
+.director-confirm button{padding:12px 18px;font:inherit;cursor:pointer;border:1px solid #8ba2b1;border-radius:6px}
+.director-confirm .primary-action{background:#71e7db;color:#14232c;font-weight:700}
+.director-confirm button:focus-visible{outline:3px solid #117786;outline-offset:3px}

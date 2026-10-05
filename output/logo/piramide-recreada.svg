@@ -1,0 +1,484 @@
+<svg class="pyramid-vector" xmlns="http://www.w3.org/2000/svg" viewBox="40 92 944 690" role="img" aria-labelledby="title desc">
+  <title id="title">La Piràmide — reconstrucción vectorial</title>
+  <desc id="desc">Pirámide de bloques azul oscuro con un marco luminoso cian y una base magenta. Interpretación editable del emblema original.</desc>
+  <style>
+    .pyramid-vector { --cyan: #79cbd4; --pink: #b18aa7; --bloom: .16; --progress-color: #77d2c0; }
+    .pyramid-vector .cyan { stroke: var(--cyan); }
+    .pyramid-vector .pink { stroke: var(--pink); }
+    .pyramid-vector .bloom { opacity: var(--bloom); }
+    .pyramid-vector .progress-fill { fill: var(--progress-color); opacity: 0; transition: opacity .45s ease; }
+    .pyramid-vector .brick.is-complete .progress-fill { opacity: .64; }
+    .pyramid-vector .brick.is-new .progress-fill { opacity: .87; }
+    .pyramid-vector .brick.is-selected .progress-fill { fill: var(--brick-color, #d8b77b); opacity: .85; }
+    @media(prefers-reduced-motion:reduce) { .pyramid-vector .progress-fill { transition: none; } }
+  </style>
+  <defs>
+    <clipPath id="face-clip"><path d="M512 150 110 729H914Z"/></clipPath>
+    <linearGradient id="face" x1="0" y1="0" x2=".1" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#536e7f"/><stop offset=".35" stop-color="#2b4558"/><stop offset=".73" stop-color="#182c39"/><stop offset="1" stop-color="#101e28"/>
+    </linearGradient>
+    <linearGradient id="brick" x2=".13" y2="1">
+      <stop stop-color="#a6c8de" stop-opacity=".17"/><stop offset=".1" stop-color="#a6c8de" stop-opacity=".07"/><stop offset=".8" stop-color="#001322" stop-opacity=".1"/><stop offset="1" stop-color="#000710" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="frame-left" x1="65" y1="400" x2="515" y2="660" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#91b6bf"/><stop offset=".14" stop-color="#426b7c"/><stop offset=".42" stop-color="#142b38"/><stop offset=".76" stop-color="#355567"/><stop offset="1" stop-color="#618f9b"/>
+    </linearGradient>
+    <linearGradient id="frame-right" x1="516" y1="540" x2="780" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#689aa5"/><stop offset=".25" stop-color="#203843"/><stop offset=".63" stop-color="#416575"/><stop offset="1" stop-color="#8bb2bb"/>
+    </linearGradient>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#284453"/><stop offset=".38" stop-color="#75b8c2"/><stop offset=".62" stop-color="#a8c5c9"/><stop offset=".82" stop-color="#896d88"/><stop offset="1" stop-color="#1b2b36"/>
+    </linearGradient>
+    <radialGradient id="wash" cx=".5" cy="0" r="1">
+      <stop stop-color="#b6d2e2" stop-opacity=".08"/><stop offset=".6" stop-color="#0b1c29" stop-opacity="0"/><stop offset="1" stop-color="#000710" stop-opacity=".18"/>
+    </radialGradient>
+    <filter id="stone" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".42" numOctaves="3" seed="18"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".045"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="soft-light"/>
+    </filter>
+    <filter id="glow" x="-15%" y="-20%" width="130%" height="140%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <filter id="wide-glow" x="-20%" y="-25%" width="140%" height="150%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <g id="masonry" clip-path="url(#face-clip)">
+    <path d="M512 150 110 729H914Z" fill="url(#face)"/>
+    <g filter="url(#stone)">
+
+<g id="course-01">
+<g id="brick-01-01" class="brick" data-row="1" data-column="1">
+          <path d="M62 151.5H508L510 184 507 189H58Z" fill="#b0d1e5" opacity="0.017"/>
+          <path class="progress-fill" d="M62 151.5H508L510 184 507 189H58Z"/>
+          <path d="M62 151.5H508L510 184 507 189H58Z" fill="url(#brick)"/>
+          <path d="M58 189H507L510 184" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M508 151.5 510 184" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 152.5H508" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 153.5 58 188" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-01-02" class="brick" data-row="1" data-column="2">
+          <path d="M514 151.5H962L964 184 961 189H510Z" fill="#b0d1e5" opacity="0.053"/>
+          <path class="progress-fill" d="M514 151.5H962L964 184 961 189H510Z"/>
+          <path d="M514 151.5H962L964 184 961 189H510Z" fill="url(#brick)"/>
+          <path d="M510 189H961L964 184" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 151.5 964 184" stroke="#020e1a" stroke-width="3"/>
+          <path d="M514 152.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M514 153.5 510 188" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-02">
+<g id="brick-02-01" class="brick" data-row="2" data-column="1">
+          <path d="M62 194.5H962L964 221 961 226H58Z" fill="#b0d1e5" opacity="0.021"/>
+          <path class="progress-fill" d="M62 194.5H962L964 221 961 226H58Z"/>
+          <path d="M62 194.5H962L964 221 961 226H58Z" fill="url(#brick)"/>
+          <path d="M58 226H961L964 221" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 194.5 964 221" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 195.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 196.5 58 225" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-03">
+<g id="brick-03-01" class="brick" data-row="3" data-column="1">
+          <path d="M62 231.5H464L466 260 463 265H58Z" fill="#b0d1e5" opacity="0.066"/>
+          <path class="progress-fill" d="M62 231.5H464L466 260 463 265H58Z"/>
+          <path d="M62 231.5H464L466 260 463 265H58Z" fill="url(#brick)"/>
+          <path d="M58 265H463L466 260" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M464 231.5 466 260" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 232.5H464" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 233.5 58 264" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-03-02" class="brick" data-row="3" data-column="2">
+          <path d="M470 231.5H554L556 260 553 265H466Z" fill="#000814" opacity="0.043"/>
+          <path class="progress-fill" d="M470 231.5H554L556 260 553 265H466Z"/>
+          <path d="M470 231.5H554L556 260 553 265H466Z" fill="url(#brick)"/>
+          <path d="M466 265H553L556 260" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M554 231.5 556 260" stroke="#020e1a" stroke-width="3"/>
+          <path d="M470 232.5H554" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M470 233.5 466 264" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-03-03" class="brick" data-row="3" data-column="3">
+          <path d="M560 231.5H962L964 260 961 265H556Z" fill="#000814" opacity="0.005"/>
+          <path class="progress-fill" d="M560 231.5H962L964 260 961 265H556Z"/>
+          <path d="M560 231.5H962L964 260 961 265H556Z" fill="url(#brick)"/>
+          <path d="M556 265H961L964 260" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 231.5 964 260" stroke="#020e1a" stroke-width="3"/>
+          <path d="M560 232.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M560 233.5 556 264" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-04">
+<g id="brick-04-01" class="brick" data-row="4" data-column="1">
+          <path d="M62 270.5H510L512 299 509 304H58Z" fill="#000814" opacity="0.049"/>
+          <path class="progress-fill" d="M62 270.5H510L512 299 509 304H58Z"/>
+          <path d="M62 270.5H510L512 299 509 304H58Z" fill="url(#brick)"/>
+          <path d="M58 304H509L512 299" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M510 270.5 512 299" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 271.5H510" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 272.5 58 303" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-04-02" class="brick" data-row="4" data-column="2">
+          <path d="M516 270.5H962L964 299 961 304H512Z" fill="#000814" opacity="0.065"/>
+          <path class="progress-fill" d="M516 270.5H962L964 299 961 304H512Z"/>
+          <path d="M516 270.5H962L964 299 961 304H512Z" fill="url(#brick)"/>
+          <path d="M512 304H961L964 299" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 270.5 964 299" stroke="#020e1a" stroke-width="3"/>
+          <path d="M516 271.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M516 272.5 512 303" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-05">
+<g id="brick-05-01" class="brick" data-row="5" data-column="1">
+          <path d="M62 309.5H962L964 345 961 350H58Z" fill="#000814" opacity="0.022"/>
+          <path class="progress-fill" d="M62 309.5H962L964 345 961 350H58Z"/>
+          <path d="M62 309.5H962L964 345 961 350H58Z" fill="url(#brick)"/>
+          <path d="M58 350H961L964 345" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 309.5 964 345" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 310.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 311.5 58 349" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-06">
+<g id="brick-06-01" class="brick" data-row="6" data-column="1">
+          <path d="M62 355.5H450L452 393 449 398H58Z" fill="#b0d1e5" opacity="0.080"/>
+          <path class="progress-fill" d="M62 355.5H450L452 393 449 398H58Z"/>
+          <path d="M62 355.5H450L452 393 449 398H58Z" fill="url(#brick)"/>
+          <path d="M58 398H449L452 393" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M450 355.5 452 393" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 356.5H450" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 357.5 58 397" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-06-02" class="brick" data-row="6" data-column="2">
+          <path d="M456 355.5H566L568 393 565 398H452Z" fill="#b0d1e5" opacity="0.071"/>
+          <path class="progress-fill" d="M456 355.5H566L568 393 565 398H452Z"/>
+          <path d="M456 355.5H566L568 393 565 398H452Z" fill="url(#brick)"/>
+          <path d="M452 398H565L568 393" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M566 355.5 568 393" stroke="#020e1a" stroke-width="3"/>
+          <path d="M456 356.5H566" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M456 357.5 452 397" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-06-03" class="brick" data-row="6" data-column="3">
+          <path d="M572 355.5H962L964 393 961 398H568Z" fill="#000814" opacity="0.008"/>
+          <path class="progress-fill" d="M572 355.5H962L964 393 961 398H568Z"/>
+          <path d="M572 355.5H962L964 393 961 398H568Z" fill="url(#brick)"/>
+          <path d="M568 398H961L964 393" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 355.5 964 393" stroke="#020e1a" stroke-width="3"/>
+          <path d="M572 356.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M572 357.5 568 397" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-07">
+<g id="brick-07-01" class="brick" data-row="7" data-column="1">
+          <path d="M62 403.5H403L405 441 402 446H58Z" fill="#000814" opacity="0.042"/>
+          <path class="progress-fill" d="M62 403.5H403L405 441 402 446H58Z"/>
+          <path d="M62 403.5H403L405 441 402 446H58Z" fill="url(#brick)"/>
+          <path d="M58 446H402L405 441" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M403 403.5 405 441" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 404.5H403" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 405.5 58 445" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-07-02" class="brick" data-row="7" data-column="2">
+          <path d="M409 403.5H507L509 441 506 446H405Z" fill="#000814" opacity="0.076"/>
+          <path class="progress-fill" d="M409 403.5H507L509 441 506 446H405Z"/>
+          <path d="M409 403.5H507L509 441 506 446H405Z" fill="url(#brick)"/>
+          <path d="M405 446H506L509 441" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M507 403.5 509 441" stroke="#020e1a" stroke-width="3"/>
+          <path d="M409 404.5H507" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M409 405.5 405 445" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-07-03" class="brick" data-row="7" data-column="3">
+          <path d="M513 403.5H614L616 441 613 446H509Z" fill="#b0d1e5" opacity="0.017"/>
+          <path class="progress-fill" d="M513 403.5H614L616 441 613 446H509Z"/>
+          <path d="M513 403.5H614L616 441 613 446H509Z" fill="url(#brick)"/>
+          <path d="M509 446H613L616 441" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M614 403.5 616 441" stroke="#020e1a" stroke-width="3"/>
+          <path d="M513 404.5H614" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M513 405.5 509 445" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-07-04" class="brick" data-row="7" data-column="4">
+          <path d="M620 403.5H962L964 441 961 446H616Z" fill="#b0d1e5" opacity="0.014"/>
+          <path class="progress-fill" d="M620 403.5H962L964 441 961 446H616Z"/>
+          <path d="M620 403.5H962L964 441 961 446H616Z" fill="url(#brick)"/>
+          <path d="M616 446H961L964 441" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 403.5 964 441" stroke="#020e1a" stroke-width="3"/>
+          <path d="M620 404.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M620 405.5 616 445" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-08">
+<g id="brick-08-01" class="brick" data-row="8" data-column="1">
+          <path d="M62 451.5H346L348 484 345 489H58Z" fill="#b0d1e5" opacity="0.039"/>
+          <path class="progress-fill" d="M62 451.5H346L348 484 345 489H58Z"/>
+          <path d="M62 451.5H346L348 484 345 489H58Z" fill="url(#brick)"/>
+          <path d="M58 489H345L348 484" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M346 451.5 348 484" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 452.5H346" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 453.5 58 488" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-08-02" class="brick" data-row="8" data-column="2">
+          <path d="M352 451.5H452L454 484 451 489H348Z" fill="#b0d1e5" opacity="0.031"/>
+          <path class="progress-fill" d="M352 451.5H452L454 484 451 489H348Z"/>
+          <path d="M352 451.5H452L454 484 451 489H348Z" fill="url(#brick)"/>
+          <path d="M348 489H451L454 484" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M452 451.5 454 484" stroke="#020e1a" stroke-width="3"/>
+          <path d="M352 452.5H452" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M352 453.5 348 488" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-08-03" class="brick" data-row="8" data-column="3">
+          <path d="M458 451.5H567L569 484 566 489H454Z" fill="#000814" opacity="0.019"/>
+          <path class="progress-fill" d="M458 451.5H567L569 484 566 489H454Z"/>
+          <path d="M458 451.5H567L569 484 566 489H454Z" fill="url(#brick)"/>
+          <path d="M454 489H566L569 484" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M567 451.5 569 484" stroke="#020e1a" stroke-width="3"/>
+          <path d="M458 452.5H567" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M458 453.5 454 488" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-08-04" class="brick" data-row="8" data-column="4">
+          <path d="M573 451.5H669L671 484 668 489H569Z" fill="#000814" opacity="0.070"/>
+          <path class="progress-fill" d="M573 451.5H669L671 484 668 489H569Z"/>
+          <path d="M573 451.5H669L671 484 668 489H569Z" fill="url(#brick)"/>
+          <path d="M569 489H668L671 484" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M669 451.5 671 484" stroke="#020e1a" stroke-width="3"/>
+          <path d="M573 452.5H669" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M573 453.5 569 488" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-08-05" class="brick" data-row="8" data-column="5">
+          <path d="M675 451.5H962L964 484 961 489H671Z" fill="#000814" opacity="0.064"/>
+          <path class="progress-fill" d="M675 451.5H962L964 484 961 489H671Z"/>
+          <path d="M675 451.5H962L964 484 961 489H671Z" fill="url(#brick)"/>
+          <path d="M671 489H961L964 484" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 451.5 964 484" stroke="#020e1a" stroke-width="3"/>
+          <path d="M675 452.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M675 453.5 671 488" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-09">
+<g id="brick-09-01" class="brick" data-row="9" data-column="1">
+          <path d="M62 494.5H396L398 537 395 542H58Z" fill="#b0d1e5" opacity="0.078"/>
+          <path class="progress-fill" d="M62 494.5H396L398 537 395 542H58Z"/>
+          <path d="M62 494.5H396L398 537 395 542H58Z" fill="url(#brick)"/>
+          <path d="M58 542H395L398 537" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M396 494.5 398 537" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 495.5H396" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 496.5 58 541" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-09-02" class="brick" data-row="9" data-column="2">
+          <path d="M402 494.5H508L510 537 507 542H398Z" fill="#b0d1e5" opacity="0.062"/>
+          <path class="progress-fill" d="M402 494.5H508L510 537 507 542H398Z"/>
+          <path d="M402 494.5H508L510 537 507 542H398Z" fill="url(#brick)"/>
+          <path d="M398 542H507L510 537" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M508 494.5 510 537" stroke="#020e1a" stroke-width="3"/>
+          <path d="M402 495.5H508" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M402 496.5 398 541" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-09-03" class="brick" data-row="9" data-column="3">
+          <path d="M514 494.5H619L621 537 618 542H510Z" fill="#b0d1e5" opacity="0.049"/>
+          <path class="progress-fill" d="M514 494.5H619L621 537 618 542H510Z"/>
+          <path d="M514 494.5H619L621 537 618 542H510Z" fill="url(#brick)"/>
+          <path d="M510 542H618L621 537" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M619 494.5 621 537" stroke="#020e1a" stroke-width="3"/>
+          <path d="M514 495.5H619" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M514 496.5 510 541" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-09-04" class="brick" data-row="9" data-column="4">
+          <path d="M625 494.5H962L964 537 961 542H621Z" fill="#b0d1e5" opacity="0.014"/>
+          <path class="progress-fill" d="M625 494.5H962L964 537 961 542H621Z"/>
+          <path d="M625 494.5H962L964 537 961 542H621Z" fill="url(#brick)"/>
+          <path d="M621 542H961L964 537" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 494.5 964 537" stroke="#020e1a" stroke-width="3"/>
+          <path d="M625 495.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M625 496.5 621 541" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-10">
+<g id="brick-10-01" class="brick" data-row="10" data-column="1">
+          <path d="M62 547.5H328L330 596 327 601H58Z" fill="#000814" opacity="0.067"/>
+          <path class="progress-fill" d="M62 547.5H328L330 596 327 601H58Z"/>
+          <path d="M62 547.5H328L330 596 327 601H58Z" fill="url(#brick)"/>
+          <path d="M58 601H327L330 596" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M328 547.5 330 596" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 548.5H328" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 549.5 58 600" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-10-02" class="brick" data-row="10" data-column="2">
+          <path d="M334 547.5H440L442 596 439 601H330Z" fill="#b0d1e5" opacity="0.074"/>
+          <path class="progress-fill" d="M334 547.5H440L442 596 439 601H330Z"/>
+          <path d="M334 547.5H440L442 596 439 601H330Z" fill="url(#brick)"/>
+          <path d="M330 601H439L442 596" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M440 547.5 442 596" stroke="#020e1a" stroke-width="3"/>
+          <path d="M334 548.5H440" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M334 549.5 330 600" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-10-03" class="brick" data-row="10" data-column="3">
+          <path d="M446 547.5H572L574 596 571 601H442Z" fill="#000814" opacity="0.036"/>
+          <path class="progress-fill" d="M446 547.5H572L574 596 571 601H442Z"/>
+          <path d="M446 547.5H572L574 596 571 601H442Z" fill="url(#brick)"/>
+          <path d="M442 601H571L574 596" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M572 547.5 574 596" stroke="#020e1a" stroke-width="3"/>
+          <path d="M446 548.5H572" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M446 549.5 442 600" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-10-04" class="brick" data-row="10" data-column="4">
+          <path d="M578 547.5H674L676 596 673 601H574Z" fill="#000814" opacity="0.039"/>
+          <path class="progress-fill" d="M578 547.5H674L676 596 673 601H574Z"/>
+          <path d="M578 547.5H674L676 596 673 601H574Z" fill="url(#brick)"/>
+          <path d="M574 601H673L676 596" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M674 547.5 676 596" stroke="#020e1a" stroke-width="3"/>
+          <path d="M578 548.5H674" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M578 549.5 574 600" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-10-05" class="brick" data-row="10" data-column="5">
+          <path d="M680 547.5H962L964 596 961 601H676Z" fill="#000814" opacity="0.080"/>
+          <path class="progress-fill" d="M680 547.5H962L964 596 961 601H676Z"/>
+          <path d="M680 547.5H962L964 596 961 601H676Z" fill="url(#brick)"/>
+          <path d="M676 601H961L964 596" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 547.5 964 596" stroke="#020e1a" stroke-width="3"/>
+          <path d="M680 548.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M680 549.5 676 600" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-11">
+<g id="brick-11-01" class="brick" data-row="11" data-column="1">
+          <path d="M62 606.5H283L285 661 282 666H58Z" fill="#000814" opacity="0.007"/>
+          <path class="progress-fill" d="M62 606.5H283L285 661 282 666H58Z"/>
+          <path d="M62 606.5H283L285 661 282 666H58Z" fill="url(#brick)"/>
+          <path d="M58 666H282L285 661" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M283 606.5 285 661" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 607.5H283" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 608.5 58 665" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-11-02" class="brick" data-row="11" data-column="2">
+          <path d="M289 606.5H389L391 661 388 666H285Z" fill="#b0d1e5" opacity="0.059"/>
+          <path class="progress-fill" d="M289 606.5H389L391 661 388 666H285Z"/>
+          <path d="M289 606.5H389L391 661 388 666H285Z" fill="url(#brick)"/>
+          <path d="M285 666H388L391 661" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M389 606.5 391 661" stroke="#020e1a" stroke-width="3"/>
+          <path d="M289 607.5H389" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M289 608.5 285 665" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-11-03" class="brick" data-row="11" data-column="3">
+          <path d="M395 606.5H507L509 661 506 666H391Z" fill="#b0d1e5" opacity="0.042"/>
+          <path class="progress-fill" d="M395 606.5H507L509 661 506 666H391Z"/>
+          <path d="M395 606.5H507L509 661 506 666H391Z" fill="url(#brick)"/>
+          <path d="M391 666H506L509 661" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M507 606.5 509 661" stroke="#020e1a" stroke-width="3"/>
+          <path d="M395 607.5H507" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M395 608.5 391 665" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-11-04" class="brick" data-row="11" data-column="4">
+          <path d="M513 606.5H627L629 661 626 666H509Z" fill="#b0d1e5" opacity="0.046"/>
+          <path class="progress-fill" d="M513 606.5H627L629 661 626 666H509Z"/>
+          <path d="M513 606.5H627L629 661 626 666H509Z" fill="url(#brick)"/>
+          <path d="M509 666H626L629 661" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M627 606.5 629 661" stroke="#020e1a" stroke-width="3"/>
+          <path d="M513 607.5H627" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M513 608.5 509 665" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-11-05" class="brick" data-row="11" data-column="5">
+          <path d="M633 606.5H744L746 661 743 666H629Z" fill="#b0d1e5" opacity="0.022"/>
+          <path class="progress-fill" d="M633 606.5H744L746 661 743 666H629Z"/>
+          <path d="M633 606.5H744L746 661 743 666H629Z" fill="url(#brick)"/>
+          <path d="M629 666H743L746 661" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M744 606.5 746 661" stroke="#020e1a" stroke-width="3"/>
+          <path d="M633 607.5H744" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M633 608.5 629 665" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-11-06" class="brick" data-row="11" data-column="6">
+          <path d="M750 606.5H962L964 661 961 666H746Z" fill="#b0d1e5" opacity="0.047"/>
+          <path class="progress-fill" d="M750 606.5H962L964 661 961 666H746Z"/>
+          <path d="M750 606.5H962L964 661 961 666H746Z" fill="url(#brick)"/>
+          <path d="M746 666H961L964 661" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 606.5 964 661" stroke="#020e1a" stroke-width="3"/>
+          <path d="M750 607.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M750 608.5 746 665" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+<g id="course-12">
+<g id="brick-12-01" class="brick" data-row="12" data-column="1">
+          <path d="M62 671.5H177L179 722 176 727H58Z" fill="#000814" opacity="0.019"/>
+          <path class="progress-fill" d="M62 671.5H177L179 722 176 727H58Z"/>
+          <path d="M62 671.5H177L179 722 176 727H58Z" fill="url(#brick)"/>
+          <path d="M58 727H176L179 722" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M177 671.5 179 722" stroke="#020e1a" stroke-width="3"/>
+          <path d="M62 672.5H177" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M62 673.5 58 726" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-12-02" class="brick" data-row="12" data-column="2">
+          <path d="M183 671.5H315L317 722 314 727H179Z" fill="#b0d1e5" opacity="0.031"/>
+          <path class="progress-fill" d="M183 671.5H315L317 722 314 727H179Z"/>
+          <path d="M183 671.5H315L317 722 314 727H179Z" fill="url(#brick)"/>
+          <path d="M179 727H314L317 722" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M315 671.5 317 722" stroke="#020e1a" stroke-width="3"/>
+          <path d="M183 672.5H315" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M183 673.5 179 726" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-12-03" class="brick" data-row="12" data-column="3">
+          <path d="M321 671.5H422L424 722 421 727H317Z" fill="#b0d1e5" opacity="0.031"/>
+          <path class="progress-fill" d="M321 671.5H422L424 722 421 727H317Z"/>
+          <path d="M321 671.5H422L424 722 421 727H317Z" fill="url(#brick)"/>
+          <path d="M317 727H421L424 722" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M422 671.5 424 722" stroke="#020e1a" stroke-width="3"/>
+          <path d="M321 672.5H422" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M321 673.5 317 726" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-12-04" class="brick" data-row="12" data-column="4">
+          <path d="M428 671.5H633L635 722 632 727H424Z" fill="#000814" opacity="0.028"/>
+          <path class="progress-fill" d="M428 671.5H633L635 722 632 727H424Z"/>
+          <path d="M428 671.5H633L635 722 632 727H424Z" fill="url(#brick)"/>
+          <path d="M424 727H632L635 722" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M633 671.5 635 722" stroke="#020e1a" stroke-width="3"/>
+          <path d="M428 672.5H633" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M428 673.5 424 726" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-12-05" class="brick" data-row="12" data-column="5">
+          <path d="M639 671.5H840L842 722 839 727H635Z" fill="#b0d1e5" opacity="0.010"/>
+          <path class="progress-fill" d="M639 671.5H840L842 722 839 727H635Z"/>
+          <path d="M639 671.5H840L842 722 839 727H635Z" fill="url(#brick)"/>
+          <path d="M635 727H839L842 722" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M840 671.5 842 722" stroke="#020e1a" stroke-width="3"/>
+          <path d="M639 672.5H840" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M639 673.5 635 726" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+<g id="brick-12-06" class="brick" data-row="12" data-column="6">
+          <path d="M846 671.5H962L964 722 961 727H842Z" fill="#000814" opacity="0.063"/>
+          <path class="progress-fill" d="M846 671.5H962L964 722 961 727H842Z"/>
+          <path d="M846 671.5H962L964 722 961 727H842Z" fill="url(#brick)"/>
+          <path d="M842 727H961L964 722" fill="none" stroke="#000c16" stroke-width="3.5"/>
+          <path d="M962 671.5 964 722" stroke="#020e1a" stroke-width="3"/>
+          <path d="M846 672.5H962" stroke="#8bb9d3" stroke-opacity=".42" stroke-width="1.25"/>
+          <path d="M846 673.5 842 726" stroke="#5d90b0" stroke-opacity=".22" stroke-width="1.2"/>
+        </g>
+</g>
+</g>
+    <path d="M512 150 110 729H914Z" fill="url(#wash)"/>
+  </g>
+  <g id="beveled-frame" stroke-linejoin="round">
+    <path d="M512 121 63 747 111 729 512 150Z" fill="url(#frame-left)"/>
+    <path d="M512 121 961 747 913 729 512 150Z" fill="url(#frame-right)"/>
+    <path d="M63 747 111 729H913L961 747 965 753H59Z" fill="url(#base)"/>
+    <path d="M512 130 77 735 102 728 512 157Z" fill="#032b47" opacity=".5"/>
+    <path d="M512 130 947 735 922 728 512 157Z" fill="#03394e" opacity=".45"/>
+    <path d="M64 741 512 121 960 741" fill="none" stroke="#afcbd2" stroke-opacity=".72" stroke-width="2"/>
+    <path d="M512 127V153M64 741 111 729M913 729 960 741" fill="none" stroke="#d0fcff" stroke-opacity=".8" stroke-width="2"/>
+  </g>
+  <g id="light-bloom" class="bloom" fill="none" stroke-linejoin="round">
+    <path d="M512 151 110 729H914Z" class="cyan" stroke-width="13" opacity=".5" filter="url(#wide-glow)"/>
+    <path d="M512 151 110 729H914Z" class="cyan" stroke-width="9" filter="url(#glow)"/>
+    <path d="M66 746H958" class="pink" stroke-width="9" filter="url(#glow)"/>
+  </g>
+  <g id="light-tubes" fill="none" stroke-linejoin="round">
+    <path d="M512 151 110 729H914Z" class="cyan" stroke-width="3.5"/>
+    <path d="M512 152 111 728M513 152 914 728" stroke="#98f7ff" stroke-opacity=".52" stroke-width="1.2"/>
+    <path d="M73 738 512 127 951 738" class="cyan" stroke-opacity=".7" stroke-width="1.4"/>
+    <path d="M66 746H958" class="pink" stroke-width="2"/>
+    <path d="M80 742H944" stroke="#e1d7e4" stroke-opacity=".5" stroke-width="1"/>
+    <path d="M64 739 512 121 960 739" stroke="#d3e4e7" stroke-opacity=".65" stroke-width="1"/>
+  </g>
+  <g id="corner-highlights" fill="#b4fbff">
+    <path d="m512 123-5 15 5-5 5 5Z"/>
+    <path d="m67 740 31-9-16 9 17 3Z" opacity=".9"/>
+    <path d="m957 740-31-9 16 9-17 3Z" opacity=".9"/>
+  </g>
+</svg>

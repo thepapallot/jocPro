@@ -478,6 +478,7 @@
             if (banner) banner.classList.remove('hidden');
             document.body.classList.add('p5-solved-flash');
             setTimeout(function () {
+                if (window.PyramidGameFlow?.complete(5)) return;
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
                     ? NEXT_PUZZLE_ID : 1;
                 fetch('/videoPuzzles/' + nextId, { method: 'POST' })
@@ -491,7 +492,7 @@
                     .catch(function () {
                         window.location.href = '/videoPuzzles/' + nextId;
                     });
-            }, 1800);
+            }, window.PyramidGameFlow?.managed ? 1300 : 1800);
         }
     }
 

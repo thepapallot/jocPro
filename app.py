@@ -1,4 +1,5 @@
 from pathlib import Path
+from player_window import register_player_window
 
 from flask import Flask, render_template, redirect, url_for, request, Response, jsonify, stream_with_context, send_from_directory, abort
 from mqtt import MQTTClient, create_puzzles
@@ -14,6 +15,7 @@ except ImportError:
     _TELEMETRY_AVAILABLE = False
 
 app = Flask(__name__)
+register_player_window(app)
 BASE_DIR = Path(__file__).resolve().parent #Directori base del projecte jocPro/
 
 # Telemetry init (non-fatal: app boots even if DB is unavailable)
@@ -71,45 +73,6 @@ def push_state_update(data):
 
 mqtt_client.set_update_callback(push_state_update)
 
-def iter_scene_candidate_dirs(scene_id):
-    return [
-        BASE_DIR / "scenes" / scene_id,  # legacy root
-        BASE_DIR / "scenes" / "source" / "intros" / "intropuzzles" / scene_id,
-        BASE_DIR / "scenes" / "source" / "intros" / "intro_inicio" / scene_id,
-        BASE_DIR / "scenes" / "source" / "intros" / "intro" / scene_id,
-        BASE_DIR / "scenes" / "source" / "transicion" / scene_id,
-        BASE_DIR / "scenes" / "source" / "cierre" / scene_id,
-    ]
-
-
-def find_scene_dir(scene_id):
-    scenes_root = (BASE_DIR / "scenes").resolve()
-    for candidate in iter_scene_candidate_dirs(scene_id):
-        scene_dir = candidate.resolve()
-        if scenes_root not in scene_dir.parents:
-            continue
-        if (scene_dir / "config.json").exists():
-            return scene_dir
-    return None
-
-
-def resolve_intro_scene_for_puzzle(puzzle_id):
-    alias = PUZZLE_ALIASES.get(puzzle_id)
-    if not alias:
-        return None
-
-    alias = str(alias).strip().lower()
-    candidate = LEGACY_ALIAS_TO_SCENE.get(alias, alias)
-
-    if not candidate.startswith("scene_"):
-        candidate = f"scene_intro_{candidate}"
-
-    if find_scene_dir(candidate):
-        return candidate
-
-    return None
-
-
 def is_playable_puzzle_id(puzzle_id):
     return puzzle_id in PUZZLE_ORDER or puzzle_id in SPECIAL_PUZZLE_IDS
 
@@ -153,53 +116,35 @@ DEFAULT_SUBTITLE_LANG = normalize_subtitle_lang(SUBTITLE_LANG)
 def inject_player_defaults():
     return {
         "default_subtitle_lang": resolve_active_subtitle_lang(),
+        "game_puzzle_order": PUZZLE_ORDER,
+        "game_language": "ca" if mqtt_client.get_active_session_language() in ("ca", "cat") else resolve_active_subtitle_lang(),
     }
 
 
-def build_scene_player_target(scene_id, next_url="", **extra_query):
-    query = {
-        "scene": scene_id,
-        "lang": resolve_active_subtitle_lang(),
-    }
-    if next_url:
-        query["next"] = next_url
+def presentation_page_data(scene_id, next_url="", puzzle_id=None, initial_step=0):
+    # These pages are visual only: opening one never starts hardware.
+    language = request.args.get("lang") or mqtt_client.get_active_session_language() or SUBTITLE_LANG
+    language = "eng" if language in ("en", "eng") else "ca" if language in ("ca", "cat") else "es"
+    sequence = [PUZZLE_TUTORIAL, *PUZZLE_ORDER, PUZZLE_FINAL]
+    routes = {"welcome": url_for('welcome', embed=1), "opening": url_for('play_video_intro'), "closing": url_for('final')}
+    for index, pid in enumerate(sequence):
+        routes[f"puzzle-{pid}"] = url_for('puzzle_presentation', puzzle_id=pid)
+        if index + 1 < len(sequence):
+            routes[f"success-{pid}"] = url_for('play_video_puzzles', puzzle_id=sequence[index + 1])
+    return {"routes": routes, "sceneId": scene_id, "nextUrl": next_url, "puzzleId": puzzle_id,
+            "initialStep": initial_step, "language": language, "order": PUZZLE_ORDER,
+            "tutorialId": PUZZLE_TUTORIAL, "finalId": PUZZLE_FINAL, "mode": "live"}
 
-    for key, value in extra_query.items():
-        if value is None or value == "":
-            continue
-        query[key] = value
 
-    return url_for("scene_player", **query)
-
-
-def build_puzzle_intro_target(puzzle_id):
-    next_url = url_for('puzzle', puzzle_id=puzzle_id)
-    scene_id = resolve_intro_scene_for_puzzle(puzzle_id)
-    if not scene_id:
-        return next_url
-    return build_scene_player_target(scene_id, next_url=next_url)
+def render_presentation(scene_id, next_url="", puzzle_id=None, initial_step=0):
+    return render_template("presentation.html", presentation_page=presentation_page_data(
+        scene_id, next_url, puzzle_id, initial_step))
 
 
 # Routes
 @app.route('/')
 def welcome():
-    redirect_flag = request.args.get('redirect_flag', 'start')  # Default to 'start' if not provided
-    print(redirect_flag)
-    idx = None
-    if redirect_flag.startswith('puzzle'):
-        raw = redirect_flag[len('puzzle'):]
-        try:
-            idx = int(raw)
-
-        except ValueError:
-            pass
-
-    return render_template(
-        'welcome.html',
-        redirect_flag=redirect_flag,
-        idx=idx,
-        final_puzzle_id=PUZZLE_FINAL
-    )
+    return render_template('welcome.html', presentation_page=presentation_page_data('welcome', url_for('play_video_intro')))
 
 @app.route('/videoIntro')
 def play_video_intro():
@@ -211,113 +156,82 @@ def play_video_intro():
             _telemetry_writer.start_session(_sid)
         except Exception as _e:
             print(f'[telemetry] start_session failed: {_e}')
-    next_url = url_for('play_video_between_intro_game')
-    target = build_scene_player_target('scene_intro_game', next_url=next_url)
-    return redirect(target)
+    return render_presentation('opening', url_for('play_video_tutorial'))
 
 
 @app.route('/videoBetweenIntroGame')
 def play_video_between_intro_game():
-    tutorial_target = url_for('play_video_tutorial')
-    target = build_scene_player_target('scene_tutorial', next_url=tutorial_target)
-    return redirect(target)
+    return redirect(url_for('play_video_tutorial'))
 
 
 @app.route('/videoTutorial', methods=['GET', 'POST'])
 def play_video_tutorial():
     if not is_playable_puzzle_id(PUZZLE_TUTORIAL):
         return redirect(url_for('welcome'))
-    return redirect(build_puzzle_intro_target(PUZZLE_TUTORIAL))
+    return render_presentation('puzzle', url_for('puzzle', puzzle_id=PUZZLE_TUTORIAL), PUZZLE_TUTORIAL)
 
 @app.route('/videoPuzzles/<int:puzzle_id>', methods=['GET','POST'])
 def play_video_puzzles(puzzle_id):
     if not is_playable_puzzle_id(puzzle_id):
         return redirect(url_for('welcome'))
 
-    # Find index in PUZZLE_ORDER for progress display (1-based)
-    idx_puzzle_id = None
     if puzzle_id in PUZZLE_ORDER:
-        idx_puzzle_id = PUZZLE_ORDER.index(puzzle_id) + 1
-    elif puzzle_id == PUZZLE_TUTORIAL:
-        idx_puzzle_id = 0
-    elif puzzle_id == PUZZLE_FINAL:
-        idx_puzzle_id = len(PUZZLE_ORDER) + 1
+        index = PUZZLE_ORDER.index(puzzle_id)
+        previous = PUZZLE_TUTORIAL if index == 0 else PUZZLE_ORDER[index - 1]
+    elif puzzle_id == PUZZLE_FINAL and PUZZLE_ORDER:
+        previous = PUZZLE_ORDER[-1]
+    else:
+        return redirect(url_for('puzzle_presentation', puzzle_id=puzzle_id))
+    return render_presentation(f'success-{previous}', url_for('puzzle_presentation', puzzle_id=puzzle_id))
 
-    next_target = build_puzzle_intro_target(puzzle_id)
 
-    between_kwargs = {
-        "brief_progress": f"{idx_puzzle_id}/{len(PUZZLE_ORDER)}" if idx_puzzle_id else "",
-    }
+@app.route('/presentacio/<int:puzzle_id>')
+def puzzle_presentation(puzzle_id):
+    if not is_playable_puzzle_id(puzzle_id):
+        abort(404)
+    return render_presentation('puzzle', url_for('puzzle', puzzle_id=puzzle_id), puzzle_id)
 
-    target = build_scene_player_target("scene_between_puzzles", next_url=next_target, **between_kwargs)
-    return redirect(target)
+# Legacy entry points resolve to the same new HTML pages.
+@app.route('/direct/<int:idx_puzzle_id>')
+def play_directa_explicacio_puzzles(idx_puzzle_id):
+    return redirect(url_for('puzzle_presentation', puzzle_id=idx_puzzle_id))
 
-@app.route('/direct/<int:idx_puzzle_id>', methods=['GET'])
-def play_directa_explicacio_puzzles(idx_puzzle_id): 
-    # Render a page that immediately submits a POST to /videoPuzzles/<idx>
-    return render_template('directaExplicacioPuzzle.html', idx_puzzle_id=idx_puzzle_id)
-
-@app.route('/explicacioPuzzles/<int:idx_puzzle_id>', methods=['GET','POST'])
-def play_explicacio_puzzles(idx_puzzle_id): 
-    puzzle_id = 0
-    if 0 <= idx_puzzle_id <= len(PUZZLE_ORDER):
-        puzzle_id= PUZZLE_ORDER[idx_puzzle_id-1]  # index mapping
-    return render_template('explicacioPuzzle.html', puzzle_id=puzzle_id)
-
+@app.route('/explicacioPuzzles/<int:idx_puzzle_id>', methods=['GET', 'POST'])
+def play_explicacio_puzzles(idx_puzzle_id):
+    if not 1 <= idx_puzzle_id <= len(PUZZLE_ORDER):
+        abort(404)
+    return redirect(url_for('puzzle_presentation', puzzle_id=PUZZLE_ORDER[idx_puzzle_id - 1]))
 
 @app.route('/puzzleSuperat/<int:puzzle_id>', methods=['GET', 'POST'])
-def puzzle_superat(puzzle_id): 
-    # Determine 1-based index for next puzzle (used in redirect_flag=puzzleN)
-    idx = None
-    final = False
-    if puzzle_id in PUZZLE_ORDER:
-        idx = PUZZLE_ORDER.index(puzzle_id)
-        if idx == len(PUZZLE_ORDER)-1:
-            final = True #it means that we have solved the last puzzle    
+def puzzle_superat(puzzle_id):
+    sequence = [PUZZLE_TUTORIAL, *PUZZLE_ORDER, PUZZLE_FINAL]
+    if puzzle_id not in sequence:
+        abort(404)
+    index = sequence.index(puzzle_id)
+    return redirect(url_for('play_video_puzzles', puzzle_id=sequence[index + 1]) if index + 1 < len(sequence) else url_for('final'))
 
-    return render_template(
-        'videoSuperat.html',
-        idx_puzzle_id=idx + 1 if idx is not None else None,
-        final=final,
-        final_puzzle_id=PUZZLE_FINAL
-    )
-
-
-##### Scene Player: rutas aisladas para intros híbridas de frontend #####
 @app.route('/player/')
 def scene_player():
-    return send_from_directory(BASE_DIR / 'player', 'index.html')
+    scene_id = request.args.get('scene', 'scene_intro_game')
+    if scene_id == 'scene_intro_game':
+        target = url_for('play_video_intro')
+    elif scene_id == 'scene_tutorial':
+        target = url_for('play_video_tutorial')
+    elif scene_id == 'scene_final':
+        target = url_for('final')
+    else:
+        matching = [pid for pid, alias in PUZZLE_ALIASES.items()
+                    if LEGACY_ALIAS_TO_SCENE.get(alias) == scene_id and is_playable_puzzle_id(pid)]
+        if not matching:
+            abort(404)
+        target = url_for('puzzle_presentation', puzzle_id=matching[0])
+    return redirect(target + ('?lang=' + presentation_page_data('welcome')['language']))
 
 @app.route('/player/<path:filename>')
 def scene_player_assets(filename):
+    if filename == 'index.html':
+        return scene_player()
     return send_from_directory(BASE_DIR / 'player', filename)
-
-@app.route('/scenes/<scene_id>/config.json')
-def scene_config(scene_id):
-    scene_dir = find_scene_dir(scene_id)
-    if scene_dir:
-        return send_from_directory(scene_dir, 'config.json')
-
-    abort(404)
-
-@app.route('/scenes/subtitles/<lang>/<filename>')
-def scene_subtitles(lang, filename):
-    safe_lang = (lang or "").strip().lower()
-    if safe_lang not in {"es", "eng"}:
-        abort(404)
-
-    if "/" in filename or "\\" in filename or not filename.endswith(".srt"):
-        abort(404)
-
-    subtitles_dir = BASE_DIR / "scenes" / "subtitles" / safe_lang
-    subtitle_path = (subtitles_dir / filename).resolve()
-    if not subtitle_path.exists():
-        abort(404)
-    if subtitles_dir.resolve() not in subtitle_path.parents:
-        abort(404)
-
-    return send_from_directory(subtitles_dir, filename)
-##### Fin Scene Player #####
 
 @app.route('/final', methods=['GET', 'POST'])
 def final():
@@ -331,11 +245,11 @@ def final():
             _telemetry_writer.end_session(_sid)
         except Exception as _e:
             print(f'[telemetry] end_session failed: {_e}')
-    return render_template('final.html')
+    return render_presentation('closing')
 
 @app.route('/final-loop', methods=['GET'])
 def final_loop():
-    return render_template('finalLoop.html')
+    return render_presentation('closing', initial_step=1)
 
 
 @app.route('/puzzle/final', methods=['GET', 'POST'])
@@ -343,7 +257,7 @@ def puzzle_final():
     print("STARTING PUZZLE FINAL")
     mqtt_client.stop_current_puzzle()
     mqtt_client.set_current_sequence_index(get_sequence_index(PUZZLE_FINAL) or len(PUZZLE_ORDER) + 1)
-    return render_template(f'puzzle{PUZZLE_FINAL}.html', current_level='FINAL')
+    return render_template(f'puzzle{PUZZLE_FINAL}.html', current_level='FINAL', puzzle_id=PUZZLE_FINAL, final_puzzle_id=PUZZLE_FINAL)
 
 @app.route('/puzzle/<int:puzzle_id>', methods=['GET', 'POST'])
 def puzzle(puzzle_id):
@@ -376,7 +290,7 @@ def puzzle(puzzle_id):
         puzzle_context["token_numbers"] = mqtt_client.puzzles[8].token_numbers[:]
     return render_template(
         f'puzzle{puzzle_id}.html', current_level=display_level,
-        next_puzzle_id=next_puzzle_id, **puzzle_context
+        next_puzzle_id=next_puzzle_id, puzzle_id=puzzle_id, final_puzzle_id=PUZZLE_FINAL, **puzzle_context
     )
 
 @app.route('/puzzle4_sample_finished', methods=['POST'])
@@ -644,6 +558,9 @@ def test_force_end():
         puzzle_id = int(puzzle_id)
     except (TypeError, ValueError):
         return jsonify({"error": "invalid_puzzle"}), 400
+
+    if mqtt_client.current_puzzle_id != puzzle_id:
+        return jsonify({"error": "puzzle_not_active"}), 409
 
     puzzle = mqtt_client.puzzles.get(puzzle_id)
     if puzzle is None:

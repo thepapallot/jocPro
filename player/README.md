@@ -1,254 +1,101 @@
-# Scene Player
+# La Piràmide: presentacions i pantalla de joc
 
-Base reutilizable para las intros de `La Pirámide`.
+El recorregut de producció s’obre a `/`. La pàgina exterior manté la pantalla completa mentre l’iframe navega entre HTMLs independents. El Game Master controla el ritme des de `/test`, pestanya **Control de juego**.
 
-La arquitectura separa cuatro capas:
+## Ús
 
-- `audio`: locución maestra de la escena
-- `character`: clips reutilizables del personaje
-- `fullscreen_ui`: UI a pantalla completa hecha con código
-- `transition`: bloques visuales intermedios
+1. Obrir la pantalla de jugadors des de Test. A la pantalla compartida, clicar per entrar en pantalla completa.
+2. La benvinguda és una pantalla d’espera fins que el GM prem **Comenzar presentación inicial**. La introducció avança sola en quatre moments (6 s, 6,5 s, 8,5 s i 6 s provisionals), amb transicions suaus i controls de pausa/reprendre a Test. S’atura abans de la pràctica; els temps es defineixen a `presentation-flow.js` i s’ajustaran quan hi hagi locució i subtítols. A partir de la pràctica, fer servir **Anterior / Siguiente** i els passos del panell per explicar cada presentació. No hi ha avanç automàtic per àudio.
+3. A l’últim pas de cada presentació (objectiu o regla), prémer **Comenzar**. El compte enrere es pot cancel·lar; en acabar, s’obre el puzzle real.
+4. Quan el puzzle es completa, apareix una transició. El GM decideix quan continuar.
 
-La regla principal es simple:
-
-- la escena dura exactamente lo mismo que el audio
-- el audio marca el tiempo global
-- los clips del personaje y la UI se intercalan sobre esa línea temporal
-
-## Ejecución
-
-Desde la raíz del proyecto:
-
-```bash
-python3 app.py
-```
-
-Abrir:
-
-```text
-http://127.0.0.1:5000/player/?scene=scene_intro_sumas
-```
-
-Con subtítulos en inglés:
-
-```text
-http://127.0.0.1:5000/player/?scene=scene_intro_sumas&lang=eng
-```
-
-El player intenta arrancar automáticamente si el navegador permite autoplay.
-
-## Controles
-
-- `Espacio`: play/pause
-- `R`: reiniciar escena
-- `Flecha derecha`: saltar al siguiente segmento
-- `L`: alternar idioma de subtítulos (`es` <-> `eng`)
+**Presentar seleccionado** obre la presentació del puzzle seleccionat sense iniciar els terminals. Els accessos directes tècnics al puzzle obren el joc directament i conserven el seu inici habitual. Tots aquests accessos comparteixen una sola finestra independent de jugadors. Presentar o iniciar un altre puzzle reutilitza aquesta finestra i manté el focus al panell del GM.
 
 ## Estructura
 
-- `player/index.html`: shell del reproductor
-- `player/main.js`: motor de timeline, audio, acumulación de UI, subtítulos y SFX
-- `player/styles.css`: sistema visual fullscreen
-- `player/CHARACTER_CLIPS.md`: clasificación narrativa de los clips del personaje
-- `scenes/scene_intro_sumas/config.json`: prueba real del puzzle 1
-- `scenes/templates/intro/puzzle_intro_template.json`: plantilla maestra para futuros puzzles
+- `templates/welcome.html`: superfície persistent i benvinguda.
+- `templates/presentation.html` i `_presentation_screen.html`: HTML de cada presentació.
+- `static/js/game-shell.js`: navegació i connexió amb Test.
+- `static/js/presentation-flow.js`: seqüència i textos en català, castellà i anglès.
+- `static/js/presentation-visuals.js`: exemples visuals de les proves.
+- `static/js/presentation-pilot.js`: passos, idioma i compte enrere.
+- `static/js/presentation-gm.js`: controls comuns al panell Test.
+- `templates/puzzle*.html` i `static/js/puzzle*.js`: jocs existents.
+- `static/css/game-theme.css` i `static/js/game-theme.js`: disseny compartit dels puzzles.
+- `static/js/presentation-game-bridge.js`: pas del puzzle superat a la següent transició.
 
-## Concepto de escena
+Rutes: `/videoIntro`, `/videoTutorial`, `/presentacio/ID`, `/puzzle/ID`, `/videoPuzzles/ID` i `/final`. Les rutes antigues `/player/?scene=…`, `/direct/ID` i `/explicacioPuzzles/index` redirigeixen al nou recorregut. L’ordre es pren de `config.py`.
 
-Ejemplo mínimo:
+## Assaig sense terminals
 
-```json
-{
-  "scene_id": "puzzle_intro",
-  "ui_titles": {
-    "top": "OBJETIVO",
-    "left": "ELEMENTOS",
-    "right": "ATENCIÓN"
-  },
-  "audio": {
-    "src": "/static/audios/scene/intro_puzzle_01.wav"
-  },
-  "subtitles": [
-    {
-      "start": 0,
-      "end": 3.5,
-      "text": "Locución sincronizada."
-    }
-  ],
-  "segments": [
-    {
-      "type": "character",
-      "src": "/static/videos/characters/cero_neutral_intro_a.mp4",
-      "clip_start": 0,
-      "clip_end": 6
-    },
-    {
-      "type": "fullscreen_ui",
-      "duration": 8,
-      "phases": [
-        {
-          "at": 0,
-          "sfx": "objective",
-          "top": {
-            "text": "COMPLETAR EL RETO ANTES DE QUE SE AGOTE EL TIEMPO."
-          }
-        },
-        {
-          "at": 2.8,
-          "left": {
-            "assets": [
-              {
-                "src": "/static/images/shared/gameplay/token_card.png",
-                "alt": "Token"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  ]
-}
-```
+`player/presentation.html?flow=game&lang=ca` és un visor de revisió. `/player/briefings.html` permet revisar les presentacions gràfiques.
 
-## Tipos de segmento
+El recorregut nou no carrega Cero, locucions ni subtítols temporitzats. Els sons que formen part dels puzzles es mantenen. El sistema antic de `scenes/`, el generador d’intros, els vídeos de Cero i les locucions antigues es van retirar el 5 d’octubre de 2026. Les presentacions actuals es mantenen en HTML i JavaScript; no depenen d’aquells fitxers.
 
-### `character`
+Validació automatitzada: rutes reals renderitzades amb Flask i MQTT simulat, navegació completa en Chrome, nou entrades de puzzle i nou esquemes de presentació amb tres revelacions cadascun. Queda pendent comprovar la partida amb els terminals físics.
 
-Usa un clip del banco del personaje.
+## Ritme i assoliments
 
-- `src`: ruta del MP4
-- `clip_start`: segundo inicial dentro del clip
-- `clip_end`: segundo final dentro del clip
-- `duration`: opcional si quieres desacoplar duración visible y corte exacto
-- `label`: etiqueta interna opcional
+El recorregut té tres actes: **Descobrir** (pràctica, Laberint, Trivial), **Organitzar-se** (Memory, Sumes, Cronòmetre) i **Actuar junts** (Botons, Música, Energia). El color d’accent i les consignes de cooperació canvien amb cada acte. Cada prova té un únic esquema amb tres capes revelades pel GM: objectiu, eines i interacció. La pràctica segueix la mateixa estructura.
 
-### `fullscreen_ui`
+S’han retirat els passos «Exemple en acció» del recorregut. El GM explica el funcionament amb el suport gràfic que es construeix progressivament.
 
-Muestra la UI principal de la intro.
+La piràmide s’omple amb els vuit reptes reals. La pràctica celebra l’aprenentatge i no suma un nivell. El tancament d’Energia omple la cima, celebra la figura daurada durant 11 segons i manté la pantalla de foto fins que el GM decideix sortir. El GM pot pausar aquesta seqüència.
 
-- `duration`: duración del bloque
-- `top`: contenido del módulo superior
-- `left`: contenido del módulo inferior izquierdo
-- `right`: contenido del módulo inferior derecho
-- `phases`: estados internos que se van acumulando sin reconstruir toda la pantalla
-- `subtitle`: barra inferior opcional
-- `sfx`: sonido opcional por segmento o por fase
+En producció, `PyramidRun` conserva els IDs completats a `sessionStorage` de la pestanya de jugadors. El pont de cada joc registra la finalització; navegar a una presentació des de Test no dona punts. Recarregar conserva els assoliments; iniciar de nou l’obertura els reinicia. És progrés visual de la pestanya, no una nova font d’estat per al backend ni un historial de sessions. Tancar-la o obrir-ne una de nova pot perdre aquest progrés. L’assaig estàtic mostra el progrés nominal de cada moment per poder revisar-lo fora d’una partida.
 
-Cada zona puede contener:
+A **Guía para el Game Master**, Control de juego ofereix tres ajudes graduals i consignes de repartiment de papers.
 
-- `text`
-- `steps`
-- `assets`
-- `variant`
-- `title` opcional
+## Comprovacions
 
-Si no se indica `title`, el player usa automáticamente los títulos fijos definidos en `ui_titles`.
+- `node tests/presentation_flow.test.cjs`: ordre, ritme, progrés i recàrrega sense regalar assoliments.
+- Tests Python de `tests/`: rutes Flask amb MQTT simulat i regressions de les regles existents.
+- Chrome: recorregut complet dels HTMLs reals, nou callbacks de finalització, un inici per prova, compte enrere cancel·lable, pausa/reprendre, pistes, notes, final i foto. Comprovació visual dels nou esquemes amb tres revelacions en tres idiomes.
 
-### `transition`
+La introducció i el final encara no tenen la futura locució/subtítols. Els sons funcionals dels puzzles es mantenen. Falta la sessió de validació amb terminals físics.
 
-Bloque visual intermedio para futuras variantes o stings.
+## Control de juego unificat
 
-## Títulos fijos del sistema
+A `/test` només hi ha **Sesiones** i **Control de juego**. **Sesiones** conserva els detalls del grup i la preparació de la sessió; la capçalera comuna mostra un resum compacte amb nom, empresa, jugadors i idioma. Les pestanyes Prepartida, Control i Técnico ja no formen part de la navegació. Els elements interns que utilitzen els controladors compartits es mantenen ocults i inerts.
 
-La base de producción asume tres títulos recurrentes:
+- Recorregut lateral: espera, obertura, presentació/joc de cada prova, celebració final i foto. El GM pot entrar en una presentació sense iniciar la prova; **Juego** és un accés directe que inicia el puzzle.
+- Centre: pantalla actual, passos, anterior/següent, pausa de les seqüències automàtiques i inici amb compte enrere cancel·lable. L’idioma només es canvia durant les presentacions.
+- Durant la prova: segueix el puzzle de la pantalla de jugadors, mostra el progrés i activa les ajudes que corresponen al joc. El tauler individual és desplegable i reutilitza el simulador existent, sense duplicar IDs ni listeners.
+- Pràctica: resol només els subpassos pendents de la instrucció actual. Trivial: respon cada terminal amb el seu verd/vermell. Memory: completa només les associacions que falten; no actua durant la memorització ni corregeix silenciosament una entrada errònia. Botons: allibera també els terminals sobrants. Sumes: espera la confirmació d’encert abans d’enviar el següent objectiu.
+- **Finalizar puzzle y continuar** marca la prova com a superada mitjançant l’endpoint existent i deixa que el joc obri la celebració. Reiniciar/finalitzar són accions separades de les ajudes normals. **Mantener energía hasta el final** activa el mode d’ajuda existent, que espera el temporitzador.
 
-- `OBJETIVO`
-- `ELEMENTOS`
-- `ATENCIÓN`
+El controlador nou és `static/js/game-director.js`. Utilitza les API locals `PyramidGM` (presentacions) i `PyramidTest` (estat/ajudes). No afegeix una segona connexió MQTT ni un segon reproductor. Les accions s’inhibeixen si el puzzle de backend no coincideix amb el de la pantalla.
 
-Lo importante es el contenido interior. Por eso ahora esos títulos pueden heredarse desde `ui_titles` y no hace falta repetirlos en cada bloque del `config.json`.
+Comprovació d’ajudes: `node tests/game_director_actions.test.cjs`. Validació de navegador feta amb endpoints/estats simulats, incloent avanç, pausa, compte enrere, ajudes, finalització, canvi entre Sesiones i Control de juego, conservació dels camps del formulari i absència d’errors JS. Cal provar les ajudes amb terminals físics.
 
-## Acumulación de UI
+### Disposició dels controls i finestra de jugadors
 
-La UI no se recarga entera al añadir contenido.
+El recorregut lateral té una fila per prova amb **Presentar** i **Iniciar** en columnes fixes. Al bloc central, **Anterior** i **Pausa** queden a l’esquerra i l’acció principal —**Següent** o **Començar joc**— a la dreta. Seleccionar un pas, repetir i canviar l’idioma són dins de **Elegir pantalla, repetir o cambiar idioma**. Les ajudes del joc i les opcions de reinici/finalització continuen en blocs separats.
 
-Comportamiento actual:
+**Abrir ventana de jugadores** demana al servidor local que executi Firefox o Chrome amb `--new-window`, amb barra d’adreces i controls normals. Requereix executar Test al mateix ordinador i perfil del navegador que el servidor. La comunicació entre Test i la finestra independent es fa amb `BroadcastChannel`, sense dependre de `window.opener`. En recarregar Test es busca la finestra existent abans d’obrir-ne una altra; navegar no reinicia el joc. **Mostrar ventana de jugadores** en demana el focus, subjecte a les restriccions del navegador. Si el llançament falla o no connecta, es mostra un error.
 
-- si aparece un nuevo icono en `ELEMENTOS`, se añade sin rehacer el bloque
-- si entra una nueva advertencia en `ATENCIÓN`, se suma a las anteriores
-- si el contenido no cambia, no se vuelve a animar
+Estils del controlador a `static/css/game-director.css`. Comprovació: `node tests/player_window.test.cjs` i Chrome amb identificadors de finestra diferents, reutilització en navegar i en recarregar Test, captures a 1366 px i comprovació sense desbordament a 390 px.
 
-Esto evita parpadeos y dobles entradas visuales.
 
-## Subtítulos
+### Presentacions gràfiques progressives
 
-Los subtítulos se definen a nivel de escena con tiempo absoluto:
+Cada puzzle té una sola composició que es revela amb **Objectiu → Terminals i tokens → Interacció**. El GM controla cada revelació; no hi ha avanç automàtic, locució ni exemples interactius. **Empezar juego** només apareix amb l’esquema complet. Tornar enrere, repetir i canviar l’idioma continuen disponibles des de Control de juego.
 
-- `start`
-- `end`
-- `text`
+`presentation-briefing.js` i `presentation-briefing.css` dibuixen els esquemes amb els recursos actuals de terminals, tokens, símbols i formes. En avançar es conserven els nodes del diagrama i només canvia la capa visible, sense transició entre diapositives. Les animacions ressalten elements nous i respecten moviment reduït. Les xifres i patrons dels esquemes són il·lustratius; no es publiquen accions ni solucions de la partida.
 
-Van sincronizados con el audio maestro, no con cada segmento individual.
+Visor de revisió: `/player/briefings.html?lang=es`. Permet escollir qualsevol dels nou jocs i recórrer les tres revelacions sense iniciar terminals. El recorregut conté 42 estats de presentació en total, dels quals 27 són revelacions dels nou esquemes; no són 27 diapositives de puzzles.
 
-## SFX
 
-El sistema ya soporta `sfx` por fase o por segmento.
+### Capçalera compacta comuna a tots els puzzles
 
-Valores usados ahora:
+`game-surface.css`, activat per `game-theme.js` als dotze HTML de puzzles, substitueix la franja antiga per dues identitats de cantonada: nom/repte a l’esquerra i piràmide/progrés real a la dreta. No hi ha marc ni línia transversal. El fons grafit i la tipografia segueixen les presentacions.
 
-- `objective`
-- `token`
-- `warning`
-- `final`
+Memory conserva els deu tokens, les dues formes, fases, temporitzador i colors reals. La instrucció se situa al centre superior; les targetes ocupen 964 px d’alçada del canvas de 1080 i agrupen número/token en una sola fila. Laberint conserva els deu recorreguts mòbils i l’alarma, amb 986 px d’alçada de tauler. La identificació roja en alarma es manté. Cap canvi de mecànica, MQTT, temps ni rondes.
 
-Por ahora están sintetizados en navegador. Más adelante se pueden sustituir por archivos reales.
+Comprovació en Chrome amb servidor/estats simulats: preparació, memorització, resposta, formes negres, entrada parcial, Laberint normal i alarma, a 1920×1080 i 1280×720. Les captures temporals de prova es van retirar durant la neteja. Visor sense activar terminals: `/player/game-surfaces.html`.
 
-## Flujo recomendado
+La capçalera aprovada s’ha estès a totes les proves. Els comptadors de ronda i temps es mouen al centre conservant els mateixos nodes i IDs. La pràctica no mostra un número de repte; les proves fora de l’ordre no inventen un índex. El progrés reflecteix assoliments de la sessió, no la posició de la pantalla. Les captures temporals de comprovació es van retirar durant la neteja.
 
-1. Preparar la locución final.
-2. Ajustar el total de la escena a la duración exacta del audio.
-3. Intercalar clips `character` con bloques `fullscreen_ui`.
-4. Sincronizar `phases` con frases concretas del audio.
-5. Mantener la información importante visible hasta el final cuando tenga sentido.
+Validació de l’extensió: 12 plantilles × 2 resolucions (1920×1080 i 1280×720), una única capçalera per pàgina, marc antic ocult, comptadors preservats i cap desbordament de la capçalera. Estats simulats, sense MQTT ni terminals físics. Trivial tolera l’absència del seu antic panell de feedback.
 
-## Checklist por puzzle
-
-Usa este proceso cada vez que adaptes una intro nueva:
-
-1. Duplicar `scenes/templates/intro/puzzle_intro_template.json` a una escena nueva.
-2. Definir el `scene_id` nuevo.
-3. Poner el `audio.src` definitivo.
-4. Escuchar la locución y dividirla en bloques con tiempos.
-5. Escribir `subtitles` por frase o por bloque corto.
-6. Redactar el `OBJETIVO` en una frase principal clara.
-7. Añadir en `ELEMENTOS` los iconos reales del puzzle.
-8. Añadir en `ATENCIÓN` las advertencias o condiciones de fallo.
-9. Repartir segmentos `character` y `fullscreen_ui` para que la intro tenga ritmo.
-10. Ajustar las `phases` para que cada elemento aparezca cuando el audio lo nombra.
-11. Probar lectura, sincronía y balance visual.
-12. Cuando la escena quede validada, usarla para sustituir la intro de vídeo antigua.
-
-Reglas fijas de producción:
-
-- el audio manda la duración total
-- `OBJETIVO`, `ELEMENTOS` y `ATENCIÓN` son módulos fijos
-- la UI acumula contenido, no se reinicia visualmente
-- los iconos apoyan la explicación, pero la locución lleva el detalle
-- los clips del personaje se usan para dar ritmo, no como vídeo continuo largo
-
-## Clips del personaje
-
-El banco de clips está en:
-
-- `static/videos/characters/`
-
-La guía de uso está en:
-
-- `player/CHARACTER_CLIPS.md`
-
-Úsalo para decidir qué clip sirve mejor como:
-
-- apertura
-- explicación
-- cambio de bloque
-- aviso
-- cierre
-
-## Estado actual
-
-- `scene_intro_sumas` ya funciona como prueba real del puzzle 1
-- usa audio independiente
-- usa iconos reales del juego
-- usa subtítulos sincronizados
-- usa acumulación progresiva de `OBJETIVO`, `ELEMENTOS` y `ATENCIÓN`
-- sirve como base para crear las siguientes intros de puzzle
+El pilot antic de Sumes s’ha retirat. Les dades necessàries estan integrades a `presentation-flow.js`; l’assaig utilitza els esquemes vigents per a tots els puzzles.
