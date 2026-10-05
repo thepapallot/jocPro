@@ -10,8 +10,10 @@
     <script src="{{ url_for('static', filename='js/shell_guard.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/game-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/game-surface.css') }}">
 </head>
-<body>
+<body class="pyramid-game">
     <div id="game-stage">
         <div id="game-frame"></div>
 
@@ -23,11 +25,7 @@
             </div>
 
             <div id="top-center" class="top-cell">
-                <img
-                    id="top-video"
-                    src="{{ url_for('static', filename='images/piramidetrans.png') }}"
-                    alt="Piramide"
-                >
+
             </div>
 
             <div id="top-right" class="top-cell">
@@ -42,6 +40,17 @@
         </div>
     </div>
 
+    <script>window.PYRAMID_GAME = {
+        puzzleId: {{ puzzle_id|default(0)|tojson }},
+        order: {{ game_puzzle_order|tojson }},
+        finalId: {{ final_puzzle_id|default(6)|tojson }},
+        level: {{ current_level|default(1)|tojson }},
+        language: {{ (request.args.get('lang') or game_language)|tojson }},
+        nextUrl: {{ (url_for('play_video_puzzles', puzzle_id=next_puzzle_id) if next_puzzle_id|default(None) else url_for('final'))|tojson }}
+    };</script>
+    <script src="{{ url_for('static', filename='js/pyramid-logo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/game-theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/presentation-game-bridge.js') }}"></script>
     {% block extra_js %}{% endblock %}
     {% block after_body %}{% endblock %}
     <script>

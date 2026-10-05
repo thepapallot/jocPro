@@ -356,7 +356,7 @@
 
 .p8-solved-text {
     color: #fff;
-    font-family: 'Orbitron', sans-serif;
+    font-family: Arial, sans-serif;
     font-size: clamp(3rem, 5.2vw, 5.4rem);
     font-weight: 700;
     line-height: 1.05;

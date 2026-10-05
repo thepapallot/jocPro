@@ -381,6 +381,7 @@
                 if (banner) banner.classList.remove('hidden');
                 document.body.classList.add('p1-solved-flash');
                 setTimeout(function () {
+                    if (window.PyramidGameFlow?.complete(1)) return;
                     var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
                         ? NEXT_PUZZLE_ID : 1;
                     fetch('/videoPuzzles/' + nextId, { method: 'POST' })
@@ -394,7 +395,7 @@
                         .catch(function () {
                             window.location.href = '/videoPuzzles/' + nextId;
                         });
-                }, 5200);
+                }, window.PyramidGameFlow?.managed ? 1300 : 5200);
                 return;
             }
 
@@ -494,7 +495,7 @@
 
                 playEffect('incorrecte.wav');
                 setDangerScreenActive(true);
-                renderStatus('error');
+                clearSolvedContainer();
                 setObjectiveMessage(data.incorrect.text, 'error');
                 setObjectiveFormula(data.incorrect.text, 'error', false, incorrectDisplayMs);
 

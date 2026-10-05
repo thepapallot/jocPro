@@ -226,7 +226,10 @@ class MQTTClient:
         
     def get_current_state(self):
         if self.current_puzzle_id and self.current_puzzle_id in self.puzzles:
-            return self.puzzles[self.current_puzzle_id].get_state()
+            puzzle = self.puzzles[self.current_puzzle_id]
+            state = dict(puzzle.get_state())
+            state.setdefault("puzzle_solved", puzzle.solved)
+            return state
         return {}
         
     def timer_expired(self):

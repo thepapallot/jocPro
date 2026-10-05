@@ -105,6 +105,7 @@ class Puzzle6(BasePuzzle):
                 "waiting_seconds": waiting_seconds,
                 "last_reset_box": self.last_reset_box,
                 "last_reset_message": self.last_reset_message,
+                "solve_mode": self.solvePuzzle,
                 "puzzle_solved": self.solved
             }
             

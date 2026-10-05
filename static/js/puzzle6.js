@@ -288,8 +288,9 @@
             if (banner) banner.classList.remove('hidden');
             document.body.classList.add('p6-solved-flash');
             setTimeout(function () {
+                if (window.PyramidGameFlow?.complete(6)) return;
                 window.location.href = '/final';
-            }, 5200);
+            }, window.PyramidGameFlow?.managed ? 1300 : 5200);
         }
     }
 

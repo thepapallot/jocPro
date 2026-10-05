@@ -16,7 +16,7 @@
 
     const instructions = {
         idle: ['', '', ''],
-        numbers: ['BUSCA TU TOKEN', 'Prepárate: aparecerán dos formas', 'PASO 1 DE 3 · PREPARACIÓN'],
+        numbers: ['ATENTOS A LA PANTALLA', 'Prepárate: aparecerán dos formas', 'PASO 1 DE 3 · PREPARACIÓN'],
         tokens: ['MEMORIZA LAS DOS FORMAS', 'Recuerda también sus colores', 'PASO 2 DE 3 · MEMORIA'],
         input: ['COMPLETA LAS DOS FORMAS', 'Pasa tu token por dos terminales, en cualquier orden', 'PASO 3 DE 3 · RESPUESTA']
     };
@@ -152,6 +152,7 @@
             document.getElementById('p8-solved-banner')?.classList.remove('hidden');
             document.body.classList.add('p8-solved-flash');
             setTimeout(() => {
+                if (window.PyramidGameFlow?.complete(8)) return;
                 const nextId = window.NEXT_PUZZLE_ID ?? 1;
                 fetch('/videoPuzzles/' + nextId, { method: 'POST' })
                     .then(response => {
@@ -159,7 +160,7 @@
                             ? response.url : '/videoPuzzles/' + nextId;
                     })
                     .catch(() => { window.location.href = '/videoPuzzles/' + nextId; });
-            }, 5200);
+            }, window.PyramidGameFlow?.managed ? 1300 : 5200);
             return;
         }
 

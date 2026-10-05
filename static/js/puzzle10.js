@@ -276,6 +276,7 @@
             document.body.classList.add('p10-solved-flash');
             // Redirect to next puzzle video after a short delay
             setTimeout(() => {
+                if (window.PyramidGameFlow?.complete(10)) return;
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
                     ? NEXT_PUZZLE_ID : 1;
                 fetch('/videoPuzzles/' + nextId, { method: 'POST' })

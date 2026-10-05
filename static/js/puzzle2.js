@@ -299,11 +299,12 @@
             document.body.classList.add('p2-solved-flash');
 
             setTimeout(() => {
+                if (window.PyramidGameFlow?.complete(2)) return;
                 const nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
                     ? NEXT_PUZZLE_ID
                     : 1;
                 window.location.href = '/videoPuzzles/' + nextId;
-            }, 1800);
+            }, window.PyramidGameFlow?.managed ? 1300 : 1800);
         }
     }
 

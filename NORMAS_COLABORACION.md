@@ -46,3 +46,10 @@ Ese documento sirve para dejar constancia de:
 - por que se hizo
 - que impacto funcional puede tener
 - que deberia revisar Pep
+
+## Linea editorial y visual
+
+Antes de cada tarea de edición, leer y aplicar la
+[guía de marca diseño y estilo](docs/MARCA_DISENO_ESTILO.md), según las instrucciones
+raíz de [AGENTS.md](AGENTS.md). El Markdown es la referencia vigente; PDF y Word
+son versiones de consulta.

@@ -1,0 +1,13 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/presentation.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/presentation-journey.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/presentation-briefing.css') }}">
+<main id="p-viewport" class="p-viewport" aria-label="Pantalla compartida dels jugadors">
+  <div id="p-stage" class="p-stage"></div>
+</main>
+<div id="p-announcement" class="p-sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+<script>window.PYRAMID_PAGE = {{ presentation_page|tojson }};</script>
+<script src="{{ url_for('static', filename='js/pyramid-logo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/presentation-flow.js') }}"></script>
+<script src="{{ url_for('static', filename='js/presentation-visuals.js') }}"></script>
+<script src="{{ url_for('static', filename='js/presentation-briefing.js') }}"></script>
+<script src="{{ url_for('static', filename='js/presentation-pilot.js') }}"></script>

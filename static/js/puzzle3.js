@@ -137,8 +137,7 @@
             answerAreaEl.appendChild(row); // append to answer-area
         });
         streakEl.textContent = `${activeQuestionNumber}/${normalizedTarget}`;
-        feedbackEl.textContent = '';
-        feedbackEl.className = "";
+        if (feedbackEl) { feedbackEl.textContent = ''; feedbackEl.className = ''; }
         resetPlayerChips(answeredPlayers); // Reset all chip styling first
         applyAnsweredMap(answeredMap);
     }
@@ -218,13 +217,11 @@
     }
 
     function showWrong() {
-        feedbackEl.className = '';
-        feedbackEl.textContent = '';
+        if (feedbackEl) { feedbackEl.className = ''; feedbackEl.textContent = ''; }
     }
 
     function showQuestionComplete(streak, target) {
-        feedbackEl.className = '';
-        feedbackEl.textContent = '';
+        if (feedbackEl) { feedbackEl.className = ''; feedbackEl.textContent = ''; }
     }
 
     function showSolved() {
@@ -241,6 +238,7 @@
             document.body.classList.add('p3-solved-flash');
 
             setTimeout(function () {
+                if (window.PyramidGameFlow?.complete(3)) return;
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
                     ? NEXT_PUZZLE_ID : 1;
                 fetch('/videoPuzzles/' + nextId, { method: 'POST' })
@@ -254,7 +252,7 @@
                     .catch(function () {
                         window.location.href = '/videoPuzzles/' + nextId;
                     });
-            }, 5200);
+            }, window.PyramidGameFlow?.managed ? 1300 : 5200);
         }, SOLVED_GREEN_DELAY_MS);
     }
 

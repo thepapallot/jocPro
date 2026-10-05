@@ -1,6 +1,6 @@
 # Scripts Python
 
-Este directorio contiene utilidades de mantenimiento para escenas y assets.
+Este directorio contiene utilidades de mantenimiento para auditar recursos gráficos y audiovisuales.
 
 ## Requisitos
 
@@ -9,59 +9,6 @@ Este directorio contiene utilidades de mantenimiento para escenas y assets.
 
 ## Scripts disponibles
 
-### `generate_intro_scene.py`
-
-Genera escenas intro (`_v2`) a partir de:
-
-- una plantilla (`scenes/templates/intro/scene_intro_template.json`)
-- un catalogo (`scenes/catalog/intro_catalog.json`)
-- un catalogo de media (`scenes/catalog/media_catalog.json`)
-- un catalogo semantico de imagenes (`scenes/catalog/image_semantics.json`)
-- escenas base legacy (`scenes/source/intros/intropuzzles/...`)
-
-Que hace:
-
-- crea `config.json` en `scenes/source/intros/intropuzzles/<scene_id>/`
-- inyecta titulos, audio, assets y subtitulos
-- transcribe subtitulos automaticamente con `openai-whisper` para cada escena generada (por defecto)
-- sincroniza timings con la escena legacy (si esta activado en catalogo)
-- selecciona clips de Cero segun intencion narrativa (intro/briefing/warning/close), con variedad entre escenas
-- prioriza assets de intro segun semantica por puzzle (`puzzleX > shared > desconocido > desaconsejado para ese puzzle`)
-
-Control de casting en `intro_catalog.json`:
-
-- `defaults.character_intents` define la intencion por etiqueta de segmento (`intro_estable`, `bloque_estable`, `cierre_suave`)
-- cada `entry` puede sobrescribir con `character_intents` propio
-- `media_catalog` indica de donde leer roles y duraciones de clips
-- `image_semantics_path` define el catalogo semantico para priorizar imagenes correctas por puzzle
-- `defaults.lock_opening_character=true` mantiene fija la primera aparicion de Cero para todas las intros
-- `defaults.lock_closing_character=false` por defecto: el clip final de Cero puede variar; la cuenta atras (`3,2,1`) sigue fija por plantilla
-- `defaults.auto_fullscreen_from_subtitles=false` por defecto (modo texto desactivado)
-
-Uso:
-
-```bash
-python3 scripts/generate_intro_scene.py
-```
-
-Forzar regeneracion de todas:
-
-```bash
-python3 scripts/generate_intro_scene.py --force
-```
-
-Opciones utiles:
-
-- `--catalog <ruta>`
-- `--template <ruta>`
-- `--output-root <ruta>`
-- `--[no-]transcribe-subtitles` activa/desactiva transcripcion automatica con Whisper
-- `--whisper-model <modelo>` (por defecto `tiny`)
-- `--whisper-language <codigo>` (por defecto `es`)
-- `--whisper-device <device>` (por defecto `cpu`)
-- `--whisper-cache-dir <ruta>` (por defecto `.cache/whisper` o `WHISPER_CACHE_DIR`)
-- `--subtitles-lang <lang>` (por defecto `es`)
-
 ### `audit_image_assets.py`
 
 Audita imagenes y referencias de imagen en el proyecto.
@@ -69,7 +16,7 @@ Audita imagenes y referencias de imagen en el proyecto.
 Que hace:
 
 - recorre `static/images`
-- busca referencias `/static/images/...` en codigo/escenas/templates
+- busca referencias `/static/images/...` en código, templates y visores
 - detecta referencias faltantes
 - reporta conteos por bucket/subcarpeta y top de uso
 
@@ -96,7 +43,7 @@ Audita videos y referencias de video en el proyecto.
 Que hace:
 
 - recorre `static/videos`
-- busca referencias `/static/videos/...` en codigo/escenas/templates
+- busca referencias `/static/videos/...` en código, templates y visores
 - detecta referencias faltantes
 - reporta conteos por bucket/subcarpeta y top de uso
 
@@ -126,8 +73,6 @@ python3 scripts/audit_image_assets.py
 python3 scripts/audit_video_assets.py
 ```
 
-3. Si cambias plantilla/catalogo de intros, regenerar:
-
-```bash
-python3 scripts/generate_intro_scene.py --force
-```
+Los generadores y catálogos del reproductor antiguo se retiraron el 5 de octubre de 2026.
+Las presentaciones actuales se mantienen en `templates/` y `static/js/presentation-*.js`.
+Los informes detectan referencias literales; revisar también las rutas dinámicas antes de borrar recursos.

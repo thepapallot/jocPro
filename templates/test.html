@@ -6,6 +6,7 @@
     <title>Panel Game Master</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/test.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/game-director.css') }}">
 </head>
 <body class="test-lab-body">
     <div id="test-app">
@@ -31,15 +32,13 @@
             </div>
 
             <div id="test-top-status" aria-hidden="true">
-                <img id="test-logo" src="{{ url_for('static', filename='images/piramidetrans.png') }}" alt="">
+                <img id="test-logo" src="{{ url_for('static', filename='branding/piramide-vector.svg') }}" alt="">
             </div>
         </header>
 
         <div id="test-tabs" class="gm-nav" role="tablist" aria-label="Secciones del Game Master">
             <button type="button" class="test-tab is-active" role="tab" aria-selected="true" data-gm-section="sesiones">Sesiones</button>
-            <button type="button" class="test-tab" role="tab" aria-selected="false" data-gm-section="prepartida">Prepartida</button>
-            <button type="button" class="test-tab" role="tab" aria-selected="false" data-gm-section="control">Control</button>
-            <button type="button" id="test-tab-system" class="test-tab" role="tab" aria-selected="false" data-gm-section="tecnico">Técnico</button>
+            <button type="button" class="test-tab" role="tab" aria-selected="false" data-gm-section="juego">Control de juego</button>
         </div>
 
         <main id="test-shell" class="gm-shell">
@@ -81,7 +80,8 @@
                 </div>
             </section>
 
-            <section class="test-tab-panel gm-main-panel" role="tabpanel" data-gm-panel="prepartida" hidden>
+            <!-- Internal adapter elements for shared controllers; these are not navigation panels. -->
+            <section class="test-tab-panel gm-main-panel" data-gm-support="preflight" hidden inert aria-hidden="true">
                 <div class="test-panel control-panel">
                     <div class="gm-section-head">
                         <div>
@@ -110,7 +110,7 @@
                 </div>
             </section>
 
-            <section class="test-tab-panel gm-main-panel" role="tabpanel" data-gm-panel="control" hidden>
+            <section class="test-tab-panel gm-main-panel" data-gm-support="controllers" hidden inert aria-hidden="true">
                 <div class="test-panel control-panel">
                     <div class="gm-section-head">
                         <div>
@@ -120,17 +120,43 @@
                     </div>
                     <div class="gm-control-puzzle-bar">
                         <label class="gm-puzzle-select">
-                            <span class="field-label">Puzzle seleccionado</span>
+                            <span class="field-label">Ver puzzle</span>
                             <select id="test-puzzle-select" aria-label="Puzzle"></select>
                         </label>
                         <div class="action-row gm-puzzle-base-actions">
-                            <button type="button" id="test-start-btn" class="primary-action">Arrancar puzzle</button>
+                            <button type="button" id="test-start-btn" class="primary-action">Presentar seleccionado</button>
+                            <button type="button" id="test-restart-btn">Reiniciar activo</button>
                             <button type="button" id="test-view-btn">Abrir pantalla jugador</button>
                             <button type="button" id="test-refresh-state-btn">Actualizar estado</button>
                         </div>
                     </div>
+                    <div id="gm-control-live-state" class="gm-control-live-state" role="status" aria-live="polite">Consultando el puzzle en juego…</div>
+                    <section id="presentation-gm" class="test-block" aria-label="Control de presentaciones" data-player-url="{{ url_for('welcome') }}">
+                        <div class="section-tag">Presentaciones</div>
+                        <h3 id="presentation-title">Recorrido del juego</h3>
+                        <div class="action-row">
+                            <button id="presentation-open" type="button" class="primary-action">Abrir pantalla de jugadores</button>
+                            <span id="presentation-status" role="status">Pantalla sin conectar</span>
+                        </div>
+                        <p class="gm-action-note">Mueve la ventana a la pantalla compartida y haz clic allí para ampliarla. Los controles y las notas se quedan en este panel.</p>
+                        <div class="inline-fields">
+                            <label>Tramo del recorrido <select id="presentation-scene" disabled></select></label>
+                            <label>Idioma <select id="presentation-language" disabled><option value="ca">Català</option><option value="es">Castellano</option><option value="eng">English</option></select></label>
+                            <label>Entrada <select id="presentation-mode" disabled><option value="preview">Ensayo · datos de muestra</option><option value="live">Partida real</option></select></label>
+                        </div>
+                        <div id="presentation-steps" class="action-row" aria-label="Pantallas de presentación"></div>
+                        <p id="presentation-note" class="gm-action-note">Abre la pantalla de jugadores para dirigir la presentación. La bienvenida espera al GM; la apertura y el cierre avanzan solos. Explica el objetivo y la regla clave, si la hay, y pulsa Comenzar cuando el grupo esté preparado.</p>
+                        <div class="action-row">
+                            <button type="button" data-presentation-action="previous" disabled>← Anterior</button>
+                            <button type="button" data-presentation-action="reveal" hidden>Mostrar ejemplo</button>
+                            <button type="button" data-presentation-action="next" disabled>Siguiente →</button>
+                            <button type="button" data-presentation-action="start" class="primary-action" hidden>Comenzar · 3, 2, 1</button>
+                            <button type="button" data-presentation-action="cancel" hidden>Cancelar cuenta atrás</button>
+                            <button type="button" data-presentation-action="restart" disabled>Repetir presentación</button>
+                        </div>
+                    </section>
                     <div class="test-block section-sim gm-current-puzzle-tools">
-                        <div class="section-tag">Control del puzzle actual</div>
+                        <div class="section-tag">Acciones y tablero</div>
                         <div id="test-resolver-hub"></div>
                         <div id="test-sim-content"></div>
                     </div>
@@ -148,7 +174,7 @@
                 </div>
             </section>
 
-            <section id="test-panel-system" class="test-tab-panel gm-tech-panel" role="tabpanel" data-gm-panel="tecnico" hidden>
+            <section id="test-panel-system" class="test-tab-panel gm-tech-panel" data-gm-support="resolvers" hidden inert aria-hidden="true">
                 <div class="test-panel monitor-panel">
                     <div class="gm-section-head"><div><span class="section-tag">Avanzado</span><h2>Técnico</h2></div></div>
                     <div class="monitor-grid monitor-grid--single">
@@ -164,6 +190,34 @@
                     </div>
                 </div>
             </section>
+            <section class="test-tab-panel gm-main-panel" role="tabpanel" data-gm-panel="juego" hidden>
+                <div class="director-head">
+                    <div><span class="section-tag">Toda la partida desde aquí</span><h2>Control de juego</h2></div>
+                    <div class="action-row director-window-tools"><button type="button" id="director-open">Abrir ventana de jugadores ↗</button><button type="button" id="director-refresh">Actualizar estado</button></div>
+                </div>
+                <div class="director-layout">
+                    <nav class="director-route" aria-label="Recorrido completo"><h3>Recorrido</h3><p>Presentar explica el reto. Iniciar abre el juego directamente.</p><div id="director-route-list"></div></nav>
+                    <div class="director-workspace">
+                        <section class="director-card director-now" aria-label="Pantalla actual">
+                            <div class="director-eyebrow"><span class="director-on-screen">En la pantalla de jugadores</span><span id="director-connection">Pantalla sin conectar</span></div>
+                            <h2 id="director-title">Abre la pantalla de jugadores</h2>
+                            <p id="director-screen">La bienvenida esperará tu señal.</p>
+                            <p id="director-note" class="gm-action-note"></p>
+                            <div id="director-navigation" class="director-main-actions" aria-label="Avanzar la presentación"></div>
+                            <details id="director-presentation-options"><summary>Elegir pantalla, repetir o cambiar idioma</summary><div id="director-steps" class="action-row" aria-label="Pasos de la presentación"></div><div class="director-presentation-settings"><button type="button" data-director-command="restart">Repetir presentación</button><label>Idioma <select id="director-language"><option value="ca">Català</option><option value="es">Castellano</option><option value="eng">English</option></select></label></div></details>
+                        </section>
+                        <section id="director-game" class="director-card" aria-label="Intervenir en el juego" hidden>
+                            <div class="director-game-head"><h3>Ayudar al grupo</h3><span id="director-progress"></span></div>
+                            <p id="director-game-state"></p>
+                            <div id="director-resolvers" class="action-row"></div>
+                            <details id="director-board"><summary>Tablero · intervenir en un token, terminal o respuesta</summary><div id="director-board-slot"></div></details>
+                            <details class="director-recovery"><summary>Reiniciar o finalizar este puzzle</summary><p>Reiniciar vuelve al principio del puzzle. Finalizar lo marca como superado y abre su celebración.</p><div class="action-row"><button type="button" id="director-restart">Reiniciar puzzle</button><button type="button" id="director-finish" class="danger-action">Finalizar puzzle y continuar</button></div></details>
+                        </section>
+                        <div id="director-feedback" class="director-feedback" role="status" aria-live="polite" hidden></div>
+                        <details id="director-guidance" class="director-card" hidden><summary>Guion y ayudas del Game Master</summary><p id="director-role"></p><p id="director-rhythm"></p><ol id="director-hints"></ol></details>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -172,8 +226,10 @@
         window.TEST_PUZZLE_ALIASES = {{ test_puzzle_aliases|tojson }};
         window.TEST_PUZZLE_TUTORIAL = {{ test_puzzle_tutorial|tojson }};
         window.TEST_PUZZLE_FINAL = {{ test_puzzle_final|tojson }};
-        window.TEST_DEFAULT_SUBTITLE_LANG = {{ default_subtitle_lang|tojson }};
+        window.TEST_DEFAULT_SUBTITLE_LANG = {{ game_language|tojson }};
     </script>
     <script src="{{ url_for('static', filename='js/test.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/presentation-gm.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/game-director.js') }}"></script>
 </body>
 </html>

@@ -460,3 +460,98 @@ Motivo de anotacion:
 Revision backend:
 
 - alta
+
+
+## 2026-10-05 — Integració del nou recorregut de presentacions
+
+### app.py
+
+Estat: `pendiente de revisar` amb terminals físics.
+
+Autorització: petició explícita d’aplicar les noves pantalles al joc real, mantenir HTMLs separats i facilitar el control des de Test.
+
+- Les rutes de benvinguda, introducció, pràctica, presentació de puzzle, transició i final renderitzen el nou suport visual manual. S’han mantingut els punts d’inici i tancament de telemetria.
+- `presentation_page_data()` comparteix l’ordre de `config.py`, les rutes, l’idioma de la sessió i el següent destí. Les presentacions no inicien MQTT.
+- Les rutes de puzzle conserven les plantilles i aporten les metadades del tema compartit. L’inici segueix fent-lo el JS existent en obrir el joc; el compte enrere no envia un segon inici.
+- Les entrades antigues del reproductor i de les explicacions redirigeixen a les presentacions noves. Es retiren els endpoints exclusius del reproductor de timeline, les seves plantilles, scripts i CSS sense ús.
+- `welcome()` és la superfície persistent que permet navegar per HTMLs independents sense perdre la pantalla completa.
+
+### Frontend amb efecte sobre el recorregut
+
+- Els JS dels puzzles configurats (11, 2, 3, 10, 1, 5, 12, 4, 6) avisen el pont compartit quan es completen. En la superfície nova, aquest pont obre la transició i espera el GM. La detecció de completat continua sent la de cada joc.
+- Test obre una sola finestra de jugadors; **Presentar seleccionado** presenta abans d’iniciar. Els accessos tècnics al puzzle mantenen l’obertura directa.
+- No s’han modificat els mòduls MQTT, les rondes, els temporitzadors ni la validació de respostes en aquesta integració. Els canvis previs de l’usuari en aquests fitxers es conserven.
+
+Verificació: 18 tests passats dins `venv`, incloses les rutes i la separació entre presentar i iniciar; Chrome amb les rutes reals i MQTT simulat, nou puzzles iniciats una sola vegada, esperes manuals, cancel·lació del compte enrere, final, idioma i redireccions antigues. No s’ha iniciat una partida amb hardware real.
+
+Retirada: 13 fitxers antics sense ús en el nou recorregut, verificats contra Git i copiats a `/tmp/pyramid-retirement-backup/` abans d’eliminar-los. Prova de retirada a `output/real-game/retirement-proof.json`. Els recursos binaris i els catàlegs amb dependències en eines es conserven.
+
+
+### 2026-10-05 — Memory substitueix Segments en el recorregut
+
+Autorització explícita: «no pongas el 10 segementos y pon el 8 memory».
+
+- `config.py`: `PUZZLE_ORDER` passa de `[2,3,10,1,5,12,4]` a `[2,3,8,1,5,12,4]`. Memory ocupa el nivell 3, entre Trivial i Sumes.
+- Presentació de Memory en tres idiomes, exemple amb dues formes/colours i connexió de la finalització de `puzzle8.js` al pont compartit. Regles i MQTT de Memory sense canvis.
+- Segments es conserva al projecte, fora del recorregut configurat.
+
+Verificació del canvi de recorregut: 18 tests passats; 58 diapositives en tres idiomes comprovades en Chrome. Presentació i joc real de Memory provats amb MQTT simulat; validació amb terminals físics pendent.
+
+
+### 2026-10-05 — Ritme, exemples i piràmide d’assoliments
+
+Autorització explícita: implementar les millores del recorregut, analitzar els jocs i preparar exemples reals, amb una piràmide que es construeix com a assoliment.
+
+- `app.py`, context compartit: afegeix `game_puzzle_order` per calcular el progrés amb l’ordre configurat. `base.html` publica l’ordre i l’ID final al tema compartit.
+- Frontend: les presentacions es redueixen a 21 passos de proves (36 pantalles totals); obertura automàtica en quatre moments amb pausa; final de 11 segons seguit de foto fixa.
+- `game-shell.js` registra els IDs completats des del pont del joc en curs, en `sessionStorage`. El progrés és visual, sobreviu a recàrregues i no canvia per un salt del GM. L’obertura reinicia aquesta memòria. No és persistència backend ni telemetria.
+- `puzzle1/2/3/4/5/6/8/11/12.js`: en el recorregut gestionat, el rètol local de prova superada dura 1,3 s abans de la celebració compartida (abans 5,2 s o 1,8 s segons el joc). Fora del recorregut conserva el temps anterior. El so funcional de victòria dura 1 s. No canvien els temps de joc, les rondes ni les validacions MQTT.
+- Test incorpora ajudes graduals i observacions manuals descarregables, sense enviar-les a serveis externs ni alterar la partida.
+
+Verificació: 18 tests Python, tres contractes de flux/progrés en Node, recorregut complet en Chrome sobre Flask amb MQTT simulat i comprovació visual de 36 pantalles en tres idiomes. Validació de hardware pendent.
+
+
+### 2026-10-05 — Control de juego unificat a Test
+
+Autorització: crear una nova pestanya al costat de Técnico per controlar pantalles i resoldre passos dels puzzles; conservar les anteriors fins que s’afini la nova.
+
+No es modifiquen rutes Flask ni mòduls MQTT. La pestanya nova reutilitza `/current_state`, `/test/send`, `/test/force_end`, el reinici existent i `/test/puzzle6/solve`.
+
+Canvis de comportament de les ajudes frontend (`static/js/test.js`):
+
+- Trivial interpreta les deu respostes de `correct_answer` com a verd/vermell segons el contracte actual (5/1). Corregeix primer els terminals ja contestats i comprova que la pregunta no hagi canviat.
+- Memory envia només els parells forma/color que falten, ignorant l’ordre d’arribada. Si una entrada ja és incorrecta, informa el GM; no inventa una correcció que el backend no permet.
+- Botons configura els deu terminals, incloent els que s’han d’alliberar, perquè les pulsacions anteriors no alterin la suma.
+- Pràctica respecta `current_substep` per no repetir subpassos fets.
+- Sumes retorna l’error de falta de confirmació al controlador nou, en lloc de mostrar l’ajuda com a enviada amb èxit.
+
+La finalització forçada continua sent una intervenció del GM que compta com a prova superada, igual que l’endpoint existent. Navegar només de pantalla no completa cap prova.
+
+Verificació: cinc tests Node de resolutors, tres tests de recorregut, 18 tests Python i navegador amb estats/MQTT simulats. Validació amb terminals físics pendent.
+
+
+### 2026-10-05 — Finestra normal de jugadors
+
+Autorització: obrir una finestra nova normal, no una pestanya ni un popup restringit.
+
+`player_window.py`, registrat a `app.py`, afegeix `POST /test/player-window`: executa el navegador del GM amb `--new-window` i una URL local del joc. Només accepta peticions de loopback amb Origin propi i destinacions relatives locals. El procés s’executa amb arguments separats, sense shell. No toca MQTT, sessions ni telemetria.
+
+Test i el shell es comuniquen per `BroadcastChannel` del mateix origen/perfil. Es descobreix una pantalla ja oberta abans de llançar-ne una altra. Cal recarregar/reiniciar el servidor per registrar la nova ruta.
+
+Validació: tests del llançador amb procés simulat i navegador amb llançament de finestra independent simulat; no s’ha iniciat l’app de producció ni connectat hardware.
+
+
+### 2026-10-05 — Esquemes de presentació progressius
+
+Autorització: una composició gràfica vistosa per joc, revelada progressivament pel GM. No es canvien rutes Flask, lògica de puzzles, MQTT, rondes ni àudio.
+
+Els nou puzzles tenen tres revelacions amb els mateixos nodes: objectiu, eines i interacció. El compte enrere només s’habilita al tercer pas. Les gràfiques utilitzen les mecàniques actuals, amb patrons il·lustratius i sense iniciar terminals. Visor de revisió a `/player/briefings.html`.
+
+Validació: 81 estats visuals (9 esquemes × 3 revelacions × 3 idiomes) en Chrome amb Flask/MQTT simulat; nodes del diagrama conservats, cap desbordament ni error JS, inici només disponible al tercer pas. Visor de revisió verificat sense iniciar cap puzzle. Prova: `output/briefings/verification.json`.
+
+
+### 2026-10-05 — Pilot visual de Memory i Laberint
+
+Autorització: provar una identitat comuna compacta als puzzles 8 i 2 abans d’estendre-la a la resta. Canvis a `game-theme.js`, `game-surface.css` i càrrega d’estils a `base.html`. No s’ha modificat lògica de puzzles, backend, MQTT ni sons funcionals.
+
+La informació de fase de Memory es mou dins del seu contenidor mantenint IDs i controladors. El HUD de cantonades utilitza el progrés guanyat de `PyramidRun`. Validat amb estats simulats en dues resolucions, sense terminal físic.
