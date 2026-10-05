@@ -211,196 +211,6 @@ body::after {
         inset 0 0 18px rgba(69, 230, 255, 0.05);
 }
 
-#security-panel {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    gap: 12px;
-    padding: 14px;
-    border: 1px solid rgba(69, 230, 255, 0.08);
-    border-radius: 20px;
-    background: #07101f;
-}
-
-#security-levels {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
-    gap: 10px;
-    align-items: center;
-}
-
-.checkpoint-node {
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 999px;
-    border: 1px solid rgba(69, 230, 255, 0.2);
-    background:
-        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.2), rgba(69, 230, 255, 0.05)),
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
-    box-shadow:
-        inset 0 0 12px rgba(69, 230, 255, 0.08),
-        0 0 12px rgba(69, 230, 255, 0.07);
-    transition:
-        border-color 0.25s ease,
-        background 0.25s ease,
-        box-shadow 0.25s ease,
-        transform 0.25s ease;
-}
-
-.checkpoint-core {
-    display: grid;
-    place-items: center;
-    width: 16px;
-    height: 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(69, 230, 255, 0.4);
-    background: rgba(69, 230, 255, 0.38);
-    box-shadow: 0 0 10px rgba(69, 230, 255, 0.18);
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.checkpoint-core::before {
-    content: "";
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1;
-    opacity: 0;
-    transform: scale(0.8);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.checkpoint-node.unlocked {
-    border-color: rgba(45, 255, 155, 0.64);
-    background:
-        radial-gradient(circle at 50% 50%, rgba(45, 255, 155, 0.36), rgba(45, 255, 155, 0.08)),
-        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-    box-shadow:
-        inset 0 0 16px rgba(45, 255, 155, 0.14),
-        0 0 18px rgba(45, 255, 155, 0.2),
-        0 0 34px rgba(45, 255, 155, 0.12);
-}
-
-.checkpoint-node.unlocked .checkpoint-core {
-    border-color: rgba(45, 255, 155, 0.92);
-    background: rgba(45, 255, 155, 0.78);
-    box-shadow:
-        inset 0 0 8px rgba(255, 255, 255, 0.22),
-        0 0 16px rgba(45, 255, 155, 0.42);
-}
-
-.checkpoint-node.unlocked .checkpoint-core::before {
-    content: "\2713";
-    opacity: 1;
-    transform: scale(1);
-}
-
-.checkpoint-node.hit {
-    animation: p3CheckpointHit 900ms ease-out 1;
-}
-
-@keyframes p3CheckpointHit {
-    0% {
-        transform: scale(0.92);
-        box-shadow:
-            inset 0 0 14px rgba(45, 255, 155, 0.12),
-            0 0 0 rgba(45, 255, 155, 0);
-    }
-    38% {
-        transform: scale(1.16);
-        box-shadow:
-            inset 0 0 22px rgba(45, 255, 155, 0.24),
-            0 0 24px rgba(45, 255, 155, 0.34),
-            0 0 44px rgba(45, 255, 155, 0.24);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow:
-            inset 0 0 16px rgba(45, 255, 155, 0.14),
-            0 0 18px rgba(45, 255, 155, 0.2),
-            0 0 34px rgba(45, 255, 155, 0.12);
-    }
-}
-
-.security-level {
-    display: grid;
-    gap: 10px;
-    padding: 14px 12px 12px;
-    border-radius: 18px;
-    border: 1px solid rgba(69, 230, 255, 0.1);
-    background: #081423;
-    opacity: 1;
-    transition:
-        opacity 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        transform 0.2s ease;
-}
-
-.security-level.is-active {
-    opacity: 1;
-    border-color: rgba(69, 230, 255, 0.22);
-    box-shadow:
-        inset 0 0 18px rgba(69, 230, 255, 0.05),
-        0 0 16px rgba(69, 230, 255, 0.08);
-    transform: none;
-}
-
-.security-level.is-complete {
-    opacity: 1;
-    border-color: rgba(45, 255, 155, 0.28);
-    background: #073522;
-    box-shadow:
-        inset 0 0 18px rgba(45, 255, 155, 0.05),
-        0 0 18px rgba(45, 255, 155, 0.1);
-}
-
-.security-level-top {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 12px;
-}
-
-.security-target {
-    text-transform: uppercase;
-}
-
-.security-target {
-    color: rgba(234, 252, 255, 0.92);
-    font-size: 1.2rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    line-height: 1;
-}
-
-.security-track {
-    height: 12px;
-    border-radius: 999px;
-    background: rgba(8, 18, 33, 0.88);
-    border: 1px solid rgba(69, 230, 255, 0.08);
-    overflow: hidden;
-}
-
-.security-fill {
-    height: 100%;
-    width: 0%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, rgba(69, 230, 255, 0.72), rgba(255, 89, 214, 0.72));
-    box-shadow: 0 0 10px rgba(69, 230, 255, 0.14);
-    transition: width 0.25s ease;
-}
-
-.security-level.is-complete .security-fill {
-    background: linear-gradient(90deg, rgba(45, 255, 155, 0.8), rgba(45, 255, 155, 0.5));
-    box-shadow: 0 0 10px rgba(45, 255, 155, 0.16);
-}
-
 #player-status {
     position: relative;
     z-index: 1;
@@ -553,9 +363,10 @@ body::after {
     position: relative;
     z-index: 1;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 12px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
     min-height: 112px;
     padding: 14px 18px;
     border: 1px solid rgba(69, 230, 255, 0.1);
@@ -564,6 +375,8 @@ body::after {
 }
 
 #question-text {
+    flex: 1;
+    min-width: 0;
     color: #f2fbff;
     font-size: clamp(1.45rem, 2.2vw, 2.4rem);
     font-weight: 800;
@@ -572,6 +385,70 @@ body::after {
     text-shadow:
         0 0 12px rgba(69, 230, 255, 0.14),
         0 0 20px rgba(69, 230, 255, 0.06);
+}
+
+.answer-reminder {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.answer-reminder-badge {
+    --reminder-color: var(--p3-ok);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 18px 8px 10px;
+    border: 1px solid var(--reminder-color);
+    border-radius: 16px;
+    color: var(--reminder-color);
+    background: linear-gradient(110deg, rgba(45, 255, 155, 0.14), rgba(45, 255, 155, 0.03));
+    box-shadow: inset 0 0 16px rgba(45, 255, 155, 0.06), 0 0 14px rgba(45, 255, 155, 0.12);
+}
+
+.answer-reminder-badge--incorrect {
+    --reminder-color: var(--p3-bad);
+    background: linear-gradient(110deg, rgba(255, 79, 109, 0.14), rgba(255, 79, 109, 0.03));
+    box-shadow: inset 0 0 16px rgba(255, 79, 109, 0.06), 0 0 14px rgba(255, 79, 109, 0.12);
+}
+
+.answer-reminder-count {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.24);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    text-shadow: 0 0 12px currentColor;
+}
+
+.answer-reminder-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.answer-reminder-copy strong {
+    font-size: clamp(0.95rem, 1.2vw, 1.3rem);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.answer-reminder-copy > span {
+    color: #edfaff;
+    font-size: clamp(0.8rem, 1vw, 1rem);
+    font-weight: 600;
+}
+
+.answer-reminder-copy > span > span {
+    color: var(--reminder-color);
+    margin-left: 6px;
 }
 
 #answer-area {
@@ -590,10 +467,10 @@ body::after {
     display: grid;
     grid-template-columns: 48px minmax(0, 1fr);
     align-items: center;
-    gap: 10px;
+    gap: 18px;
     min-height: 0;
     height: 100%;
-    padding: 8px 12px;
+    padding: 8px 12px 8px 20px;
     border-radius: 16px;
     border: 1px solid rgba(69, 230, 255, 0.1);
     background: #07101f;
@@ -629,7 +506,7 @@ body::after {
 
 .answer-text {
     color: #f4fcff;
-    font-size: clamp(1.1rem, 1.8vw, 1.8rem);
+    font-size: clamp(1.4rem, 2.25vw, 2.25rem);
     font-weight: 700;
     line-height: 1.12;
     padding-left: 6px;
@@ -642,7 +519,7 @@ body::after {
         font-size: clamp(2rem, 3vw, 2.8rem);
     }
     .answer-text {
-        font-size: clamp(2.5rem, 4vw, 3.2rem);
+        font-size: clamp(3.15rem, 4.95vw, 4.05rem);
     }
 }
 
@@ -745,18 +622,21 @@ body::after {
 }
 
 @media (max-width: 900px) {
+    #question-area {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .answer-reminder {
+        flex-wrap: wrap;
+    }
+
     #puzzle3-shell {
         grid-template-columns: 1fr;
         height: auto;
     }
 
-    #security-levels {
-        grid-template-columns: 1fr;
-    }
-
-    .checkpoint-node {
-        display: none;
-    }
 }
 
 @media (max-width: 640px) {
@@ -777,11 +657,4 @@ body::after {
         align-items: center;
     }
 
-    #security-levels {
-        grid-template-columns: 1fr;
-    }
-
-    .checkpoint-node {
-        display: none;
-    }
 }

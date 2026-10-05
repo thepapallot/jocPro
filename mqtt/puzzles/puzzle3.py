@@ -84,6 +84,7 @@ class Puzzle3(BasePuzzle):
         if not isinstance(question, dict):
             return question
 
+        question = question.copy()
         answers = question.get("answers")
         correct = question.get("correct")
         if isinstance(correct, list) and isinstance(answers, list) and len(correct) == len(answers):
@@ -178,7 +179,7 @@ class Puzzle3(BasePuzzle):
                 slot = random.randint(lo, hi)
                 chosen[slot] = company_sample[i]
 
-        self.chosen_questions = [self._shuffle_question_display(q) for q in chosen]
+        self.chosen_questions = chosen
         self.current_question_idx = 0
         self.display_question_number = 1
         self.streak = 0
@@ -197,8 +198,12 @@ class Puzzle3(BasePuzzle):
         current_pair = (q.get("_source"), q.get("id"))
         replacement = self._pick_question_for_stage(stage, excluded={current_pair})
         if replacement is not None:
-            self.chosen_questions[self.current_question_idx] = replacement
             q = replacement
+
+        # Shuffle the final question, including replacements after a wrong answer.
+        # Store that same order for MQTT validation and state snapshots.
+        q = self._shuffle_question_display(q)
+        self.chosen_questions[self.current_question_idx] = q
 
         self._push({
             "question": {
