@@ -506,7 +506,7 @@ body::after {
 
 .answer-text {
     color: #f4fcff;
-    font-size: clamp(1.4rem, 2.25vw, 2.25rem);
+    font-size: calc(clamp(1.4rem, 2.25vw, 2.25rem) - 8px);
     font-weight: 700;
     line-height: 1.12;
     padding-left: 6px;
@@ -519,7 +519,7 @@ body::after {
         font-size: clamp(2rem, 3vw, 2.8rem);
     }
     .answer-text {
-        font-size: clamp(3.15rem, 4.95vw, 4.05rem);
+        font-size: calc(clamp(3.15rem, 4.95vw, 4.05rem) - 8px);
     }
 }
 

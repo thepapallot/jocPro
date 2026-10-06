@@ -1,7 +1,8 @@
 (function () {
     const TOTAL = 5;
     const PLAYER_COUNT = 10;
-    const CELL_SIZE = 48;
+    const CELL_SIZE = 72;
+    const MOVEMENT_STEP_MS = 360; // 200 logical pixels/second on the scaled board.
     const TOKEN_BY_PLAYER = [5, 13, 17, 22, 10, 20, 35, 31, 14, 18];
     const DEFAULT_SEQUENCES = {
         1: [5, 0, 9, 6, 2],
@@ -22,9 +23,14 @@
 
     let redirected = false;
     let alarmMode = false;
+    let alarmAudio = null;
     const progressByPlayer = {};
     const snakePositions = new Map();
-    let movementTimer = null;
+    const errorMarkers = new Map();
+    let movementFrame = null;
+    let lastMovementTime = null;
+    let lastFrameTime = null;
+    let movementProgress = 1;
 
     const snakeStageEl = document.getElementById('p2-snake-stage');
     const completeOverlayEl = document.getElementById('p2-complete-overlay');
@@ -42,6 +48,33 @@
     function playSound(url) {
         const audio = new Audio(url);
         audio.play().catch((err) => console.warn('Audio play failed:', err));
+    }
+
+    function stopAlarmAudio() {
+        const audio = alarmAudio;
+        alarmAudio = null;
+        if (audio) audio.pause();
+        document.body.classList.remove('p2-alarm-sounding');
+    }
+
+    function playAlarmAudio(url) {
+        stopAlarmAudio();
+        const audio = new Audio(url);
+        alarmAudio = audio;
+        const finish = () => {
+            if (alarmAudio !== audio) return;
+            alarmAudio = null;
+            document.body.classList.remove('p2-alarm-sounding');
+        };
+        audio.addEventListener('playing', () => {
+            if (alarmAudio === audio) document.body.classList.add('p2-alarm-sounding');
+        });
+        audio.addEventListener('ended', finish);
+        audio.addEventListener('error', finish);
+        audio.play().catch(err => {
+            finish();
+            console.warn('Alarm audio play failed:', err);
+        });
     }
 
     function setAlarmMode(active) {
@@ -98,6 +131,7 @@
                 snakePositions.set(player, createSnakeState(player));
             }
 
+            snake.classList.toggle('is-complete', progress >= TOTAL);
             const segments = snake.querySelectorAll('.snake-segment');
 
             sequence.forEach((symbol, index) => {
@@ -148,7 +182,7 @@
             });
         }
 
-        return { trail, direction, ticks: 0 };
+        return { trail, previousTrail: trail.slice(), direction, ticks: 0 };
     }
 
     function renderSnakePositions() {
@@ -158,14 +192,55 @@
             const state = snakePositions.get(player);
             if (!snake || !state) continue;
 
-            const parts = [snake.querySelector('.snake-head'), ...snake.querySelectorAll('.snake-segment')];
-            parts.forEach((part, index) => {
+            const positionPart = (part, index) => {
                 const point = state.trail[index];
+                const previous = state.previousTrail[index] || point;
                 if (!part || !point) return;
-                part.style.left = `${point.x * CELL_SIZE + CELL_SIZE / 2}px`;
-                part.style.top = `${point.y * CELL_SIZE + CELL_SIZE / 2}px`;
+                const x = previous.x + (point.x - previous.x) * movementProgress;
+                const y = previous.y + (point.y - previous.y) * movementProgress;
+                part.style.left = `${x * CELL_SIZE + CELL_SIZE / 2}px`;
+                part.style.top = `${y * CELL_SIZE + CELL_SIZE / 2}px`;
+            };
+            const parts = [snake.querySelector('.snake-head'), ...snake.querySelectorAll('.snake-segment')];
+            parts.forEach(positionPart);
+            snake.querySelectorAll('.snake-error-marker').forEach(marker => {
+                positionPart(marker, Number(marker.dataset.segmentIndex) + 1);
             });
         }
+    }
+
+    function showErrorMarker(player) {
+        if (!Number.isInteger(player) || player < 1 || player > PLAYER_COUNT) return;
+        const index = progressByPlayer[player] || 0;
+        if (index >= TOTAL || !snakeStageEl) return;
+        const snake = snakeStageEl.querySelector(`.snake-player[data-player="${player}"]`);
+        if (!snake) return;
+        const key = `${player}:${index}`;
+        const previous = errorMarkers.get(key);
+        if (previous) {
+            clearTimeout(previous.timer);
+            previous.marker.remove();
+        }
+        const marker = document.createElement('span');
+        marker.className = 'snake-error-marker';
+        marker.dataset.segmentIndex = String(index);
+        marker.setAttribute('role', 'img');
+        marker.setAttribute('aria-label', `Respuesta incorrecta para el token ${TOKEN_BY_PLAYER[player - 1]}, símbolo ${index + 1}`);
+        snake.appendChild(marker);
+        const timer = setTimeout(() => {
+            marker.remove();
+            errorMarkers.delete(key);
+        }, 4000);
+        errorMarkers.set(key, {marker, timer});
+        renderSnakePositions();
+    }
+
+    function clearErrorMarkers() {
+        errorMarkers.forEach(({marker, timer}) => {
+            clearTimeout(timer);
+            marker.remove();
+        });
+        errorMarkers.clear();
     }
 
     function moveSnakes() {
@@ -223,10 +298,46 @@
             };
             state.direction = nextDirection;
             state.ticks += 1;
+            state.previousTrail = state.trail.slice();
             state.trail.unshift(nextHead);
             state.trail.length = TOTAL + 1;
         }
 
+    }
+
+    function animateSnakes(timestamp) {
+        // Resume where drawing stopped, never race through missed steps after
+        // a hidden tab or a slow frame. Timing uses the same logical board at
+        // every resolution; interpolation does not depend on monitor refresh.
+        if (lastFrameTime !== null && timestamp - lastFrameTime > MOVEMENT_STEP_MS) {
+            lastMovementTime = timestamp - movementProgress * MOVEMENT_STEP_MS;
+        }
+        lastFrameTime = timestamp;
+        if (lastMovementTime === null) {
+            lastMovementTime = timestamp;
+            movementProgress = 0;
+            moveSnakes();
+        } else if (timestamp - lastMovementTime >= MOVEMENT_STEP_MS) {
+            lastMovementTime += MOVEMENT_STEP_MS;
+            movementProgress = 0;
+            moveSnakes();
+        }
+        movementProgress = Math.min(1, (timestamp - lastMovementTime) / MOVEMENT_STEP_MS);
+        renderSnakePositions();
+        movementFrame = requestAnimationFrame(animateSnakes);
+    }
+
+    function resizeSnakeBoard() {
+        if (!snakeStageEl) return;
+        const {columns, rows} = getGridBounds();
+        snakePositions.forEach(state => {
+            for (const trail of [state.trail, state.previousTrail]) {
+                trail.forEach(point => {
+                    point.x = Math.max(0, Math.min(columns - 1, point.x));
+                    point.y = Math.max(0, Math.min(rows - 1, point.y));
+                });
+            }
+        });
         renderSnakePositions();
     }
 
@@ -256,6 +367,7 @@
         }
 
         if (data.error_increment) {
+            showErrorMarker(data.error_increment.player);
             playSound('/static/audios/effects/incorrecte.wav');
             return;
         }
@@ -277,14 +389,12 @@
         }
 
         if (data.play_alarm_sound) {
-            playSound(data.play_alarm_sound.url);
-            document.body.classList.add('alarm-flash');
-            setTimeout(() => document.body.classList.remove('alarm-flash'), 900);
+            playAlarmAudio(data.play_alarm_sound.url);
         }
 
         if (data.play_normal_sound) {
+            stopAlarmAudio();
             playSound(data.play_normal_sound.url);
-            document.body.classList.remove('alarm-flash');
         }
 
         if (data.alarm_mode !== undefined) {
@@ -293,6 +403,7 @@
 
         if (data.puzzle_solved && !redirected) {
             redirected = true;
+            stopAlarmAudio();
             playSound('/static/audios/effects/nivel_completado.wav');
             const banner = document.getElementById('p2-solved-banner');
             if (banner) banner.classList.remove('hidden');
@@ -314,6 +425,8 @@
                 handleUpdate({ puzzle_id: 2, ...payload });
             },
             reset() {
+                stopAlarmAudio();
+                clearErrorMarkers();
                 handleUpdate({
                     puzzle_id: 2,
                     players: Array.from({ length: 10 }, (_, index) => ({
@@ -330,6 +443,9 @@
             },
             alarm(on = true) {
                 handleUpdate({ puzzle_id: 2, alarm_mode: on });
+            },
+            error(player = 1) {
+                handleUpdate({ puzzle_id: 2, error_increment: {player} });
             },
             solved() {
                 handleUpdate({ puzzle_id: 2, puzzle_solved: true });
@@ -361,6 +477,7 @@
     }
 
     function initSSE() {
+        clearErrorMarkers();
         for (let player = 1; player <= PLAYER_COUNT; player++) {
             progressByPlayer[player] = 0;
         }
@@ -368,13 +485,11 @@
         updateHudState();
         loadCurrentState();
 
-        if (movementTimer) clearInterval(movementTimer);
-        movementTimer = setInterval(moveSnakes, 240);
-        window.addEventListener('resize', () => {
-            snakeStageEl.innerHTML = '';
-            snakePositions.clear();
-            renderSnakes();
-        });
+        if (movementFrame !== null) cancelAnimationFrame(movementFrame);
+        lastMovementTime = null;
+        lastFrameTime = null;
+        movementProgress = 1;
+        movementFrame = requestAnimationFrame(animateSnakes);
 
         const es = new EventSource('/state_stream');
         es.onopen = () => {
@@ -398,6 +513,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         installDebugHelpers();
+        window.addEventListener('resize', resizeSnakeBoard);
         initSSE();
     });
 })();
