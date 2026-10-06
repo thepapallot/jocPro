@@ -15,10 +15,14 @@
             window.top.postMessage({
                 type: "piramide_bgm_mode",
                 mode: getRequestedMode(),
-            }, "*");
+            }, location.origin);
         } catch (error) {
             // Ignore cross-frame communication errors.
         }
+        // A gesture inside an iframe does not bubble to the persistent player.
+        ['click','touchstart','keydown'].forEach(name=>document.addEventListener(name,()=>{
+            window.top.postMessage({type:'piramide_bgm_unlock'},location.origin);
+        },{once:true,passive:true}));
         return;
     }
 
@@ -81,9 +85,16 @@
         return Math.max(0, basePos + elapsedSec);
     }
 
+    let volumeFrame=null;
     function applyVolume(audio, mode, fadeMs) {
         const target = MODE_VOLUMES[mode];
         if (target === undefined) return;
+        applyLevel(audio,target,fadeMs);
+    }
+    function applyLevel(audio,target,fadeMs){
+        if(volumeFrame!==null)cancelAnimationFrame(volumeFrame);
+        volumeFrame=null;
+        target=clamp(target,0,1);
 
         const now = audio.volume;
         if (!Number.isFinite(now) || fadeMs <= 0) {
@@ -99,11 +110,11 @@
             const progress = clamp((nowTs - start) / fadeMs, 0, 1);
             audio.volume = from + (delta * progress);
             if (progress < 1) {
-                requestAnimationFrame(step);
+                volumeFrame=requestAnimationFrame(step);
             }
         }
 
-        requestAnimationFrame(step);
+        volumeFrame=requestAnimationFrame(step);
     }
 
     function installUnlockHandlers(audio) {
@@ -125,6 +136,7 @@
         audio.setAttribute("playsinline", "");
 
         const mode = getRequestedMode();
+        let desiredVolume=MODE_VOLUMES[mode];
         applyVolume(audio, mode, 0);
 
         const state = readState();
@@ -133,7 +145,7 @@
             if (resumePos > 0) {
                 audio.currentTime = resumePos;
             }
-            applyVolume(audio, mode, 420);
+            applyLevel(audio, desiredVolume, 420);
         }, { once: true });
 
         audio.play().catch(() => {
@@ -148,18 +160,26 @@
         });
 
         window.addEventListener("message", (event) => {
+            const frame=document.getElementById('game-shell-frame');
+            if(event.origin!==location.origin||(frame&&event.source!==frame.contentWindow))return;
             const data = event && event.data;
+            if(data?.type==='piramide_bgm_unlock'){audio.play().catch(()=>{});return;}
             if (!data || data.type !== "piramide_bgm_mode") {
                 return;
             }
 
             const nextMode = MODE_VOLUMES.hasOwnProperty(data.mode) ? data.mode : "medium";
+            desiredVolume=MODE_VOLUMES[nextMode];
             applyVolume(audio, nextMode, 360);
         });
 
         window.BGM = {
+            play(){return audio.play();},
+            pause(){audio.pause();},
+            setVolume(level,fadeMs=0){if(Number.isFinite(level)){desiredVolume=clamp(level,0,1);applyLevel(audio,desiredVolume,Math.max(0,fadeMs));}},
             setMode(nextMode, fadeMs) {
                 const safeMode = MODE_VOLUMES.hasOwnProperty(nextMode) ? nextMode : "medium";
+                desiredVolume=MODE_VOLUMES[safeMode];
                 applyVolume(audio, safeMode, Number(fadeMs) > 0 ? Number(fadeMs) : 360);
             },
             persist() {
@@ -168,9 +188,5 @@
         };
     }
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", boot, { once: true });
-    } else {
-        boot();
-    }
+    boot();
 })();

@@ -1,0 +1,1118 @@
+[
+  {
+    "step": "mission",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nMISIÓN · REACTIVACIÓN\nDESPERTAD\nLA PIRÁMIDE.\n\nLas conexiones se han fragmentado.\nSolo un equipo puede volver a activarla.\n\nCONEXIONES FRAGMENTADAS\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "es",
+    "stepIndex": 0
+  },
+  {
+    "step": "team",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nVUESTRA VENTAJA\nCADA MIRADA\nCUENTA.\n\nConectad lo que sabéis.\nLa solución necesita todas las miradas.\n\nOBSERVAD\nESCUCHAD\nCOMPARTID\nCOORDINAOS\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nUN ÚNICO EQUIPO\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "es",
+    "stepIndex": 1
+  },
+  {
+    "step": "equipment",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nVUESTRAS HERRAMIENTAS\nCONECTAD\nCON EL JUEGO.\n\nUn token por persona o pareja.\nEs vuestro toda la partida: no lo intercambiéis.\n\nTOKEN\nTERMINAL\nLector · Botones · Luces · Símbolos\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "es",
+    "stepIndex": 2
+  },
+  {
+    "step": "mobility",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nVUESTRO TERRENO DE JUEGO\nMOVEOS.\nCONECTAOS.\n\nExplorad los terminales y compartid las pistas.\nCaminad sin correr y dejad paso a los demás.\n\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nPANTALLA COMPARTIDA\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "es",
+    "stepIndex": 3
+  },
+  {
+    "step": "journey",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nVUESTRO RECORRIDO\nUN EQUIPO. TODO UN RECORRIDO.\n\nPracticad, resolved los retos y llegad juntos al final.\n\nESTÁIS AQUÍ\n◎\nPRÁCTICA\n\nConoced el sistema\n\n◆\n◆\n◆\n3 RETOS\n\nPrimer bloque\n\n?\nQUIZ\n\nDecidid juntos\n\n◆\n◆\n◆\n3 RETOS\n\nSegundo bloque\n\nCARGA FINAL\n\nEl último impulso\n\nCada reto superado reactiva una parte de la pirámide.\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "es",
+    "stepIndex": 4
+  },
+  {
+    "step": "launch",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nPRIMERA CONEXIÓN\nEL RETO\nES DE TODOS.\n\nPrimero, practicamos.\nEl Game Master os guiará.\n\nSIMULACRO INICIAL\n→\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "es",
+    "stepIndex": 5
+  },
+  {
+    "step": "mission",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nMISSIÓ · REACTIVACIÓ\nDESPERTEU\nLA PIRÀMIDE.\n\nLes connexions s’han fragmentat.\nNomés un equip pot tornar-la a activar.\n\nCONNEXIONS FRAGMENTADES\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "ca",
+    "stepIndex": 0
+  },
+  {
+    "step": "team",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nEL VOSTRE AVANTATGE\nCADA MIRADA\nCOMPTA.\n\nConnecteu el que sabeu.\nLa solució necessita totes les mirades.\n\nOBSERVEU\nESCOLTEU\nCOMPARTIU\nCOORDINEU-VOS\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nUN ÚNIC EQUIP\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "ca",
+    "stepIndex": 1
+  },
+  {
+    "step": "equipment",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nLES VOSTRES EINES\nCONNECTEU\nAMB EL JOC.\n\nUn token per persona o parella.\nÉs vostre durant tota la partida: no l’intercanvieu.\n\nTOKEN\nTERMINAL\nLector · Botons · Llums · Símbols\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "ca",
+    "stepIndex": 2
+  },
+  {
+    "step": "mobility",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nEL VOSTRE TERRENY DE JOC\nMOVEU-VOS.\nCONNECTEU-VOS.\n\nExploreu els terminals i compartiu les pistes.\nCamineu sense córrer i deixeu pas als altres.\n\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nPANTALLA COMPARTIDA\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "ca",
+    "stepIndex": 3
+  },
+  {
+    "step": "journey",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nEL VOSTRE RECORREGUT\nUN EQUIP. TOT UN RECORREGUT.\n\nPractiqueu, resoleu els reptes i arribeu junts al final.\n\nSOU AQUÍ\n◎\nPRÀCTICA\n\nConeixeu el sistema\n\n◆\n◆\n◆\n3 REPTES\n\nPrimer bloc\n\n?\nQUIZ\n\nDecidiu junts\n\n◆\n◆\n◆\n3 REPTES\n\nSegon bloc\n\nCÀRREGA FINAL\n\nL’últim impuls\n\nCada repte superat reactiva una part de la piràmide.\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "ca",
+    "stepIndex": 4
+  },
+  {
+    "step": "launch",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nPRIMERA CONNEXIÓ\nEL REPTE\nÉS DE TOTS.\n\nPrimer, practiquem.\nEl Game Master us guiarà.\n\nSIMULACRE INICIAL\n→\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "ca",
+    "stepIndex": 5
+  },
+  {
+    "step": "mission",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nMISSION · REACTIVATION\nAWAKEN\nTHE PYRAMID.\n\nIts connections have been fragmented.\nOnly a team can bring it back to life.\n\nCONNECTIONS FRAGMENTED\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "eng",
+    "stepIndex": 0
+  },
+  {
+    "step": "team",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nYOUR ADVANTAGE\nEVERY VIEW\nCOUNTS.\n\nConnect what you know.\nThe solution needs every perspective.\n\nOBSERVE\nLISTEN\nSHARE\nCOORDINATE\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nONE TEAM\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "eng",
+    "stepIndex": 1
+  },
+  {
+    "step": "equipment",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nYOUR TOOLS\nCONNECT\nTO THE GAME.\n\nOne token per person or pair.\nKeep it throughout the game: do not swap it.\n\nTOKEN\nTERMINAL\nReader · Buttons · Lights · Symbols\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "eng",
+    "stepIndex": 2
+  },
+  {
+    "step": "mobility",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nYOUR PLAYING FIELD\nMOVE.\nCONNECT.\n\nExplore the terminals and share the clues.\nWalk, don’t run, and leave room for others.\n\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nSHARED SCREEN\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "eng",
+    "stepIndex": 3
+  },
+  {
+    "step": "journey",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nYOUR JOURNEY\nONE TEAM. A SHARED JOURNEY.\n\nPractise, solve the challenges and reach the final together.\n\nYOU ARE HERE\n◎\nPRACTICE\n\nLearn the system\n\n◆\n◆\n◆\n3 CHALLENGES\n\nFirst block\n\n?\nQUIZ\n\nDecide together\n\n◆\n◆\n◆\n3 CHALLENGES\n\nSecond block\n\nFINAL CHARGE\n\nThe final push\n\nEach completed challenge reactivates part of the pyramid.\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "eng",
+    "stepIndex": 4
+  },
+  {
+    "step": "launch",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nFIRST CONNECTION\nONE TEAM.\nONE SHARED CHALLENGE.\n\nFirst, let’s practise.\nYour Game Master will guide you.\n\nINITIAL SIMULATION\n→\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1920,
+    "height": 1080,
+    "lang": "eng",
+    "stepIndex": 5
+  },
+  {
+    "step": "mission",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nMISIÓN · REACTIVACIÓN\nDESPERTAD\nLA PIRÁMIDE.\n\nLas conexiones se han fragmentado.\nSolo un equipo puede volver a activarla.\n\nCONEXIONES FRAGMENTADAS\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "es",
+    "stepIndex": 0
+  },
+  {
+    "step": "team",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nVUESTRA VENTAJA\nCADA MIRADA\nCUENTA.\n\nConectad lo que sabéis.\nLa solución necesita todas las miradas.\n\nOBSERVAD\nESCUCHAD\nCOMPARTID\nCOORDINAOS\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nUN ÚNICO EQUIPO\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "es",
+    "stepIndex": 1
+  },
+  {
+    "step": "equipment",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nVUESTRAS HERRAMIENTAS\nCONECTAD\nCON EL JUEGO.\n\nUn token por persona o pareja.\nEs vuestro toda la partida: no lo intercambiéis.\n\nTOKEN\nTERMINAL\nLector · Botones · Luces · Símbolos\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "es",
+    "stepIndex": 2
+  },
+  {
+    "step": "mobility",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nVUESTRO TERRENO DE JUEGO\nMOVEOS.\nCONECTAOS.\n\nExplorad los terminales y compartid las pistas.\nCaminad sin correr y dejad paso a los demás.\n\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nPANTALLA COMPARTIDA\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "es",
+    "stepIndex": 3
+  },
+  {
+    "step": "journey",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nVUESTRO RECORRIDO\nUN EQUIPO. TODO UN RECORRIDO.\n\nPracticad, resolved los retos y llegad juntos al final.\n\nESTÁIS AQUÍ\n◎\nPRÁCTICA\n\nConoced el sistema\n\n◆\n◆\n◆\n3 RETOS\n\nPrimer bloque\n\n?\nQUIZ\n\nDecidid juntos\n\n◆\n◆\n◆\n3 RETOS\n\nSegundo bloque\n\nCARGA FINAL\n\nEl último impulso\n\nCada reto superado reactiva una parte de la pirámide.\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "es",
+    "stepIndex": 4
+  },
+  {
+    "step": "launch",
+    "language": "es",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÁMIDE\nPRIMERA CONEXIÓN\nEL RETO\nES DE TODOS.\n\nPrimero, practicamos.\nEl Game Master os guiará.\n\nSIMULACRO INICIAL\n→\nDIEZ TERMINALES. UN ÚNICO EQUIPO.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "es",
+    "stepIndex": 5
+  },
+  {
+    "step": "mission",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nMISSIÓ · REACTIVACIÓ\nDESPERTEU\nLA PIRÀMIDE.\n\nLes connexions s’han fragmentat.\nNomés un equip pot tornar-la a activar.\n\nCONNEXIONS FRAGMENTADES\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "ca",
+    "stepIndex": 0
+  },
+  {
+    "step": "team",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nEL VOSTRE AVANTATGE\nCADA MIRADA\nCOMPTA.\n\nConnecteu el que sabeu.\nLa solució necessita totes les mirades.\n\nOBSERVEU\nESCOLTEU\nCOMPARTIU\nCOORDINEU-VOS\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nUN ÚNIC EQUIP\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "ca",
+    "stepIndex": 1
+  },
+  {
+    "step": "equipment",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nLES VOSTRES EINES\nCONNECTEU\nAMB EL JOC.\n\nUn token per persona o parella.\nÉs vostre durant tota la partida: no l’intercanvieu.\n\nTOKEN\nTERMINAL\nLector · Botons · Llums · Símbols\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "ca",
+    "stepIndex": 2
+  },
+  {
+    "step": "mobility",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nEL VOSTRE TERRENY DE JOC\nMOVEU-VOS.\nCONNECTEU-VOS.\n\nExploreu els terminals i compartiu les pistes.\nCamineu sense córrer i deixeu pas als altres.\n\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nPANTALLA COMPARTIDA\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "ca",
+    "stepIndex": 3
+  },
+  {
+    "step": "journey",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nEL VOSTRE RECORREGUT\nUN EQUIP. TOT UN RECORREGUT.\n\nPractiqueu, resoleu els reptes i arribeu junts al final.\n\nSOU AQUÍ\n◎\nPRÀCTICA\n\nConeixeu el sistema\n\n◆\n◆\n◆\n3 REPTES\n\nPrimer bloc\n\n?\nQUIZ\n\nDecidiu junts\n\n◆\n◆\n◆\n3 REPTES\n\nSegon bloc\n\nCÀRREGA FINAL\n\nL’últim impuls\n\nCada repte superat reactiva una part de la piràmide.\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "ca",
+    "stepIndex": 4
+  },
+  {
+    "step": "launch",
+    "language": "ca",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "LA PIRÀMIDE\nPRIMERA CONNEXIÓ\nEL REPTE\nÉS DE TOTS.\n\nPrimer, practiquem.\nEl Game Master us guiarà.\n\nSIMULACRE INICIAL\n→\nDEU TERMINALS. UN ÚNIC EQUIP.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "ca",
+    "stepIndex": 5
+  },
+  {
+    "step": "mission",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 0,
+        "screen": "mission",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nMISSION · REACTIVATION\nAWAKEN\nTHE PYRAMID.\n\nIts connections have been fragmented.\nOnly a team can bring it back to life.\n\nCONNECTIONS FRAGMENTED\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "eng",
+    "stepIndex": 0
+  },
+  {
+    "step": "team",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 1,
+        "screen": "team",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nYOUR ADVANTAGE\nEVERY VIEW\nCOUNTS.\n\nConnect what you know.\nThe solution needs every perspective.\n\nOBSERVE\nLISTEN\nSHARE\nCOORDINATE\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nONE TEAM\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "eng",
+    "stepIndex": 1
+  },
+  {
+    "step": "equipment",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 2,
+        "screen": "equipment",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nYOUR TOOLS\nCONNECT\nTO THE GAME.\n\nOne token per person or pair.\nKeep it throughout the game: do not swap it.\n\nTOKEN\nTERMINAL\nReader · Buttons · Lights · Symbols\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "eng",
+    "stepIndex": 2
+  },
+  {
+    "step": "mobility",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 3,
+        "screen": "mobility",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nYOUR PLAYING FIELD\nMOVE.\nCONNECT.\n\nExplore the terminals and share the clues.\nWalk, don’t run, and leave room for others.\n\n01\n02\n03\n04\n05\n06\n07\n08\n09\n10\nSHARED SCREEN\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "eng",
+    "stepIndex": 3
+  },
+  {
+    "step": "journey",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 4,
+        "screen": "journey",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nYOUR JOURNEY\nONE TEAM. A SHARED JOURNEY.\n\nPractise, solve the challenges and reach the final together.\n\nYOU ARE HERE\n◎\nPRACTICE\n\nLearn the system\n\n◆\n◆\n◆\n3 CHALLENGES\n\nFirst block\n\n?\nQUIZ\n\nDecide together\n\n◆\n◆\n◆\n3 CHALLENGES\n\nSecond block\n\nFINAL CHARGE\n\nThe final push\n\nEach completed challenge reactivates part of the pyramid.\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "eng",
+    "stepIndex": 4
+  },
+  {
+    "step": "launch",
+    "language": "eng",
+    "overflow": [],
+    "overlap": false,
+    "images": [],
+    "errors": [],
+    "states": [
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": false,
+        "kind": "opening"
+      },
+      {
+        "step": 5,
+        "screen": "launch",
+        "automatic": true,
+        "autoPaused": true,
+        "kind": "opening"
+      }
+    ],
+    "text": "THE PYRAMID\nFIRST CONNECTION\nONE TEAM.\nONE SHARED CHALLENGE.\n\nFirst, let’s practise.\nYour Game Master will guide you.\n\nINITIAL SIMULATION\n→\nTEN TERMINALS. ONE TEAM.",
+    "paused": "true",
+    "motion": false,
+    "width": 1280,
+    "height": 720,
+    "lang": "eng",
+    "stepIndex": 5
+  }
+]

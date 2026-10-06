@@ -97,8 +97,7 @@
   const byId=new Map(puzzles.map(p=>[p.id,puzzle(p)])); byId.set(1,{...sums,kind:'puzzle',visual:'sumas'});
   function scene(id,kind,title,lead,steps=['cover']) {
     const copy={};for(const lang of ['ca','es','eng']) copy[lang]={...common[lang],name:common[lang].brand,coverTitle:title[lang],coverLead:lead[lang],stepLabels:steps.map((s,i)=>kind==='opening'?(lang==='ca'?['Un únic equip','Tokens i terminals'][i]:lang==='es'?['Un único equipo','Tokens y terminales'][i]:['One team','Tokens and terminals'][i]):kind==='closing'?(lang==='ca'?['Repte completat','Tancament'][i]:lang==='es'?['Reto completado','Cierre'][i]:['Challenge completed','Closing'][i]):title[lang].replaceAll('<br>',' ')),notes:steps.map(()=>lead[lang]),footers:steps.map(()=>common[lang].slogan)};
-    // Provisional opening timings; replace with narration cues when audio is ready.
-    const autoAdvanceMs=kind==='opening'?[6000,6500,8500,12000,6000]:null;
+    const autoAdvanceMs=null;
     return {id,kind,steps,copy,assets:sums.assets,example:sums.example,autoAdvanceMs};
   }
   const requested=(page?.order?.join(',')??params.get('order')??'2,1,8,3,5,12,4').split(',').map(Number);
@@ -110,8 +109,10 @@
     pre:trivialIndex<0?order:order.slice(0,trivialIndex),
     post:trivialIndex<0?[]:order.slice(trivialIndex+1)};
   const flow=[scene('welcome','welcome',local('LA<br>PIRÀMIDE','LA<br>PIRÁMIDE','LA<br>PIRÀMIDE'),local('Deu terminals. Un únic equip.','Diez terminales. Un único equipo.','Ten terminals. One team.')),
-    scene('opening','opening',local('EL REPTE<br>ÉS DE TOTS.','EL RETO<br>ES DE TODOS.','ONE TEAM.<br>ONE CHALLENGE.'),local('Compartiu informació. Combineu les vostres habilitats.','Compartid información. Combinad vuestras habilidades.','Share information. Combine your skills.'),['mission','team','equipment','journey','launch'])];
+    scene('opening','opening',local('EL REPTE<br>ÉS DE TOTS.','EL RETO<br>ES DE TODOS.','ONE TEAM.<br>ONE CHALLENGE.'),local('Compartiu informació. Combineu les vostres habilitats.','Compartid información. Combinad vuestras habilidades.','Share information. Combine your skills.'),window.PyramidOpeningStory.forJourney(journey).map(b=>b.id))];
   flow[1].journey=journey;
+  flow[1].story=window.PyramidOpeningStory.forJourney(journey);
+  flow[1].autoAdvanceMs=flow[1].story.map(b=>b.seconds*1000);
   const acts=[
     {id:1,colour:'#39d6e5',name:local('Descobrir','Descubrir','Discover'),role:local('Repartiu qui observa, qui comunica i qui actua.','Repartid quién observa, quién comunica y quién actúa.','Share observing, communicating and acting.')},
     {id:2,colour:'#dc68a7',name:local('Organitzar-se','Organizarse','Organise'),role:local('Canvieu els papers perquè tothom tingui una aportació.','Cambiad los papeles para que todos tengan una aportación.','Switch roles so everyone has a part to play.')},
@@ -162,8 +163,9 @@
   flow.push(closing);
   for(const lang of ['ca','es','eng']) {
     const t=flow[1].copy[lang];
-    t.stepLabels=[local('Una meta','Una meta','One goal')[lang],local('Un equip','Un equipo','One team')[lang],local('Les vostres eines','Vuestras herramientas','Your tools')[lang],local('El recorregut','El recorrido','The journey')[lang],local('Comença el repte','Empieza el reto','The challenge begins')[lang]];
-    t.notes=t.stepLabels.map(()=>local('Obertura automàtica. Pots pausar-la o repetir-la; el grup no ha d’actuar encara.','Apertura automática. Puedes pausarla o repetirla; el grupo todavía no debe actuar.','Automatic opening. You can pause or replay it; the group does not act yet.')[lang]);
+    t.stepLabels=flow[1].story.map(b=>b.label[lang]);
+    t.notes=flow[1].story.map(b=>b.id==='hold'?b.voice[lang]:window.PyramidOpeningStory.recording(lang)?'Locució: '+b.voice[lang]:local('Guió de veu (gravació pendent): ','Guion de voz (grabación pendiente): ','Voice script (recording pending): ')[lang]+b.voice[lang]);
+    t.footers=t.stepLabels.map(()=>t.slogan);
   }
   window.PyramidActs=acts;
   window.PyramidFlow=flow;

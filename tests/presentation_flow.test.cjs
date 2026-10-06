@@ -7,6 +7,7 @@ const script=name=>fs.readFileSync(path.join(__dirname,'../static/js',name),'utf
 function flow(order){
   const context=vm.createContext({window:{},URL,URLSearchParams,location:{search:'?flow=game'+(order?'&order='+order:'')},document:{currentScript:{src:'http://localhost/static/js/presentation-flow.js'}}});
   vm.runInContext(script('puzzle-names.js'),context);
+  vm.runInContext(script('presentation-story.js'),context);
   vm.runInContext(script('presentation-flow.js'),context);
   return JSON.parse(JSON.stringify(context.window.PyramidFlow));
 }
@@ -15,11 +16,18 @@ test('the journey has a manual lobby, compact briefings and a final earned summi
   assert.deepEqual(games.map(g=>g.puzzleId),[11,2,1,8,3,5,12,4,6]);
   assert.equal(games.reduce((n,g)=>n+g.steps.length,0),28);
   assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>s!=='journey').join(',')==='objective,tools,interaction'));
-  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),44);
+  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),56);
   assert.ok(games.every(g=>!g.steps.includes('example')));
   assert.ok(games.every(g=>!g.previewPath), 'rehearsal uses current diagrams, never the retired pilot');
   assert.equal(scenes[0].autoAdvanceMs,null);
-  assert.deepEqual(scenes[1].autoAdvanceMs,[6000,6500,8500,12000,6000]);
+  assert.equal(scenes[1].steps.length,17);
+  assert.equal(scenes[1].steps.at(-1),'hold');
+  assert.equal(scenes[1].autoAdvanceMs.at(-1),0);
+  assert.equal(scenes[1].autoAdvanceMs.reduce((sum,ms)=>sum+ms,0),169000);
+  for(const lang of ['ca','es','eng']){
+    assert.equal(scenes[1].copy[lang].stepLabels.length,scenes[1].steps.length);
+    assert.equal(scenes[1].copy[lang].notes.length,scenes[1].steps.length);
+  }
   assert.equal(scenes.find(s=>s.id==='success-11').completed,0);
   assert.equal(games.at(-1).completed,7);
   assert.equal(scenes.at(-1).completed,8);
@@ -40,12 +48,23 @@ test('configured order is respected without duplicates or early summit',()=>{
   assert.equal(scenes.find(s=>s.puzzleId===6).completed,2);
 });
 function shell(storage=new Map()){
-  const handlers={},child={},opener={postMessage(){}},frame={contentWindow:child,addEventListener(){}},origin='http://localhost';
+  const handlers={},child={postMessage(){}},opener={postMessage(){}},frame={contentWindow:child,addEventListener(){}},origin='http://localhost';
   const window={opener,addEventListener(name,fn){(handlers[name]??=[]).push(fn)}};
   const context=vm.createContext({BroadcastChannel:class{postMessage(){}},window,document:{getElementById:()=>frame},location:{origin,search:''},history:{state:null},URL,URLSearchParams,sessionStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)}});
   vm.runInContext(script('game-shell.js'),context);
-  return {run:window.PyramidRun,child,storage,emit(data,source=child){for(const fn of handlers.message)fn({origin,source,data});}};
+  return {run:window.PyramidRun,child,frame,opener,storage,emit(data,source=child){for(const fn of handlers.message)fn({origin,source,data});}};
 }
+test('the shell keeps the selected language between player routes and reconnects',()=>{
+  const s=shell();
+  s.emit({type:'pyramid-presentation-state',phase:'slides',language:'eng'});
+  s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/puzzle/8'},s.opener);
+  assert.equal(new URL(s.frame.src).searchParams.get('lang'),'eng');
+  s.emit({type:'pyramid-presentation-state',phase:'game',puzzleId:8});
+  s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/videoPuzzles/3'},s.opener);
+  assert.equal(new URL(s.frame.src).searchParams.get('lang'),'eng');
+  s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/presentacio/3?lang=ca'},s.opener);
+  assert.equal(new URL(s.frame.src).searchParams.get('lang'),'ca');
+});
 test('earned progress survives refresh; navigation and unrelated messages cannot award it',()=>{
   const s=shell();
   const report=id=>s.emit({type:'pyramid-presentation-state',phase:'game',puzzleId:id});
@@ -77,13 +96,18 @@ test('journey blocks follow the configured order, including empty and unequal bl
   }
   const noQuiz=flow('2,8');
   assert.equal(noQuiz[1].journey.trivialId,null);
+  assert.ok(!noQuiz[1].steps.includes('quiz'),'do not narrate an absent QUIZ stage');
+  assert.equal(noQuiz[1].steps.at(-1),'hold');
+  assert.equal(noQuiz[1].autoAdvanceMs.at(-1),0,'token handout always waits for GM');
   assert.deepEqual(noQuiz[1].journey.pre,[2,8]);
 });
 
 test('Trivial intro shows the previous block completed even when opened without saved achievements',()=>{
   const context=vm.createContext({window:{PYRAMID_PAGE:{order:[2,1,8,3,5,12,4],tutorialId:11,finalId:6}},URL,URLSearchParams,location:{search:''},document:{currentScript:{src:'http://localhost/static/js/presentation-flow.js'}},PyramidLogo:{markup:()=>'<svg></svg>'}});
   vm.runInContext(script('puzzle-names.js'),context);
+  vm.runInContext(script('presentation-story.js'),context);
   vm.runInContext(script('presentation-flow.js'),context);
+  vm.runInContext(script('presentation-opening.js'),context);
   vm.runInContext(script('presentation-visuals.js'),context);
   const quiz=context.window.PyramidFlow.find(s=>s.puzzleId===3),opening=context.window.PyramidFlow[1];
   for(const ids of [[],[2],[2,1,8,5]]){
@@ -100,6 +124,7 @@ test('Trivial intro shows the previous block completed even when opened without 
 test('every intro uses the shared editorial catalog in all three languages',()=>{
   const context=vm.createContext({window:{},URL,URLSearchParams,location:{search:''},document:{currentScript:{src:'http://localhost/static/js/presentation-flow.js'}}});
   vm.runInContext(script('puzzle-names.js'),context);
+  vm.runInContext(script('presentation-story.js'),context);
   vm.runInContext(script('presentation-flow.js'),context);
   for(const scene of context.window.PyramidFlow.filter(s=>s.kind==='puzzle'))for(const lang of ['ca','es','eng']){
     assert.equal(scene.copy[lang].name,context.window.PyramidPuzzleNames.name(scene.puzzleId,lang));
@@ -108,4 +133,32 @@ test('every intro uses the shared editorial catalog in all three languages',()=>
   assert.equal(context.window.PyramidPuzzleNames.name(2,'es'),'Tras la Serpiente');
   assert.equal(context.window.PyramidPuzzleNames.name(3,'ca'),'QUIZ');
   assert.equal(context.window.PyramidPuzzleNames.name(12,'es'),'Conexión Simultánea');
+});
+
+test('opening subtitles preserve the narration and cover each beat without gaps',()=>{
+  const context=vm.createContext({window:{}});
+  vm.runInContext(script('presentation-story.js'),context);
+  const story=context.window.PyramidOpeningStory;
+  const normalize=text=>text.replace(/\s+/g,' ').trim();
+  for(const beat of story.beats)for(const lang of ['es','ca','eng']){
+    const cues=beat.subtitles[lang];
+    if(beat.id==='hold'){
+      assert.equal(cues.length,0,'GM instructions must never become player subtitles');
+      assert.equal(story.subtitleAt(beat,lang,0),'');
+      continue;
+    }
+    assert.equal(normalize(cues.map(c=>c.text).join(' ')),normalize(beat.voice[lang]));
+    assert.equal(cues[0].startMs,0);
+    assert.equal(cues.at(-1).endMs,beat.seconds*1000);
+    cues.forEach((cue,i)=>{
+      assert.ok(cue.endMs>cue.startMs);
+      assert.ok(cue.text.split('\n').length<=2);
+      assert.ok(cue.text.split('\n').every(line=>line.length<=56));
+      if(i)assert.equal(cue.startMs,cues[i-1].endMs);
+      assert.equal(story.subtitleAt(beat,lang,cue.startMs),cue.text);
+      assert.equal(story.subtitleAt(beat,lang,cue.endMs-1),cue.text);
+    });
+    assert.equal(story.subtitleAt(beat,lang,beat.seconds*1000),'');
+    if(lang==='eng')assert.equal(story.subtitleAt(beat,'en',0),cues[0].text);
+  }
 });

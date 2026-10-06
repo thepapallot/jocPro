@@ -28,6 +28,12 @@
   $('mark').addEventListener('click',()=>{observations.push({at:new Date().toISOString(),puzzle:state?.puzzleId,phase:state?.phase,observation:$('observation').value});$('note-count').textContent=`${observations.length} notas · solo en este panel`;});
   $('export').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(observations,null,2)],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='piramide-observaciones.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 
+  function sessionLanguage() {
+    return window.PyramidLanguage.normalize(window.PyramidTest?.session()?.gameLanguage || window.TEST_DEFAULT_SUBTITLE_LANG || 'ca');
+  }
+  function sessionPath(path) {
+    return window.PyramidLanguage.path(!path || path === '/' ? '/?embed=1' : path, sessionLanguage());
+  }
   function send(action, value) {
     if(channel){channel.postMessage({type:'pyramid-presentation-command',action,value});return;}
     if (player && !player.closed) player.postMessage({type:'pyramid-presentation-command', action, value}, location.origin);
@@ -36,7 +42,7 @@
   function render() {
     const online = connected();
     $('status').textContent = online ? (state.automatic?(state.autoPaused?'Secuencia en pausa':'Secuencia automática'):state.phase==='countdown'?'Cuenta atrás en curso':state.phase==='game'?`${state.name} · juego abierto`:`${state.step+1} / ${state.labels.length} · ${state.labels[state.step]}`) : 'Pantalla sin conectar';
-    $('language').disabled=!online||state.phase!=='slides';
+    $('language').disabled=production||!online||state.phase!=='slides';
     $('mode').disabled=!online||state.phase!=='slides'||state.realPage;
     $('mode').parentElement.hidden=production;
     if (online) { $('title').textContent=state.name+(state.phase==='game'?' · partida':' · presentación'); $('language').value=state.language; $('mode').value=state.mode; $('note').textContent=state.note; }
@@ -74,11 +80,11 @@
     // Discover an existing projector after a Test refresh before launching another window.
     send('sync');
     await new Promise(resolve=>setTimeout(resolve,250));
-    if(connected()){send(path && path!=='/'?'navigate':'focus',path);send('sync');return true;}
+    if(connected()){if(state.phase==='slides'&&state.language!==sessionLanguage())send('language',sessionLanguage());send(path && path!=='/'?'navigate':'focus',path);send('sync');return true;}
     if(opening)return opening;
     opening=(async()=>{
       try {
-        const response=await fetch('/test/player-window',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:path||'/'})});
+        const response=await fetch('/test/player-window',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:path||sessionPath('/')})});
         const data=await response.json();
         if(!response.ok)throw new Error(data.error||'No se ha podido abrir la ventana.');
         for(let i=0;i<50;i++){
@@ -92,7 +98,7 @@
     return opening;
   }
   function openPlayer(path) {
-    if(production)return openNativePlayer(path);
+    if(production)return openNativePlayer(path ? sessionPath(path) : undefined);
     if (player && !player.closed) { if(path && path!=='/')send('navigate',path);else player.focus();send('sync');return true; }
     const url=new URL(panel.dataset.playerUrl,location.href);
     if(!production || state)url.searchParams.set('lang',$('language').value||'ca');
@@ -126,7 +132,12 @@
   });
   panel.addEventListener('click',e=>{const button=e.target.closest('[data-presentation-action]');if(button&&!button.disabled)send(button.dataset.presentationAction);});
   $('scene')?.addEventListener('change',e=>send('scene',Number(e.target.value)));
-  $('language').addEventListener('change',e=>send('language',e.target.value));
+  $('language').addEventListener('change',e=>{if(!production)send('language',e.target.value);});
+  window.addEventListener('pyramid-session-change',()=>{
+    if(!production)return;
+    $('language').value=sessionLanguage();
+    if(connected()&&state.phase==='slides'&&state.language!==sessionLanguage())send('language',sessionLanguage());
+  });
   $('mode').addEventListener('change',e=>send('mode',e.target.value));
   setInterval(()=>{send('sync');if(!connected())render();},1000);
   render();

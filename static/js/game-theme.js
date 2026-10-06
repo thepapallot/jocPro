@@ -2,7 +2,8 @@
   const game=window.PYRAMID_GAME;
   if(!game)return;
 
-  const lang=game.language, index=lang==='ca'?0:(lang==='eng'||lang==='en')?2:1;
+  const lang=window.PyramidLanguage.set(game.language);game.language=lang;
+  const index=lang==='ca'?0:(lang==='eng'||lang==='en')?2:1;
   game.name=window.PyramidPuzzleNames.name(game.puzzleId,lang);
   document.title=game.name;
   document.documentElement.lang=lang==='eng'?'en':lang;
