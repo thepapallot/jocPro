@@ -1,0 +1,2149 @@
+[
+  {
+    "step": "reveal",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "LA PIRÁMIDE\n\nAnte vosotros está la Pirámide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Ante vosotros está la Pirámide."
+    },
+    "width": 1920,
+    "case": "reveal-es-1920"
+  },
+  {
+    "step": "terminals",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Ahora permanece en silencio.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Su energía está repartida entre diez terminales,\nesperando a que alguien consiga reunirla."
+    },
+    "width": 1920,
+    "case": "terminals-es-1920"
+  },
+  {
+    "step": "mission",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "DESPERTARLA\n\nEsa es vuestra misión.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Esa es vuestra misión."
+    },
+    "width": 1920,
+    "case": "mission-es-1920"
+  },
+  {
+    "step": "fragments",
+    "language": "es",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "Para lograrlo, tendréis\nque superar una serie de retos.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "y cobrar sentido gracias a otra."
+    },
+    "width": 1920,
+    "case": "fragments-es-1920"
+  },
+  {
+    "step": "perspectives",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "CADA MIRADA CUENTA\n\nAlguien recordará un detalle.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Una idea que parecía no llevar a ninguna parte\nencontrará su lugar al escuchar a un compañero."
+    },
+    "width": 1920,
+    "case": "perspectives-es-1920"
+  },
+  {
+    "step": "awakening",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Así empieza a despertar la Pirámide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Y con lo que sois capaces de hacer juntos."
+    },
+    "width": 1920,
+    "case": "awakening-es-1920"
+  },
+  {
+    "step": "skills",
+    "language": "es",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "13 + 5\nINGENIO\nMEMORIA\nOBSERVACIÓN\nPRECISIÓN\n\nA lo largo del recorrido necesitaréis\ningenio, memoria, observación y precisión.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Habrá momentos para detenerse y pensar, y otros\nen los que tendréis que actuar al mismo tiempo."
+    },
+    "width": 1920,
+    "case": "skills-es-1920"
+  },
+  {
+    "step": "teamwork",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Repartíos las tareas.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 4,
+      "failures": [],
+      "text": "La siguiente solución puede venir\nde quien todavía no ha hablado."
+    },
+    "width": 1920,
+    "case": "teamwork-es-1920"
+  },
+  {
+    "step": "explore",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Vuestra búsqueda os llevará de un terminal a otro.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "La pantalla compartida os mostrará cada reto."
+    },
+    "width": 1920,
+    "case": "explore-es-1920"
+  },
+  {
+    "step": "tools",
+    "language": "es",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "Los tokens, los botones, las luces\ny los símbolos serán vuestras herramientas.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Los tokens, los botones, las luces\ny los símbolos serán vuestras herramientas."
+    },
+    "width": 1920,
+    "case": "tools-es-1920"
+  },
+  {
+    "step": "journey",
+    "language": "es",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRO INICIAL\n3 RETOS\n\nPrimero aprenderéis a utilizarlas\nen el Simulacro Inicial.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Con cada reto superado, una parte\nde la Pirámide recuperará su energía."
+    },
+    "width": 1920,
+    "case": "journey-es-1920"
+  },
+  {
+    "step": "quiz",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRO INICIAL\n3 RETOS\n?\nQUIZ\n\nEn mitad del recorrido llegará QUIZ:",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "un cambio de ritmo para poner en común\nlo que sabéis y decidir juntos."
+    },
+    "width": 1920,
+    "case": "quiz-es-1920"
+  },
+  {
+    "step": "finale",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRO INICIAL\n3 RETOS\n?\nQUIZ\n3 RETOS\nCARGA FINAL\n\nMás adelante os esperan nuevos desafíos.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Hasta llegar a Carga Final, donde todo\nel equipo tendrá que dar el último impulso."
+    },
+    "width": 1920,
+    "case": "finale-es-1920"
+  },
+  {
+    "step": "return",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "ESTAMOS AQUÍ\n◎\nSIMULACRO INICIAL\n3 RETOS\n?\nQUIZ\n3 RETOS\nCARGA FINAL\n\nPero ese momento aún está por llegar.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Pero ese momento aún está por llegar."
+    },
+    "width": 1920,
+    "case": "return-es-1920"
+  },
+  {
+    "step": "tokens",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "VUESTRO TOKEN\n\nAhora recibiréis vuestros tokens.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Conservad el vuestro durante toda la partida y seguid\na vuestro Game Master en la primera práctica."
+    },
+    "width": 1920,
+    "case": "tokens-es-1920"
+  },
+  {
+    "step": "call",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Equipo…",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "es hora de despertar la Pirámide."
+    },
+    "width": 1920,
+    "case": "call-es-1920"
+  },
+  {
+    "step": "hold",
+    "language": "es",
+    "overflow": [],
+    "lines": 0,
+    "errors": [],
+    "images": [],
+    "text": "SIMULACRO INICIAL",
+    "automatic": false,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 0,
+      "failures": [],
+      "text": ""
+    },
+    "width": 1920,
+    "case": "hold-es-1920"
+  },
+  {
+    "step": "reveal",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "LA PIRÀMIDE\n\nDavant vostre hi ha la Piràmide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Davant vostre hi ha la Piràmide."
+    },
+    "width": 1920,
+    "case": "reveal-ca-1920"
+  },
+  {
+    "step": "terminals",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Ara roman en silenci.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "La seva energia està repartida entre deu terminals,\nesperant que algú aconsegueixi reunir-la."
+    },
+    "width": 1920,
+    "case": "terminals-ca-1920"
+  },
+  {
+    "step": "mission",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "DESPERTAR-LA\n\nAquesta és la vostra missió.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Aquesta és la vostra missió."
+    },
+    "width": 1920,
+    "case": "mission-ca-1920"
+  },
+  {
+    "step": "fragments",
+    "language": "ca",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "Per aconseguir-ho, haureu\nde superar una sèrie de reptes.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "i cobrar sentit gràcies a una altra."
+    },
+    "width": 1920,
+    "case": "fragments-ca-1920"
+  },
+  {
+    "step": "perspectives",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "CADA MIRADA COMPTA\n\nAlgú recordarà un detall.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Una idea que semblava no dur enlloc trobarà\nel seu lloc en escoltar un company."
+    },
+    "width": 1920,
+    "case": "perspectives-ca-1920"
+  },
+  {
+    "step": "awakening",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Així comença a despertar la Piràmide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "I amb el que sou capaços de fer junts."
+    },
+    "width": 1920,
+    "case": "awakening-ca-1920"
+  },
+  {
+    "step": "skills",
+    "language": "ca",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "13 + 5\nENGINY\nMEMÒRIA\nOBSERVACIÓ\nPRECISIÓ\n\nAl llarg del recorregut necessitareu\nenginy, memòria, observació i precisió.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Hi haurà moments per aturar-se i pensar,\ni d’altres en què haureu d’actuar alhora."
+    },
+    "width": 1920,
+    "case": "skills-ca-1920"
+  },
+  {
+    "step": "teamwork",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Repartiu-vos les tasques.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 4,
+      "failures": [],
+      "text": "La solució següent pot venir\nde qui encara no ha parlat."
+    },
+    "width": 1920,
+    "case": "teamwork-ca-1920"
+  },
+  {
+    "step": "explore",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "La vostra cerca us durà d’un terminal a un altre.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "La pantalla compartida us mostrarà cada repte."
+    },
+    "width": 1920,
+    "case": "explore-ca-1920"
+  },
+  {
+    "step": "tools",
+    "language": "ca",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "Els tokens, els botons, els llums\ni els símbols seran les vostres eines.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Els tokens, els botons, els llums\ni els símbols seran les vostres eines."
+    },
+    "width": 1920,
+    "case": "tools-ca-1920"
+  },
+  {
+    "step": "journey",
+    "language": "ca",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRE INICIAL\n3 REPTES\n\nPrimer aprendreu\na utilitzar-les al Simulacre Inicial.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Amb cada repte superat, una part\nde la Piràmide recuperarà la seva energia."
+    },
+    "width": 1920,
+    "case": "journey-ca-1920"
+  },
+  {
+    "step": "quiz",
+    "language": "ca",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRE INICIAL\n3 REPTES\n?\nQUIZ\n\nA mig recorregut arribarà QUIZ: un canvi de ritme\nper posar en comú el que sabeu i decidir junts.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "A mig recorregut arribarà QUIZ: un canvi de ritme\nper posar en comú el que sabeu i decidir junts."
+    },
+    "width": 1920,
+    "case": "quiz-ca-1920"
+  },
+  {
+    "step": "finale",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRE INICIAL\n3 REPTES\n?\nQUIZ\n3 REPTES\nCÀRREGA FINAL\n\nMés endavant us esperen nous desafiaments.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Fins a arribar a Càrrega Final, on tot\nl’equip haurà de donar l’últim impuls."
+    },
+    "width": 1920,
+    "case": "finale-ca-1920"
+  },
+  {
+    "step": "return",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "SOM AQUÍ\n◎\nSIMULACRE INICIAL\n3 REPTES\n?\nQUIZ\n3 REPTES\nCÀRREGA FINAL\n\nPerò aquest moment encara ha d’arribar.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Però aquest moment encara ha d’arribar."
+    },
+    "width": 1920,
+    "case": "return-ca-1920"
+  },
+  {
+    "step": "tokens",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "EL VOSTRE TOKEN\n\nAra rebreu els vostres tokens.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Conserveu el vostre durant tota la partida i seguiu\nel vostre Game Master a la primera pràctica."
+    },
+    "width": 1920,
+    "case": "tokens-ca-1920"
+  },
+  {
+    "step": "call",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Equip…",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "és hora de despertar la Piràmide."
+    },
+    "width": 1920,
+    "case": "call-ca-1920"
+  },
+  {
+    "step": "hold",
+    "language": "ca",
+    "overflow": [],
+    "lines": 0,
+    "errors": [],
+    "images": [],
+    "text": "SIMULACRE INICIAL",
+    "automatic": false,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 0,
+      "failures": [],
+      "text": ""
+    },
+    "width": 1920,
+    "case": "hold-ca-1920"
+  },
+  {
+    "step": "reveal",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "THE PYRAMID\n\nBefore you stands the Pyramid.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Before you stands the Pyramid."
+    },
+    "width": 1920,
+    "case": "reveal-eng-1920"
+  },
+  {
+    "step": "terminals",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "For now, it is silent.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Its energy is scattered across ten terminals,\nwaiting for someone to bring it together."
+    },
+    "width": 1920,
+    "case": "terminals-eng-1920"
+  },
+  {
+    "step": "mission",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "AWAKEN IT\n\nThat is your mission.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "That is your mission."
+    },
+    "width": 1920,
+    "case": "mission-eng-1920"
+  },
+  {
+    "step": "fragments",
+    "language": "eng",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "To succeed, you will need\nto overcome a series of challenges.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "while another makes sense of it."
+    },
+    "width": 1920,
+    "case": "fragments-eng-1920"
+  },
+  {
+    "step": "perspectives",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "EVERY PERSPECTIVE COUNTS\n\nSomeone will remember a detail.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "An idea that seemed to lead nowhere will find\nits place when you listen to a teammate."
+    },
+    "width": 1920,
+    "case": "perspectives-eng-1920"
+  },
+  {
+    "step": "awakening",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "This is how the Pyramid begins to awaken.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "And what you can achieve together."
+    },
+    "width": 1920,
+    "case": "awakening-eng-1920"
+  },
+  {
+    "step": "skills",
+    "language": "eng",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "13 + 5\nINGENUITY\nMEMORY\nOBSERVATION\nPRECISION\n\nAlong the way, you will need ingenuity,\nmemory, observation and precision.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "There will be moments to stop and think,\nand others when you must act at the same time."
+    },
+    "width": 1920,
+    "case": "skills-eng-1920"
+  },
+  {
+    "step": "teamwork",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Share the tasks.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 4,
+      "failures": [],
+      "text": "The next solution may come from\nsomeone who has not spoken yet."
+    },
+    "width": 1920,
+    "case": "teamwork-eng-1920"
+  },
+  {
+    "step": "explore",
+    "language": "eng",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "Your search will take you\nfrom one terminal to another.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "The shared screen will show you each challenge."
+    },
+    "width": 1920,
+    "case": "explore-eng-1920"
+  },
+  {
+    "step": "tools",
+    "language": "eng",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "Tokens, buttons, lights\nand symbols will be your tools.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Tokens, buttons, lights\nand symbols will be your tools."
+    },
+    "width": 1920,
+    "case": "tools-eng-1920"
+  },
+  {
+    "step": "journey",
+    "language": "eng",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "◎\nINITIAL SIMULATION\n3 CHALLENGES\n\nFirst, you will learn to use\nthem in Initial Simulation.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "With each completed challenge, part\nof the Pyramid will regain its energy."
+    },
+    "width": 1920,
+    "case": "journey-eng-1920"
+  },
+  {
+    "step": "quiz",
+    "language": "eng",
+    "overflow": [],
+    "lines": 2,
+    "errors": [],
+    "images": [],
+    "text": "◎\nINITIAL SIMULATION\n3 CHALLENGES\n?\nQUIZ\n\nHalfway through comes QUIZ: a change of pace\nto share what you know and decide together.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Halfway through comes QUIZ: a change of pace\nto share what you know and decide together."
+    },
+    "width": 1920,
+    "case": "quiz-eng-1920"
+  },
+  {
+    "step": "finale",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nINITIAL SIMULATION\n3 CHALLENGES\n?\nQUIZ\n3 CHALLENGES\nFINAL CHARGE\n\nMore challenges lie ahead.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Until you reach Final Charge, where\nthe whole team must give one final push."
+    },
+    "width": 1920,
+    "case": "finale-eng-1920"
+  },
+  {
+    "step": "return",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "WE ARE HERE\n◎\nINITIAL SIMULATION\n3 CHALLENGES\n?\nQUIZ\n3 CHALLENGES\nFINAL CHARGE\n\nBut that moment is still to come.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "But that moment is still to come."
+    },
+    "width": 1920,
+    "case": "return-eng-1920"
+  },
+  {
+    "step": "tokens",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "YOUR TOKEN\n\nYou will now receive your tokens.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Keep yours throughout the game and follow\nyour Game Master through the first practice."
+    },
+    "width": 1920,
+    "case": "tokens-eng-1920"
+  },
+  {
+    "step": "call",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Team…",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "it is time to awaken the Pyramid."
+    },
+    "width": 1920,
+    "case": "call-eng-1920"
+  },
+  {
+    "step": "hold",
+    "language": "eng",
+    "overflow": [],
+    "lines": 0,
+    "errors": [],
+    "images": [],
+    "text": "INITIAL SIMULATION",
+    "automatic": false,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 0,
+      "failures": [],
+      "text": ""
+    },
+    "width": 1920,
+    "case": "hold-eng-1920"
+  },
+  {
+    "step": "reveal",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "LA PIRÁMIDE\n\nAnte vosotros está la Pirámide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Ante vosotros está la Pirámide."
+    },
+    "width": 1280,
+    "case": "reveal-es-1280"
+  },
+  {
+    "step": "terminals",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Ahora permanece en silencio.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Su energía está repartida entre diez terminales,\nesperando a que alguien consiga reunirla."
+    },
+    "width": 1280,
+    "case": "terminals-es-1280"
+  },
+  {
+    "step": "mission",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "DESPERTARLA\n\nEsa es vuestra misión.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Esa es vuestra misión."
+    },
+    "width": 1280,
+    "case": "mission-es-1280"
+  },
+  {
+    "step": "fragments",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Para lograrlo, tendréis\nque superar una serie de retos.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "y cobrar sentido gracias a otra."
+    },
+    "width": 1280,
+    "case": "fragments-es-1280"
+  },
+  {
+    "step": "perspectives",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "CADA MIRADA CUENTA\n\nAlguien recordará un detalle.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Una idea que parecía no llevar a ninguna parte\nencontrará su lugar al escuchar a un compañero."
+    },
+    "width": 1280,
+    "case": "perspectives-es-1280"
+  },
+  {
+    "step": "awakening",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Así empieza a despertar la Pirámide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Y con lo que sois capaces de hacer juntos."
+    },
+    "width": 1280,
+    "case": "awakening-es-1280"
+  },
+  {
+    "step": "skills",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "13 + 5\nINGENIO\nMEMORIA\nOBSERVACIÓN\nPRECISIÓN\n\nA lo largo del recorrido necesitaréis\ningenio, memoria, observación y precisión.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Habrá momentos para detenerse y pensar, y otros\nen los que tendréis que actuar al mismo tiempo."
+    },
+    "width": 1280,
+    "case": "skills-es-1280"
+  },
+  {
+    "step": "teamwork",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Repartíos las tareas.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 4,
+      "failures": [],
+      "text": "La siguiente solución puede venir\nde quien todavía no ha hablado."
+    },
+    "width": 1280,
+    "case": "teamwork-es-1280"
+  },
+  {
+    "step": "explore",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Vuestra búsqueda os llevará de un terminal a otro.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "La pantalla compartida os mostrará cada reto."
+    },
+    "width": 1280,
+    "case": "explore-es-1280"
+  },
+  {
+    "step": "tools",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Los tokens, los botones, las luces\ny los símbolos serán vuestras herramientas.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Los tokens, los botones, las luces\ny los símbolos serán vuestras herramientas."
+    },
+    "width": 1280,
+    "case": "tools-es-1280"
+  },
+  {
+    "step": "journey",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRO INICIAL\n3 RETOS\n\nPrimero aprenderéis a utilizarlas\nen el Simulacro Inicial.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Con cada reto superado, una parte\nde la Pirámide recuperará su energía."
+    },
+    "width": 1280,
+    "case": "journey-es-1280"
+  },
+  {
+    "step": "quiz",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRO INICIAL\n3 RETOS\n?\nQUIZ\n\nEn mitad del recorrido llegará QUIZ:",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "un cambio de ritmo para poner en común\nlo que sabéis y decidir juntos."
+    },
+    "width": 1280,
+    "case": "quiz-es-1280"
+  },
+  {
+    "step": "finale",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRO INICIAL\n3 RETOS\n?\nQUIZ\n3 RETOS\nCARGA FINAL\n\nMás adelante os esperan nuevos desafíos.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Hasta llegar a Carga Final, donde todo\nel equipo tendrá que dar el último impulso."
+    },
+    "width": 1280,
+    "case": "finale-es-1280"
+  },
+  {
+    "step": "return",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "ESTAMOS AQUÍ\n◎\nSIMULACRO INICIAL\n3 RETOS\n?\nQUIZ\n3 RETOS\nCARGA FINAL\n\nPero ese momento aún está por llegar.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Pero ese momento aún está por llegar."
+    },
+    "width": 1280,
+    "case": "return-es-1280"
+  },
+  {
+    "step": "tokens",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "VUESTRO TOKEN\n\nAhora recibiréis vuestros tokens.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Conservad el vuestro durante toda la partida y seguid\na vuestro Game Master en la primera práctica."
+    },
+    "width": 1280,
+    "case": "tokens-es-1280"
+  },
+  {
+    "step": "call",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Equipo…",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "es hora de despertar la Pirámide."
+    },
+    "width": 1280,
+    "case": "call-es-1280"
+  },
+  {
+    "step": "hold",
+    "language": "es",
+    "overflow": [],
+    "lines": 0,
+    "errors": [],
+    "images": [],
+    "text": "SIMULACRO INICIAL",
+    "automatic": false,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 0,
+      "failures": [],
+      "text": ""
+    },
+    "width": 1280,
+    "case": "hold-es-1280"
+  },
+  {
+    "step": "reveal",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "LA PIRÀMIDE\n\nDavant vostre hi ha la Piràmide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Davant vostre hi ha la Piràmide."
+    },
+    "width": 1280,
+    "case": "reveal-ca-1280"
+  },
+  {
+    "step": "terminals",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Ara roman en silenci.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "La seva energia està repartida entre deu terminals,\nesperant que algú aconsegueixi reunir-la."
+    },
+    "width": 1280,
+    "case": "terminals-ca-1280"
+  },
+  {
+    "step": "mission",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "DESPERTAR-LA\n\nAquesta és la vostra missió.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Aquesta és la vostra missió."
+    },
+    "width": 1280,
+    "case": "mission-ca-1280"
+  },
+  {
+    "step": "fragments",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Per aconseguir-ho, haureu\nde superar una sèrie de reptes.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "i cobrar sentit gràcies a una altra."
+    },
+    "width": 1280,
+    "case": "fragments-ca-1280"
+  },
+  {
+    "step": "perspectives",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "CADA MIRADA COMPTA\n\nAlgú recordarà un detall.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Una idea que semblava no dur enlloc trobarà\nel seu lloc en escoltar un company."
+    },
+    "width": 1280,
+    "case": "perspectives-ca-1280"
+  },
+  {
+    "step": "awakening",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Així comença a despertar la Piràmide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "I amb el que sou capaços de fer junts."
+    },
+    "width": 1280,
+    "case": "awakening-ca-1280"
+  },
+  {
+    "step": "skills",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "13 + 5\nENGINY\nMEMÒRIA\nOBSERVACIÓ\nPRECISIÓ\n\nAl llarg del recorregut necessitareu\nenginy, memòria, observació i precisió.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Hi haurà moments per aturar-se i pensar,\ni d’altres en què haureu d’actuar alhora."
+    },
+    "width": 1280,
+    "case": "skills-ca-1280"
+  },
+  {
+    "step": "teamwork",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Repartiu-vos les tasques.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 4,
+      "failures": [],
+      "text": "La solució següent pot venir\nde qui encara no ha parlat."
+    },
+    "width": 1280,
+    "case": "teamwork-ca-1280"
+  },
+  {
+    "step": "explore",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "La vostra cerca us durà d’un terminal a un altre.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "La pantalla compartida us mostrarà cada repte."
+    },
+    "width": 1280,
+    "case": "explore-ca-1280"
+  },
+  {
+    "step": "tools",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Els tokens, els botons, els llums\ni els símbols seran les vostres eines.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Els tokens, els botons, els llums\ni els símbols seran les vostres eines."
+    },
+    "width": 1280,
+    "case": "tools-ca-1280"
+  },
+  {
+    "step": "journey",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRE INICIAL\n3 REPTES\n\nPrimer aprendreu\na utilitzar-les al Simulacre Inicial.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Amb cada repte superat, una part\nde la Piràmide recuperarà la seva energia."
+    },
+    "width": 1280,
+    "case": "journey-ca-1280"
+  },
+  {
+    "step": "quiz",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRE INICIAL\n3 REPTES\n?\nQUIZ\n\nA mig recorregut arribarà QUIZ: un canvi de ritme\nper posar en comú el que sabeu i decidir junts.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "A mig recorregut arribarà QUIZ: un canvi de ritme\nper posar en comú el que sabeu i decidir junts."
+    },
+    "width": 1280,
+    "case": "quiz-ca-1280"
+  },
+  {
+    "step": "finale",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRE INICIAL\n3 REPTES\n?\nQUIZ\n3 REPTES\nCÀRREGA FINAL\n\nMés endavant us esperen nous desafiaments.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Fins a arribar a Càrrega Final, on tot\nl’equip haurà de donar l’últim impuls."
+    },
+    "width": 1280,
+    "case": "finale-ca-1280"
+  },
+  {
+    "step": "return",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "SOM AQUÍ\n◎\nSIMULACRE INICIAL\n3 REPTES\n?\nQUIZ\n3 REPTES\nCÀRREGA FINAL\n\nPerò aquest moment encara ha d’arribar.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Però aquest moment encara ha d’arribar."
+    },
+    "width": 1280,
+    "case": "return-ca-1280"
+  },
+  {
+    "step": "tokens",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "EL VOSTRE TOKEN\n\nAra rebreu els vostres tokens.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Conserveu el vostre durant tota la partida i seguiu\nel vostre Game Master a la primera pràctica."
+    },
+    "width": 1280,
+    "case": "tokens-ca-1280"
+  },
+  {
+    "step": "call",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Equip…",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "és hora de despertar la Piràmide."
+    },
+    "width": 1280,
+    "case": "call-ca-1280"
+  },
+  {
+    "step": "hold",
+    "language": "ca",
+    "overflow": [],
+    "lines": 0,
+    "errors": [],
+    "images": [],
+    "text": "SIMULACRE INICIAL",
+    "automatic": false,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 0,
+      "failures": [],
+      "text": ""
+    },
+    "width": 1280,
+    "case": "hold-ca-1280"
+  },
+  {
+    "step": "reveal",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "THE PYRAMID\n\nBefore you stands the Pyramid.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Before you stands the Pyramid."
+    },
+    "width": 1280,
+    "case": "reveal-eng-1280"
+  },
+  {
+    "step": "terminals",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "For now, it is silent.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Its energy is scattered across ten terminals,\nwaiting for someone to bring it together."
+    },
+    "width": 1280,
+    "case": "terminals-eng-1280"
+  },
+  {
+    "step": "mission",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "AWAKEN IT\n\nThat is your mission.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "That is your mission."
+    },
+    "width": 1280,
+    "case": "mission-eng-1280"
+  },
+  {
+    "step": "fragments",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "To succeed, you will need\nto overcome a series of challenges.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "while another makes sense of it."
+    },
+    "width": 1280,
+    "case": "fragments-eng-1280"
+  },
+  {
+    "step": "perspectives",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "EVERY PERSPECTIVE COUNTS\n\nSomeone will remember a detail.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "An idea that seemed to lead nowhere will find\nits place when you listen to a teammate."
+    },
+    "width": 1280,
+    "case": "perspectives-eng-1280"
+  },
+  {
+    "step": "awakening",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "This is how the Pyramid begins to awaken.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "And what you can achieve together."
+    },
+    "width": 1280,
+    "case": "awakening-eng-1280"
+  },
+  {
+    "step": "skills",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "13 + 5\nINGENUITY\nMEMORY\nOBSERVATION\nPRECISION\n\nAlong the way, you will need ingenuity,\nmemory, observation and precision.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "There will be moments to stop and think,\nand others when you must act at the same time."
+    },
+    "width": 1280,
+    "case": "skills-eng-1280"
+  },
+  {
+    "step": "teamwork",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Share the tasks.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 4,
+      "failures": [],
+      "text": "The next solution may come from\nsomeone who has not spoken yet."
+    },
+    "width": 1280,
+    "case": "teamwork-eng-1280"
+  },
+  {
+    "step": "explore",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Your search will take you\nfrom one terminal to another.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "The shared screen will show you each challenge."
+    },
+    "width": 1280,
+    "case": "explore-eng-1280"
+  },
+  {
+    "step": "tools",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Tokens, buttons, lights\nand symbols will be your tools.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Tokens, buttons, lights\nand symbols will be your tools."
+    },
+    "width": 1280,
+    "case": "tools-eng-1280"
+  },
+  {
+    "step": "journey",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nINITIAL SIMULATION\n3 CHALLENGES\n\nFirst, you will learn to use\nthem in Initial Simulation.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "With each completed challenge, part\nof the Pyramid will regain its energy."
+    },
+    "width": 1280,
+    "case": "journey-eng-1280"
+  },
+  {
+    "step": "quiz",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nINITIAL SIMULATION\n3 CHALLENGES\n?\nQUIZ\n\nHalfway through comes QUIZ: a change of pace\nto share what you know and decide together.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Halfway through comes QUIZ: a change of pace\nto share what you know and decide together."
+    },
+    "width": 1280,
+    "case": "quiz-eng-1280"
+  },
+  {
+    "step": "finale",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nINITIAL SIMULATION\n3 CHALLENGES\n?\nQUIZ\n3 CHALLENGES\nFINAL CHARGE\n\nMore challenges lie ahead.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Until you reach Final Charge, where\nthe whole team must give one final push."
+    },
+    "width": 1280,
+    "case": "finale-eng-1280"
+  },
+  {
+    "step": "return",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "WE ARE HERE\n◎\nINITIAL SIMULATION\n3 CHALLENGES\n?\nQUIZ\n3 CHALLENGES\nFINAL CHARGE\n\nBut that moment is still to come.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "But that moment is still to come."
+    },
+    "width": 1280,
+    "case": "return-eng-1280"
+  },
+  {
+    "step": "tokens",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "YOUR TOKEN\n\nYou will now receive your tokens.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Keep yours throughout the game and follow\nyour Game Master through the first practice."
+    },
+    "width": 1280,
+    "case": "tokens-eng-1280"
+  },
+  {
+    "step": "call",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Team…",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "it is time to awaken the Pyramid."
+    },
+    "width": 1280,
+    "case": "call-eng-1280"
+  },
+  {
+    "step": "hold",
+    "language": "eng",
+    "overflow": [],
+    "lines": 0,
+    "errors": [],
+    "images": [],
+    "text": "INITIAL SIMULATION",
+    "automatic": false,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 0,
+      "failures": [],
+      "text": ""
+    },
+    "width": 1280,
+    "case": "hold-eng-1280"
+  },
+  {
+    "step": "perspectives",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "CADA MIRADA CUENTA\n\nLa siguiente solución puede venir\nde quien todavía no ha hablado.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Una idea que parecía no llevar a ninguna parte\nencontrará su lugar al escuchar a un compañero."
+    },
+    "width": 1280,
+    "case": "subtitle-reserve"
+  },
+  {
+    "step": "finale",
+    "language": "eng",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nINITIAL SIMULATION\n1 CHALLENGE\n?\nQUIZ\n6 CHALLENGES\nFINAL CHARGE\n\nMore challenges lie ahead.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Until you reach Final Charge, where\nthe whole team must give one final push."
+    },
+    "width": 1280,
+    "case": "unequal-route"
+  },
+  {
+    "step": "finale",
+    "language": "ca",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRE INICIAL\n—\n0 REPTES\n?\nQUIZ\n—\n0 REPTES\nCÀRREGA FINAL\n\nMés endavant us esperen nous desafiaments.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Fins a arribar a Càrrega Final, on tot\nl’equip haurà de donar l’últim impuls."
+    },
+    "width": 1280,
+    "case": "empty-blocks"
+  },
+  {
+    "step": "finale",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRO INICIAL\n2 RETOS\nCARGA FINAL\n\nMás adelante os esperan nuevos desafíos.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Hasta llegar a Carga Final, donde todo\nel equipo tendrá que dar el último impulso."
+    },
+    "width": 1280,
+    "case": "no-quiz"
+  },
+  {
+    "step": "fragments",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Para lograrlo, tendréis\nque superar una serie de retos.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "y cobrar sentido gracias a otra."
+    },
+    "width": 1280,
+    "case": "reduced-3"
+  },
+  {
+    "step": "awakening",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Así empieza a despertar la Pirámide.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 3,
+      "failures": [],
+      "text": "Y con lo que sois capaces de hacer juntos."
+    },
+    "width": 1280,
+    "case": "reduced-5"
+  },
+  {
+    "step": "skills",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "13 + 5\nINGENIO\nMEMORIA\nOBSERVACIÓN\nPRECISIÓN\n\nA lo largo del recorrido necesitaréis\ningenio, memoria, observación y precisión.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Habrá momentos para detenerse y pensar, y otros\nen los que tendréis que actuar al mismo tiempo."
+    },
+    "width": 1280,
+    "case": "reduced-6"
+  },
+  {
+    "step": "teamwork",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Repartíos las tareas.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 4,
+      "failures": [],
+      "text": "La siguiente solución puede venir\nde quien todavía no ha hablado."
+    },
+    "width": 1280,
+    "case": "reduced-7"
+  },
+  {
+    "step": "tools",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "Los tokens, los botones, las luces\ny los símbolos serán vuestras herramientas.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 1,
+      "failures": [],
+      "text": "Los tokens, los botones, las luces\ny los símbolos serán vuestras herramientas."
+    },
+    "width": 1280,
+    "case": "reduced-9"
+  },
+  {
+    "step": "finale",
+    "language": "es",
+    "overflow": [],
+    "lines": 1,
+    "errors": [],
+    "images": [],
+    "text": "◎\nSIMULACRO INICIAL\n3 RETOS\n?\nQUIZ\n3 RETOS\nCARGA FINAL\n\nMás adelante os esperan nuevos desafíos.",
+    "automatic": true,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 2,
+      "failures": [],
+      "text": "Hasta llegar a Carga Final, donde todo\nel equipo tendrá que dar el último impulso."
+    },
+    "width": 1280,
+    "case": "reduced-12"
+  },
+  {
+    "step": "hold",
+    "language": "es",
+    "overflow": [],
+    "lines": 0,
+    "errors": [],
+    "images": [],
+    "text": "SIMULACRO INICIAL",
+    "automatic": false,
+    "subtitleTop": 880,
+    "starts": [],
+    "captions": {
+      "count": 0,
+      "failures": [],
+      "text": ""
+    },
+    "width": 1280,
+    "case": "reduced-16"
+  }
+]

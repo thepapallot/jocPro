@@ -11,6 +11,9 @@
   {% include '_presentation_screen.html' %}
 {% else %}
   <iframe id="game-shell-frame" title="La Piràmide · pantalla dels jugadors"></iframe>
+  <script>window.PYRAMID_SESSION_LANGUAGE = {{ presentation_page.language|tojson }};</script>
+  <script src="{{ url_for('static', filename='js/game-language.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bgm_layer.js') }}"></script>
   <script src="{{ url_for('static', filename='js/game-shell.js') }}"></script>
 {% endif %}
 </body>

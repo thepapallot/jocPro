@@ -562,6 +562,7 @@
   let selectedSessionId = null;
   let activeSession = null;
   let _loadedDbSessionId = null;
+  let sessionActionBusy = false, publishedSessionLanguage = null;
   const puzzleRuntime = {
     statuses: {},
     gameStatus: "Preparado",
@@ -665,7 +666,7 @@
 	  }
 
   function languageLabel(value) {
-    return ({ es: "Castellano", ca: "Català", eng: "English", en: "English" })[value] || value || "--";
+    return value ? window.PyramidLanguage.label(value) : "--";
   }
 
   function getSessionField(name) {
@@ -691,6 +692,7 @@
       const input = getSessionField(field);
       data[field] = input ? String(input.value || "").trim() : "";
     });
+    data.gameLanguage = window.PyramidLanguage.normalize(data.gameLanguage);
     data.id = selectedSessionId || `session_${Date.now()}`;
     data.updatedAt = new Date().toISOString();
     return data;
@@ -700,7 +702,7 @@
     selectedSessionId = session.id || selectedSessionId;
     Object.entries(session).forEach(([key, value]) => {
       const field = getSessionField(key);
-      if (field) field.value = value ?? "";
+      if (field) field.value = key === "gameLanguage" ? window.PyramidLanguage.normalize(value) : value ?? "";
     });
   }
 
@@ -743,15 +745,17 @@
       const isActive = s.session_id === _loadedDbSessionId;
       return `<button type="button" class="gm-session-item${isActive ? " is-selected" : ""}" data-db-session-id="${escapeHtml(String(s.session_id))}">
         <strong>${escapeHtml(s.name || "Sesión sin nombre")}</strong>
-        <span>${escapeHtml([s.expected_day, s.expected_time].filter(Boolean).join(" · ") || "Sin fecha")}</span>
+        <span>${escapeHtml([s.expected_day, s.expected_time, languageLabel(s.language)].filter(Boolean).join(" · ") || "Sin fecha")}</span>
       </button>`;
     }).join("");
     els.sessionList.querySelectorAll("[data-db-session-id]").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (sessionActionBusy) return;
         const dbId = parseInt(btn.dataset.dbSessionId, 10);
         const session = sessions.find((s) => s.session_id === dbId);
         if (!session) return;
         _loadedDbSessionId = dbId;
+        selectedSessionId = `db_${dbId}`;
         // Map DB field names → form field names
         getSessionField("sessionName") && (getSessionField("sessionName").value = session.name || "");
         getSessionField("company") && (getSessionField("company").value = session.company || "");
@@ -759,7 +763,7 @@
         getSessionField("time") && (getSessionField("time").value = session.expected_time || "");
         getSessionField("place") && (getSessionField("place").value = session.place || "");
         getSessionField("players") && (getSessionField("players").value = session.players_num ?? "");
-        getSessionField("gameLanguage") && (getSessionField("gameLanguage").value = session.language || "es");
+        getSessionField("gameLanguage") && (getSessionField("gameLanguage").value = window.PyramidLanguage.normalize(session.language));
         getSessionField("additionalNotes") && (getSessionField("additionalNotes").value = session.notes || "");
         // Refresh list to update is-selected highlight
         renderDbSessionList(sessions);
@@ -790,7 +794,7 @@
       expected_time: session.time || null,
       place: session.place || null,
       players_num: session.players ? parseInt(session.players, 10) || null : null,
-      language: session.gameLanguage || null,
+      language: window.PyramidLanguage.normalize(session.gameLanguage),
       notes: session.additionalNotes || null,
     };
     if (!forceInsert && _loadedDbSessionId !== null) {
@@ -815,7 +819,7 @@
     await refreshDbSessionList();
   }
 
-  function saveSession(options = {}) {
+  async function saveSession(options = {}) {
     const session = collectSessionForm();
     const sessions = readSessions();
     const index = sessions.findIndex((item) => item.id === session.id);
@@ -823,12 +827,17 @@
     else sessions.unshift(session);
     selectedSessionId = session.id;
     writeSessions(sessions);
-    saveSessionToDb(session, options).catch((err) => {
-      console.warn("[telemetry] saveSessionToDb failed:", err);
-      setStatus("Sesión guardada (sin BD)");
-    });
-    addSimpleEvent("Sesión guardada");
-    setStatus("Sesión guardada");
+    try {
+      await saveSessionToDb(session, options);
+      if (activeSession?.dbSessionId === _loadedDbSessionId) await syncConfirmedSession();
+    } catch (error) {
+      setStatus("Sesión guardada solo en este navegador. No se ha podido guardar en el servidor.");
+      throw error;
+    }
+    if (!options.silent) {
+      addSimpleEvent("Sesión guardada");
+      setStatus("Sesión guardada");
+    }
     return session;
   }
 
@@ -843,7 +852,7 @@
     setStatus("Sesión cargada");
   }
 
-  function duplicateSession() {
+  async function duplicateSession() {
     const source = collectSessionForm();
     if (!source.sessionName && !source.company && !source.date) {
       setStatus("Selecciona o completa una sesión para duplicar");
@@ -857,7 +866,7 @@
     };
     selectedSessionId = duplicate.id;
     fillSessionForm(duplicate);
-    saveSession({ forceInsert: true });
+    await saveSession({ forceInsert: true });
   }
 
   async function deleteSelectedSession() {
@@ -884,12 +893,9 @@
   async function confirmSession(options = {}) {
     const silent = Boolean(options.silent);
 
-    if (_loadedDbSessionId === null) {
-      if (!silent) {
-        setStatus("Selecciona una sessio per confirmar-la");
-      }
-      return;
-    }
+    // Confirm exactly the language and details currently visible in the form.
+    // Await persistence before confirmation, including for a brand-new session.
+    await saveSession({ silent: true });
 
     const response = await fetch("/test/session/confirm", {
       method: "POST",
@@ -912,7 +918,7 @@
       time: session.expected_time || "",
       place: session.place || "",
       players: session.players_num != null ? String(session.players_num) : "",
-      gameLanguage: session.language || "es",
+      gameLanguage: window.PyramidLanguage.normalize(session.language),
       additionalNotes: session.notes || "",
       confirmedAt: new Date().toISOString(),
       status: "confirmed",
@@ -954,6 +960,11 @@
   function renderActiveSession() {
     const s = activeSession;
     const sessionStarted = Boolean(puzzleRuntime.startedAt);
+    const languageSignature = JSON.stringify([s?.dbSessionId, s?.gameLanguage]);
+    if (languageSignature !== publishedSessionLanguage) {
+      publishedSessionLanguage = languageSignature;
+      window.dispatchEvent(new CustomEvent('pyramid-session-change', {detail: s ? structuredClone(s) : null}));
+    }
     const line = s
       ? `${s.sessionName || "Sesión"} · ${s.company || "Sin empresa"} · ${s.players || "--"} jugadores · ${languageLabel(s.gameLanguage)}`
       : "Sin sesión confirmada";
@@ -1028,7 +1039,6 @@
       if (activeSession !== null) {
         activeSession = null;
         window.localStorage.removeItem(activeSessionKey);
-        _loadedDbSessionId = null;
         resetGameState();
         renderActiveSession();
       }
@@ -1048,7 +1058,7 @@
       time: session.expected_time || "",
       place: session.place || "",
       players: session.players_num != null ? String(session.players_num) : "",
-      gameLanguage: session.language || "es",
+      gameLanguage: window.PyramidLanguage.normalize(session.language),
       additionalNotes: session.notes || "",
       startedAt: session.started_at || null,
       status: "confirmed",
@@ -4387,7 +4397,7 @@
       return;
     }
 
-    const assets = ['css/presentation.css','css/game-theme.css','js/puzzle-names.js','js/presentation-flow.js','js/presentation-pilot.js','js/presentation-visuals.js','js/game-shell.js','js/game-theme.js','js/pyramid-logo.js','fonts/PiramideDisplay-Black.ttf','images/shared/gameplay/token_card.png','images/shared/gameplay/terminal_box.png'];
+    const assets = ['css/presentation.css','css/presentation-opening.css','js/presentation-opening.js','js/presentation-recordings.js','js/presentation-story.js','audios/intro/intro-ca.mp3','css/game-theme.css','js/puzzle-names.js','js/presentation-flow.js','js/presentation-pilot.js','js/presentation-visuals.js','js/game-shell.js','js/bgm_layer.js','js/game-theme.js','js/pyramid-logo.js','fonts/PiramideDisplay-Black.ttf','images/shared/gameplay/token_card.png','images/shared/gameplay/terminal_box.png'];
     const checks=await Promise.all(assets.map(async path=>({path,ok:await resourceExists('/static/'+path)})));
     const missing=checks.filter(item=>!item.ok);
     els.sceneHealth.innerHTML=`<div class="state-empty">${missing.length ? 'Faltan recursos: '+missing.map(item=>escapeHtml(item.path)).join(', ') : 'Presentaciones y diseño común: todos los recursos disponibles.'}</div>`;
@@ -4862,7 +4872,7 @@
         appendLog({ error: "copy_reference_failed", detail: String(error) });
       }
     });
-    if (els.saveSessionBtn) els.saveSessionBtn.addEventListener("click", saveSession);
+    if (els.saveSessionBtn) els.saveSessionBtn.addEventListener("click", () => runSessionAction(() => saveSession()));
     if (els.deleteSessionBtn) {
       els.deleteSessionBtn.addEventListener("click", () => {
         deleteSelectedSession().catch((err) => {
@@ -4876,17 +4886,11 @@
       refreshDbSessionList();
       setStatus("Nueva sesión preparada");
     });
-    if (els.duplicateSessionBtn) els.duplicateSessionBtn.addEventListener("click", duplicateSession);
+    if (els.duplicateSessionBtn) els.duplicateSessionBtn.addEventListener("click", () => runSessionAction(duplicateSession));
     if (els.confirmSessionBtn) {
-      els.confirmSessionBtn.addEventListener("click", async () => {
-        try {
-          await confirmSession();
-        } catch (error) {
-          console.warn("[telemetry] confirmSession failed:", error);
-          setStatus("No se pudo confirmar la sesión");
-        }
-      });
+      els.confirmSessionBtn.addEventListener("click", () => runSessionAction(confirmSession));
     }
+
     if (els.updateSessionBtn) {
       els.updateSessionBtn.addEventListener("click", async () => {
         try {
@@ -4919,8 +4923,20 @@
     if (els.finishGameBtn) els.finishGameBtn.addEventListener("click", finishGame);
   }
 
+  async function runSessionAction(action) {
+    if (sessionActionBusy) return;
+    sessionActionBusy = true;
+    const controls = [...document.querySelectorAll('#gm-session-form input, #gm-session-form select, #gm-session-form textarea, #gm-session-form button'), els.duplicateSessionBtn, els.newSessionBtn].filter(Boolean);
+    const disabled = controls.map(control => control.disabled);
+    controls.forEach(control => { control.disabled = true; });
+    try { await action(); }
+    catch (error) { console.warn('[session]', error); setStatus('No se ha podido guardar o confirmar la sesión. Revisa la conexión y vuelve a intentarlo.'); }
+    finally { sessionActionBusy = false; controls.forEach((control,i) => { control.disabled = disabled[i]; }); }
+  }
+
   // Shared operations for the unified director; the original panels use the same logic.
   window.PyramidTest={
+    session:()=>activeSession ? structuredClone(activeSession) : null,
     snapshot:()=>({state:currentGameState?structuredClone(currentGameState):null,selected:getSelectedPuzzleIdForBackend(),busy:controlActionBusy,progress:getProgressInfo(currentGameState),instruction:currentGameState?.puzzle_id===11?puzzle11Steps[currentGameState.current_step]:'',name:currentGameState?.puzzle_id?getPuzzleDisplayName(String(currentGameState.puzzle_id)):'Sin puzzle activo'}),
     select(id){if(String(els.puzzleSelect.value)!==String(id))selectPuzzle(id);},
     refresh:refreshCurrentState,

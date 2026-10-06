@@ -19,21 +19,117 @@
   const $ = id => document.getElementById(id);
   const stage = $('p-stage'), viewport = $('p-viewport');
   const params = new URLSearchParams(location.search);
-  const normalizeLanguage = value => value === 'en' ? 'eng' : Object.hasOwn(config.copy, value) ? value : 'ca';
+  const normalizeLanguage = value => window.PyramidLanguage?.normalize(value,'ca') || (value === 'en' ? 'eng' : Object.hasOwn(config.copy, value) ? value : 'ca');
   let language = normalizeLanguage(page?.language||params.get('lang'));
   let mode = page ? 'live' : params.get('mode') === 'live' && location.protocol !== 'file:' ? 'live' : 'preview';
   let step = page?.initialStep||0, revealed = false, phase = 'slides', countdownStart = 0, countdownTimer = null, lastCount = null;
-  let openingTimer=null,autoPaused=false,autoDeadline=0,autoRemaining=null,leaving=false;
+  let subtitleTimer=null,openingTimer=null,autoPaused=false,autoDeadline=0,autoRemaining=null,leaving=false;
+  let narration=null,recording=null,narrationBlocked=false,narrationIssue='',playRequest=0;
+  const endingMs=2600;let ending=false;
   const text = () => config.copy[language];
-  function stopOpening(){if(openingTimer!==null)clearTimeout(openingTimer);openingTimer=null;}
+  const timing=()=>recording?.beats[config.steps[step]];
+  function pauseNarration(){playRequest++;narration?.pause();stage.dataset.narrationWaiting='false';}
+  function prepareNarration(preserve){
+    const profile=config.kind==='opening'?window.PyramidOpeningStory.recording(language):null;
+    narrationBlocked=false;narrationIssue='';stage.querySelector('.o-audio-retry')?.remove();
+    if(profile!==recording){
+      pauseNarration();recording=profile;
+      if(profile){
+        narration=new Audio(profile.src);narration.preload='auto';
+        const audio=narration;
+        audio.addEventListener('waiting',()=>{if(audio===narration&&recording&&!autoPaused)stage.dataset.narrationWaiting='true';});
+        audio.addEventListener('playing',()=>{if(audio===narration)stage.dataset.narrationWaiting='false';});
+        audio.addEventListener('ended',()=>{if(audio===narration)tickNarration();});
+        audio.addEventListener('error',()=>{if(audio===narration&&recording)audioFailure(false);});
+      }else narration=null;
+    }
+    if(!recording){stage.dataset.narrationWaiting='false';return;}
+    if(config.steps[step]==='hold'){pauseNarration();return;}
+    if(!preserve)narration.currentTime=timing().startMs/1000;
+    stage.dataset.narrationWaiting=String(!autoPaused&&narration.paused);
+  }
+  function audioFailure(blocked){
+    if(leaving||!recording||config.steps[step]==='hold')return;
+    autoPaused=true;narrationBlocked=true;pauseNarration();stopOpening();
+    stage.dataset.autoPaused='true';window.PyramidOpening?.sound(config,step,true,false,language);
+    narrationIssue=blocked?'El navegador requiere un clic en la pantalla de jugadores para activar la locución.':'No se ha podido reproducir la locución. Comprueba el audio y pulsa Reintentar.';
+    let button=stage.querySelector('.o-audio-retry');
+    if(!button){button=document.createElement('button');button.className='o-audio-retry';stage.append(button);}
+    button.textContent=blocked?'Activar so':'Reintentar àudio';updateControls();
+  }
+  function playNarration(){
+    if(!recording||autoPaused||config.steps[step]==='hold')return;
+    const request=++playRequest;
+    narration.play().catch(error=>{if(request===playRequest)audioFailure(error.name==='NotAllowedError');});
+  }
+  function tickNarration(){
+    if(!recording||autoPaused||leaving||config.steps[step]==='hold')return;
+    const current=timing(),clock=narration.currentTime*1000;
+    if(config.steps[step]==='call'&&narration.ended){finishCall();return;}
+    if(config.steps[step]!=='call'&&(clock>=current.endMs-10||narration.ended)){
+      const following=recording.beats[config.steps[step+1]];
+      // A customised route without QUIZ also skips its spoken passage.
+      if(following&&following.startMs>current.endMs)narration.currentTime=following.startMs/1000;
+      choose(step+1,true);return;
+    }
+    updateOpeningSubtitle();
+  }
+  function finishCall(){
+    if(ending)return;
+    ending=true;autoRemaining=endingMs;scheduleOpening();updateControls();
+  }
+  function stopOpening(){
+    if(openingTimer!==null)clearTimeout(openingTimer);openingTimer=null;
+    if(subtitleTimer!==null)clearInterval(subtitleTimer);subtitleTimer=null;
+  }
+  function updateOpeningSubtitle(){
+    if(ending){
+      const remaining=autoPaused?(autoRemaining??endingMs):Math.max(0,autoDeadline-performance.now());
+      window.PyramidOpening?.setSubtitle('');
+      window.PyramidOpening?.fade(1-remaining/endingMs);
+      return;
+    }
+    if(recording){
+      const elapsed=Math.max(0,narration.currentTime*1000-timing().startMs);
+      window.PyramidOpening?.updateSubtitle(config,step,language,elapsed);
+      // Keep visual motion on the same media clock, including buffering and seeks.
+      for(const animation of stage.querySelector('.p-screen:not(.j-leaving) .o-cinema')?.getAnimations({subtree:true})||[])animation.currentTime=elapsed;
+      return;
+    }
+    const duration=config.autoAdvanceMs?.[step]||0;
+    const remaining=autoPaused?(autoRemaining??duration):Math.max(0,autoDeadline-performance.now());
+    window.PyramidOpening?.updateSubtitle(config,step,language,Math.max(0,duration-remaining));
+  }
   function scheduleOpening(){
     stopOpening();
+    if(ending){
+      const duration=autoRemaining??endingMs;
+      if(!autoPaused){
+        autoDeadline=performance.now()+duration;
+        subtitleTimer=setInterval(updateOpeningSubtitle,40);
+        openingTimer=setTimeout(()=>{autoRemaining=null;next();},duration);
+      }
+      updateOpeningSubtitle();return;
+    }
+    if(recording){
+      if(phase==='slides'&&!autoPaused&&config.steps[step]!=='hold'){subtitleTimer=setInterval(tickNarration,50);playNarration();}
+      updateOpeningSubtitle();return;
+    }
     const duration=autoRemaining??config.autoAdvanceMs?.[step];
-    if(phase==='slides'&&!autoPaused&&duration>0){autoDeadline=performance.now()+duration;openingTimer=setTimeout(()=>{openingTimer=null;autoRemaining=null;next();},duration);}
+    if(phase==='slides'&&!autoPaused&&duration>0){
+      autoDeadline=performance.now()+duration;
+      if(config.kind==='opening')subtitleTimer=setInterval(updateOpeningSubtitle,80);
+      openingTimer=setTimeout(()=>{openingTimer=null;autoRemaining=null;if(config.kind==='opening'&&config.steps[step]==='call')finishCall();else next();},duration);
+    }
+    updateOpeningSubtitle();
   }
   function toggleAutoplay(){
     if(phase!=='slides'||!config.autoAdvanceMs?.[step])return;
-    if(autoPaused){autoPaused=false;scheduleOpening();}else{autoRemaining=Math.max(1,autoDeadline-performance.now());autoPaused=true;stopOpening();}
+    if(autoPaused){autoPaused=false;narrationBlocked=false;narrationIssue='';stage.querySelector('.o-audio-retry')?.remove();scheduleOpening();}else{autoRemaining=Math.max(1,autoDeadline-performance.now());autoPaused=true;pauseNarration();stopOpening();}
+    stage.dataset.autoPaused=String(autoPaused);
+    updateOpeningSubtitle();
+    window.PyramidOpening?.sound(config,step,autoPaused,false,language);
+    updateOpeningSubtitle();
     updateControls();
   }
   const logo = (className = '') => PyramidLogo.markup({className, progress:flow && config.kind !== 'welcome' ? 100*(config.completed||0)/(config.total||1) : 0, cyan:'#39d6e5', pink:'#dc68a7', bloom:.28});
@@ -62,23 +158,27 @@
     const host=page&&window.parent!==window?window.parent:window.opener;
     if (host && !host.closed) host.postMessage({
       type: 'pyramid-presentation-state', realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
-      incremental:!!config.incremental,nextLabel:config.incremental?({objective:'Mostrar objetivo →',tools:'Mostrar terminales y tokens →',interaction:'Mostrar interacción →'}[config.steps[step+1]]||null):null,
+      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el simulacre →',es:'Tokens repartidos · explicar el simulacro →',eng:'Tokens handed out · explain the simulation →'}[language]:config.incremental?({objective:'Mostrar objetivo →',tools:'Mostrar terminales y tokens →',interaction:'Mostrar interacción →'}[config.steps[step+1]]||null):null,
       name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
       labels: text().stepLabels, kind: config.kind || 'puzzle',
       sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
       canNext: flow ? (phase==='game' ? mode==='preview' : phase==='slides' && (step<config.steps.length-1 || (config.kind!=='puzzle' && (page ? !!page.nextUrl : sceneIndex<flow.length-1)))) : phase==='slides' && step<config.steps.length-1,
-      note: phase === 'game' ? (mode === 'live' ? 'Partida real abierta. Al completar la prueba se muestra la transición; el GM avanza a la siguiente presentación.' : 'Ensayo del recorrido: esta vista no reproduce la lógica del juego. Pulsa Siguiente para simular la prueba superada.') : config.kind==='welcome' ? 'Pantalla de espera. Cuando todo el grupo esté en su sitio, pulsa Comenzar presentación inicial.' : text().notes[step]
+      note: phase === 'game' ? (mode === 'live' ? 'Partida real abierta. Al completar la prueba se muestra la transición; el GM avanza a la siguiente presentación.' : 'Ensayo del recorrido: esta vista no reproduce la lógica del juego. Pulsa Siguiente para simular la prueba superada.') : config.kind==='welcome' ? 'Pantalla de espera. Cuando todo el grupo esté en su sitio, pulsa Comenzar presentación inicial.' : narrationIssue||(ending?'Cierre musical. La Pirámide permanece 2,6 segundos antes del reparto de tokens.':text().notes[step])
     }, location.origin);
   }
-  function render() {
+  function render(preserveNarration=false) {
     restoreProgress();
     document.title=text().name;
     stage.hidden = false;
     stage.dataset.flow = String(!!flow);
     stage.dataset.kind = config.kind || 'puzzle';
+    stage.dataset.autoPaused=String(autoPaused);
+    prepareNarration(preserveNarration);
+    window.PyramidOpening?.sound(config,step,autoPaused,!preserveNarration,language);
     stage.dataset.step = config.steps[step];
     stage.dataset.language = language;
     viewport.querySelector('.p-game-frame')?.remove();
+    window.PyramidLanguage?.set(language);
     document.documentElement.lang = language === 'eng' ? 'en' : language;
     stage.dataset.scene=config.id;
     stage.dataset.puzzle=config.puzzleId||'';
@@ -98,7 +198,7 @@
     section.innerHTML=`${immersive?'':header((config.act?config.act.name[language]+' · ':'')+text().name)}${body()}${immersive?'':footer(text().footers[step])}`;
     const old=stage.querySelector('.p-screen:not(.j-leaving)');
     stage.querySelectorAll('.j-leaving').forEach(node=>node.remove());
-    if(old){old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
+    if(old){const subtitle=old.querySelector('.o-subtitle');if(subtitle)subtitle.textContent='';old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
     stage.append(section);
     if(config.incremental&&section.querySelector('.j-blueprint'))PyramidBriefing.reveal(section.querySelector('.j-blueprint'),revealStep);
     if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
@@ -119,19 +219,19 @@
     countdownTimer = null;
     lastCount = null;
   }
-  function choose(index) {
+  function choose(index,preserveNarration=false) {
     if (flow && phase==='game' && mode==='live') return;
     if(leaving)return;
-    stopCountdown();stopOpening();autoPaused=false;autoRemaining=null;
+    stopCountdown();stopOpening();ending=false;autoPaused=false;autoRemaining=null;
     phase = 'slides';
     step = Math.max(0,Math.min(config.steps.length-1,index));
-    render();
+    render(preserveNarration);
   }
   function navigatePage(path) {
     if(!path||leaving)return;
     const url=new URL(path,location.origin);url.searchParams.set('lang',language);
     if(url.origin!==location.origin)return;
-    leaving=true;stopOpening();stopCountdown();
+    leaving=true;pauseNarration();stopOpening();stopCountdown();window.PyramidOpening?.stop();
     const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:300;
     stage.animate([{opacity:1},{opacity:0}],{duration,fill:'forwards'});
     setTimeout(()=>location.assign(url.href),duration);
@@ -233,18 +333,18 @@
     if (action === 'reveal') reveal();
     if (action === 'start') start();
     if (action === 'restart') { if(page){revealed=false;choose(0);}else if(flow){loadScene(0);}else {revealed=false; choose(0);} }
-    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); render(); }
+    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); if(config.kind==='opening')choose(step);else render(); }
     if (action === 'mode' && !page && phase === 'slides') { mode=value==='live' && location.protocol !== 'file:' ? 'live' : 'preview'; render(); }
   });
   // Fullscreen needs a gesture in the player window. A click only expands it;
   // slide navigation and game start remain on the GM panel.
-  viewport.addEventListener('click', () => { if(page&&window.parent!==window)window.parent.postMessage({type:'pyramid-fullscreen'},location.origin);else if (!document.fullscreenElement) fullscreen(); });
+  viewport.addEventListener('click', () => { if(narrationBlocked&&autoPaused)toggleAutoplay(); window.PyramidOpening?.sound(config,step,autoPaused,false,language); if(page&&window.parent!==window)window.parent.postMessage({type:'pyramid-fullscreen'},location.origin);else if (!document.fullscreenElement) fullscreen(); });
   document.addEventListener('keydown', e => {
     if (e.key.toLowerCase() === 'f') { e.preventDefault(); if(page&&window.parent!==window)window.parent.postMessage({type:'pyramid-fullscreen'},location.origin);else fullscreen(); }
   });
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&phase==='countdown')choose(config.steps.length-1);size();});
   addEventListener('resize',size);
-  addEventListener('pagehide',()=>{stopCountdown();stopOpening();});
+  addEventListener('pagehide',()=>{pauseNarration();stopCountdown();stopOpening();window.PyramidOpening?.stop();});
   render();
   document.fonts.ready.then(size);
 })();

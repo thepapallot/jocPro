@@ -85,11 +85,11 @@
 {% endblock %}
 
 {% block after_body %}
-<div id="p4-phase-popup" class="p4-phase-popup hidden" role="status" aria-live="polite" aria-atomic="true">
-    <div id="p4-phase-popup-line1" class="p4-phase-popup-line">Primera fase</div>
-    <div id="p4-phase-popup-line2" class="p4-phase-popup-line">superada</div>
+<div id="p4-phase-popup" class="p4-phase-popup hidden" aria-live="polite">
+    <div id="p4-phase-popup-line1" class="p4-phase-popup-line" data-i18n="game.firstPhase">Primera fase</div>
+    <div id="p4-phase-popup-line2" class="p4-phase-popup-line" data-i18n="game.phaseCleared">superada</div>
 </div>
 <div id="p4-solved-banner" class="p4-solved-banner hidden">
-    <div class="p4-solved-text">NIVEL COMPLETADO</div>
+    <div class="p4-solved-text" data-i18n="game.levelCompleted">NIVEL COMPLETADO</div>
 </div>
 {% endblock %}

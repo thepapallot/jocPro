@@ -18,7 +18,7 @@
             <span id="p1-progress" role="status" aria-live="polite" aria-atomic="true">0/16 COMPLETADOS</span>
         </div>
 
-        <div class="p1-timer-caption">TIEMPO RESTANTE</div>
+        <div class="p1-timer-caption" data-i18n="game.timeRemaining">TIEMPO RESTANTE</div>
         <div id="timer" role="timer" aria-live="off">00:45</div>
 
         <div id="objective-formula">
@@ -63,10 +63,10 @@
 
 {% block after_body %}
 <div id="p1-phase-popup" class="p1-phase-popup hidden" aria-live="polite">
-    <div id="p1-phase-popup-line1" class="p1-phase-popup-line">Primera fase</div>
-    <div id="p1-phase-popup-line2" class="p1-phase-popup-line">superada</div>
+    <div id="p1-phase-popup-line1" class="p1-phase-popup-line" data-i18n="game.firstPhase">Primera fase</div>
+    <div id="p1-phase-popup-line2" class="p1-phase-popup-line" data-i18n="game.phaseCleared">superada</div>
 </div>
 <div id="p1-solved-banner" class="p1-solved-banner hidden">
-    <div class="p1-solved-text">NIVEL COMPLETADO</div>
+    <div class="p1-solved-text" data-i18n="game.levelCompleted">NIVEL COMPLETADO</div>
 </div>
 {% endblock %}
