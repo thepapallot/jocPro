@@ -59,3 +59,7 @@
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/puzzle7.js') }}"></script>
 {% endblock %}
+
+{% block after_body %}
+{% with success_puzzle_id=7 %}{% include '_level_success.html' %}{% endwith %}
+{% endblock %}

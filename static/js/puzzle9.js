@@ -390,9 +390,11 @@
 
         if (d.puzzle_solved && !solved) {
             solved = true;
-            playSound(PUZZLE_COMPLETE_SOUND_URL, () => {
+            playSound(PUZZLE_COMPLETE_SOUND_URL);
+            document.getElementById('p9-solved-banner')?.classList.remove('hidden');
+            setTimeout(() => {
                 window.location.href = '/puzzleSuperat/9';
-            });
+            }, 4000);
         }
     }
 

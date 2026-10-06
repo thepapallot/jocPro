@@ -1,0 +1,5 @@
+{% set success_language = (request.args.get('lang') or game_language|default('es', true))|lower %}
+{% set success_title = {'es': 'NIVEL SUPERADO', 'ca': 'NIVELL SUPERAT', 'en': 'LEVEL COMPLETED', 'eng': 'LEVEL COMPLETED'}.get(success_language, 'NIVEL SUPERADO') %}
+<div id="p{{ success_puzzle_id }}-solved-banner" class="p{{ success_puzzle_id }}-solved-banner level-success hidden" role="status" aria-live="polite" aria-atomic="true">
+    <div class="p{{ success_puzzle_id }}-solved-text level-success-title{% if success_puzzle_id == 11 %} p11-solved-main{% endif %}">{{ success_title }}</div>
+</div>

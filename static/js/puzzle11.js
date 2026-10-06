@@ -159,7 +159,7 @@
                     .catch(function () {
                         window.location.href = '/videoPuzzles/' + nextId;
                     });
-            }, window.PyramidGameFlow?.managed ? 1300 : 5200);
+            }, 4000);
         }
     }
 

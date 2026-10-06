@@ -56,7 +56,8 @@
             solved = true;
             // Play puzzle completion sound
             playSound(PUZZLE_COMPLETE_SOUND_URL);
-            setTimeout(() => (window.location.href = '/puzzleSuperat/7'), 1500);
+            document.getElementById('p7-solved-banner')?.classList.remove('hidden');
+            setTimeout(() => (window.location.href = '/puzzleSuperat/7'), 4000);
         }
     }
 

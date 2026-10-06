@@ -342,6 +342,30 @@
     box-shadow: 0 0 20px rgba(255, 79, 109, 0.24), inset 0 0 22px rgba(255, 79, 109, 0.13);
 }
 
+/* Result classes arrive with input_result, at the same time as its sound.
+   Override the shared neutral surfaces without recolouring the symbols. */
+.pyramid-game.game-surface[data-puzzle="8"] .p8-frame.p8-correct {
+    background: #17443C;
+    border-color: #2DFF9B;
+    box-shadow: none;
+}
+
+.pyramid-game.game-surface[data-puzzle="8"] .p8-frame.p8-wrong {
+    background: #481E2A;
+    border-color: #F15C68;
+    box-shadow: none;
+}
+
+.pyramid-game.game-surface[data-puzzle="8"] .p8-frame.p8-correct .p8-answer {
+    background: #20584A;
+    border-color: #2DFF9B;
+}
+
+.pyramid-game.game-surface[data-puzzle="8"] .p8-frame.p8-wrong .p8-answer {
+    background: #602B36;
+    border-color: #F15C68;
+}
+
 /* One full-screen confirmation, without an extra popup or flashing. */
 .pyramid-game #p8-solved-banner {
     position: fixed;

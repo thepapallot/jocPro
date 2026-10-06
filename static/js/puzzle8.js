@@ -173,7 +173,7 @@
                             ? response.url : '/videoPuzzles/' + nextId;
                     })
                     .catch(() => { window.location.href = '/videoPuzzles/' + nextId; });
-            }, window.PyramidGameFlow?.managed ? 1300 : 5200);
+            }, 4000);
             return;
         }
 
@@ -242,12 +242,14 @@
                 frame.classList.add(ok ? 'p8-correct' : 'p8-wrong');
             });
             if (data.input_result.success) {
-                showCompletion();
                 if (Number(data.round_total) > 0 && Number(data.round) >= Number(data.round_total)) {
-                    // Celebrate as soon as the server validates the final answers,
-                    // not again after its five-second inter-phase pause.
+                    // Keep the immediate success sound, but start the four-second
+                    // final screen only once puzzle_solved confirms completion.
+                    stopCountdown();
+                    setPhase('completed');
                     playCompletionSound();
                 } else {
+                    showCompletion();
                     playSound(PHASE_OK_SOUND_URL);
                 }
             } else {

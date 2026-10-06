@@ -290,7 +290,7 @@
                     .catch(function () {
                         window.location.href = '/videoPuzzles/' + nextId;
                     });
-            }, 5200);
+            }, 4000);
         }
     }
 
