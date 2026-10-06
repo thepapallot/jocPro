@@ -9,30 +9,36 @@
     return `<div class="o-terminal-world"><svg class="o-energy-paths" viewBox="0 0 1920 850" aria-hidden="true">${Array.from({length:10},(_,i)=>{const a=(i*36-90)*Math.PI/180,x=960+Math.cos(a)*600,y=415+Math.sin(a)*300;return `<path style="--i:${i}" d="M${x} ${y} Q960 ${y} 960 430"/>`;}).join('')}</svg>${Array.from({length:10},(_,i)=>{const a=(i*36-90)*Math.PI/180;return `<div class="o-terminal-mini" style="--i:${i};left:${960+Math.cos(a)*600}px;top:${415+Math.sin(a)*300}px"><img src="${c.assets.terminal}" alt="Terminal ${i+1}"><i></i></div>`;}).join('')}<div class="o-world-centre">${screen==='explore'?`<div class="o-shared-screen">${pyramid()}</div>`:pyramid()}</div>${screen==='explore'?'<div class="o-search-dot" aria-hidden="true"></div>':''}</div>`;
   }
   function litPyramid(){
-    return `<div class="o-monument o-light-story"><div class="o-light-base">${pyramid()}</div><div class="o-light-pass o-light-left" aria-hidden="true">${pyramid()}</div><div class="o-light-pass o-light-right" aria-hidden="true">${pyramid()}</div></div>`;
+    return `<div class="o-monument o-light-story">${pyramid()}</div>`;
   }
-  // Use the subtitle edit points, so each light starts with its spoken phrase.
+  // Five cumulative stages, timed to the voice; seeking derives the same state.
   function lightingAt(beat,language,elapsed,reduced=false){
-    if(!beat||!['fragments','perspectives','teamwork'].includes(beat.id))return null;
+    if(!beat||!['fragments','perspectives','awakening','teamwork','call'].includes(beat.id))return null;
     const cues=beat.subtitles[language==='en'?'eng':language];
     const smooth=(start,duration=850)=>{const t=Math.max(0,Math.min(1,(elapsed-start)/duration));return t*t*(3-2*t);};
-    const state={base:.22,left:0,right:0,x:27,y:58,title:0,opacity:1};
-    if(beat.id==='fragments'){
-      state.left=smooth(cues[1].startMs);
-      state.right=smooth(cues[2].startMs);
-      state.base+=.6*state.right;
-    }else if(beat.id==='perspectives'){
-      const movement=smooth(cues[1].startMs,1100);
-      const settle=smooth(cues[2].startMs+(cues[2].endMs-cues[2].startMs)*.65,650);
-      state.left=.95;state.x=27+46*movement-23*settle;state.y=58-23*movement+13*settle;
-      state.right=.15+.6*settle;state.base=.32+.5*settle;state.title=settle;
-    }else{
+    const stages=['fragments','perspectives','awakening','teamwork','call'];
+    const index=stages.indexOf(beat.id);
+    const start=cues[beat.id==='fragments'?1:0].startMs;
+    const duration=Math.max(1,Math.min(5000,(cues.at(-1).endMs-start)*.85));
+    const state={title:0,opacity:1,bricks:(index+smooth(start,duration))/stages.length};
+    if(beat.id==='perspectives'){
+      state.title=smooth(cues[2].startMs+(cues[2].endMs-cues[2].startMs)*.65,650);
+    }else if(beat.id==='teamwork'){
       const quiet=smooth(cues[1].startMs,1000);
-      state.base=.65;state.left=.2;state.right=.2;
       state.opacity=1-.65*quiet;state.title=quiet;
     }
-    if(reduced){state.base=beat.id==='teamwork'?.65:.82;state.left=.65;state.right=.65;state.x=35;state.y=55;state.title=beat.id==='fragments'?0:1;state.opacity=beat.id==='teamwork'?.35:1;}
+    if(reduced){state.bricks=(index+1)/stages.length;state.title=['perspectives','teamwork'].includes(beat.id)?1:0;state.opacity=beat.id==='teamwork'?.35:1;}
     return state;
+  }
+  // Local visual preview: use the game's brick order and fill, never its run state.
+  function brickLightsAt(beat,language,elapsed,count,reduced=false){
+    const light=lightingAt(beat,language,elapsed,reduced);
+    if(!light)return [];
+    const amount=light.bricks;
+    return Array.from({length:count},(_,index)=>{
+      const t=Math.max(0,Math.min(1,amount*count-index));
+      return t*t*(3-2*t);
+    });
   }
   function skills(lang){
     const labels=L(lang,['ENGINY','MEMÒRIA','OBSERVACIÓ','PRECISIÓ'],['INGENIO','MEMORIA','OBSERVACIÓN','PRECISIÓN'],['INGENUITY','MEMORY','OBSERVATION','PRECISION']);
@@ -73,6 +79,7 @@
   window.PyramidOpening={
     sound,
     lightingAt,
+    brickLightsAt,
     fade(progress){const level=scoreLevel*Math.pow(Math.max(0,1-progress),1.5);const persistent=persistentScore();if(persistent)persistent.setVolume(level);else if(score)score.volume=level;},
     stop(){score?.pause();},
     // Uses the same elapsed time as the opening; a paused screen keeps its current cue.
@@ -81,17 +88,22 @@
       this.setSubtitle(window.PyramidOpeningStory.subtitleAt(beat,language,elapsedMs));
       const light=lightingAt(beat,language,elapsedMs,matchMedia('(prefers-reduced-motion: reduce)').matches);
       const cinema=document.querySelector('.p-screen:not(.j-leaving) .o-cinema');
-      if(light&&cinema)for(const [key,value] of Object.entries(light))cinema.style.setProperty('--light-'+key,String(value));
+      if(light&&cinema){
+        for(const [key,value] of Object.entries(light))cinema.style.setProperty('--light-'+key,String(value));
+        const bricks=[...cinema.querySelectorAll('.o-light-story .brick')].sort((a,b)=>Number(b.dataset.row)-Number(a.dataset.row)||Number(a.dataset.column)-Number(b.dataset.column));
+        const levels=brickLightsAt(beat,language,elapsedMs,bricks.length,matchMedia('(prefers-reduced-motion: reduce)').matches);
+        bricks.forEach((brick,index)=>brick.style.setProperty('--intro-brick-light',String(levels[index])));
+      }
     },
     setSubtitle(text){const node=document.querySelector('.p-screen:not(.j-leaving) .o-subtitle');if(node&&node.textContent!==(text||''))node.textContent=text||'';},
     markup(c,screen,lang){
       let art='',heading='';
       const brand=L(lang,'LA PIRÀMIDE','LA PIRÁMIDE','THE PYRAMID');
-      if(['reveal','mission','awakening','call'].includes(screen)){
-        art=`<div class="o-monument">${pyramid()}${screen==='awakening'?'<div class="o-demo-pulse" aria-hidden="true"></div>':''}</div>`;
+      if(['reveal','mission'].includes(screen)){
+        art=`<div class="o-monument">${pyramid()}</div>`;
         heading=screen==='reveal'?brand:screen==='mission'?L(lang,'DESPERTAR-LA','DESPERTARLA','AWAKEN IT'):'';
       }else if(['terminals','explore'].includes(screen))art=terminals(c,screen);
-      else if(['fragments','perspectives','teamwork'].includes(screen)){art=litPyramid();heading=screen==='perspectives'?L(lang,'CADA MIRADA COMPTA','CADA MIRADA CUENTA','EVERY PERSPECTIVE COUNTS'):screen==='teamwork'?L(lang,'TOTES LES VEUS COMPTEN','TODAS LAS VOCES CUENTAN','EVERY VOICE COUNTS'):'';}
+      else if(['fragments','perspectives','awakening','teamwork','call'].includes(screen)){art=litPyramid();heading=screen==='perspectives'?L(lang,'CADA MIRADA COMPTA','CADA MIRADA CUENTA','EVERY PERSPECTIVE COUNTS'):screen==='teamwork'?L(lang,'TOTES LES VEUS COMPTEN','TODAS LAS VOCES CUENTAN','EVERY VOICE COUNTS'):'';}
       else if(screen==='skills')art=skills(lang);
       else if(screen==='tools')art=tools(c);
       else if(['journey','quiz','finale','return'].includes(screen))art=route(c,screen,lang);

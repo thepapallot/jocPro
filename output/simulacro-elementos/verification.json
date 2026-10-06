@@ -1,0 +1,64 @@
+[
+  {
+    "step": "elements",
+    "overflow": [],
+    "images": [],
+    "text": "DESCUBRIR · SIMULACRO INICIAL\nLA PIRÁMIDE\nELEMENTOS Y JUGABILIDAD\nVUESTRO TOKEN ES PERSONAL\n\nConservad el vuestro durante toda la partida.\n\n→\nLOS TERMINALES\n\nBotones, luces y símbolos para resolver los retos.\n\nAcercad vuestro token al lector del terminal para interactuar.\n\nUN ÚNICO EQUIPO: COMPARTID INFORMACIÓN Y COORDINAOS.",
+    "width": 1920
+  },
+  {
+    "step": "objective",
+    "overflow": [],
+    "images": [],
+    "reveal": "0",
+    "text": "DESCUBRIR · SIMULACRO INICIAL\nLA PIRÁMIDE\nSIMULACRO INICIAL\n\nCONOCED EL SISTEMA.\n\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nEN LA PANTALLA\nLA PIRÀMIDE\n01\nSEGUID\nLA INSTRUCCIÓN\n✓\nOBSERVAD EL RETO.",
+    "width": 1920
+  },
+  {
+    "step": "tools",
+    "overflow": [],
+    "images": [],
+    "reveal": "1",
+    "text": "DESCUBRIR · SIMULACRO INICIAL\nLA PIRÁMIDE\nSIMULACRO INICIAL\n\nCONOCED EL SISTEMA.\n\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nEN LA PANTALLA\nLA PIRÀMIDE\n01\nSEGUID\nLA INSTRUCCIÓN\n✓\n02\nEN VUESTRAS MANOS\n→\nToken · lector · botones\nESTAS SON VUESTRAS HERRAMIENTAS.",
+    "width": 1920
+  },
+  {
+    "step": "interaction",
+    "overflow": [],
+    "images": [],
+    "reveal": "2",
+    "text": "DESCUBRIR · SIMULACRO INICIAL\nLA PIRÁMIDE\nSIMULACRO INICIAL\n\nCONOCED EL SISTEMA.\n\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nEN LA PANTALLA\nLA PIRÀMIDE\n01\nSEGUID\nLA INSTRUCCIÓN\n✓\n02\nEN VUESTRAS MANOS\n→\nToken · lector · botones\n03\nCÓMO ACTUÁIS JUNTOS\n◉\nMIRAD LA PANTALLA\n→\n◎\nHACED LA ACCIÓN INDICADA\n→\n✓\nSIGUIENTE INSTRUCCIÓN\n\nLas acciones pueden combinar token y botones. Seguid el orden indicado.\n\nREPARTID QUIÉN OBSERVA, QUIÉN COMUNICA Y QUIÉN ACTÚA.",
+    "width": 1920
+  },
+  {
+    "step": "elements",
+    "overflow": [],
+    "images": [],
+    "text": "DESCUBRIR · SIMULACRO INICIAL\nLA PIRÁMIDE\nELEMENTOS Y JUGABILIDAD\nVUESTRO TOKEN ES PERSONAL\n\nConservad el vuestro durante toda la partida.\n\n→\nLOS TERMINALES\n\nBotones, luces y símbolos para resolver los retos.\n\nAcercad vuestro token al lector del terminal para interactuar.\n\nUN ÚNICO EQUIPO: COMPARTID INFORMACIÓN Y COORDINAOS.",
+    "width": 1280
+  },
+  {
+    "step": "objective",
+    "overflow": [],
+    "images": [],
+    "reveal": "0",
+    "text": "DESCUBRIR · SIMULACRO INICIAL\nLA PIRÁMIDE\nSIMULACRO INICIAL\n\nCONOCED EL SISTEMA.\n\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nEN LA PANTALLA\nLA PIRÀMIDE\n01\nSEGUID\nLA INSTRUCCIÓN\n✓\nOBSERVAD EL RETO.",
+    "width": 1280
+  },
+  {
+    "step": "tools",
+    "overflow": [],
+    "images": [],
+    "reveal": "1",
+    "text": "DESCUBRIR · SIMULACRO INICIAL\nLA PIRÁMIDE\nSIMULACRO INICIAL\n\nCONOCED EL SISTEMA.\n\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nEN LA PANTALLA\nLA PIRÀMIDE\n01\nSEGUID\nLA INSTRUCCIÓN\n✓\n02\nEN VUESTRAS MANOS\n→\nToken · lector · botones\nESTAS SON VUESTRAS HERRAMIENTAS.",
+    "width": 1280
+  },
+  {
+    "step": "interaction",
+    "overflow": [],
+    "images": [],
+    "reveal": "2",
+    "text": "DESCUBRIR · SIMULACRO INICIAL\nLA PIRÁMIDE\nSIMULACRO INICIAL\n\nCONOCED EL SISTEMA.\n\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nEN LA PANTALLA\nLA PIRÀMIDE\n01\nSEGUID\nLA INSTRUCCIÓN\n✓\n02\nEN VUESTRAS MANOS\n→\nToken · lector · botones\n03\nCÓMO ACTUÁIS JUNTOS\n◉\nMIRAD LA PANTALLA\n→\n◎\nHACED LA ACCIÓN INDICADA\n→\n✓\nSIGUIENTE INSTRUCCIÓN\n\nLas acciones pueden combinar token y botones. Seguid el orden indicado.\n\nREPARTID QUIÉN OBSERVA, QUIÉN COMUNICA Y QUIÉN ACTÚA.",
+    "width": 1280
+  }
+]

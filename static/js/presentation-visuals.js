@@ -43,8 +43,9 @@
     body(c,screen,t,lang,revealed){
       if(!c.kind)return null;
       if(c.kind==='opening')return window.PyramidOpening.markup(c,screen,lang);
+      if(screen==='elements'&&c.elementsCopy)return PyramidBriefing.elements(c,lang);
       if(screen==='journey')return journey(c,lang);
-      if(c.kind==='puzzle'&&c.incremental&&['objective','tools','interaction'].includes(screen))return PyramidBriefing.markup(c,t,lang);
+      if(c.kind==='puzzle'&&c.incremental&&['objective','tools','interaction','attention'].includes(screen))return PyramidBriefing.markup(c,t,lang);
       if(c.kind==='welcome')return `<div class="j-welcome"><div><span class="j-eyebrow">${L(lang,'EL REPTE ÉS DE TOTS.','EL RETO ES DE TODOS.','ONE TEAM. ONE SHARED CHALLENGE.')}</span><h1>LA<br>PIRÀMIDE</h1><p>${L(lang,'Deu terminals. Un únic equip.','Diez terminales. Un único equipo.','Ten terminals. One team.')}</p><span class="j-wait"><i></i>${L(lang,'Benvinguts','Bienvenidos','Welcome')}</span></div>${beam(c,lang)}</div>`;
       if(c.kind==='success'||c.kind==='closing'){
         const closing=c.kind==='closing',thanks=screen==='thanks',practice=c.afterPuzzle===11;

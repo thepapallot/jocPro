@@ -1,0 +1,66 @@
+[
+  {
+    "step": "objective",
+    "overflow": [],
+    "images": [],
+    "reveal": "0",
+    "text": "TRAS LA SERPIENTE\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nCompletar la serpiente correspondiente a cada token.",
+    "width": 1920
+  },
+  {
+    "step": "tools",
+    "overflow": [],
+    "images": [],
+    "reveal": "1",
+    "text": "TRAS LA SERPIENTE\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nCompletar la serpiente correspondiente a cada token.\n\n02\nHERRAMIENTAS",
+    "width": 1920
+  },
+  {
+    "step": "interaction",
+    "overflow": [],
+    "images": [],
+    "reveal": "2",
+    "text": "TRAS LA SERPIENTE\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nCompletar la serpiente correspondiente a cada token.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nIDENTIFICAD VUESTRA SERPIENTE\n→\nBUSCAD LOS SÍMBOLOS EN EL ORDEN INDICADO\n→\nPASAD EL TOKEN POR CADA TERMINAL",
+    "width": 1920
+  },
+  {
+    "step": "attention",
+    "overflow": [],
+    "images": [],
+    "reveal": "2",
+    "text": "TRAS LA SERPIENTE\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nCompletar la serpiente correspondiente a cada token.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nIDENTIFICAD VUESTRA SERPIENTE\n→\nBUSCAD LOS SÍMBOLOS EN EL ORDEN INDICADO\n→\nPASAD EL TOKEN POR CADA TERMINAL\n04 · ATENCIÓN\n\nCuando suene la alarma, las serpientes se pondrán rojas. Los símbolos de la pantalla no cambian: buscad en los terminales el mismo símbolo con los colores invertidos.\n\nSÍMBOLO EN PANTALLA\n→\nSÍMBOLO QUE DEBÉIS BUSCAR",
+    "width": 1920
+  },
+  {
+    "step": "objective",
+    "overflow": [],
+    "images": [],
+    "reveal": "0",
+    "text": "TRAS LA SERPIENTE\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nCompletar la serpiente correspondiente a cada token.",
+    "width": 1280
+  },
+  {
+    "step": "tools",
+    "overflow": [],
+    "images": [],
+    "reveal": "1",
+    "text": "TRAS LA SERPIENTE\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nCompletar la serpiente correspondiente a cada token.\n\n02\nHERRAMIENTAS",
+    "width": 1280
+  },
+  {
+    "step": "interaction",
+    "overflow": [],
+    "images": [],
+    "reveal": "2",
+    "text": "TRAS LA SERPIENTE\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nCompletar la serpiente correspondiente a cada token.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nIDENTIFICAD VUESTRA SERPIENTE\n→\nBUSCAD LOS SÍMBOLOS EN EL ORDEN INDICADO\n→\nPASAD EL TOKEN POR CADA TERMINAL",
+    "width": 1280
+  },
+  {
+    "step": "attention",
+    "overflow": [],
+    "images": [],
+    "reveal": "2",
+    "text": "TRAS LA SERPIENTE\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nCompletar la serpiente correspondiente a cada token.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nIDENTIFICAD VUESTRA SERPIENTE\n→\nBUSCAD LOS SÍMBOLOS EN EL ORDEN INDICADO\n→\nPASAD EL TOKEN POR CADA TERMINAL\n04 · ATENCIÓN\n\nCuando suene la alarma, las serpientes se pondrán rojas. Los símbolos de la pantalla no cambian: buscad en los terminales el mismo símbolo con los colores invertidos.\n\nSÍMBOLO EN PANTALLA\n→\nSÍMBOLO QUE DEBÉIS BUSCAR",
+    "width": 1280
+  }
+]

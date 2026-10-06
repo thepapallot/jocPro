@@ -138,6 +138,7 @@
     return `<header class="p-head"><div class="p-kicker">${label}</div><div class="p-brand">${logo()}<span>${text().brand}</span></div></header>`;
   }
   function footer(label) {
+    if (phase === 'slides') return '<footer class="p-footer" hidden></footer>';
     return `<footer class="p-footer"><span>${label}</span><span class="p-step-track" aria-hidden="true">${config.steps.map((_,i)=>`<i class="${i<=step?'active':''}"></i>`).join('')}</span></footer>`;
   }
   function targets(completed = false) {
@@ -158,7 +159,7 @@
     const host=page&&window.parent!==window?window.parent:window.opener;
     if (host && !host.closed) host.postMessage({
       type: 'pyramid-presentation-state', realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
-      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el simulacre →',es:'Tokens repartidos · explicar el simulacro →',eng:'Tokens handed out · explain the simulation →'}[language]:config.incremental?({objective:'Mostrar objetivo →',tools:'Mostrar terminales y tokens →',interaction:'Mostrar interacción →'}[config.steps[step+1]]||null):null,
+      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el simulacre →',es:'Tokens repartidos · explicar el simulacro →',eng:'Tokens handed out · explain the simulation →'}[language]:config.incremental?({elements:'La misión está en vuestras manos →',objective:'Mostrar objetivo →',tools:'Mostrar herramientas →',interaction:'Mostrar interacción →',attention:'Mostrar atención →'}[config.steps[step+1]]||null):null,
       name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
       labels: text().stepLabels, kind: config.kind || 'puzzle',
       sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
@@ -186,7 +187,7 @@
     const immersive=flow&&['welcome','opening','success','closing'].includes(config.kind);
     // Keep the same diagram nodes in place while revealing the next layer.
     const current=stage.querySelector('.p-screen:not(.j-leaving)');
-    const revealStep=['objective','tools','interaction'].indexOf(config.steps[step]);
+    const revealStep=['objective','tools','interaction','attention'].indexOf(config.steps[step]);
     const persistent=config.incremental&&revealStep>=0&&phase==='slides'&&current?.dataset.scene===config.id&&current.dataset.language===language&&current.querySelector('.j-blueprint');
     if(persistent){
       PyramidBriefing.reveal(persistent,revealStep);

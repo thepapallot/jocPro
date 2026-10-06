@@ -15,9 +15,7 @@
 .o-mission .o-monument{animation:o-mission-pulse var(--beat-duration) ease-in-out both}
 .o-mission .o-title{color:#71e7db}
 .o-awakening .o-monument,.o-call .o-monument{top:35px;width:1010px;left:455px;height:750px}
-.o-awakening .o-pyramid .brick[data-row="12"][data-column="3"] .progress-fill{fill:#71e7db;animation:o-demonstrate var(--beat-duration) ease-in-out both}
-.o-demo-pulse{position:absolute;left:8%;right:8%;bottom:13%;height:5px;background:#71e7db;box-shadow:0 0 40px #71e7db;animation:o-demonstrate var(--beat-duration) both}
-.o-call .o-monument{animation:o-call-pulse var(--beat-duration) ease-out both}
+.o-awakening .o-monument,.o-call .o-monument{animation:o-call-pulse var(--beat-duration) ease-out both}
 .o-terminal-world{position:absolute;inset:0}
 .o-energy-paths{position:absolute;inset:0;width:100%;height:100%}
 .o-energy-paths path{fill:none;stroke:#39d6e539;stroke-width:2;stroke-dasharray:7 14;animation:o-flow var(--beat-duration) linear both}
@@ -29,13 +27,10 @@
 .o-shared-screen{width:450px;height:290px;border:2px solid #a8bbc5;border-bottom:8px solid #a8bbc5;background:#0a1016;display:grid;place-items:center}
 .o-shared-screen svg{width:330px}
 .o-search-dot{position:absolute;left:0;top:0;offset-path:path('M390 320 Q530 100 960 115 Q1440 130 1530 450 Q1360 760 740 720 Q590 570 960 420');width:20px;height:20px;border-radius:50%;background:#edb970;border:3px solid #f3eee4;animation:o-search var(--beat-duration) ease-in-out both}
-/* Light reveals the unchanged master SVG; no individual brick receives progress. */
+/* Same masonry fill as game progress, driven only by the narration clock. */
 .o-light-story{opacity:var(--light-opacity,1)}
-.o-light-base,.o-light-pass{position:absolute;inset:0;display:grid;place-items:center}
-.o-light-base{filter:brightness(var(--light-base,.22))}
-.o-light-pass{filter:brightness(1.25);pointer-events:none}
-.o-light-left{opacity:var(--light-left,0);mask-image:radial-gradient(ellipse at calc(var(--light-x,27)*1%) calc(var(--light-y,58)*1%),#000 10%,transparent 72%);-webkit-mask-image:radial-gradient(ellipse at calc(var(--light-x,27)*1%) calc(var(--light-y,58)*1%),#000 10%,transparent 72%)}
-.o-light-right{opacity:var(--light-right,0);mask-image:radial-gradient(ellipse at 78% 56%,#000 10%,transparent 72%);-webkit-mask-image:radial-gradient(ellipse at 78% 56%,#000 10%,transparent 72%)}
+.o-light-story .o-pyramid{filter:brightness(.85)}
+.o-light-story .o-pyramid .brick .progress-fill{opacity:calc(var(--intro-brick-light,0)*.64);transition:none}
 .o-perspectives .o-title,.o-teamwork .o-title{animation:none;opacity:var(--light-title,0)}
 .o-teamwork .o-title{top:360px;bottom:auto;font-size:108px;left:150px;right:150px;text-shadow:0 4px 25px #0a1016}
 .o-perspectives .o-title{font-size:78px}
@@ -47,8 +42,8 @@
 .o-memory-pairs{display:grid;grid-template-columns:repeat(4,160px);gap:30px}.o-memory-pairs i{height:190px;border:3px solid #39d6e5;background:#14232c;position:relative}.o-memory-pairs i::after{content:'';position:absolute;inset:43px 30px;border:12px solid #71e7db;border-radius:50%}.o-memory-pairs i:nth-child(even)::after{border-radius:0;transform:rotate(45deg);inset:54px 39px;border-color:#dc68a7}
 .o-observation{display:flex;gap:35px}.o-observation i{width:125px;height:125px;border:5px solid #39d6e5;transform:rotate(45deg)}.o-observation .different{border-color:#edb970;border-radius:50%;transform:none}
 .o-precision{display:flex;gap:80px}.o-precision i{width:150px;height:150px;border:3px solid #a8bbc5;border-radius:50%;box-shadow:inset 0 0 0 25px #14232c;background:#39d6e5}
-.o-tools-stage{position:absolute;inset:0}.o-tool-token{position:absolute;left:380px;top:265px;width:310px;height:310px;object-fit:contain;animation:o-token-turn 9s both}
-.o-tool-terminal{position:absolute;left:820px;top:45px;width:720px;height:720px}.o-tool-terminal>img{width:100%;height:100%;object-fit:contain}
+.o-tools-stage{position:absolute;inset:0}.o-tool-token{position:absolute;left:240px;top:65px;width:720px;height:720px;object-fit:contain;animation:o-token-turn 9s both}
+.o-tool-terminal{position:absolute;left:960px;top:45px;width:720px;height:720px}.o-tool-terminal>img{width:100%;height:100%;object-fit:contain}
 .o-tool-focus{position:absolute;border:3px solid #f3eee4;border-radius:50%;opacity:0;pointer-events:none;box-shadow:0 0 18px #f3eee422}
 .o-tool-focus.buttons{left:350px;top:115px;width:270px;height:160px;animation:o-tool-spot calc(var(--beat-duration)*.22) calc(var(--beat-duration)*.22) both}.o-tool-focus.lights{left:35px;top:132px;width:610px;height:480px;border-color:#71e7db;animation:o-tool-spot calc(var(--beat-duration)*.22) calc(var(--beat-duration)*.44) both}.o-tool-focus.symbols{left:278px;top:417px;width:275px;height:200px;animation:o-tool-spot calc(var(--beat-duration)*.22) calc(var(--beat-duration)*.66) both}
 .o-map{position:absolute;left:90px;right:90px;top:265px;height:450px}
@@ -75,7 +70,6 @@
 @keyframes o-terminal-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 @keyframes o-flow{to{stroke-dashoffset:-140}}
 @keyframes o-mission-pulse{0%,100%{filter:brightness(.65)}50%{filter:brightness(1.35)}}
-@keyframes o-demonstrate{0%,20%,100%{opacity:0}45%,70%{opacity:1}}
 @keyframes o-call-pulse{0%{filter:brightness(.6);transform:scale(.97)}50%{filter:brightness(1.3)}100%{filter:brightness(.85);transform:scale(1)}}
 @keyframes o-skill-one{0%,21%{opacity:1}25%,100%{opacity:0}}
 @keyframes o-skill-two{0%,23%,50%,100%{opacity:0}27%,46%{opacity:1}}
@@ -84,6 +78,6 @@
 @keyframes o-search{from{offset-distance:0%}to{offset-distance:100%}}
 @keyframes o-token-turn{from{transform:rotate(-9deg) scale(.92);opacity:.4}to{transform:none;opacity:1}}
 @keyframes o-tool-spot{0%,100%{opacity:0}20%,80%{opacity:1}}
-@media(prefers-reduced-motion:reduce){.o-cinema *{animation:none!important;transition:none!important}.o-atmosphere i,.o-search-dot,.o-demo-pulse{display:none}.o-awakening .o-pyramid .progress-fill{opacity:0!important}.o-skill{opacity:1;position:relative;flex:1;min-width:0;height:100%}.o-skill-stage{display:flex;gap:40px;padding:150px 85px 0}.o-skill-art{left:50%;right:auto;top:100px;width:900px;height:300px;transform:translateX(-50%) scale(.35)}.o-skill .o-title{font-size:42px;left:0;right:0;bottom:135px}.o-tools-stage .o-tool-focus{display:none}}
+@media(prefers-reduced-motion:reduce){.o-cinema *{animation:none!important;transition:none!important}.o-atmosphere i,.o-search-dot{display:none}.o-skill{opacity:1;position:relative;flex:1;min-width:0;height:100%}.o-skill-stage{display:flex;gap:40px;padding:150px 85px 0}.o-skill-art{left:50%;right:auto;top:100px;width:900px;height:300px;transform:translateX(-50%) scale(.35)}.o-skill .o-title{font-size:42px;left:0;right:0;bottom:135px}.o-tools-stage .o-tool-focus{display:none}}
 
 .o-audio-retry{position:absolute;z-index:30;left:50%;top:40px;transform:translateX(-50%);padding:16px 32px;border:1px solid var(--g-cyan,#39d6e5);border-radius:12px;background:#0d1531;color:#fff;font-family:inherit;font-size:28px;font-weight:600;cursor:pointer}

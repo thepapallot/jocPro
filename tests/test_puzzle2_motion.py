@@ -90,6 +90,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     const normalBackground = getComputedStyle(stage).backgroundColor;
     test('initially normal', !active());
+    const symbolsBeforeAlarm = [...stage.querySelectorAll('.snake-segment')].map(el => el.src);
+    window.puzzle2Debug.alarm(true);
+    const symbolsDuringAlarm = [...stage.querySelectorAll('.snake-segment')].map(el => el.src);
+    test('alarm keeps the symbols shown on screen',
+        JSON.stringify(symbolsDuringAlarm) === JSON.stringify(symbolsBeforeAlarm));
+    test('alarm still marks the snakes red', document.body.classList.contains('alarm-mode'));
+    window.puzzle2Debug.alarm(false);
     const first = start();
     test('red gradient during playback', active() && getComputedStyle(stage, '::before').backgroundImage.includes('radial-gradient'));
     test('no rectangular background fill', getComputedStyle(stage).backgroundColor === normalBackground);
