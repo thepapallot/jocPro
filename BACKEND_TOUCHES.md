@@ -14,6 +14,33 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-06 — Bloques antes y después del Trivial
+
+Archivo: `config.py`. Tipo: `pendiente de revisar` con terminales físicos.
+
+Autorización: petición explícita de configurar libremente los bloques antes y
+después del Trivial, manteniendo `PUZZLE_ORDER` para el backend y los ESP32.
+
+- Se añaden `PUZZLE_PRE_TRIVIAL = [2, 1, 8]`, `PUZZLE_TRIVIAL = 3` y
+  `PUZZLE_POST_TRIVIAL = [5, 12, 4]`.
+- `PUZZLE_ORDER` sigue siendo una lista de IDs, calculada a partir de esos bloques:
+  `[2, 1, 8, 3, 5, 12, 4]`. El Trivial pasa de la segunda a la cuarta posición.
+- Se permiten bloques de distinta longitud. Los IDs deben ser únicos y no incluir
+  tutorial ni final. Los cambios de configuración se aplican al reiniciar.
+- No se modifican handlers MQTT, mensajes, reglas, timers ni puntuación. La posición
+  ordinal del Trivial, Memory y Sumas cambia conforme al nuevo recorrido.
+
+Revisión para Pep: validar la nueva secuencia y sus posiciones con los ESP32.
+El diagrama de etapas todavía no está implementado.
+
+Verificación: cinco tests de rutas de presentación aprobados con MQTT simulado,
+incluidas las transiciones en el nuevo orden y el contexto de los puzzles.
+`git diff --check` sin errores. No se conecta hardware ni se inicia el servidor real.
+
+Recomprobación: se restauran los bloques tras encontrar de nuevo una lista única,
+conservando el orden guardado por el usuario (`2, 1, 8` antes del Trivial).
+Se verifica también la generación de `PUZZLE_ORDER` con bloques de distinta longitud.
+
 ## 2026-03-25
 
 ### app.py

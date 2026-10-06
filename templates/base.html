@@ -49,6 +49,7 @@
         nextUrl: {{ (url_for('play_video_puzzles', puzzle_id=next_puzzle_id) if next_puzzle_id|default(None) else url_for('final'))|tojson }}
     };</script>
     <script src="{{ url_for('static', filename='js/pyramid-logo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/puzzle-names.js') }}"></script>
     <script src="{{ url_for('static', filename='js/game-theme.js') }}"></script>
     <script src="{{ url_for('static', filename='js/presentation-game-bridge.js') }}"></script>
     {% block extra_js %}{% endblock %}

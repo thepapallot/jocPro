@@ -49,3 +49,15 @@
 .game-corner-status :is(#streak-panel,#final-top-hud){display:flex;flex-direction:row;align-items:center;justify-content:center;gap:14px}
 .game-corner-status .hud-label{font:700 18px/1.2 Arial,sans-serif;color:#bbccd4;text-transform:uppercase;letter-spacing:.06em}
 .game-corner-status :is(#streak,#timer,#timer-overlay){font:900 36px/1.2 PiramideDisplay,'Arial Narrow',Arial,sans-serif;color:#edb970;text-shadow:none;font-variant-numeric:tabular-nums}
+
+/* Editorial names sit above the route position, leaving functional counters clear. */
+.game-corner-identity{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;max-width:500px}
+.game-corner-step{border:0;padding:0;font-size:14px;line-height:1.25}
+.game-surface[data-puzzle="8"] .game-corner-identity{max-width:310px}
+.game-surface[data-puzzle="8"] .game-corner-identity h1{font-size:29px}
+
+/* Player headers show the name and painted pyramid, without ordinal/round totals.
+   Keep counter nodes for their controllers; timers and action instructions remain. */
+.game-surface :is(#streak-panel,#final-round-indicator,#final-levels,.round-step){display:none!important}
+.game-surface[data-puzzle="8"] #p8-instruction-step{display:none}
+.game-surface #round-indicator .phase-step{display:none}

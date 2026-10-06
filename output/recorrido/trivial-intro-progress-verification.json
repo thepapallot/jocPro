@@ -1,0 +1,62 @@
+[
+  {
+    "width": 1920,
+    "height": 1080,
+    "savedIds": [],
+    "states": [
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      },
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [
+      "Práctica",
+      "3 retos",
+      "Trivial",
+      "3 retos",
+      "Final"
+    ],
+    "earned": 3,
+    "current": "Estáis aquí"
+  },
+  {
+    "width": 1280,
+    "height": 720,
+    "savedIds": [],
+    "states": [
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      },
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [
+      "Práctica",
+      "3 retos",
+      "Trivial",
+      "3 retos",
+      "Final"
+    ],
+    "earned": 3,
+    "current": "Estáis aquí"
+  }
+]

@@ -1,0 +1,600 @@
+[
+  {
+    "name": "trivial-puzzle-1920",
+    "errors": [],
+    "overflow": [],
+    "before": [
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row green",
+        "background": "linear-gradient(rgba(45, 255, 155, 0.42), rgba(45, 255, 155, 0.16)), radial-gradient(circle at 0% 50%, rgba(45, 255, 155, 0.34), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(45, 255, 155, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(45, 255, 155, 0.64), rgba(45, 255, 155, 0.18)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row red",
+        "background": "linear-gradient(rgba(255, 79, 109, 0.4), rgba(255, 79, 109, 0.16)), radial-gradient(circle at 0% 50%, rgba(255, 79, 109, 0.3), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(255, 79, 109, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(255, 79, 109, 0.58), rgba(255, 79, 109, 0.16)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row correct",
+        "background": "linear-gradient(rgba(45, 255, 155, 0.42), rgba(45, 255, 155, 0.16)), radial-gradient(circle at 0% 50%, rgba(45, 255, 155, 0.34), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(45, 255, 155, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(45, 255, 155, 0.64), rgba(45, 255, 155, 0.18)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row wrong",
+        "background": "linear-gradient(rgba(255, 79, 109, 0.4), rgba(255, 79, 109, 0.16)), radial-gradient(circle at 0% 50%, rgba(255, 79, 109, 0.3), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(255, 79, 109, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(255, 79, 109, 0.58), rgba(255, 79, 109, 0.16)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      }
+    ],
+    "after": [
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row green",
+        "background": "linear-gradient(rgba(45, 255, 155, 0.42), rgba(45, 255, 155, 0.16)), radial-gradient(circle at 0% 50%, rgba(45, 255, 155, 0.34), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(45, 255, 155, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(45, 255, 155, 0.64), rgba(45, 255, 155, 0.18)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row red",
+        "background": "linear-gradient(rgba(255, 79, 109, 0.4), rgba(255, 79, 109, 0.16)), radial-gradient(circle at 0% 50%, rgba(255, 79, 109, 0.3), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(255, 79, 109, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(255, 79, 109, 0.58), rgba(255, 79, 109, 0.16)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row correct",
+        "background": "linear-gradient(rgba(45, 255, 155, 0.42), rgba(45, 255, 155, 0.16)), radial-gradient(circle at 0% 50%, rgba(45, 255, 155, 0.34), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(45, 255, 155, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(45, 255, 155, 0.64), rgba(45, 255, 155, 0.18)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row wrong",
+        "background": "linear-gradient(rgba(255, 79, 109, 0.4), rgba(255, 79, 109, 0.16)), radial-gradient(circle at 0% 50%, rgba(255, 79, 109, 0.3), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(255, 79, 109, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(255, 79, 109, 0.58), rgba(255, 79, 109, 0.16)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      }
+    ]
+  },
+  {
+    "name": "trivial-intro-es-0-1920",
+    "states": [
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      },
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [
+      "Práctica",
+      "3 retos",
+      "Trivial",
+      "3 retos",
+      "Final"
+    ],
+    "earned": 3,
+    "current": "Estáis aquí"
+  },
+  {
+    "name": "trivial-intro-es-3-1920",
+    "states": [
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      },
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [],
+    "earned": 0,
+    "reveal": "2"
+  },
+  {
+    "name": "trivial-intro-ca-0-1920",
+    "states": [
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      },
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [
+      "Pràctica",
+      "3 reptes",
+      "Trivial",
+      "3 reptes",
+      "Final"
+    ],
+    "earned": 3,
+    "current": "Sou aquí"
+  },
+  {
+    "name": "trivial-intro-ca-3-1920",
+    "states": [
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      },
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [],
+    "earned": 0,
+    "reveal": "2"
+  },
+  {
+    "name": "trivial-intro-eng-0-1920",
+    "states": [
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      },
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [
+      "Practice",
+      "3 challenges",
+      "Quiz",
+      "3 challenges",
+      "Final"
+    ],
+    "earned": 3,
+    "current": "You are here"
+  },
+  {
+    "name": "trivial-intro-eng-3-1920",
+    "states": [
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      },
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [],
+    "earned": 0,
+    "reveal": "2"
+  },
+  {
+    "name": "trivial-puzzle-1280",
+    "errors": [],
+    "overflow": [],
+    "before": [
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row green",
+        "background": "linear-gradient(rgba(45, 255, 155, 0.42), rgba(45, 255, 155, 0.16)), radial-gradient(circle at 0% 50%, rgba(45, 255, 155, 0.34), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(45, 255, 155, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(45, 255, 155, 0.64), rgba(45, 255, 155, 0.18)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row red",
+        "background": "linear-gradient(rgba(255, 79, 109, 0.4), rgba(255, 79, 109, 0.16)), radial-gradient(circle at 0% 50%, rgba(255, 79, 109, 0.3), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(255, 79, 109, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(255, 79, 109, 0.58), rgba(255, 79, 109, 0.16)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row correct",
+        "background": "linear-gradient(rgba(45, 255, 155, 0.42), rgba(45, 255, 155, 0.16)), radial-gradient(circle at 0% 50%, rgba(45, 255, 155, 0.34), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(45, 255, 155, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(45, 255, 155, 0.64), rgba(45, 255, 155, 0.18)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row wrong",
+        "background": "linear-gradient(rgba(255, 79, 109, 0.4), rgba(255, 79, 109, 0.16)), radial-gradient(circle at 0% 50%, rgba(255, 79, 109, 0.3), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(255, 79, 109, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(255, 79, 109, 0.58), rgba(255, 79, 109, 0.16)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(223, 246, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(69, 230, 255, 0.22), rgba(69, 230, 255, 0.06)), linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))"
+      }
+    ],
+    "after": [
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row green",
+        "background": "linear-gradient(rgba(45, 255, 155, 0.42), rgba(45, 255, 155, 0.16)), radial-gradient(circle at 0% 50%, rgba(45, 255, 155, 0.34), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(45, 255, 155, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(45, 255, 155, 0.64), rgba(45, 255, 155, 0.18)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row red",
+        "background": "linear-gradient(rgba(255, 79, 109, 0.4), rgba(255, 79, 109, 0.16)), radial-gradient(circle at 0% 50%, rgba(255, 79, 109, 0.3), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(255, 79, 109, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(255, 79, 109, 0.58), rgba(255, 79, 109, 0.16)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row correct",
+        "background": "linear-gradient(rgba(45, 255, 155, 0.42), rgba(45, 255, 155, 0.16)), radial-gradient(circle at 0% 50%, rgba(45, 255, 155, 0.34), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(45, 255, 155, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(45, 255, 155, 0.64), rgba(45, 255, 155, 0.18)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row wrong",
+        "background": "linear-gradient(rgba(255, 79, 109, 0.4), rgba(255, 79, 109, 0.16)), radial-gradient(circle at 0% 50%, rgba(255, 79, 109, 0.3), rgba(0, 0, 0, 0) 48%)",
+        "border": "rgba(255, 79, 109, 0.95)",
+        "indexColour": "rgb(255, 255, 255)",
+        "indexBackground": "radial-gradient(circle, rgba(255, 79, 109, 0.58), rgba(255, 79, 109, 0.16)), linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      },
+      {
+        "state": "answer-row ",
+        "background": "none",
+        "border": "rgba(220, 104, 167, 0.4)",
+        "indexColour": "rgb(220, 104, 167)",
+        "indexBackground": "none"
+      }
+    ]
+  },
+  {
+    "name": "trivial-intro-es-0-1280",
+    "states": [
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      },
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [
+      "Práctica",
+      "3 retos",
+      "Trivial",
+      "3 retos",
+      "Final"
+    ],
+    "earned": 3,
+    "current": "Estáis aquí"
+  },
+  {
+    "name": "trivial-intro-es-3-1280",
+    "states": [
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      },
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [],
+    "earned": 0,
+    "reveal": "2"
+  },
+  {
+    "name": "trivial-intro-ca-0-1280",
+    "states": [
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      },
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [
+      "Pràctica",
+      "3 reptes",
+      "Trivial",
+      "3 reptes",
+      "Final"
+    ],
+    "earned": 3,
+    "current": "Sou aquí"
+  },
+  {
+    "name": "trivial-intro-ca-3-1280",
+    "states": [
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      },
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [],
+    "earned": 0,
+    "reveal": "2"
+  },
+  {
+    "name": "trivial-intro-eng-0-1280",
+    "states": [
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      },
+      {
+        "screen": "journey",
+        "step": 0,
+        "next": "Mostrar objetivo →",
+        "canNext": true
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [
+      "Practice",
+      "3 challenges",
+      "Quiz",
+      "3 challenges",
+      "Final"
+    ],
+    "earned": 3,
+    "current": "You are here"
+  },
+  {
+    "name": "trivial-intro-eng-3-1280",
+    "states": [
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      },
+      {
+        "screen": "interaction",
+        "step": 3,
+        "next": null,
+        "canNext": false
+      }
+    ],
+    "errors": [],
+    "overflow": [],
+    "labels": [],
+    "earned": 0,
+    "reveal": "2"
+  }
+]

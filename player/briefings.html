@@ -11,14 +11,15 @@
 <header><strong>La Piràmide · Presentaciones</strong><select id="puzzle" aria-label="Juego"></select><select id="language" aria-label="Idioma"><option value="es">Español</option><option value="ca">Català</option><option value="eng">English</option></select><button id="repeat">Repetir</button><button id="previous">← Anterior</button><button id="next" class="primary">Mostrar terminales →</button></header>
 <iframe id="screen" title="Presentación gráfica del juego"></iframe>
 <footer><span id="status">Objetivo → terminales y tokens → interacción</span><a href="/test?panel=juego">Abrir Control de juego</a></footer>
+<script src="/static/js/puzzle-names.js"></script>
 <script>
-const names={11:'Práctica',2:'Laberinto',3:'Trivial',8:'Memory',1:'Sumas',5:'Cronómetro',12:'Botones',4:'Música',6:'Energía'};
+const names=Object.fromEntries(Object.keys(window.PyramidPuzzleNames.catalog).map(id=>[id,window.PyramidPuzzleNames.name(id,'es')]));
 const params=new URLSearchParams(location.search),screen=document.getElementById('screen'),puzzle=document.getElementById('puzzle'),language=document.getElementById('language');
 puzzle.innerHTML=[11,2,3,8,1,5,12,4,6].map(id=>`<option value="${id}">${names[id]}</option>`).join('');puzzle.value=Object.hasOwn(names,params.get('puzzle'))?params.get('puzzle'):'11';language.value=['ca','es','eng'].includes(params.get('lang'))?params.get('lang'):'es';
 function send(action){screen.contentWindow.postMessage({type:'pyramid-presentation-command',action},location.origin)}
 function load(){screen.src=`/presentacio/${puzzle.value}?embed=1&lang=${language.value}`;history.replaceState(null,'',`?puzzle=${puzzle.value}&lang=${language.value}`);document.getElementById('next').disabled=true;document.getElementById('previous').disabled=true;}
 puzzle.onchange=load;language.onchange=load;document.getElementById('repeat').onclick=()=>send('restart');document.getElementById('previous').onclick=()=>send('previous');document.getElementById('next').onclick=()=>send('next');
-window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==screen.contentWindow||event.data?.type!=='pyramid-presentation-state')return;const s=event.data;document.getElementById('status').textContent=`${s.name} · ${s.step+1} / ${s.labels.length} · ${s.labels[s.step]}${s.step===2?' · Esquema completo':''}`;document.getElementById('next').disabled=!s.canNext;document.getElementById('next').textContent=s.canNext?s.nextLabel:'Esquema completo ✓';document.getElementById('previous').disabled=s.step===0;});
+window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==screen.contentWindow||event.data?.type!=='pyramid-presentation-state')return;const s=event.data;document.getElementById('status').textContent=`${s.name} · ${s.step+1} / ${s.labels.length} · ${s.labels[s.step]}${!s.canNext?' · Esquema completo':''}`;document.getElementById('next').disabled=!s.canNext;document.getElementById('next').textContent=s.canNext?s.nextLabel:'Esquema completo ✓';document.getElementById('previous').disabled=s.step===0;});
 screen.onload=()=>send('sync');load();
 </script>
 </body>

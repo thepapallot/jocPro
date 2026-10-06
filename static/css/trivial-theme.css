@@ -1,0 +1,34 @@
+/* Trivial identity: brand magenta on graphite. Answer and result colours retain
+   their gameplay meaning; the neutral option selectors exclude every state. */
+:is(.p-stage[data-puzzle="3"],body.pyramid-game[data-puzzle="3"]){
+  --trivial-accent:#dc68a7;
+  --trivial-line:#dc68a766;
+  --trivial-bg:#0a1016;
+  --trivial-panel:#14232c;
+  --trivial-text:#f3eee4;
+  --trivial-secondary:#a8bbc5;
+}
+
+/* Player introduction, including its route map and three briefing reveals. */
+.p-stage[data-puzzle="3"] :is(.j-journey-heading h1,.b-heading h1){color:var(--trivial-accent)}
+.p-stage[data-puzzle="3"] :is(.j-journey-heading p,.b-art-label,.b-rule){color:var(--trivial-text)}
+.p-stage[data-puzzle="3"] .b-monitor{background:var(--trivial-bg);border-color:var(--trivial-line);border-bottom-color:var(--trivial-accent)}
+.p-stage[data-puzzle="3"] .b-monitor-top{background:var(--trivial-panel)}
+.p-stage[data-puzzle="3"] .b-question{color:var(--trivial-text)}
+.p-stage[data-puzzle="3"] .b-options>div{background:var(--trivial-panel);border-color:var(--trivial-line)}
+.p-stage[data-puzzle="3"] .b-options b{color:var(--trivial-accent)}
+.p-stage[data-puzzle="3"] .b-options span{background:var(--trivial-secondary)}
+.p-stage[data-puzzle="3"] .b-interaction-zone{background:var(--trivial-panel);border-color:var(--trivial-line);border-left-color:var(--trivial-accent)}
+.p-stage[data-puzzle="3"] .b-arrow{color:var(--trivial-accent)}
+.p-stage[data-puzzle="3"] .b-terminal b{color:var(--trivial-accent);border-color:var(--trivial-accent)}
+
+/* Live game: no overrides for green/red, correct/wrong or answered states. */
+body.pyramid-game.game-surface[data-puzzle="3"]{--surface-accent:var(--trivial-accent)}
+body.pyramid-game[data-puzzle="3"] .game-corner-identity h1{color:var(--trivial-accent)}
+body.pyramid-game[data-puzzle="3"] #quiz-stage{background:var(--trivial-panel);border-color:var(--trivial-line);border-top:3px solid var(--trivial-accent);box-shadow:none}
+body.pyramid-game[data-puzzle="3"] #quiz-stage::before{display:none}
+body.pyramid-game[data-puzzle="3"] #question-area{background:var(--trivial-bg);border-color:var(--trivial-line)}
+body.pyramid-game[data-puzzle="3"] #question-text{color:var(--trivial-text);text-shadow:none}
+body.pyramid-game[data-puzzle="3"] .answer-row:not(.green):not(.red):not(.correct):not(.wrong){background:var(--trivial-bg);border-color:var(--trivial-line);box-shadow:none}
+body.pyramid-game[data-puzzle="3"] .answer-row:not(.green):not(.red):not(.correct):not(.wrong) .answer-index{background:var(--trivial-panel);color:var(--trivial-accent);border-color:var(--trivial-line);box-shadow:none;text-shadow:none}
+body.pyramid-game[data-puzzle="3"] .answer-row:not(.green):not(.red):not(.correct):not(.wrong) .answer-text{color:var(--trivial-text);text-shadow:none}
