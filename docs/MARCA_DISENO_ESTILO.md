@@ -6,6 +6,9 @@ de recursos gráficos. Leer antes de editar, como establece [AGENTS.md](../AGENT
 
 Esta guía sirve a diseño, frontend, marketing y Game Master. Mantiene una identidad
 común sin congelar las mecánicas, rondas o textos que todavía están evolucionando.
+Su alcance es editorial y visual: no es un registro de cambios, un informe de
+pruebas ni un manual técnico. No incluir soluciones de puzzles, parámetros de
+ejecución, contratos del backend o instrucciones particulares del test.
 
 ## Cómo interpretar las decisiones
 
@@ -82,22 +85,12 @@ y los controles del GM. Las versiones catalanas e inglesas conservan el signific
 | 7 | Segmentos difícil, fuera del recorrido | Segmentos avanzados | Segments avançats | Advanced Segments |
 
 La prueba 7 conserva su denominación descriptiva: no se ha acordado un nombre
-creativo nuevo para ella. Catálogo único de implementación:
-`static/js/puzzle-names.js`. Los IDs, `PUZZLE_ALIASES`, rutas, carpetas y mensajes
-MQTT mantienen sus identificadores técnicos; no usar los nombres editoriales
-para construir rutas ni comandos. Las pruebas 7, 9 y 10 no se añaden al recorrido.
+creativo nuevo para ella. Las pruebas 7, 9 y 10 no se añaden al recorrido.
 
 La explicación de Tras la Serpiente muestra una cabeza con el número del token
 y cinco formas en orden. El equipo busca cada forma en los terminales y pasa el
 token para completar la serpiente. Se mantiene la correspondencia de alarma.
 Se sustituye la explicación antigua de entradas y centro de un laberinto.
-
-Validación de los nombres: intros disponibles y cabeceras de los doce puzzles
-revisadas en castellano, catalán e inglés, a 1920 × 1080 y 1280 × 720.
-Fixtures aislados con plantillas reales; no se ejecutan los scripts que inician
-hardware. Catálogo y flujo comprobados con tests; controles del GM y rutas de
-presentación verificados. Solo simulación, pendiente lectura desde la sala.
-Capturas y resultados: `output/nombres/`.
 
 ## Personalidad y lenguaje
 
@@ -179,19 +172,12 @@ bordes y revelados; no expresa una respuesta ni un resultado.
 Se conservan los colores funcionales existentes de botones verde/rojo,
 respuestas sí/no, acierto/fallo, estados contestados y logros. Las imágenes del
 terminal y sus botones no se recolorean. La variante está acotada al puzzle 3
-en `static/css/trivial-theme.css`; el mapa general mantiene sus otras etapas.
+en su presentación y tablero; el mapa general mantiene sus otras etapas.
 
-Jerarquía del QUIZ, acordada e implementada el 6 octubre 2026: reducir 8 px el
-tamaño calculado de las respuestas (cuatro ajustes de 2 px), sin cambiar el tamaño
-de los números. Destacar la pregunta con mayor peso
-tipográfico, una barra lateral magenta y un fondo magenta tenue; conservar el
-texto blanco cálido y los colores funcionales de las respuestas.
-
-Verificación con fixtures aislados: intro en castellano, catalán e inglés y
-puzzle con estados neutro/verde/rojo/acierto/fallo a 1920 × 1080 y 1280 × 720.
-Colores funcionales del puzzle comparados antes/después, sin cambios. Solo
-simulación, sin MQTT ni hardware; revisión desde la sala pendiente.
-Capturas y resultados: `output/recorrido/trivial-*`.
+Jerarquía del QUIZ: destacar la pregunta con mayor peso tipográfico, una barra
+lateral magenta y un fondo magenta tenue. Las respuestas tienen menor tamaño
+que la pregunta; mantener legibles sus números, el texto blanco cálido y los
+colores funcionales de las respuestas.
 
 ### Tipografía
 
@@ -238,17 +224,14 @@ Recorrido actual de referencia: Simulacro Inicial 11 → Tras la Serpiente 2 →
 Cálculo Extremo 1 → Memoria Fantasma 8 → QUIZ 3 → Pulso de Tiempo 5 →
 Conexión Simultánea 12 → Código Sonoro 4 → Carga Final 6 → cierre.
 Ocho retos puntuables; Segmentos 10 queda fuera del recorrido activo. Consultar
-`config.py` y el flujo antes de cambiar el orden. El progreso actual no debe
-suponerse persistente entre ventanas o reinicios sin comprobarlo.
+el recorrido vigente antes de cambiar su representación.
 
 Acordado: el QUIZ constituye una etapa central entre dos bloques de retos,
 con tres pruebas por bloque como configuración inicial, sin exigir esa cantidad.
-Implementado en `config.py`: `PUZZLE_PRE_TRIVIAL`, `PUZZLE_TRIVIAL` y
-`PUZZLE_POST_TRIVIAL` generan la lista completa `PUZZLE_ORDER`, que conserva el
-contrato de navegación y MQTT. El Trivial sigue contando como reto puntuable.
-Implementado: diagrama común en la apertura automática y como primer paso manual
+El Trivial sigue contando como reto puntuable.
+Diagrama común en la apertura automática y como primer paso manual
 de la presentación del QUIZ. Muestra práctica → primer bloque → QUIZ →
-segundo bloque → final, con cantidades y casillas derivadas de `PUZZLE_ORDER`.
+segundo bloque → final, con cantidades y casillas del recorrido vigente.
 «Estáis aquí» identifica la etapa. Decisión actualizada el 6 octubre 2026: en la
 intro del QUIZ el mapa presenta las pruebas del primer bloque como superadas
 y las del segundo bloque pendientes, también al abrir directamente la intro.
@@ -397,9 +380,7 @@ locuciones antiguas se retiraron del proyecto el 5 de octubre de 2026.
 El recorrido vigente utiliza HTML y JavaScript. Las nuevas voces se producirán
 para ese recorrido. Registro: [limpieza del proyecto](LIMPIEZA_PROYECTO.md).
 
-El diseño integrado de Sumas está aprobado como base de trabajo. Su piloto
-independiente se retiró; los datos de presentación están en `presentation-flow.js`
-y el ensayo utiliza el esquema vigente, igual que el resto de los puzzles.
+El diseño integrado de Sumas está aprobado como base de trabajo.
 
 Animar para revelar, señalar cambios y celebrar. Detener el movimiento durante
 lectura y resolución. Evitar destellos rápidos y respetar movimiento reducido.
@@ -419,62 +400,35 @@ su superficie piloto. La revisión individual de cada tablero sigue pendiente.
 - Mantener disposición y señales particulares de cada mecánica.
 
 Decisión actualizada e implementada el 6 octubre 2026: retirar número/posición de
-reto y contadores de rondas/preguntas de las pantallas de juego. Los nodos que
-actualizan los scripts se conservan ocultos para no modificar su funcionamiento.
+reto y contadores de rondas/preguntas de las pantallas de juego.
 Memory conserva el título de fase, las instrucciones y el tiempo; se oculta su
 etiqueta «Paso X de 3». Se mantienen los tiempos, objetivos, errores y pistas que
 sirven para resolver las pruebas. El GM conserva sus datos de conducción.
-
-Verificado con las doce plantillas en fixtures aislados a 1920 × 1080 y
-1280 × 720: cabeceras sin número de reto ni contador de rondas, pirámide presente
-con progreso pintado simulado y sin cifras visibles. Solo simulación; sin hardware.
-Capturas y resultados: `output/cabeceras/`.
 
 Memory conserva su cuadrícula de diez fichas y su jerarquía de fase e instrucción.
 Laberinto usa el tablero actual de secuencias móviles; no recuperar automáticamente
 los antiguos mapas fijos. Los colores de alarma mantienen su función.
 
-Serpientes del puzzle 2, ampliadas por petición del usuario el 6 octubre 2026:
-cabezas de 64 px, símbolos de 54 px y números de 34 px en el lienzo base,
-con celdas de movimiento de 72 px. Aumento aproximado del 50 %, conservando
-símbolos y secuencias.
-Velocidad visual fija: 200 px lógicos por segundo (una celda cada 360 ms),
-escalada proporcionalmente con el lienzo completo. Interpolación por tiempo,
-independiente de la resolución y frecuencia de refresco; sin aceleración para
-recuperar pasos perdidos al volver a una pestaña. Redimensionar no reinicia las
-posiciones de las serpientes. Este ajuste reduce la velocidad anterior.
-Velocidad comprobada con reloj simulado a 30, 60 y 144 Hz, en las dos
-resoluciones de referencia, incluyendo pausas, redimensionado y cruces de error.
-Cabezas en blanco cálido `#F3EEE4` con números grafito
-`#0A1016` en estado normal, por petición del usuario; conservar el rojo de alarma
-cuando suena la sirena. Cada casilla completada se marca con fondo y borde verde
-`#2DFF9B` (menos azulado, ajustado por petición del usuario); la siguiente casilla pendiente se destaca con borde ámbar
-`#EDB970`, brillo estático y un leve aumento de tamaño. Conservar estos estados
-durante la alarma, sin recolorear los símbolos ni alterar su correspondencia.
-Al completar los cinco símbolos, la cabeza y todas las casillas del cuerpo
-pasan a fondo verde `#2DFF9B`, también durante la alarma; el número sigue
-en grafito y los símbolos conservan su imagen. Un reinicio retira este estado.
-Al recibir un error del backend, mostrar una cruz roja `#F15C68` sobre la
-casilla pendiente de esa serpiente, sin cambiar su progreso. La cruz sigue el
-movimiento y permanece 4 segundos, con brillo rojo reforzado; parpadea suavemente dos veces al aparecer
-(sin parpadeo si se solicita movimiento reducido). Un nuevo error en la misma
-casilla reinicia los 4 segundos. Se mantienen el sonido y las reglas de error.
-Mientras se reproduce el audio de entrada de alarma, el fondo del tablero tiene
-un resplandor rojo radial que pulsa suavemente desde el centro y se degrada
-hasta transparente hacia los bordes, sin relleno rectangular. Se sincroniza con los eventos reales
-del audio: empieza en `playing` y termina en `ended`, no con un tiempo fijo.
-Si el audio falla, se sustituye o se completa el puzzle, retirar el efecto.
-Con movimiento reducido, mantener el fondo rojo estático durante el audio.
-Esta señal no altera la correspondencia de símbolos ni el estado de alarma.
-Comprobadas diez serpientes durante
-cien movimientos, alarma y progreso a 1920 × 1080 y 1280 × 720, sin recortes.
-Solo simulación aislada; legibilidad desde la sala pendiente.
+### Criterios visuales particulares
 
-Confirmación de Memory, acordada e implementada el 6 octubre 2026: conservar la
-pantalla verde con «NIVEL COMPLETADO», sin popup adicional ni destello. Mostrarla
-al recibir un resultado correcto validado por el backend. En la última ronda,
-reproducir ahí el sonido de nivel superado, sin repetirlo al llegar el evento final.
-Comprobado con estados simulados a 1920 × 1080 y 1280 × 720; sin hardware.
+- **Serpientes:** cabezas y números grandes y legibles. Cabeza normal en blanco
+  cálido `#F3EEE4`, número grafito `#0A1016` y cabeza de alarma roja. Casillas y
+  serpientes completadas en verde `#2DFF9B`; siguiente casilla en ámbar `#EDB970`.
+  Error con cruz roja `#F15C68`. Alarma con resplandor radial rojo que se desvanece
+  hacia los bordes, sin relleno rectangular. Conservar las imágenes de símbolos.
+- **Memory:** confirmación verde con «NIVEL COMPLETADO», sin popup adicional
+  ni destello.
+- **Botons:** confirmación con resplandor radial verde y «NIVEL SUPERADO»;
+  tiempo agotado con resplandor radial rojo y «SE ACABÓ EL TIEMPO». Sin pirámide
+  grande ni popup adicional en esos avisos. Traducir los mensajes al idioma
+  de sesión.
+- **Música:** confirmación entre fases en panel apaisado `#14232C` sobre fondo
+  oscurecido grafito, blanco cálido y menta `#71E7DB`. PiramideDisplay, bordes
+  discretos y radio pequeño, sin halos de neón. Mensaje «Primera fase superada»,
+  localizado al idioma de sesión.
+
+Aplicar a estos avisos la pauta común de movimiento suave, sin destellos rápidos
+y con variante estática cuando se solicite movimiento reducido.
 
 ## Catálogo gráfico autorizado
 
@@ -564,8 +518,8 @@ para conducción. Resumen discreto de sesión activa, jugadores e idioma.
 
 - Destacar la acción siguiente según la fase.
 - «Iniciar» junto a un puzzle siempre pide confirmación dentro del panel; no
-  depender de `window.confirm()` para esta acción. Cancelar no abre ni inicia
-  nada. Mostrar el progreso de apertura y cualquier error del lanzador.
+  depender de un aviso del navegador. Cancelar no abre ni inicia nada. Mostrar
+  el progreso de apertura y cualquier error del lanzador.
 - Agrupar volver, pausar y repetir como acciones secundarias.
 - Mostrar ayudas y resolución de pasos en el contexto del puzzle.
 - Separar reinicio y acciones que fuerzan resultados.

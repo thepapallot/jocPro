@@ -8,6 +8,11 @@
     const FASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
     const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
+    // Match Puzzle4's required orders; these are only used for visual feedback.
+    const REQUIRED_ORDERS = {
+        'streak1-container': ['5', '1', '8', '3'],
+        'streak2-container': ['6', '1', '0', '9', '8', '4', '2', '7']
+    };
 
     const trackAudio = (() => {
         const audio = new Audio();
@@ -283,17 +288,20 @@
         const streak2Container = document.getElementById('streak2-container');
         const activeContainer = streak1Container.style.display !== 'none' ? streak1Container : streak2Container;
         const boxes = activeContainer.querySelectorAll('.progress-box');
-        const flashClass = flashingCorrect ? 'flash-correct' : 'flash-wrong';
-        const otherClass = flashingCorrect ? 'flash-wrong' : 'flash-correct';
-        const outcomeClass = flashingCorrect ? 'outcome-correct' : 'outcome-wrong';
-        const otherOutcomeClass = flashingCorrect ? 'outcome-wrong' : 'outcome-correct';
+        const requiredOrder = REQUIRED_ORDERS[activeContainer.id];
+        const complete = requiredOrder && boxes.length === requiredOrder.length &&
+            Array.from(boxes).every(box => box.classList.contains('filled'));
 
-        activeContainer.classList.add(outcomeClass);
-        activeContainer.classList.remove(otherOutcomeClass);
+        activeContainer.classList.toggle('outcome-correct', flashingCorrect);
+        activeContainer.classList.remove('outcome-wrong');
 
-        boxes.forEach(box => {
-            box.classList.add(flashClass);
-            box.classList.remove(otherClass);
+        boxes.forEach((box, index) => {
+            box.classList.remove('flash-correct', 'flash-wrong');
+            if (flashingCorrect) {
+                box.classList.add('flash-correct');
+            } else if (complete && box.dataset.label !== requiredOrder[index]) {
+                box.classList.add('flash-wrong');
+            }
         });
     }
 
@@ -620,6 +628,15 @@
         streakEl = document.getElementById('streak');
         progressSectionEl = document.getElementById('progress-section');
         phasePopupEl = document.getElementById('p4-phase-popup');
+        const popupMessages = {
+            ca: ['Primera fase', 'superada'],
+            es: ['Primera fase', 'superada'],
+            en: ['First phase', 'completed']
+        };
+        const language = window.PYRAMID_GAME?.language;
+        const popupCopy = popupMessages[language === 'eng' ? 'en' : language] || popupMessages.ca;
+        document.getElementById('p4-phase-popup-line1').textContent = popupCopy[0];
+        document.getElementById('p4-phase-popup-line2').textContent = popupCopy[1];
 
         //installDebugHelpers();
         setStatus('Preparando muestra', 'listening');

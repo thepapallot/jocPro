@@ -17,9 +17,11 @@
                     <div id="button-pattern" role="group" aria-label="Botons que cal prémer per color" style="display:none;"></div>
                     <div id="timer-overlay" role="timer" aria-label="Temps restant" aria-live="off" style="display:none;">00:00</div>
                     <div id="wrong-img" role="status" aria-live="assertive" style="display:none;">
-                        <span class="p12-timeout-text">TIEMPO AGOTADO</span>
+                        <span class="p12-feedback-text p12-timeout-text">SE ACABÓ EL TIEMPO</span>
                     </div>
-                    <img id="good-img" src="{{ url_for('static', filename='images/puzzle12/good.png') }}" alt="good" style="display:none;">
+                    <div id="good-img" role="status" aria-live="polite" style="display:none;">
+                        <span class="p12-feedback-text p12-success-text">NIVEL SUPERADO</span>
+                    </div>
 
                     <div id="wait-screen">
                         <img id="wait-img" src="{{ url_for('static', filename='images/puzzle12/wait.png') }}" alt="wait">
