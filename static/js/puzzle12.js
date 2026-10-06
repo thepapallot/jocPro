@@ -428,6 +428,7 @@
             interRoundPauseActive = false;
             queuedStartRoundUpdate = null;
             showSuccessFeedback();
+            document.getElementById('p12-solved-banner')?.classList.remove('hidden');
             setTimeout(function () {
                 if (window.PyramidGameFlow?.complete(12)) return;
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
@@ -443,7 +444,7 @@
                     .catch(function () {
                         window.location.href = '/videoPuzzles/' + nextId;
                     });
-            }, window.PyramidGameFlow?.managed ? 1300 : 5200);
+            }, 4000);
             return;
         }
     }

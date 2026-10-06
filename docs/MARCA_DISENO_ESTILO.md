@@ -409,6 +409,20 @@ Memory conserva su cuadrícula de diez fichas y su jerarquía de fase e instrucc
 Laberinto usa el tablero actual de secuencias móviles; no recuperar automáticamente
 los antiguos mapas fijos. Los colores de alarma mantienen su función.
 
+### Cierre final común de los niveles
+
+Acordado e implementado en las plantillas y el estilo común el **6 octubre
+2026**: los doce puzzles, incluido el simulacro y las pruebas fuera del recorrido,
+comparten una pantalla de cierre **final** verde sólido funcional `#2DFF9B`,
+con titular grafito `#0A1016` centrado en PiramideDisplay Black. Mensaje localizado:
+**«NIVEL SUPERADO»** en castellano, **«NIVELL SUPERAT»** en catalán y
+**«LEVEL COMPLETED»** en inglés. Sin halos, neón, bordes ni pirámides decorativas.
+Entrada suave y variante estática con movimiento reducido.
+
+Este cierre confirma la resolución completa del nivel; no sustituye los avisos
+ni logros de fases intermedias. En Carga Final, la confirmación verde de
+«NIVEL SUPERADO» precede a la celebración final del juego.
+
 ### Criterios visuales particulares
 
 - **Serpientes:** cabezas y números grandes y legibles. Cabeza normal en blanco
@@ -416,12 +430,12 @@ los antiguos mapas fijos. Los colores de alarma mantienen su función.
   serpientes completadas en verde `#2DFF9B`; siguiente casilla en ámbar `#EDB970`.
   Error con cruz roja `#F15C68`. Alarma con resplandor radial rojo que se desvanece
   hacia los bordes, sin relleno rectangular. Conservar las imágenes de símbolos.
-- **Memory:** confirmación verde con «NIVEL COMPLETADO», sin popup adicional
-  ni destello.
-- **Botons:** confirmación con resplandor radial verde y «NIVEL SUPERADO»;
+- **Memory:** confirmación verde común con «NIVEL SUPERADO», localizada al idioma
+  de sesión, sin popup adicional ni destello.
+- **Botons:** logro de fase con resplandor radial verde y «NIVEL SUPERADO»;
   tiempo agotado con resplandor radial rojo y «SE ACABÓ EL TIEMPO». Sin pirámide
   grande ni popup adicional en esos avisos. Traducir los mensajes al idioma
-  de sesión.
+  de sesión. El éxito final utiliza la pantalla verde común, no el aviso radial.
 - **Música:** confirmación entre fases en panel apaisado `#14232C` sobre fondo
   oscurecido grafito, blanco cálido y menta `#71E7DB`. PiramideDisplay, bordes
   discretos y radio pequeño, sin halos de neón. Mensaje «Primera fase superada»,

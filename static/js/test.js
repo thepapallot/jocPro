@@ -210,9 +210,8 @@
         { label: "Terminal 3 +1.8s", payload: "P5,3,1.8" }
       ],
       reference: [
-        "Rondas fijas:",
-        "1 -> objetivo 10 s",
-        "2 -> objetivo 30 s",
+        "Configuración actual: una ronda con objetivo de 30 s.",
+        "El tablero muestra el objetivo vigente enviado por el juego.",
         "",
         "El mensaje envia el error respecto al objetivo:",
         "P5,9,-0.5 -> terminal 9 se adelanta 0.5 s",
@@ -1758,9 +1757,9 @@
         phase: [{
           id: "p8-solve-input",
           label: "Resolver fase input",
-          detail: "Todas las filas disponibles",
+          detail: "Completa solo las posiciones vacías del intento actual, sin cambiar las respuestas registradas.",
           tone: "primary",
-          getPayloads: () => getPuzzle8Payloads("all")
+          run: resolvePuzzle8Phase
         }],
         all: [{
           id: "p8-solve-all-confirm",
@@ -1768,7 +1767,7 @@
           detail: "Fase input activa",
           tone: "danger",
           confirm: true,
-          getPayloads: () => getPuzzle8Payloads("all")
+          run: resolvePuzzle8Phase
         }]
       };
     }
@@ -2098,8 +2097,8 @@
     return code ? [`P7,${box},${code}`] : [];
   }
 
-  async function getPuzzle8Payloads(mode) {
-    const data = await fetchCurrentStateForPuzzle(8);
+  async function getPuzzle8Payloads(mode, completeAttempt = false, snapshot = null) {
+    const data = snapshot || await fetchCurrentStateForPuzzle(8);
     if (data.phase !== "input") {
       throw new Error("espera_fase_input");
     }
@@ -2110,22 +2109,47 @@
     const selectedRows = mode === "token"
       ? rows.filter((row) => String(row.token_code) === String(simState.puzzle8Token))
       : rows;
+    if (!selectedRows.length || selectedRows.some(row => !Array.isArray(row.entries) || !row.entries.length)) {
+      throw new Error("No hay combinaciones disponibles para esta fase.");
+    }
     return selectedRows.flatMap((row) => {
       const tokenCode = row.token_code;
       const remaining = [...(Array.isArray(row.entries) ? row.entries : [])];
-      for(const existing of data.input_entries?.[row.box]||[]){
+      const existingEntries = data.input_entries?.[row.box] || [];
+      for(const existing of existingEntries){
         const match=remaining.findIndex(entry=>entry.symbol===existing.symbol&&entry.color===existing.color);
-        if(match<0)throw new Error(`El token ${row.token} ya tiene una respuesta incorrecta. Completa el intento o reinicia el puzzle.`);
-        remaining.splice(match,1);
+        if (match < 0) {
+          if (!completeAttempt) throw new Error(`El token ${row.token} ya tiene una respuesta incorrecta. Resolver fase input solo completa las posiciones vacías del intento actual.`);
+        } else {
+          remaining.splice(match, 1);
+        }
       }
-      return remaining.map((entry) => {
+      return remaining.slice(0, Math.max(0, row.entries.length - existingEntries.length)).map((entry) => {
         const symbolCode = entry.symbol_code ?? symbolCodeByName[entry.symbol];
         const colorCode = entry.color_code ?? colorCodeByName[entry.color];
-        return tokenCode != null && symbolCode != null && colorCode != null
-          ? `P8,${symbolCode},${tokenCode},${colorCode}`
-          : "";
+        if (tokenCode == null || symbolCode == null || colorCode == null) {
+          throw new Error("La combinación contiene un código de token, símbolo o color no válido.");
+        }
+        return `P8,${symbolCode},${tokenCode},${colorCode}`;
       });
     }).filter(Boolean);
+  }
+
+  async function resolvePuzzle8Phase() {
+    const data = await fetchCurrentStateForPuzzle(8);
+    if (data.puzzle_solved) {
+      setStatus("Memory · este puzzle ya está resuelto.");
+      return;
+    }
+    const payloads = await getPuzzle8Payloads("all", true, data);
+    if (!payloads.length) {
+      setStatus("Memory · no quedan posiciones vacías en este intento.");
+      return;
+    }
+    await sendPayloads(payloads, "TO_FLASK");
+    appendLog({ local: true, resolver_action: "p8-solve-input", payloads });
+    setStatus("Memory · posiciones vacías completadas; se mantienen las respuestas registradas.");
+    return true;
   }
 
   function getPuzzle10SelectedPayloads() {
@@ -2628,20 +2652,21 @@
     });
   }
 
+  function updatePuzzle5SimulatorState(data) {
+    simState.puzzle5State = data;
+    simState.puzzle5Round = Number(data.round || 0);
+    simState.puzzle5Objective = data.objective ?? simState.puzzle5Objective ?? 30;
+    simState.puzzle5Limit = data.limit ?? null;
+    simState.puzzle5Total = data.total ?? 0;
+    simState.puzzle5Waiting = !!data.waiting;
+    simState.puzzle5ActiveRound = !!data.active_round;
+    simState.puzzle5Submitted = Array.isArray(data.times) ? data.times.map(item => Number(item.player)) : [];
+  }
+
   function renderPuzzle5Simulator() {
     const syncPuzzle5State = async (silent = true) => {
-      const response = await fetch("/current_state");
-      const data = await response.json();
-      if (String(data.puzzle_id) !== "5") {
-        throw new Error("no activo");
-      }
-      simState.puzzle5Round = Number(data.round || 0);
-      simState.puzzle5Objective = data.objective ?? null;
-      simState.puzzle5Limit = data.limit ?? null;
-      simState.puzzle5Total = data.total ?? 0;
-      simState.puzzle5Waiting = !!data.waiting;
-      simState.puzzle5ActiveRound = !!data.active_round;
-      simState.puzzle5Submitted = Array.isArray(data.times) ? data.times.map((item) => Number(item.player)) : [];
+      const data = await fetchCurrentStateForPuzzle(5);
+      updatePuzzle5SimulatorState(data);
       if (!silent) {
         setStatus("Puzzle 5 sincronizado");
       }
@@ -2661,7 +2686,7 @@
     }).join("");
 
     const roundLabel = simState.puzzle5Round || 1;
-    const objectiveLabel = simState.puzzle5Objective ?? (roundLabel === 1 ? 10 : 30);
+    const objectiveLabel = simState.puzzle5Objective ?? 30;
     const statusLabel = simState.puzzle5Waiting
       ? "Esperando"
       : simState.puzzle5ActiveRound
@@ -4734,6 +4759,12 @@
       if (String(data.puzzle_id) === "2" && els.puzzleSelect.value === "2") {
         applyPuzzle2State(data);
         renderPuzzle2Simulator();
+      }
+      if (String(data.puzzle_id) === "5" && els.puzzleSelect.value === "5") {
+        const relevant = state => JSON.stringify([state?.round, state?.objective, state?.limit, state?.total, state?.waiting, state?.active_round, state?.times]);
+        const previousChronometerState = simState.puzzle5State;
+        updatePuzzle5SimulatorState(data);
+        if (relevant(previousChronometerState) !== relevant(data)) renderPuzzle5Simulator();
       }
       if(String(data.puzzle_id)==='8'&&els.puzzleSelect.value==='8'){
         const relevant=state=>JSON.stringify([state?.phase,state?.round,state?.solution_rows,state?.input_entries]);

@@ -1,0 +1,56 @@
+/* Final level completion only: keep intermediate phase feedback untouched. */
+.pyramid-game :is(#p1-solved-banner, #p2-solved-banner, #p3-solved-banner, #p4-solved-banner, #p5-solved-banner, #p6-solved-banner, #p7-solved-banner, #p8-solved-banner, #p9-solved-banner, #p10-solved-banner, #p11-solved-banner, #p12-solved-banner) {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    background: #2DFF9B;
+    color: #0A1016;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: none;
+    text-align: center;
+    letter-spacing: 0;
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: level-success-enter .35s ease-out;
+}
+
+.pyramid-game :is(#p1-solved-banner, #p2-solved-banner, #p3-solved-banner, #p4-solved-banner, #p5-solved-banner, #p6-solved-banner, #p7-solved-banner, #p8-solved-banner, #p9-solved-banner, #p10-solved-banner, #p11-solved-banner, #p12-solved-banner).hidden {
+    display: none !important;
+}
+
+.pyramid-game :is(#p1-solved-banner, #p2-solved-banner, #p3-solved-banner, #p4-solved-banner, #p5-solved-banner, #p6-solved-banner, #p7-solved-banner, #p8-solved-banner, #p9-solved-banner, #p10-solved-banner, #p11-solved-banner, #p12-solved-banner) .level-success-title {
+    margin: 0;
+    padding: 0;
+    color: #0A1016;
+    font: 900 clamp(64px, 8vw, 160px)/1.1 PiramideDisplay, 'Arial Narrow', Arial, sans-serif;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-shadow: none;
+    animation: none;
+}
+
+body.pyramid-game:is(.p1-solved-flash, .p2-solved-flash, .p3-solved-flash, .p4-solved-flash, .p5-solved-flash, .p6-solved-flash, .p7-solved-flash, .p8-solved-flash, .p9-solved-flash, .p10-solved-flash, .p11-solved-flash, .p12-solved-flash) {
+    animation: none;
+}
+
+@keyframes level-success-enter {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pyramid-game :is(#p1-solved-banner, #p2-solved-banner, #p3-solved-banner, #p4-solved-banner, #p5-solved-banner, #p6-solved-banner, #p7-solved-banner, #p8-solved-banner, #p9-solved-banner, #p10-solved-banner, #p11-solved-banner, #p12-solved-banner) {
+        animation: none;
+    }
+}

@@ -188,7 +188,7 @@
                     .catch(function () {
                         window.location.href = '/videoPuzzles/' + nextId;
                     });
-            }, window.PyramidGameFlow?.managed ? 1300 : 5200);
+            }, 4000);
         }, SOLVED_GREEN_DELAY_MS);
     }
 

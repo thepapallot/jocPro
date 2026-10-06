@@ -415,7 +415,7 @@
                     ? NEXT_PUZZLE_ID
                     : 1;
                 window.location.href = '/videoPuzzles/' + nextId;
-            }, window.PyramidGameFlow?.managed ? 1300 : 1800);
+            }, 4000);
         }
     }
 

@@ -19,6 +19,7 @@ function memory() {
         });
         return elements.get(id);
     };
+    getElement('p8-solved-banner');
     const listeners = {};
     let stream;
     const timers = [];
@@ -73,6 +74,7 @@ test('final completion shows the green screen and schedules navigation only once
     assert.equal(game.elements.get('p8-instruction-title').textContent, 'NIVEL COMPLETADO');
     assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), false);
     assert.equal(game.timers.length, 1);
+    assert.equal(game.timers[0].delay, 4000);
 });
 
 test('the final success sound plays at answer validation, not five seconds later or twice', () => {
@@ -80,9 +82,12 @@ test('the final success sound plays at answer validation, not five seconds later
     game.update({round: 1, round_total: 1, phase: 'input', input_result: {success: true, box_results: {}}});
     assert.deepEqual(game.sounds, ['/static/audios/effects/nivel_completado.wav']);
     assert.equal(game.timers.length, 0);
+    assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), true);
     game.update({puzzle_solved: true});
     assert.equal(game.sounds.length, 1);
     assert.equal(game.timers.length, 1);
+    assert.equal(game.timers[0].delay, 4000);
+    assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), false);
 });
 
 test('an intermediate success retains the phase sound', () => {

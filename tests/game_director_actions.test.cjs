@@ -6,7 +6,8 @@ const path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../static/js/test.js'),'utf8');
 // Exercise the actual existing resolver functions without booting the operator UI.
 function resolver(name,context){
-  const start=source.indexOf(`  async function ${name}(`);
+  const asyncStart=source.indexOf(`  async function ${name}(`);
+  const start=asyncStart>=0?asyncStart:source.indexOf(`  function ${name}(`);
   const next=source.slice(start+1).search(/\n  (?:async )?function /);
   assert.ok(start>=0&&next>=0);
   vm.createContext(context);
@@ -35,6 +36,81 @@ test('Memory fills only missing pairs, in either arrival order',async()=>{
   await assert.rejects(()=>solve('all'),/respuesta incorrecta/);
   state.phase='tokens';
   await assert.rejects(()=>solve('all'),/espera_fase_input/);
+});
+
+test('Memory can finish a wrong attempt without exceeding a token capacity', async () => {
+  const state = {phase:'input',solution_rows:[{box:0,token:13,token_code:2,entries:[{symbol:'alpha',color:'red'},{symbol:'beta',color:'blue'}]}],input_entries:{0:[{symbol:'gamma',color:'black'}]}};
+  const solve = resolver('getPuzzle8Payloads', {simState:{},fetchCurrentStateForPuzzle:async()=>state});
+  await assert.rejects(()=>solve('all'), /respuesta incorrecta/);
+  assert.deepEqual(plain(await solve('all', true)), ['P8,0,2,1']);
+  state.input_entries[0].push({symbol:'alpha',color:'red'});
+  assert.deepEqual(plain(await solve('all', true)), []);
+});
+
+test('Memory keeps duplicate counts and rejects missing solutions rather than silently doing nothing', async () => {
+  const state = {phase:'input',solution_rows:[{box:0,token:13,token_code:2,entries:[{symbol:'alpha',color:'red'},{symbol:'alpha',color:'red'}]}],input_entries:{0:[{symbol:'alpha',color:'red'}]}};
+  const solve = resolver('getPuzzle8Payloads', {simState:{},fetchCurrentStateForPuzzle:async()=>state});
+  assert.deepEqual(plain(await solve('all')), ['P8,0,2,1']);
+  state.solution_rows=[];
+  await assert.rejects(()=>solve('all'), /No hay combinaciones/);
+});
+
+function memoryPhaseResolver(states) {
+  const sent = [];
+  let clock = 0;
+  const build = resolver('getPuzzle8Payloads', {simState:{}});
+  const solve = resolver('resolvePuzzle8Phase', {
+    Date:{now:()=>clock},
+    window:{setTimeout(callback){clock+=250;callback();}},
+    fetchCurrentStateForPuzzle:async()=>states.length>1?states.shift():states[0],
+    getPuzzle8Payloads:(mode,completeAttempt,data)=>build(mode,completeAttempt,data),
+    sendPayloads:async(payloads,topic)=>sent.push({payloads:plain(payloads),topic}),
+    appendLog(){},setStatus(){}
+  });
+  return {solve,sent};
+}
+
+test('Memory phase resolution fills only current empty slots, even with wrong registered answers', async () => {
+  const oldRows=[{box:0,token:13,token_code:2,entries:[{symbol:'alpha',color:'red'},{symbol:'beta',color:'blue'}]}];
+  const newRows=[{box:0,token:13,token_code:2,entries:[{symbol:'gamma',color:'white'},{symbol:'delta',color:'black'}]}];
+  const game=memoryPhaseResolver([
+    {phase:'input',round:1,solution_rows:oldRows,input_entries:{0:[{symbol:'gamma',color:'black'}]}},
+    {phase:'input',round:1,solution_rows:newRows,input_entries:{}}
+  ]);
+  assert.equal(await game.solve(),true);
+  assert.deepEqual(game.sent,[
+    {payloads:['P8,0,2,1'],topic:'TO_FLASK'}
+  ]);
+});
+
+test('Memory phase resolution does not send anything when the current attempt is full', async () => {
+  const game=memoryPhaseResolver([
+    {phase:'input',round:1,solution_rows:[{box:0,token:13,token_code:2,entries:[{symbol:'alpha',color:'red'}]}],input_entries:{0:[{symbol:'beta',color:'blue'}]}},
+    {phase:'input',round:2,solution_rows:[{box:0,token:13,token_code:2,entries:[{symbol:'delta',color:'white'}]}]}
+  ]);
+  await game.solve();
+  assert.equal(game.sent.length,0);
+});
+
+test('Memory phase resolution refuses non-input phases without waiting for the next phase', async () => {
+  for (const phase of ['numbers','tokens','idle']) {
+    const game=memoryPhaseResolver([{phase,round:1}]);
+    await assert.rejects(game.solve,/espera_fase_input/);
+    assert.equal(game.sent.length,0);
+  }
+});
+
+test('Chronometer uses 30 seconds before start and follows the live objective and submissions', () => {
+  const simState={};
+  const update=resolver('updatePuzzle5SimulatorState',{simState});
+  update({round:0,objective:null,waiting:true});
+  assert.equal(simState.puzzle5Objective,30);
+  update({round:1,objective:30,active_round:true,limit:20,total:1.5,times:[{player:3,time:1.5}]});
+  assert.equal(simState.puzzle5Objective,30);
+  assert.deepEqual(plain(simState.puzzle5Submitted),[3]);
+  update({round:1,objective:45,active_round:true});
+  assert.equal(simState.puzzle5Objective,45);
+  assert.doesNotMatch(source,/objetivo 10 s|puzzle5Objective \?\? \(roundLabel === 1 \? 10/);
 });
 test('Buttons sets the requested totals and releases every unused terminal',async()=>{
   const target=[2,1,3,0,2,1];

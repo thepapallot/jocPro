@@ -290,7 +290,7 @@
             setTimeout(function () {
                 if (window.PyramidGameFlow?.complete(6)) return;
                 window.location.href = '/final';
-            }, window.PyramidGameFlow?.managed ? 1300 : 5200);
+            }, 4000);
         }
     }
 
