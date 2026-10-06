@@ -181,6 +181,12 @@ respuestas sí/no, acierto/fallo, estados contestados y logros. Las imágenes de
 terminal y sus botones no se recolorean. La variante está acotada al puzzle 3
 en `static/css/trivial-theme.css`; el mapa general mantiene sus otras etapas.
 
+Jerarquía del QUIZ, acordada e implementada el 6 octubre 2026: reducir 8 px el
+tamaño calculado de las respuestas (cuatro ajustes de 2 px), sin cambiar el tamaño
+de los números. Destacar la pregunta con mayor peso
+tipográfico, una barra lateral magenta y un fondo magenta tenue; conservar el
+texto blanco cálido y los colores funcionales de las respuestas.
+
 Verificación con fixtures aislados: intro en castellano, catalán e inglés y
 puzzle con estados neutro/verde/rojo/acierto/fallo a 1920 × 1080 y 1280 × 720.
 Colores funcionales del puzzle comparados antes/después, sin cambios. Solo
@@ -318,6 +324,48 @@ Capturas y resultados: `output/cabeceras/`.
 Memory conserva su cuadrícula de diez fichas y su jerarquía de fase e instrucción.
 Laberinto usa el tablero actual de secuencias móviles; no recuperar automáticamente
 los antiguos mapas fijos. Los colores de alarma mantienen su función.
+
+Serpientes del puzzle 2, ampliadas por petición del usuario el 6 octubre 2026:
+cabezas de 64 px, símbolos de 54 px y números de 34 px en el lienzo base,
+con celdas de movimiento de 72 px. Aumento aproximado del 50 %, conservando
+símbolos y secuencias.
+Velocidad visual fija: 200 px lógicos por segundo (una celda cada 360 ms),
+escalada proporcionalmente con el lienzo completo. Interpolación por tiempo,
+independiente de la resolución y frecuencia de refresco; sin aceleración para
+recuperar pasos perdidos al volver a una pestaña. Redimensionar no reinicia las
+posiciones de las serpientes. Este ajuste reduce la velocidad anterior.
+Velocidad comprobada con reloj simulado a 30, 60 y 144 Hz, en las dos
+resoluciones de referencia, incluyendo pausas, redimensionado y cruces de error.
+Cabezas en blanco cálido `#F3EEE4` con números grafito
+`#0A1016` en estado normal, por petición del usuario; conservar el rojo de alarma
+cuando suena la sirena. Cada casilla completada se marca con fondo y borde verde
+`#2DFF9B` (menos azulado, ajustado por petición del usuario); la siguiente casilla pendiente se destaca con borde ámbar
+`#EDB970`, brillo estático y un leve aumento de tamaño. Conservar estos estados
+durante la alarma, sin recolorear los símbolos ni alterar su correspondencia.
+Al completar los cinco símbolos, la cabeza y todas las casillas del cuerpo
+pasan a fondo verde `#2DFF9B`, también durante la alarma; el número sigue
+en grafito y los símbolos conservan su imagen. Un reinicio retira este estado.
+Al recibir un error del backend, mostrar una cruz roja `#F15C68` sobre la
+casilla pendiente de esa serpiente, sin cambiar su progreso. La cruz sigue el
+movimiento y permanece 4 segundos, con brillo rojo reforzado; parpadea suavemente dos veces al aparecer
+(sin parpadeo si se solicita movimiento reducido). Un nuevo error en la misma
+casilla reinicia los 4 segundos. Se mantienen el sonido y las reglas de error.
+Mientras se reproduce el audio de entrada de alarma, el fondo del tablero tiene
+un resplandor rojo radial que pulsa suavemente desde el centro y se degrada
+hasta transparente hacia los bordes, sin relleno rectangular. Se sincroniza con los eventos reales
+del audio: empieza en `playing` y termina en `ended`, no con un tiempo fijo.
+Si el audio falla, se sustituye o se completa el puzzle, retirar el efecto.
+Con movimiento reducido, mantener el fondo rojo estático durante el audio.
+Esta señal no altera la correspondencia de símbolos ni el estado de alarma.
+Comprobadas diez serpientes durante
+cien movimientos, alarma y progreso a 1920 × 1080 y 1280 × 720, sin recortes.
+Solo simulación aislada; legibilidad desde la sala pendiente.
+
+Confirmación de Memory, acordada e implementada el 6 octubre 2026: conservar la
+pantalla verde con «NIVEL COMPLETADO», sin popup adicional ni destello. Mostrarla
+al recibir un resultado correcto validado por el backend. En la última ronda,
+reproducir ahí el sonido de nivel superado, sin repetirlo al llegar el evento final.
+Comprobado con estados simulados a 1920 × 1080 y 1280 × 720; sin hardware.
 
 ## Catálogo gráfico autorizado
 
