@@ -57,3 +57,60 @@
 .b-snake{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:36px 0}
 .b-snake>b{display:grid;place-content:center;width:80px;height:80px;border-radius:8px;background:#edb970;color:#0a1016;font:900 48px var(--p-display);flex:none}
 .b-snake .b-symbol{width:78px;height:78px;border:1px solid #647b88;padding:8px;background:#14232c}
+
+/* Practice-only equipment introduction, before the persistent puzzle diagram. */
+.p-stage[data-kind=puzzle][data-step=elements]::before,.p-stage[data-kind=puzzle][data-step=elements]::after{opacity:.06}
+.b-elements{flex:1;min-height:0;display:flex;flex-direction:column;padding:24px 0 28px}
+.b-elements>h1{font:900 86px/1.1 var(--p-display);margin:0;color:#f3eee4}
+.b-elements-items{flex:1;min-height:0;display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;gap:30px}
+.b-elements-items section{text-align:center}
+.b-elements-items img{display:block;width:450px;height:410px;object-fit:contain;margin:0 auto 4px}
+.b-elements-items h2{font:900 43px/1.12 var(--p-display);color:#39d6e5;margin:4px 0 15px}
+.b-elements-items p{font:31px/1.3 Arial,sans-serif;color:#f3eee4;margin:0 auto;max-width:630px}
+.b-elements-arrow{font:70px/1 Arial,sans-serif;color:#a8bbc5;text-align:center;padding-bottom:100px}
+.b-elements-action{font:900 42px/1.15 var(--p-display);text-align:center;color:#71e7db;margin:20px 0 0;padding:25px 30px 0;border-top:1px solid #35434d}
+
+.b-practice-objective{font:400 42px/1.25 Arial,sans-serif;color:var(--p-ivory,#F3EEE4);max-width:720px;margin:0;text-align:center;text-wrap:balance}
+
+/* Approved Spanish practice composition; other briefings are reviewed separately. */
+.p-screen:has(.b-practice-layout) .p-head{display:none}
+.p-screen:has(.b-practice-layout) .p-kicker{display:none}
+.p-screen:has(.b-practice-layout) .p-brand{font-size:27px}
+.p-screen:has(.b-practice-layout) .p-brand .pyramid-vector{width:66px;height:48px}
+.b-practice-layout{justify-content:center}
+.b-practice-layout .b-heading{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:35px;row-gap:12px;margin-bottom:20px}
+.b-practice-layout .b-heading>div:first-child{grid-column:1;grid-row:1}
+.b-practice-layout .b-practice-brand{grid-column:2;grid-row:1;justify-self:end;align-self:center}
+.b-practice-layout .b-heading h1{font-size:88px;line-height:1.15}
+.b-practice-layout .b-reveal-track{grid-column:2;grid-row:2;justify-self:end;gap:18px;padding-top:0}
+.b-practice-layout .b-reveal-track span{min-width:105px;gap:4px;font-size:20px;padding-top:8px}
+.b-practice-layout .b-reveal-track b{font-size:28px}
+.b-practice-layout .b-map{flex:none;grid-template-columns:1fr 1fr;grid-template-rows:405px 210px;column-gap:64px;row-gap:24px}
+.b-practice-layout .b-monitor{height:350px;border:1px solid #647b8855;border-left:4px solid var(--act-colour);border-radius:4px;box-shadow:none}
+.b-practice-layout .b-monitor-art{height:100%;padding:36px}
+.b-practice-layout .b-practice-objective{font-weight:700;font-size:44px;line-height:1.3;max-width:730px}
+.b-practice-layout .b-tools-art{height:350px;border-bottom:0}
+.b-practice-layout .b-art-row{gap:65px}
+.b-practice-layout .b-token{width:225px;height:270px}
+.b-practice-layout .b-terminal{width:410px;height:355px}
+.b-practice-layout .b-intro-mark{right:100px;top:25px}
+.b-practice-layout .b-interaction-zone{padding:20px 28px;display:flex;flex-direction:column;border-radius:4px}
+.b-practice-layout .b-action-route{flex:1;min-height:0;gap:25px}
+.b-practice-layout .b-action>span{max-width:390px;font-size:34px;line-height:1.18;text-align:center;text-wrap:balance}
+.b-practice-layout .b-action-route>.b-arrow{font-size:52px}
+
+/* Mandatory warning reveal, controlled by the GM like the other steps. */
+.b-attention[hidden]{display:none}
+.b-attention{position:absolute;inset:0;z-index:5;display:grid;place-items:center;background:#0a1016dc;backdrop-filter:blur(5px)}
+.b-attention-card{width:1320px;padding:54px 70px;background:#14232c;border:1px solid #edb97088;border-top:5px solid #edb970;border-radius:8px;box-shadow:0 24px 90px #0008}
+.b-attention-card h2{font:900 60px/1.1 var(--p-display);color:#edb970;margin:0 0 30px}
+.b-attention-card p{font:700 36px/1.35 Arial,sans-serif;color:#f3eee4;margin:0;text-wrap:balance}
+.b-attention-example{display:flex;justify-content:center;align-items:center;gap:100px;margin-top:44px}
+.b-attention-example>div{display:flex;flex-direction:column;align-items:center;gap:22px}
+.b-attention-example .b-symbol{width:170px;height:170px;image-rendering:pixelated}
+.b-attention-example span{font:900 27px/1.2 var(--p-display);color:#a8bbc5}
+.b-attention-example>div:last-child span{color:#edb970}
+.b-practice-layout[data-puzzle="2"] .b-reveal-track{gap:14px}
+.b-practice-layout[data-puzzle="2"] .b-tools-art>.b-art-row>.b-symbol{width:142px;height:142px;padding:16px;background:#101a24;border:1px solid #55707b;box-shadow:0 12px 35px #0005;flex:none}
+
+.b-attention-example>.b-arrow{font:64px/1 Arial,sans-serif;color:#edb970}

@@ -18,9 +18,9 @@
     switch(c.puzzleId){
       case 11:return {
         screen:`<div class="b-instruction"><span class="b-instruction-number">01</span><div>${text('SEGUIU<br>LA INSTRUCCIÓ','SEGUID<br>LA INSTRUCCIÓN','FOLLOW<br>THE INSTRUCTION')}</div><span class="b-instruction-check">✓</span></div>`,
-        tools:row(device(c,'token')+arrow+device(c,'terminal'))+label(text('Token · lector · botons','Token · lector · botones','Token · reader · buttons')),
-        interaction:route(action('◉',text('Mireu la pantalla','Mirad la pantalla','Read the screen'))+arrow+action('◎',text('Feu l’acció indicada','Haced la acción indicada','Perform the action'))+arrow+action('✓',text('Següent instrucció','Siguiente instrucción','Next instruction'))),
-        rule:text('Les accions poden combinar token i botons. Seguiu l’ordre indicat.','Las acciones pueden combinar token y botones. Seguid el orden indicado.','Actions may combine a token and buttons. Follow the order shown.')};
+        tools:row(device(c,'token')+arrow+device(c,'terminal'))+(lang==='es'?'':label(text('Token · lector · botons','','Token · reader · buttons'))),
+        interaction:route(action('◉',text('Mireu la pantalla','Mirad la pantalla','Read the screen'))+arrow+action('◎',text('Feu l’acció indicada','Realizad la acción indicada','Perform the action'))+arrow+action(text('✓','…','✓'),text('Següent instrucció','Esperad la siguiente instrucción','Next instruction'))),
+        rule:text('Les accions poden combinar token i botons. Seguiu l’ordre indicat.','','Actions may combine a token and buttons. Follow the order shown.')};
       case 2:return {
         screen:`<div class="b-snake"><b>5</b>${[5,0,9,6,2].map(sym).join('')}</div>`+label(text('Busqueu la serp del vostre token','Buscad la serpiente de vuestro token','Find your token’s snake')),
         tools:row(device(c,'token','5')+arrow+`<div class="b-terminal-symbol">${device(c,'terminal')}${sym(5)}</div>`)+label(text('Busqueu el terminal del símbol','Buscad el terminal del símbolo','Find the terminal matching the symbol')),
@@ -66,12 +66,33 @@
   }
   function markup(c,t,lang){
     const g=graphics(c,lang);
-    return `<div class="j-blueprint" data-reveal="0" data-puzzle="${c.puzzleId}"><div class="b-heading"><div><h1>${t.name}</h1><p>${t.objectiveTitle.replaceAll('<br>',' ')}</p></div><div class="b-reveal-track" aria-hidden="true">${[L(lang,'Objectiu','Objetivo','Goal'),L(lang,'Eines','Herramientas','Tools'),L(lang,'Acció','Acción','Action')].map((label,i)=>`<span data-track="${i}"><b>0${i+1}</b>${label}</span>`).join('')}</div></div><div class="b-map"><div class="b-intro-mark" aria-hidden="true">${PyramidLogo.markup({className:'b-brand-pyramid',progress:100*(c.completed||0)/(c.total||8),bloom:.25})}</div><section class="b-screen-zone b-layer" data-layer="0"><h2><b>01</b>${L(lang,'A LA PANTALLA','EN LA PANTALLA','ON THE SCREEN')}</h2><div class="b-monitor"><div class="b-monitor-top"><i></i><i></i><i></i><span>LA PIRÀMIDE</span></div><div class="b-monitor-art">${g.screen}</div></div></section><section class="b-tools-zone b-layer" data-layer="1" aria-hidden="true"><h2><b>02</b>${L(lang,'A LES VOSTRES MANS','EN VUESTRAS MANOS','IN YOUR HANDS')}</h2><div class="b-tools-art">${g.tools}</div></section><section class="b-interaction-zone b-layer" data-layer="2" aria-hidden="true"><h2><b>03</b>${L(lang,'COM ACTUEU JUNTS','CÓMO ACTUÁIS JUNTOS','HOW YOU ACT TOGETHER')}</h2>${g.interaction}<p class="b-rule">${g.rule}</p></section></div></div>`;
+    const reviewedBriefing=[11,2].includes(c.puzzleId)&&lang==='es';
+    if(reviewedBriefing){
+      g.screen=`<p class="b-practice-objective">${t.objectiveTitle}</p>`;
+      g.tools=`<div class="b-art-row">${device(c,'token')}${device(c,'terminal')}${c.puzzleId===2?sym(4):''}</div>`;
+      g.interaction=`<div class="b-action-route">${(c.puzzleId===2?['Identificad vuestra serpiente','Buscad los símbolos en el orden indicado','Pasad el token por cada terminal']:['Mirad la pantalla','Realizad la acción indicada','Esperad la siguiente instrucción']).map(txt=>`<span class="b-action"><span>${txt}</span></span>`).join(arrow)}</div>`;
+      g.rule='';
+    }
+    return `<div class="j-blueprint${reviewedBriefing?' b-practice-layout':''}" data-reveal="0" data-puzzle="${c.puzzleId}"><div class="b-heading"><div><h1>${t.name}</h1>${reviewedBriefing?'':`<p>${t.objectiveTitle.replaceAll('<br>',' ')}</p>`}</div>${reviewedBriefing?`<div class="p-brand b-practice-brand">${PyramidLogo.markup({progress:100*(c.completed||0)/(c.total||1),bloom:.28})}<span>${t.brand}</span></div>`:''}<div class="b-reveal-track" aria-hidden="true">${[L(lang,'Objectiu','Objetivo','Goal'),L(lang,'Eines','Herramientas','Tools'),L(lang,'Acció','Acción','Action'),...(c.attentionCopy?['Atención']:[])].map((label,i)=>`<span data-track="${i}"><b>0${i+1}</b>${label}</span>`).join('')}</div></div><div class="b-map"><div class="b-intro-mark" aria-hidden="true">${PyramidLogo.markup({className:'b-brand-pyramid',progress:100*(c.completed||0)/(c.total||8),bloom:.25})}</div><section class="b-screen-zone b-layer" data-layer="0"><h2><b>01</b>${reviewedBriefing?'OBJETIVO':L(lang,'A LA PANTALLA','EN LA PANTALLA','ON THE SCREEN')}</h2><div class="b-monitor">${reviewedBriefing?'':'<div class="b-monitor-top"><i></i><i></i><i></i><span>LA PIRÀMIDE</span></div>'}<div class="b-monitor-art">${g.screen}</div></div></section><section class="b-tools-zone b-layer" data-layer="1" aria-hidden="true"><h2><b>02</b>${L(lang,'A LES VOSTRES MANS','HERRAMIENTAS','IN YOUR HANDS')}</h2><div class="b-tools-art">${g.tools}</div></section><section class="b-interaction-zone b-layer" data-layer="2" aria-hidden="true"><h2><b>03</b>${reviewedBriefing?'ACCIÓN':L(lang,'COM ACTUEU JUNTS','CÓMO ACTUÁIS JUNTOS','HOW YOU ACT TOGETHER')}</h2>${g.interaction}${g.rule?`<p class="b-rule">${g.rule}</p>`:''}</section></div>${attention(c,lang)}</div>`;
+  }
+  function attention(c,lang){
+    const t=c.attentionCopy?.[lang]||c.attentionCopy?.es;
+    if(!t)return '';
+    return `<div class="b-attention" hidden><section class="b-attention-card" role="dialog" aria-modal="true" aria-labelledby="b-attention-title"><h2 id="b-attention-title">04 · ATENCIÓN</h2><p>${t.text}</p><div class="b-attention-example"><div>${sym(t.before)}<span>SÍMBOLO EN PANTALLA</span></div>${arrow}<div>${sym(t.after)}<span>SÍMBOLO QUE DEBÉIS BUSCAR</span></div></div></section></div>`;
+  }
+  function elements(c,lang){
+    const t=c.elementsCopy[lang]||c.elementsCopy.es;
+    return `<div class="b-elements"><h1>${t.title}</h1><div class="b-elements-items"><section><img src="${c.assets.token}" alt="Token personal"><h2>${t.tokenTitle}</h2><p>${t.tokenLead}</p></section><span class="b-elements-arrow" aria-hidden="true">→</span><section><img src="${c.assets.terminal}" alt="Terminal"><h2>${t.terminalTitle}</h2><p>${t.terminalLead}</p></section></div><p class="b-elements-action">${t.action}</p></div>`;
   }
   function reveal(root,index){
-    root.dataset.reveal=index;
+    root.dataset.reveal=Math.min(index,2);
+    const overlay=root.querySelector('.b-attention');
+    if(overlay){
+      overlay.hidden=index!==3;
+      for(const el of root.querySelectorAll('.b-heading,.b-map')){el.inert=index===3;el.setAttribute('aria-hidden',String(index===3));}
+    }
     root.querySelectorAll('[data-layer]').forEach(layer=>layer.setAttribute('aria-hidden',String(Number(layer.dataset.layer)>index)));
     root.querySelectorAll('[data-track]').forEach(item=>item.classList.toggle('is-active',Number(item.dataset.track)<=index));
   }
-  window.PyramidBriefing={markup,reveal};
+  window.PyramidBriefing={markup,reveal,elements};
 })();

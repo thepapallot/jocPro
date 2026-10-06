@@ -283,8 +283,8 @@ forman parte de la historia. No se prometen resultados empresariales medibles.
 
 Implementado: 16 momentos visuales y una pantalla final de espera. La Pirámide
 aparece en silencio; se descubre la energía en los terminales. Las escenas sobre
-compartir y escuchar utilizan luz sobre la Pirámide maestra: primero un lateral,
-después el otro, un recorrido suave y una iluminación estable. Aparecen los
+compartir y escuchar utilizan luz sobre la Pirámide maestra: encendido de las totxanas de la base hacia la cúspide, con el mismo
+relleno que el progreso del juego. Aparecen los
 titulares «Cada mirada cuenta» y «Todas las voces cuentan», sincronizados con la voz. Siguen habilidades, búsqueda y herramientas. El mapa
 revela práctica y primer bloque, QUIZ magenta, segundo bloque y Carga Final; después
 vuelve a señalar el inicio. Aparecen el token y el pulso final de la Pirámide.
@@ -301,8 +301,11 @@ vuelve a señalar el inicio. Aparecen el token y el pulso final de la Pirámide.
 - Retirados los diagramas de pistas y las ilustraciones de personas, rechazados
   por falta de claridad y de coherencia visual, respectivamente.
   Los objetos reales usan el catálogo autorizado; botones y símbolos se conservan.
-- El encendido de un bloque es un anticipo breve y desaparece. No registra logros;
-  el mapa de apertura mantiene todos los retos pendientes.
+- La pirámide se llena despacio en cinco etapas acumulativas: Las pistas (20 %),
+  Cada mirada cuenta (40 %), El primer pulso (60 %), Hacer sitio (80 %) y llamada
+  final (100 %). Cada etapa conserva los bloques anteriores y enciende los nuevos
+  uno a uno desde la base. Solo se completa en la llamada final. No registra
+  logros; el mapa sigue pendiente.
 - El mapa deriva de `PUZZLE_ORDER`; admite bloques vacíos/desiguales. Si no hay
   QUIZ en la configuración se omite su momento de la apertura y del mapa.
 - Al final, **la apertura se detiene en el reparto de tokens**. El GM avanza con
@@ -332,16 +335,22 @@ Visuales: `static/js/presentation-opening.js` y `static/css/presentation-opening
 La banda conserva dos líneas como máximo y queda vacía en las pausas y el reparto.
 Corrección de dirección visual: el usuario ha rechazado los trazados de pistas y
 las ilustraciones de personas. Ambos se retiran de las tres escenas de cooperación.
-Dirección aprobada e implementada: luz sobre la Pirámide original en las tres
-escenas, sin modificar bloques ni otorgar progreso. La primera luz acompaña la
-pista de una persona; la segunda acompaña la aportación de otra. En «Cada mirada
-cuenta» la luz recorre el conjunto y se estabiliza al hablar de escuchar. El titular
-aparece entonces. En «Todas las voces cuentan» la Pirámide se atenúa al hacer
-sitio a otras ideas y el titular se mantiene durante la última frase. Catalán:
-«CADA MIRADA COMPTA» y «TOTES LES VEUS COMPTEN»; inglés: «EVERY PERSPECTIVE
-COUNTS» y «EVERY VOICE COUNTS». Los tiempos salen de los cues de la narración,
-con pausa y navegación sincronizadas. Movimiento reducido mantiene una composición
-estable. Verificación a dos resoluciones y tres idiomas en `output/intro-luces/`.
+Dirección actualizada e implementada: iluminar cada totxana con el mismo relleno
+que el progreso del juego, conservando su forma. El encendido se reparte en cinco
+etapas de 20 %: Las pistas, Cada mirada cuenta, El primer pulso, Hacer sitio y
+llamada final. Cada etapa empieza donde terminó la anterior y añade bloques
+suavemente durante hasta cinco segundos, ajustados a los cues de la voz. No se
+reinicia ni se llena toda al principio; tampoco vuelve a una totxana aislada.
+Es una animación local: no registra logros ni cambia el progreso real.
+Los titulares «Cada mirada cuenta» y «Todas las voces cuentan» siguen sincronizados
+con escuchar y hacer sitio a otras ideas. En esta última escena, la pirámide se
+atenúa para dar protagonismo al titular. Pausa y navegación siguen el reloj de
+la narración. Movimiento reducido muestra el resultado estático de cada etapa,
+no una pirámide completa desde el principio. Verificación aislada a dos
+resoluciones y tres idiomas en `output/intro-cinc-passos/`; sin hardware.
+En herramientas, token y terminal ocupan cajas de 720 × 720 px: el tamaño se
+equilibra por la silueta visible, conservando sus proporciones y los recursos
+autorizados. No expresa la escala física de los objetos.
 Las ilustraciones descartadas quedan archivadas en `output/intro-personas/descartadas/`,
 sin referencias en el juego.
 Guion de producción: [APERTURA_NARRATIVA.md](APERTURA_NARRATIVA.md).
@@ -363,6 +372,93 @@ final natural, recorrido sin QUIZ y recuperación de sonido bloqueado. Revisión
 de 17 escenas a dos resoluciones en `output/intro-ca-audio/`. Pendiente ensayo
 con altavoces en la sala. Resultados y capturas del montaje anterior:
 `output/apertura-narrativa/`; `output/apertura/` documenta la versión sustituida.
+
+### Edición de las explicaciones de puzzles
+
+Acordado: revisar primero las presentaciones en castellano. Traducir el contenido
+al catalán después de aprobar el conjunto; no anticipar nuevas traducciones.
+Implementado para el Simulacro Inicial: una pantalla manual titulada **La misión está en
+vuestras manos** precede al esquema habitual de objetivo, herramientas e interacción.
+Muestra token personal y terminal con tamaño visual equilibrado. Explica conservar
+el token, acercarlo al lector para interactuar y trabajar en equipo compartiendo
+información y coordinándose. El GM muestra el lector físico y después avanza a
+la explicación del Simulacro. Los tokens ya se han repartido al acabar la apertura.
+Esta pantalla no inicia el juego ni modifica el progreso. La cuenta atrás sigue
+reservada al final de la explicación. Textos nuevos en `elementsCopy.es` de
+`presentation-flow.js`; los idiomas pendientes utilizan ese borrador en castellano.
+Verificación con fixture aislado a 1920 × 1080 y 1280 × 720, sin hardware:
+`output/simulacro-titulo/`.
+
+Decisión actualizada e implementada: retirar de todas las pantallas de
+presentación las frases inferiores de apoyo («Repartid quién observa…»,
+«Estas son vuestras herramientas», etc.) y su línea de separación. Incluye la
+pantalla de elementos del Simulacro y los tres revelados de todos los puzzles.
+El pie no ocupa espacio. Las ayudas de coordinación permanecen en el control
+del GM; las instrucciones propias del esquema y la cuenta atrás se conservan.
+Verificación aislada a 1920 × 1080 y 1280 × 720, sin hardware:
+`output/presentaciones-sin-pie/`.
+
+Simulacro Inicial, texto en castellano aprobado e implementado:
+
+- **Objetivo:** Familiarizarse con el sistema siguiendo las instrucciones de la pantalla.
+- **Herramientas:** Tokens y terminales.
+- **Acción:** Mirad la pantalla → realizad la acción indicada → esperad la siguiente instrucción.
+
+Conserva la pantalla previa «La misión está en vuestras manos». No tiene apartado
+«Atención» ni añade reglas bajo la acción. La secuencia visual y las notas del GM
+utilizan esos textos. Catalán e inglés conservan su contenido anterior hasta la
+traducción del conjunto aprobado. Verificación aislada a ambas resoluciones:
+`output/simulacro-aprobado/`, sin hardware.
+
+Decisión implementada en las presentaciones en castellano: el apartado visual
+se titula **Herramientas**, también en los controles del GM. La lista editorial
+selecciona las imágenes; no se reproduce como rótulo debajo de ellas. En el
+Simulacro aparecen el token y el terminal completo, sin «Tokens y terminales»
+bajo los iconos. Para las próximas revisiones, mostrar el terminal completo
+cuando se use en conjunto; destacar sus botones o su lector NFC cuando sean
+la herramienta concreta, y añadir el token cuando se utilice. Las instrucciones
+se explican en Acción. Las pistas funcionales de los otros puzzles se mantienen
+hasta revisar cada presentación. No se anticipan sus herramientas ni traducciones.
+
+Criterio acordado para las siguientes revisiones: cuando un puzzle incluya
+«Atención», será un paso obligatorio antes del inicio. Su contenido y la ventana
+superpuesta se implementarán al aprobar la presentación correspondiente; no
+se añade a puzzles que no tengan ese apartado.
+
+Composición aprobada e implementada para el Simulacro en castellano: cabecera
+con título y logo en la misma fila, sin repetir «Descubrir · Simulacro Inicial».
+El indicador de revelados queda debajo del logo. Objetivo y herramientas ocupan
+áreas de 350 px de alto, con el conjunto centrado verticalmente; dos áreas superiores alineadas y franja de Acción de 210 px en el
+canvas 1080p. El objetivo usa Arial negrita en blanco cálido dentro de un panel
+sencillo, sin decoración de navegador. Herramientas muestra token y terminal
+ampliados, sin flecha. Acción contiene tres textos y flechas, sin círculos
+abstractos. Las posiciones se mantienen durante los revelados. Esta composición
+se adaptará a los demás puzzles al revisar sus presentaciones.
+
+Tras la Serpiente, revisión en castellano implementada con el formato del Simulacro:
+
+- Objetivo: «Completar la serpiente correspondiente a cada token».
+- Herramientas: token, terminal y símbolo como tres elementos independientes,
+  alineados a la misma altura y sin rótulos inferiores. El símbolo no se
+  superpone al terminal.
+- Acción: «Identificad vuestra serpiente → buscad los símbolos en el orden indicado
+  → pasad el token por cada terminal». La secuencia permanece visible en el juego;
+  no se pide memorizarla.
+- Atención: «Cuando suene la alarma, las serpientes se pondrán rojas. Los símbolos
+  de la pantalla no cambian: buscad en los terminales el mismo símbolo con los
+  colores invertidos».
+
+Atención es el cuarto paso obligatorio, en una ventana superpuesta sin cierre
+opcional. El GM puede retroceder y volver a mostrarlo; el inicio solo se habilita
+al llegar a ese paso. Ejemplo con los recursos reales `symbol_4.png` y
+`symbol_3.png`, versiones de colores invertidos, sin recolorear las imágenes.
+El ejemplo distingue «Símbolo en pantalla» de «Símbolo que debéis buscar».
+Durante la alarma, el tablero conserva los iconos originales y solo cambia la
+señal visual de las serpientes a rojo; la inversión debe resolverla el equipo.
+La correspondencia que valida el backend se conserva sin cambios.
+Las notas del GM acompañan cada paso. Las traducciones del contenido nuevo quedan
+pendientes: Atención usa el borrador castellano también en los otros idiomas.
+Verificación aislada a 1920 × 1080 y 1280 × 720: `output/serpiente-presentacion/`.
 
 ### Tres revelados dentro de una única composición
 
@@ -595,3 +691,7 @@ Antes de entregar un cambio visual:
 Referencias de implementación: `static/css/game-theme.css`, `game-surface.css`,
 `presentation-briefing.css`, `presentation-journey.css`; `static/js/presentation-flow.js`,
 `presentation-briefing.js`, `pyramid-logo.js`; `player/README.md` y `config.py`.
+
+En castellano, el objetivo del Simulacro aparece dentro del recuadro 01,
+en lugar de la ilustración «Seguid la instrucción». No se repite como subtítulo
+bajo el nombre del puzzle. Las notas del GM conservan el mismo objetivo.

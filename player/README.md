@@ -172,3 +172,52 @@ Codi Sonor silencia el fons, també a la seva explicació; després es recupera.
 La intro comparteix aquest reproductor i manté pausa i fundit final. El player
 independent d’assaig conserva la seva música local. Verificació amb fixtures
 a `output/musica-fondo/`, sense MQTT ni hardware.
+
+La presentación del Simulacro Inicial empieza con «La misión está en vuestras manos»,
+una pantalla manual para explicar el token personal, los terminales, el lector
+y el trabajo en equipo. Después siguen los tres revelados habituales. Los textos
+nuevos se revisan primero en castellano (`elementsCopy.es`); la traducción al
+catalán se hará al aprobar el conjunto. La nueva pantalla no inicia hardware ni
+otorga progreso. Verificación aislada: `output/simulacro-elementos/`.
+
+Las pantallas de presentación ya no muestran frases de apoyo en el pie ni su
+línea de separación. El espacio queda disponible para el contenido; las ayudas
+del GM y las instrucciones de cada esquema se conservan.
+
+Textos aprobados del Simulacro en castellano: «Familiarizaos con el sistema
+siguiendo las instrucciones de la pantalla», «Tokens y terminales» y
+«Mirad la pantalla → realizad la acción indicada → esperad la siguiente
+instrucción». Mantiene los tres revelados tras la pantalla de herramientas
+de la misión, sin apartado Atención. Traducción del conjunto pendiente.
+
+Las presentaciones en castellano usan «Herramientas» como título del apartado
+y en el control del GM. En el Simulacro, token y terminal se muestran sin rótulo
+inferior. Las listas de herramientas seleccionan las imágenes para cada revisión;
+los botones o el lector NFC se destacarán dentro del terminal cuando corresponda.
+Las pistas funcionales de los puzzles pendientes se conservan.
+
+En castellano, el objetivo del Simulacro aparece dentro del recuadro 01,
+en lugar de la ilustración «Seguid la instrucción». No se repite como subtítulo
+bajo el nombre del puzzle. Las notas del GM conservan el mismo objetivo.
+
+Composición del Simulacro en castellano: cabecera compacta, objetivo en Arial
+negrita dentro de un panel sencillo, herramientas ampliadas sin flecha y Acción
+en una franja de 210 px, con textos y flechas. Mantiene posiciones entre revelados.
+Verificación visual aislada: `output/simulacro-composicion/`, 1080p y 720p.
+
+Ajuste de encuadre del Simulacro: título y logo comparten fila, indicador debajo
+del logo, objetivo y herramientas de 350 px de alto. Acción conserva 210 px.
+Verificación aislada a ambas resoluciones: `output/simulacro-encuadre/`.
+
+Tras la Serpiente adopta el formato revisado en castellano: objetivo, herramientas
+visuales y tres acciones sin memorización. Añade Atención como cuarto paso
+obligatorio antes del inicio, con una pareja real de símbolos de colores invertidos.
+La pantalla del puzzle conserva los símbolos originales durante la alarma y pone
+las serpientes en rojo. El equipo debe buscar en los terminales el mismo símbolo
+con los colores invertidos.
+GM, notas y navegación incluyen ese paso. Traducciones pendientes; Atención tiene
+fallback castellano. Validación sin hardware: `output/serpiente-presentacion/`.
+
+En Herramientas de Tras la Serpiente, token, terminal y símbolo se presentan
+como tres elementos independientes y alineados; el símbolo no se superpone al
+terminal.

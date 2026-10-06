@@ -77,7 +77,7 @@
   };
   // No fixed round counts, time limits or penalties copied from obsolete voiceovers.
   const puzzles = [
-    {id:11,key:'practice',title:local('PRIMER<br>CONTACTE','PRIMER<br>CONTACTO','FIRST<br>CONTACT'),goal:local('CONEIXEU<br>EL SISTEMA.','CONOCED<br>EL SISTEMA.','LEARN<br>THE SYSTEM.'),lead:local('Seguiu les accions de la pantalla, pas a pas.','Seguid las acciones de la pantalla, paso a paso.','Follow the actions on screen, step by step.'),demo:local('Token → terminal → botó indicat','Token → terminal → botón indicado','Token → terminal → indicated button'),team:local('OBSERVEU.<br>APRENEU.','OBSERVAD.<br>APRENDED.','WATCH.<br>LEARN.'),rule:local('Mentre una persona actua, les altres segueixen la seqüència.','Mientras una persona actúa, las demás siguen la secuencia.','While one person acts, everyone else follows the sequence.')},
+    {id:11,key:'practice',title:local('PRIMER<br>CONTACTE','PRIMER<br>CONTACTO','FIRST<br>CONTACT'),goal:local('CONEIXEU<br>EL SISTEMA.','Familiarizarse con el sistema siguiendo las instrucciones de la pantalla.','LEARN<br>THE SYSTEM.'),lead:local('Seguiu les accions de la pantalla, pas a pas.','Familiarizarse con el sistema siguiendo las instrucciones de la pantalla.','Follow the actions on screen, step by step.'),demo:local('Token → terminal → botó indicat','Tokens y terminales.','Token → terminal → indicated button'),team:local('OBSERVEU.<br>APRENEU.','OBSERVAD.<br>APRENDED.','WATCH.<br>LEARN.'),rule:local('Mentre una persona actua, les altres segueixen la seqüència.','Mirad la pantalla → realizad la acción indicada → esperad la siguiente instrucción.','While one person acts, everyone else follows the sequence.')},
     {id:2,key:'maze',title:local('UN CAMÍ<br>COMPARTIT','UN CAMINO<br>COMPARTIDO','A SHARED<br>PATH'),goal:local('COMPLETEU<br>LA SERP.','COMPLETAD<br>LA SERPIENTE.','COMPLETE<br>THE SNAKE.'),lead:local('Busqueu la serp del vostre token i trobeu les seves formes als terminals, en ordre.','Buscad la serpiente de vuestro token y encontrad sus formas en los terminales, en orden.','Find your token’s snake and match its shapes at the terminals, in order.'),demo:local('Normal: mateix símbol. Alarma: símbol contrari.','Normal: mismo símbolo. Alarma: símbolo contrario.','Normal: matching symbol. Alarm: opposite symbol.'),team:local('ADAPTEU<br>EL CAMÍ.','ADAPTAD<br>EL CAMINO.','ADAPT<br>YOUR PATH.'),rule:local('Quan s’activa l’alarma, canvia la correspondència dels símbols.','Cuando se activa la alarma, cambia la correspondencia de los símbolos.','When the alarm starts, the symbol mapping changes.')},
     {id:3,key:'quiz',title:local('DECIDIU<br>JUNTS','DECIDID<br>JUNTOS','DECIDE<br>TOGETHER'),goal:local('CLASSIFIQUEU<br>LES OPCIONS.','CLASIFICAD<br>LAS OPCIONES.','CLASSIFY<br>THE OPTIONS.'),lead:local('Cada número correspon a un terminal. Decidiu si la seva opció compleix la pregunta.','Cada número corresponde a un terminal. Decidid si su opción cumple la pregunta.','Each number corresponds to a terminal. Decide whether its option matches the question.'),demo:local('Terminal 3: verd si l’opció encaixa; vermell si no.','Terminal 3: verde si la opción encaja; rojo si no.','Terminal 3: green if the option matches; red if it does not.'),team:local('COMPARTIU<br>EL QUE SABEU.','COMPARTID<br>LO QUE SABÉIS.','SHARE<br>WHAT YOU KNOW.'),rule:local('Cada terminal respon la seva opció. Ajudeu-vos abans de prémer.','Cada terminal responde su opción. Ayudaos antes de pulsar.','Each terminal answers its own option. Help each other before pressing.')},
     {id:8,key:'memory',title:local('RECORDEU<br>JUNTS','RECORDAD<br>JUNTOS','REMEMBER<br>TOGETHER'),goal:local('MEMORITZEU<br>LES DUES FORMES.','MEMORIZAD<br>LAS DOS FORMAS.','REMEMBER<br>BOTH SHAPES.'),lead:local('Localitzeu el vostre token i recordeu les dues formes amb els seus colors.','Localizad vuestro token y recordad las dos formas con sus colores.','Find your token and remember both shapes and their colours.'),demo:local('Token → dues formes i colors → dos terminals','Token → dos formas y colores → dos terminales','Token → two shapes and colours → two terminals'),team:local('OBSERVEU.<br>RECORDEU.','OBSERVAD.<br>RECORDAD.','WATCH.<br>REMEMBER.'),rule:local('Quan desapareguin, passeu el vostre token pels dos terminals corresponents, en qualsevol ordre.','Cuando desaparezcan, pasad vuestro token por los dos terminales correspondientes, en cualquier orden.','Once they disappear, scan your token at the two matching terminals, in either order.')},
@@ -124,7 +124,13 @@
   for(const id of [tutorialId,...order,finalId]) {
     const intro=byId.get(id);intro.completed=completed;intro.total=total;
     intro.act=actFor(id);intro.isFinal=id===finalId;
-    intro.steps=id===journey.trivialId?['journey','objective','tools','interaction']:['objective','tools','interaction'];
+    intro.steps=id===tutorialId?['elements','objective','tools','interaction']:id===journey.trivialId?['journey','objective','tools','interaction']:['objective','tools','interaction'];
+    if(id===tutorialId)intro.elementsCopy={es:{title:'LA MISIÓN ESTÁ EN VUESTRAS MANOS',tokenTitle:'VUESTRO TOKEN ES PERSONAL',tokenLead:'Conservad el vuestro durante toda la partida.',terminalTitle:'LOS TERMINALES',terminalLead:'Botones, luces y símbolos para resolver los retos.',action:'Acercad vuestro token al lector del terminal para interactuar.',team:'Un único equipo: compartid información y coordinaos.',notes:'El token es personal: cada persona o pareja conserva el suyo durante toda la partida. Mostrad el lector de un terminal y cómo acercar el token para interactuar. Los terminales contienen botones, luces y símbolos. El nivel requiere trabajar en equipo: compartid lo que encontréis y coordinaos. Después explicad el Simulacro Inicial; esta pantalla no inicia la práctica.'}};
+    if(id===2){
+      intro.attentionCopy={es:{text:'Cuando suene la alarma, las serpientes se pondrán rojas. Los símbolos de la pantalla no cambian: buscad en los terminales el mismo símbolo con los colores invertidos.',before:4,after:3}};
+      intro.steps.push('attention');
+      Object.assign(intro.copy.es,{objectiveTitle:'Completar la serpiente correspondiente a cada token.',objectiveLead:'Completar la serpiente correspondiente a cada token.',exampleLead:'Tokens y símbolos de los terminales.',warning:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.',coordinateLead:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.'});
+    }
     intro.journey=journey;
     if(id===3)intro.accent='#dc68a7';
     intro.incremental=true;
@@ -132,10 +138,24 @@
       const t=intro.copy[lang];
 
       const rule=t.warning||t.coordinateLead;
-      t.stepLabels=[local('Objectiu','Objetivo','Goal')[lang],local('Terminals i tokens','Terminales y tokens','Terminals and tokens')[lang],local('Interacció','Interacción','Interaction')[lang]];
+      t.stepLabels=[local('Objectiu','Objetivo','Goal')[lang],local('Terminals i tokens','Herramientas','Terminals and tokens')[lang],local('Interacció','Interacción','Interaction')[lang]];
       t.notes=[t.objectiveLead,t.exampleLead,rule];
       t.footers=[local('Observeu el repte.','Observad el reto.','Look at the challenge.')[lang],local('Aquestes són les vostres eines.','Estas son vuestras herramientas.','These are your tools.')[lang],intro.act.role[lang]];
       t.guidance={role:intro.act.role[lang],hints:[t.objectiveLead,t.exampleLead,rule],rhythm:local('Doneu temps per pensar. Si el grup no sap què fer, oferiu una ajuda; si està provant un pla, deixeu-lo jugar.','Dad tiempo para pensar. Si el grupo no sabe qué hacer, ofreced una ayuda; si está probando un plan, dejadlo jugar.','Allow thinking time. Offer a hint if the group does not know what to do; let them play if they are testing a plan.')[lang]};
+      if(intro.attentionCopy){
+        if(lang==='es')t.stepLabels=['Objetivo','Herramientas','Acción'];
+        t.stepLabels.push('Atención');
+        t.notes.push(intro.attentionCopy.es.text);
+        t.footers.push('');
+      }
+      if(id===tutorialId){
+        if(lang==='es')t.stepLabels=['Objetivo','Herramientas','Acción'];
+        // Spanish editorial draft; translations follow approval of the full content.
+        const elements=intro.elementsCopy.es;
+        t.stepLabels.unshift('La misión está en vuestras manos');
+        t.notes.unshift(elements.notes);
+        t.footers.unshift(elements.team);
+      }
       if(id===journey.trivialId){
         t.stepLabels.unshift(local('El recorregut','El recorrido','The journey')[lang]);
         t.notes.unshift(local('Ara arriba el QUIZ: compartiu el que sabeu i decidiu junts. Després vindrà el segon bloc de reptes i el final. El mapa presenta el primer bloc com a superat en arribar a aquesta etapa; no modifica la puntuació ni els assoliments de la piràmide.','Ahora llega el QUIZ: compartid lo que sabéis y decidid juntos. Después vendrá el segundo bloque de retos y el final. El mapa presenta el primer bloque como superado al llegar a esta etapa; no modifica la puntuación ni los logros de la pirámide.','Now comes the QUIZ: share what you know and decide together. The second block of challenges and the final come next. The map presents the first block as completed at this stage; it does not change the score or earned pyramid progress.')[lang]);

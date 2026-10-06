@@ -35,22 +35,23 @@ Esa es vuestra misión.
 
 ### 4. Las pistas
 
-13 s provisionales. Pirámide oscura. Una luz lateral aparece con la frase sobre
-la pista de una persona; una segunda luz entra con la aportación de otra y permite
-ver el conjunto. En catalán se utilizan los tiempos reales de la locución.
+13 s provisionales. Primer paso: las totxanas de la base se encienden despacio
+hasta el 20 %. Se utiliza el mismo relleno que el progreso del juego. En catalán
+se utilizan los tiempos reales de la locución.
 
 Para lograrlo, tendréis que superar una serie de retos. Y pronto descubriréis que una pista puede estar delante de una persona… y cobrar sentido gracias a otra.
 
 ### 5. Cada mirada cuenta
 
-15 s provisionales. La luz recorre dos zonas al hablar del detalle y el patrón.
-Se estabiliza al llegar a escuchar al compañero y aparece CADA MIRADA CUENTA.
+15 s provisionales. Segundo paso: conserva el 20 % anterior y avanza lentamente
+hasta el 40 %. Al llegar a escuchar al compañero aparece CADA MIRADA CUENTA.
 
 Alguien recordará un detalle. Alguien reconocerá un patrón. Una idea que parecía no llevar a ninguna parte encontrará su lugar al escuchar a un compañero.
 
 ### 6. El primer pulso
 
-10 s provisionales. Un bloque recibe energía brevemente y vuelve a apagarse.
+10 s provisionales. Tercer paso: conserva el 40 % y avanza despacio hasta el 60 %.
+Un pulso suave del conjunto acompaña la voz. No se destaca una totxana aislada.
 
 Así empieza a despertar la Pirámide. Con lo que cada uno aporta. Y con lo que sois capaces de hacer juntos.
 
@@ -62,7 +63,8 @@ A lo largo del recorrido necesitaréis ingenio, memoria, observación y precisi�
 
 ### 8. Hacer sitio
 
-17 s provisionales. Al hacer sitio a otras ideas la Pirámide se atenúa y aparece
+17 s provisionales. Cuarto paso: conserva el 60 % y avanza hasta el 80 %.
+Al hacer sitio a otras ideas la Pirámide se atenúa y aparece
 TODAS LAS VOCES CUENTAN. La composición se mantiene durante la última frase.
 
 Repartíos las tareas. Haced sitio a otras ideas. Cuando un camino se cierre, probad otro. La siguiente solución puede venir de quien todavía no ha hablado.
@@ -75,7 +77,8 @@ Vuestra búsqueda os llevará de un terminal a otro. La pantalla compartida os m
 
 ### 10. Las herramientas
 
-9 s provisionales. Token y terminal; foco sobre botones, luces y símbolos.
+9 s provisionales. Token y terminal con un tamaño visual equilibrado; foco
+sobre botones, luces y símbolos. Ambas cajas miden 720 × 720 px en el lienzo base.
 
 Los tokens, los botones, las luces y los símbolos serán vuestras herramientas.
 
@@ -111,7 +114,8 @@ Ahora recibiréis vuestros tokens. Conservad el vuestro durante toda la partida 
 
 ### 16. Despertar la Pirámide
 
-7 s provisionales. Pulso de la Pirámide; pausa antes de la llamada final.
+7 s provisionales. Quinto paso: conserva el 80 % y enciende las últimas totxanas
+hasta el 100 % con la llamada final. Pulso suave del conjunto.
 
 Equipo… es hora de despertar la Pirámide.
 
@@ -240,6 +244,9 @@ comprobaciones en `output/musica-fondo/`.
 Dirección visual corregida tras revisión del usuario: retirados los diagramas
 confusos y las ilustraciones de personas que no encajaban con el diseño. Las tres
 escenas usan ahora la iluminación narrativa de la Pirámide aprobada por el usuario:
-dos aportaciones que revelan el conjunto, luz que recorre y se estabiliza, y un
-titular que da protagonismo a todas las voces. No se pintan bloques como superados.
-Capturas y verificación: `output/intro-luces/`.
+cinco pasos acumulativos (20 %, 40 %, 60 %, 80 % y 100 %) que iluminan las
+totxanas desde la base hacia la cúspide. Se conserva lo ya iluminado y solo
+se completa en la llamada final. Se utiliza el relleno del progreso del juego
+y un titular da protagonismo a todas las voces. El encendido sigue el reloj de la narración y se restaura al
+retroceder. No registra retos superados.
+Capturas y verificación aislada: `output/intro-cinc-passos/`.

@@ -16,11 +16,6 @@
         9: [0, 8, 2, 5, 6],
         10: [1, 4, 6, 3, 5],
     };
-    const ALARM_MAP = {
-        0: 2, 1: 3, 2: 0, 3: 1, 4: 5,
-        5: 4, 6: 8, 7: 9, 8: 6, 9: 7,
-    };
-
     let redirected = false;
     let alarmMode = false;
     let alarmAudio = null;
@@ -37,8 +32,7 @@
     const completeCopyEl = document.getElementById('p2-complete-copy');
 
     function getSequence(player) {
-        const sequence = DEFAULT_SEQUENCES[player] || [];
-        return sequence.map((symbol) => (alarmMode ? (ALARM_MAP[symbol] ?? symbol) : symbol));
+        return DEFAULT_SEQUENCES[player] || [];
     }
 
     function getCompletedPlayers() {

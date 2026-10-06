@@ -14,9 +14,9 @@ function flow(order){
 test('the journey has a manual lobby, compact briefings and a final earned summit',()=>{
   const scenes=flow(),games=scenes.filter(s=>s.kind==='puzzle');
   assert.deepEqual(games.map(g=>g.puzzleId),[11,2,1,8,3,5,12,4,6]);
-  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),28);
-  assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>s!=='journey').join(',')==='objective,tools,interaction'));
-  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),56);
+  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),30);
+  assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>!['journey','elements','attention'].includes(s)).join(',')==='objective,tools,interaction'));
+  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),58);
   assert.ok(games.every(g=>!g.steps.includes('example')));
   assert.ok(games.every(g=>!g.previewPath), 'rehearsal uses current diagrams, never the retired pilot');
   assert.equal(scenes[0].autoAdvanceMs,null);
@@ -161,4 +161,26 @@ test('opening subtitles preserve the narration and cover each beat without gaps'
     assert.equal(story.subtitleAt(beat,lang,beat.seconds*1000),'');
     if(lang==='eng')assert.equal(story.subtitleAt(beat,'en',0),cues[0].text);
   }
+});
+
+test('practice starts with equipment and teamwork before the normal three reveals',()=>{
+ const practice=flow().find(s=>s.puzzleId===11);
+ assert.deepEqual(practice.steps,['elements','objective','tools','interaction']);
+ assert.equal(practice.autoAdvanceMs,undefined,'the GM advances equipment manually');
+ assert.ok(practice.elementsCopy.es.notes.includes('El token es personal'));
+ assert.ok(practice.elementsCopy.es.action.includes('lector del terminal'));
+ assert.ok(practice.elementsCopy.es.team.includes('coordinaos'));
+ assert.equal(practice.completed,0);
+ assert.equal(practice.elementsCopy.ca,undefined,'translations wait for content approval');
+});
+
+test('snake briefing always includes the alarm warning before its final start step',()=>{
+  const snake=flow().find(s=>s.puzzleId===2&&s.kind==='puzzle');
+  assert.deepEqual(snake.steps,['objective','tools','interaction','attention']);
+  assert.equal(snake.copy.es.stepLabels.at(-1),'Atención');
+  assert.match(snake.copy.es.notes.at(-1),/pantalla no cambian/);
+  assert.match(snake.copy.es.notes.at(-1),/colores invertidos/);
+  assert.doesNotMatch(snake.copy.es.notes.join(' '),/memoriz/i);
+  assert.equal(snake.attentionCopy.es.before,4);
+  assert.equal(snake.attentionCopy.es.after,3);
 });
