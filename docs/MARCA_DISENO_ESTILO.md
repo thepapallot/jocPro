@@ -248,7 +248,8 @@ intro del QUIZ el mapa presenta las pruebas del primer bloque como superadas
 y las del segundo bloque pendientes, también al abrir directamente la intro.
 Es un esquema explicativo de esa etapa; no modifica los logros registrados,
 la puntuación ni el progreso real de la pirámide. La apertura muestra todos los
-retos pendientes, reserva 12 segundos al mapa y permite pausar o repetir.
+retos pendientes. La nueva apertura revela el mapa en varios momentos del guion
+y permite pausar o repetir.
 
 Explicación del GM al llegar al Trivial: «Ahora llega el QUIZ: compartid lo que
 sabéis y decidid juntos. Después vendrá el segundo bloque de retos y el final».
@@ -260,6 +261,102 @@ Verificado el 6 octubre 2026: Chrome con fixtures aislados, tres idiomas a
 1920 × 1080 y 1280 × 720; bloques vacíos/desiguales, progreso parcial y retorno
 desde las reglas al mapa. Solo simulación; legibilidad desde la sala y ritmo con
 público pendientes. Capturas y comprobaciones: `output/recorrido/`.
+
+### Apertura narrativa: Despertar la Pirámide
+
+Decisión actualizada e implementada el 6 octubre 2026: la narración aprobada lleva
+la historia y la pantalla sirve de apoyo visual. Se sustituye la apertura de seis
+pantallas con párrafos. Se retiran la insistencia en «conectar» y las instrucciones
+«caminad sin correr, dejad paso». **Los tokens se reparten al terminar la intro,
+antes de explicar el Simulacro Inicial**, uno por persona o pareja.
+
+La energía de la Pirámide está repartida entre diez terminales. Recuperarla exige
+poner en común las aportaciones: una pista encontrada por alguien cobra sentido
+gracias a otra persona. Escuchar, hacer sitio a otras ideas y repartirse las tareas
+forman parte de la historia. No se prometen resultados empresariales medibles.
+
+Implementado: 16 momentos visuales y una pantalla final de espera. La Pirámide
+aparece en silencio; se descubre la energía en los terminales. Las escenas sobre
+compartir y escuchar utilizan luz sobre la Pirámide maestra: primero un lateral,
+después el otro, un recorrido suave y una iluminación estable. Aparecen los
+titulares «Cada mirada cuenta» y «Todas las voces cuentan», sincronizados con la voz. Siguen habilidades, búsqueda y herramientas. El mapa
+revela práctica y primer bloque, QUIZ magenta, segundo bloque y Carga Final; después
+vuelve a señalar el inicio. Aparecen el token y el pulso final de la Pirámide.
+
+- Solo titulares breves donde ayudan. Sin párrafos, consignas repetidas, firma
+  permanente ni contador de escena en la pantalla de jugadores.
+- Se reservan **y=880–1080 del canvas 1920 × 1080** para subtítulos de un máximo
+  de dos líneas. El guion aparece por frases temporizadas en castellano, catalán
+  e inglés, a 40 px y con márgenes laterales amplios. Ningún gráfico invade la banda.
+  El fondo grafito y su iluminación son continuos hasta el borde inferior, sin
+  una franja oscura propia para los subtítulos.
+  Los subtítulos se detienen con la pausa, se reinician al navegar y desaparecen
+  durante el reparto de tokens. Las instrucciones del GM no se subtitulan.
+- Retirados los diagramas de pistas y las ilustraciones de personas, rechazados
+  por falta de claridad y de coherencia visual, respectivamente.
+  Los objetos reales usan el catálogo autorizado; botones y símbolos se conservan.
+- El encendido de un bloque es un anticipo breve y desaparece. No registra logros;
+  el mapa de apertura mantiene todos los retos pendientes.
+- El mapa deriva de `PUZZLE_ORDER`; admite bloques vacíos/desiguales. Si no hay
+  QUIZ en la configuración se omite su momento de la apertura y del mapa.
+- Al final, **la apertura se detiene en el reparto de tokens**. El GM avanza con
+  «Tokens repartidos · explicar el simulacro». La práctica y su cuenta atrás
+  mantienen el control manual.
+- Pausa, anterior/siguiente y repetición siguen disponibles. El idioma se elige
+  en Sesiones. La pausa
+  congela las animaciones y música; movimiento reducido presenta composiciones
+  estables. En habilidades muestra las cuatro juntas. La espera final es estable.
+
+**Implementado en catalán:** locución aportada por el equipo, conservada sin cambios
+como `static/audios/intro/intro-ca.mp3`. Dura 115,5 segundos y gobierna los cues,
+las animaciones y el avance de escenas. Pausa, navegación y repetición actúan
+sobre la voz y la pantalla juntas. La música baja durante la locución. En producción, la pista persistente
+recupera el volumen bajo al llegar al reparto de tokens; la voz ya ha terminado. Tras el final natural de la voz, la Pirámide
+permanece 2,6 segundos mientras la música se desvanece; el MP3 no se modifica ni
+se corta la última frase. Pausar también congela este cierre. Si el navegador bloquea el audio, la intro
+se pausa y ofrece «Activar so», con aviso al GM. Sin QUIZ se salta también su voz.
+
+**Pendiente:** voces de castellano e inglés y narración del cierre. Esos idiomas
+mantienen los 169 segundos provisionales para ensayar. El guion completo sigue
+disponible en las notas del GM, momento por momento.
+
+Fuente del guion: `static/js/presentation-story.js`. Tiempos reales y cues catalanes:
+`static/js/presentation-recordings.js`; exportación `static/audios/intro/intro-ca.vtt`.
+Visuales: `static/js/presentation-opening.js` y `static/css/presentation-opening.css`.
+La banda conserva dos líneas como máximo y queda vacía en las pausas y el reparto.
+Corrección de dirección visual: el usuario ha rechazado los trazados de pistas y
+las ilustraciones de personas. Ambos se retiran de las tres escenas de cooperación.
+Dirección aprobada e implementada: luz sobre la Pirámide original en las tres
+escenas, sin modificar bloques ni otorgar progreso. La primera luz acompaña la
+pista de una persona; la segunda acompaña la aportación de otra. En «Cada mirada
+cuenta» la luz recorre el conjunto y se estabiliza al hablar de escuchar. El titular
+aparece entonces. En «Todas las voces cuentan» la Pirámide se atenúa al hacer
+sitio a otras ideas y el titular se mantiene durante la última frase. Catalán:
+«CADA MIRADA COMPTA» y «TOTES LES VEUS COMPTEN»; inglés: «EVERY PERSPECTIVE
+COUNTS» y «EVERY VOICE COUNTS». Los tiempos salen de los cues de la narración,
+con pausa y navegación sincronizadas. Movimiento reducido mantiene una composición
+estable. Verificación a dos resoluciones y tres idiomas en `output/intro-luces/`.
+Las ilustraciones descartadas quedan archivadas en `output/intro-personas/descartadas/`,
+sin referencias en el juego.
+Guion de producción: [APERTURA_NARRATIVA.md](APERTURA_NARRATIVA.md).
+La versión catalana está revisada para locución y recogida íntegramente en ese
+documento. «Català» en Sesiones selecciona títulos, recorrido, subtítulos y notas
+de la apertura; la indicación de reparto pasa a «Tokens repartits · explicar el
+simulacre». Se conserva «token» como nombre del objeto usado durante el juego.
+
+Verificado en Chrome con fixtures aislados: 17 estados × tres idiomas × dos
+resoluciones (1920 × 1080 y 1280 × 720), todos los cues de subtítulos, bloques
+vacíos/desiguales, recorrido sin QUIZ y movimiento reducido. Sin desbordes ni
+imágenes ausentes. Pausa/reanudación de animación y música, navegación, idioma,
+mapa progresivo y espera final comprobados en tiempo real; secuencia automática
+completa comprobada acelerando solo los tiempos del fixture. El GM debe avanzar
+para llegar a la práctica; no se inician juegos ni se otorgan logros desde la intro.
+Tests de rutas, flujo y controles correctos. **Solo simulación, sin MQTT ni
+hardware**. La locución catalana se ha comprobado con su reloj real: controles,
+final natural, recorrido sin QUIZ y recuperación de sonido bloqueado. Revisión
+de 17 escenas a dos resoluciones en `output/intro-ca-audio/`. Pendiente ensayo
+con altavoces en la sala. Resultados y capturas del montaje anterior:
+`output/apertura-narrativa/`; `output/apertura/` documenta la versión sustituida.
 
 ### Tres revelados dentro de una única composición
 
@@ -273,14 +370,26 @@ Los números ilustrativos muestran relaciones; no revelan soluciones de la parti
 
 ### Sonido y movimiento
 
-Minimizar narraciones entre puzzles: explica el GM. Apertura y cierre pueden tener
-voz y subtítulos en una fase posterior. El audio que forma parte de una mecánica,
-como Música, se conserva. Reservar zona de subtítulos cuando se produzcan.
+Minimizar narraciones entre puzzles: explica el GM. La apertura tiene locución
+catalana y subtítulos temporizados; las voces de los demás idiomas y la narración
+del cierre siguen pendientes. El audio de las mecánicas se conserva.
+
+Recuperada la música de fondo histórica: `static/audios/musica_ambient/musica_piramide.mp3`.
+Un único reproductor en la ventana exterior de jugadores (`bgm_layer.js`) continúa
+al cambiar de HTML, durante bienvenida, explicaciones, juegos y transiciones.
+Volumen habitual 0,22; 0,06 durante la voz catalana, 0,14 en el ensayo sin voz y
+0,10 durante el reparto. Pausar la intro pausa también la pista; su cierre mantiene
+el fundido de 2,6 segundos y después recupera el fondo bajo. No se superpone un
+segundo reproductor de música de la intro. Código Sonoro (4) silencia el fondo,
+incluida su explicación, y el siguiente momento lo recupera sin reiniciar la pista.
+Comprobación con rutas reales en fixture aislado y MQTT simulado: continuidad,
+volúmenes, pausa y ausencia de duplicación en `output/musica-fondo/`. Pendiente
+validar niveles con altavoces en sala.
 
 El sistema antiguo de escenas JSON, su generador, los vídeos de Cero y las
 locuciones antiguas se retiraron del proyecto el 5 de octubre de 2026.
-El recorrido vigente utiliza HTML y JavaScript. Las futuras voces y subtítulos
-se producirán para ese recorrido. Registro: [limpieza del proyecto](LIMPIEZA_PROYECTO.md).
+El recorrido vigente utiliza HTML y JavaScript. Las nuevas voces se producirán
+para ese recorrido. Registro: [limpieza del proyecto](LIMPIEZA_PROYECTO.md).
 
 El diseño integrado de Sumas está aprobado como base de trabajo. Su piloto
 independiente se retiró; los datos de presentación están en `presentation-flow.js`
@@ -387,6 +496,20 @@ capturas con artes finales de impresión. Adaptar proporciones y texto a cada
 formato. Mantener legibles descriptor, capacidad y llamada a solicitar propuesta.
 
 ## Control del Game Master
+
+### Idioma de la sesión
+
+Acordado e implementado: en `/test` → **Sesiones** se elige catalán, castellano o
+inglés junto con empresa, fecha, hora, lugar, jugadores y notas. Confirmar guarda
+los cambios antes de activar la sesión. El idioma confirmado se aplica a la
+pantalla de jugadores y sus rutas; el control de presentación lo muestra como
+dato de la sesión. El panel del GM conserva su propio idioma.
+
+La infraestructura de los tres idiomas está preparada. Las traducciones completas
+de textos de puzzles y mensajes dinámicos se realizarán al cerrar los contenidos.
+Las claves aún sin traducción conservan el texto actual. No presentar la partida
+como íntegramente traducida. Contrato y guía de incorporación:
+[IDIOMAS_SESION.md](IDIOMAS_SESION.md).
 
 Dos espacios: **Sesiones** para preparación y datos del grupo; **Control de juego**
 para conducción. Resumen discreto de sesión activa, jugadores e idioma.

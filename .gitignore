@@ -1,6 +1,10 @@
 venv/
 __pycache__
-static/audios/
+static/audios/*
+!static/audios/intro/
+static/audios/intro/*
+!static/audios/intro/intro-ca.mp3
+!static/audios/intro/intro-ca.vtt
 static/images/
 static/videos/
 

@@ -32,8 +32,8 @@
     $('title').textContent=connected?s.name:'Abre la pantalla de jugadores';
     $('screen').textContent=!connected?'La bienvenida esperará tu señal.':playing?'Juego en curso':s.phase==='countdown'?'Cuenta atrás · a punto de empezar':`${s.incremental?'Explicación · ':''}${s.step+1} / ${s.labels.length} · ${s.labels[s.step]}${s.automatic?(s.autoPaused?' · En pausa':' · Avance automático'):''}`;
     $('note').textContent=connected?(matched&&game.instruction?game.instruction:s.note):'Abrir recupera la misma ventana de jugadores. Si está cerrada, abre la bienvenida.';
-    $('language').disabled=!connected||s?.phase!=='slides'||blocked;
-    if(s?.language)$('language').value=s.language;
+    $('language').disabled=true;
+    $('language').value=window.PyramidLanguage.normalize(api.session?.()?.gameLanguage || window.TEST_DEFAULT_SUBTITLE_LANG);
     const key=JSON.stringify([connected,s?.phase,s?.step,s?.screen,s?.labels,s?.kind,s?.canNext,s?.automatic,s?.autoPaused,s?.revealed,s?.sceneIndex]);
     if(key!==signature){
       signature=key;
@@ -97,7 +97,6 @@
   }
   $('open').addEventListener('click',async()=>{try{await player.open();render();}catch(error){feedback(error.message,true);}});
   $('refresh').addEventListener('click',async()=>{await api.refresh();player.command('sync');render();feedback(api.snapshot().state?'Estado actualizado.':'No se ha podido consultar el juego.',!api.snapshot().state);});
-  $('language').addEventListener('change',event=>player.command('language',event.target.value));
   $('navigation').addEventListener('click',event=>{const b=event.target.closest('[data-director-command]');if(b&&!b.disabled)player.command(b.dataset.directorCommand);});
   $('presentation-options').addEventListener('click',event=>{const b=event.target.closest('[data-director-command]');if(b&&!b.disabled)player.command(b.dataset.directorCommand);});
   $('steps').addEventListener('click',event=>{const b=event.target.closest('[data-director-step]');if(b&&!b.disabled)player.command('step',Number(b.dataset.directorStep));});
