@@ -11,7 +11,7 @@ class Puzzle12(BasePuzzle):
         self.solved = False
         self.processing_wrong_result = False
         self.current_giff = 0
-        self.active_streaks = [2]
+        self.active_streaks = [3]
         self.current_active_index = 0
         self.current_streak = self.active_streaks[self.current_active_index]
         self.streaks = len(self.active_streaks)
