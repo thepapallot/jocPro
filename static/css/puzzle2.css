@@ -1401,16 +1401,26 @@ body.alarm-mode #p2-maze-frame {
     transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease;
 }
 
-.snake-segment.complete {
+.snake-segment.complete,
+body.alarm-mode .snake-segment.complete {
     opacity: 1;
-    filter: drop-shadow(0 0 10px rgba(107, 227, 255, 0.38));
-    transform: scale(1.04);
+    border: 3px solid #2dff9b;
+    border-radius: 6px;
+    background: rgba(45, 255, 155, 0.3);
+    box-shadow: inset 0 0 12px rgba(45, 255, 155, 0.24);
+    filter: drop-shadow(0 0 10px rgba(45, 255, 155, 0.45));
+    transform: translate(-50%, -50%) scale(1.04);
 }
 
-.snake-segment.active {
+.snake-segment.active,
+body.alarm-mode .snake-segment.active {
     opacity: 1;
-    transform: scale(1.12);
-    filter: drop-shadow(0 0 12px rgba(255, 176, 72, 0.45));
+    border: 3px solid #edb970;
+    border-radius: 6px;
+    background: rgba(237, 185, 112, 0.16);
+    box-shadow: 0 0 14px rgba(237, 185, 112, 0.35);
+    transform: translate(-50%, -50%) scale(1.12);
+    filter: drop-shadow(0 0 12px rgba(237, 185, 112, 0.45));
 }
 
 .snake-segment.pending {
@@ -1428,8 +1438,22 @@ body.alarm-mode .snake-head {
     box-shadow: 0 0 18px rgba(255, 98, 98, 0.28);
 }
 
-body.alarm-flash {
-    animation: alarm-flash 0.6s ease-in-out 2;
+body.pyramid-game.game-surface[data-puzzle="2"] #p2-snake-stage {
+    isolation: isolate;
+}
+
+body.pyramid-game.game-surface[data-puzzle="2"].p2-alarm-sounding #p2-snake-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center,
+        rgba(241, 92, 104, 0.5) 0%,
+        rgba(241, 92, 104, 0.25) 32%,
+        rgba(241, 92, 104, 0.08) 52%,
+        transparent 72%);
+    animation: p2-alarm-background 1600ms ease-in-out infinite alternate;
 }
 
 @keyframes snake-drift {
@@ -1504,9 +1528,15 @@ body.alarm-flash {
     }
 }
 
-@keyframes alarm-flash {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(1.2) saturate(1.5); }
+@keyframes p2-alarm-background {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.pyramid-game.game-surface[data-puzzle="2"].p2-alarm-sounding #p2-snake-stage::before {
+        animation: none;
+    }
 }
 
 @media (max-width: 640px) {
@@ -1546,34 +1576,92 @@ body.alarm-flash {
 }
 
 .snake-head,
-.snake-segment {
+.snake-segment,
+.snake-error-marker {
     position: absolute;
     left: 0;
     top: 0;
     transform: translate(-50%, -50%);
-    transition: left 230ms linear, top 230ms linear;
+    /* Position is interpolated by the monotonic animation clock in JS. */
+    transition: none;
+}
+
+.snake-error-marker {
+    z-index: 5;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    animation: p2-error-blink 650ms ease-in-out 2;
+}
+
+.snake-error-marker::before,
+.snake-error-marker::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 27px;
+    width: 6px;
+    height: 58px;
+    border-radius: 3px;
+    background: #f15c68;
+    box-shadow:
+        0 0 3px 2px #0a1016,
+        0 0 12px 3px rgba(241, 92, 104, 0.9),
+        0 0 24px 5px rgba(241, 92, 104, 0.55);
+    transform: rotate(45deg);
+}
+
+.snake-error-marker::after {
+    transform: rotate(-45deg);
+}
+
+@keyframes p2-error-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .snake-error-marker { animation: none; }
 }
 
 .snake-head {
     z-index: 2;
-    width: 42px;
-    height: 42px;
+    width: 64px;
+    height: 64px;
+    font-size: 34px;
+}
+
+.pyramid-game.game-surface[data-puzzle="2"]:not(.alarm-mode) .snake-head {
+    background: #f3eee4;
+    border-color: #f3eee4;
+    color: #0a1016;
+}
+
+.pyramid-game.game-surface[data-puzzle="2"] .snake-player.is-complete .snake-head,
+.pyramid-game.game-surface[data-puzzle="2"] .snake-player.is-complete .snake-segment {
+    background: #2dff9b;
+    border-color: #2dff9b;
+}
+
+.pyramid-game.game-surface[data-puzzle="2"] .snake-player.is-complete .snake-head {
+    color: #0a1016;
 }
 
 .snake-segment {
-    width: 36px;
-    height: 36px;
+    width: 54px;
+    height: 54px;
     padding: 2px;
 }
 
 @media (max-width: 640px) {
     .snake-head {
-        width: 36px;
-        height: 36px;
+        width: 54px;
+        height: 54px;
+        font-size: 28px;
     }
 
     .snake-segment {
-        width: 30px;
-        height: 30px;
+        width: 45px;
+        height: 45px;
     }
 }

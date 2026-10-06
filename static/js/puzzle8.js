@@ -12,13 +12,15 @@
     const timeFill = document.getElementById('p8-time-fill');
     let symbolsOrder = [];
     let solved = false;
+    let completionSoundPlayed = false;
     let countdownFrame = null;
 
     const instructions = {
         idle: ['', '', ''],
         numbers: ['ATENTOS A LA PANTALLA', 'Prepárate: aparecerán dos formas', 'PASO 1 DE 3 · PREPARACIÓN'],
         tokens: ['MEMORIZA LAS DOS FORMAS', 'Recuerda también sus colores', 'PASO 2 DE 3 · MEMORIA'],
-        input: ['COMPLETA LAS DOS FORMAS', 'Pasa tu token por dos terminales, en cualquier orden', 'PASO 3 DE 3 · RESPUESTA']
+        input: ['COMPLETA LAS DOS FORMAS', 'Pasa tu token por dos terminales, en cualquier orden', 'PASO 3 DE 3 · RESPUESTA'],
+        completed: ['NIVEL COMPLETADO', '', '']
     };
 
     function stopCountdown() {
@@ -140,6 +142,18 @@
     const LLETRES_SOUND_URL = '/static/audios/effects/apareix_contingut.wav';
     const PUZZLE_COMPLETE_SOUND_URL = '/static/audios/effects/nivel_completado.wav';
 
+    function showCompletion() {
+        stopCountdown();
+        setPhase('completed');
+        document.getElementById('p8-solved-banner')?.classList.remove('hidden');
+    }
+
+    function playCompletionSound() {
+        if (completionSoundPlayed) return;
+        completionSoundPlayed = true;
+        playSound(PUZZLE_COMPLETE_SOUND_URL);
+    }
+
     function handleUpdate(data) {
         if (!data || data.puzzle_id !== 8) return;
         const previousPhase = grid.dataset.phase;
@@ -148,9 +162,8 @@
 
         if (data.puzzle_solved && !solved) {
             solved = true;
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
-            document.getElementById('p8-solved-banner')?.classList.remove('hidden');
-            document.body.classList.add('p8-solved-flash');
+            playCompletionSound();
+            showCompletion();
             setTimeout(() => {
                 if (window.PyramidGameFlow?.complete(8)) return;
                 const nextId = window.NEXT_PUZZLE_ID ?? 1;
@@ -170,6 +183,8 @@
         }
 
         if (data.phase === 'numbers') {
+            completionSoundPlayed = false;
+            document.getElementById('p8-solved-banner')?.classList.add('hidden');
             resetAnswers();
             setPhase('numbers');
             if (previousPhase !== 'numbers') playSound(LLETRES_SOUND_URL);
@@ -226,7 +241,18 @@
                 frame.classList.remove('p8-correct', 'p8-wrong');
                 frame.classList.add(ok ? 'p8-correct' : 'p8-wrong');
             });
-            playSound(data.input_result.success ? PHASE_OK_SOUND_URL : PHASE_KO_SOUND_URL);
+            if (data.input_result.success) {
+                showCompletion();
+                if (Number(data.round_total) > 0 && Number(data.round) >= Number(data.round_total)) {
+                    // Celebrate as soon as the server validates the final answers,
+                    // not again after its five-second inter-phase pause.
+                    playCompletionSound();
+                } else {
+                    playSound(PHASE_OK_SOUND_URL);
+                }
+            } else {
+                playSound(PHASE_KO_SOUND_URL);
+            }
         }
     }
 
