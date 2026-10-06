@@ -2516,6 +2516,14 @@
   }
 
 	  function renderPuzzle4Simulator() {
+    const solutions = Object.entries(p4StreakOrders).map(([streak, terminals]) => `
+      <div class="sim-p4-solution-round">
+        <h4>Ronda ${Number(streak) + 1}</h4>
+        <ol class="sim-p4-solution-sequence" aria-label="Terminales correctos de la ronda ${Number(streak) + 1}, en orden">
+          ${terminals.map((terminal, index) => `<li aria-label="Posición ${index + 1}: terminal ${terminal}"><strong>${terminal}</strong></li>`).join("")}
+        </ol>
+      </div>
+    `).join("");
     const buttons = [
       { value: "4", label: "Escuchar la muestra completa", shortLabel: "Azul", colorClass: "sim-p4-blue" },
       { value: "3", label: "Registrar pulsación", shortLabel: "Verde", colorClass: "sim-p4-green" },
@@ -2545,7 +2553,12 @@
     }).join("");
 
     els.simContent.innerHTML = `
-      <div class="sim-note">Los cuatro botones de color replican los del juego real. Las pistas quedan aparte para simular la accion interna de reproducir track.</div>
+      <section class="sim-solution-card sim-p4-solutions" aria-label="Soluciones de Música para el Game Master">
+        <div class="field-label">Combinaciones correctas</div>
+        <div class="sim-note">Números de los terminales en orden de registro · Solo Game Master.</div>
+        <div class="sim-p4-solution-rounds">${solutions}</div>
+      </section>
+      <div class="sim-note">Los botones de color replican los del juego real. Las pistas quedan aparte para simular la accion interna de reproducir track.</div>
       <div class="sim-selected-readout">Ultimo boton: <strong>${simState.puzzle4Button}</strong> · Pista activa: <strong>${simState.puzzle4Song}</strong></div>
       <div class="sim-p4-controls">${buttons}</div>
       <div class="field-label">Pistas</div>
@@ -2802,13 +2815,13 @@
       return `
         <button type="button" class="sim-box sim-p3-terminal" data-sim-p3-box="${index}">
           <img src="/static/images/shared/gameplay/terminal_box.png" alt="" aria-hidden="true">
-          <span>${index+1}</span>
+          <span>${index}</span>
         </button>
       `;
     }).join("");
 
     const correctBlock = simState.puzzle3Correct
-      ? `<div class="sim-selected-readout">Respuestas por terminal: <strong>${escapeHtml((simState.puzzle3Correct.correct_answer||[]).map((value,index)=>`${index+1}: ${value}`).join(' · '))}</strong></div>`
+      ? `<div class="sim-selected-readout">Respuestas por terminal: <strong>${escapeHtml((simState.puzzle3Correct.correct_answer||[]).map((value,index)=>`${index}: ${value}`).join(' · '))}</strong></div>`
       : `<div class="sim-selected-readout">Correcta actual: <strong>--</strong></div>`;
 
     els.simContent.innerHTML = `

@@ -1,39 +1,42 @@
-/* Solved banner styles (matching puzzle8 green) */
+/* Phase confirmation uses the shared graphite, warm white and mint palette. */
 .p4-phase-popup {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translateX(-50%) translateY(-50%) scale(0.95);
+    transform: translate(-50%, -50%) translateY(8px);
     z-index: 950;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: clamp(8px, 2vh, 20px);
-    width: min(96vw, 920px);
-    aspect-ratio: 1 / 1;
-    max-height: 94vh;
-    padding: clamp(16px, 3.2vw, 48px);
+    gap: clamp(12px, 2vh, 24px);
+    width: min(82vw, 1100px);
+    min-height: clamp(240px, 34vh, 380px);
+    max-height: 82vh;
+    padding: clamp(32px, 4vw, 64px);
     box-sizing: border-box;
     text-align: center;
-    border-radius: 8px;
-    border: 2px solid rgba(69, 230, 255, 0.32);
+    border-radius: 6px;
+    border: 1px solid rgba(113, 231, 219, 0.3);
+    border-top: 4px solid #71e7db;
     background:
-        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.05), transparent 56%),
-        radial-gradient(circle at 50% 50%, rgba(69, 230, 255, 0.08), rgb(10, 18, 32) 68%),
-        linear-gradient(180deg, rgb(8, 18, 33) 0%, rgb(5, 12, 24) 100%);
+        radial-gradient(ellipse at 50% 0%, rgba(113, 231, 219, 0.09), transparent 72%),
+        #14232c;
     box-shadow:
-        0 0 0 100vmax rgba(45,255,155,0.16),
-        0 0 34px rgba(0, 240, 255, 0.14),
-        inset 0 0 54px rgba(69, 230, 255, 0.08);
+        0 0 0 100vmax rgba(10, 16, 22, 0.82),
+        0 24px 64px rgba(0, 0, 0, 0.28);
     opacity: 0;
     overflow: hidden;
     transition: opacity 200ms ease, transform 200ms ease;
 }
 
+.p4-phase-popup.hidden {
+    display: none !important;
+}
+
 .p4-phase-popup.is-visible {
     opacity: 1;
-    transform: translateX(-50%) translateY(-50%) scale(1);
+    transform: translate(-50%, -50%);
 }
 
 .p4-phase-popup-line {
@@ -41,23 +44,34 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding-inline: 0;
     box-sizing: border-box;
-    color: #ffffff;
-    font-family: Arial, sans-serif;
-    font-size: clamp(1.98rem, 5.45vw, 5.25rem);
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    color: #f3eee4;
+    font-family: PiramideDisplay, 'Arial Narrow', Arial, sans-serif;
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    font-weight: 900;
+    letter-spacing: 0.015em;
     text-transform: uppercase;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
-    line-height: 1.05;
+    text-shadow: none;
+    line-height: 1.1;
     text-align: center;
-    white-space: nowrap;
-    padding-inline: clamp(6px, 1vw, 12px);
-    max-width: 96%;
-    overflow: visible;
+    text-wrap: balance;
+    margin: 0;
+    overflow-wrap: anywhere;
 }
 
+#p4-phase-popup-line2 {
+    color: #71e7db;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .p4-phase-popup {
+        transition: none;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Final solved banner keeps its existing behavior. */
 .p4-solved-banner {
     position: fixed;
     top: 0;

@@ -1,7 +1,5 @@
 (function () {
-    const PHASE_POPUP_DELAY_MS = 3000;
-    const PHASE_POPUP_VISIBLE_MS = 3000;
-    const INTER_ROUND_PAUSE_MS = PHASE_POPUP_DELAY_MS + PHASE_POPUP_VISIBLE_MS;
+    const INTER_ROUND_PAUSE_MS = 6000;
     // Same order as Puzzle12.botons and the hardware button payload.
     const BUTTON_COLORS = [
         { name: 'Negre', className: 'black' },
@@ -15,14 +13,13 @@
     let timeLeft = 0;
     let countdownInterval = null;
     let redirectTimeout = null;
-    let phasePopupTimer = null;
-    let delayedPopupTimer = null;
     let interRoundPauseTimer = null;
     let interRoundPauseActive = false;
     let queuedStartRoundUpdate = null;
     let currentRound = null;
     let totalRounds = null;
     let currentLevelId = null;
+    let hasStartedRound = false;
     let ballAnimationFrame = null;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -40,40 +37,9 @@
     const phaseCopyEl = document.getElementById('final-phase-copy');
     const statusTitleEl = document.getElementById('final-status-title');
     const statusCopyEl = document.getElementById('final-status-copy');
-    let phasePopupEl = null;
-    let phasePopupTextEl = null;
-
-    function resolvePhasePopupElements() {
-        if (!phasePopupEl) {
-            phasePopupEl = document.getElementById('p12-phase-popup');
-        }
-    }
-
-    function showPhasePopup(message) {
-        resolvePhasePopupElements();
-        if (!phasePopupEl) return;
-        phasePopupEl.classList.remove('hidden');
-        phasePopupEl.classList.add('is-visible');
-        if (phasePopupTimer) {
-            clearTimeout(phasePopupTimer);
-        }
-        phasePopupTimer = setTimeout(() => {
-            phasePopupEl.classList.remove('is-visible');
-            phasePopupEl.classList.add('hidden');
-            phasePopupTimer = null;
-        }, PHASE_POPUP_VISIBLE_MS);
-    }
 
     function startInterRoundPause() {
         interRoundPauseActive = true;
-        if (delayedPopupTimer) {
-            clearTimeout(delayedPopupTimer);
-        }
-        delayedPopupTimer = setTimeout(() => {
-            delayedPopupTimer = null;
-            showPhasePopup('Primera fase superada');
-        }, PHASE_POPUP_DELAY_MS);
-
         if (interRoundPauseTimer) {
             clearTimeout(interRoundPauseTimer);
         }
@@ -144,12 +110,21 @@
 
     function resetViewport() {
         stopBallMotion();
-        document.body.classList.remove('p12-danger-state');
+        document.body.classList.remove('p12-danger-state', 'p12-success-state');
         patternEl.style.display = 'none';
         wrongEl.style.display = 'none';
         goodEl.style.display = 'none';
         waitScreen.style.display = 'none';
         countdownEl.textContent = '';
+    }
+
+    function showSuccessFeedback() {
+        clearInterval(timerInterval);
+        clearInterval(countdownInterval);
+        resetViewport();
+        timerEl.style.display = 'none';
+        goodEl.style.display = 'flex';
+        document.body.classList.add('p12-success-state');
     }
 
     function showTimeoutFeedback() {
@@ -393,10 +368,7 @@
             if (currentRound > 0 && totalRounds > 0 && currentRound < totalRounds) {
                 startInterRoundPause();
             }
-            clearInterval(timerInterval);
-            resetViewport();
-            timerEl.style.display = 'none';
-            goodEl.style.display = 'block';
+            showSuccessFeedback();
             setStatus(
                 'success',
                 'Nivell completat',
@@ -405,7 +377,7 @@
             );
             setPhase(
                 'Seqüencia consolidada',
-                'Manteniu la calma: la piràmide està absorbint l’energia correcta i tancarà la ronda en breus instants.'
+                'Nivell superat. Prepareu l’equip per a la següent ronda.'
             );
         }
 
@@ -426,7 +398,7 @@
                 console.log("Puzzle solved!");
                 return;
             }
-            showWaitCountdown(() => {
+            const beginRound = () => {
                 showButtonPattern(d.target, d.duration);
                 updateRoundIndicator(d.round, d.total_rounds, 'active');
                 setStatus(
@@ -439,15 +411,23 @@
                     `Sincronitza el nivell ${currentLevelId}`,
                     'Prem un botó per cada bola del mateix color i mantén la combinació fins que es validi.'
                 );
-            });
+            };
+            if (hasStartedRound) {
+                showWaitCountdown(beginRound);
+            } else {
+                // The presentation already counts down before the game starts.
+                hasStartedRound = true;
+                beginRound();
+            }
         }
 
         if (d.puzzle_solved) {
             playEffect('nivel_completado.wav');
-            // Show solved banner and flash
-            const banner = document.getElementById('p12-solved-banner');
-            if (banner) banner.classList.remove('hidden');
-            document.body.classList.add('p12-solved-flash');
+            clearTimeout(interRoundPauseTimer);
+            interRoundPauseTimer = null;
+            interRoundPauseActive = false;
+            queuedStartRoundUpdate = null;
+            showSuccessFeedback();
             setTimeout(function () {
                 if (window.PyramidGameFlow?.complete(12)) return;
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
@@ -529,6 +509,15 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+        const messages = {
+            es: { success: 'NIVEL SUPERADO', timeout: 'SE ACABÓ EL TIEMPO' },
+            ca: { success: 'NIVELL SUPERAT', timeout: 'TEMPS ESGOTAT' },
+            en: { success: 'LEVEL COMPLETED', timeout: 'TIME IS UP' }
+        };
+        const language = window.PYRAMID_GAME?.language || 'es';
+        const feedback = messages[language] || messages.es;
+        setText(goodEl.querySelector('.p12-success-text'), feedback.success);
+        setText(wrongEl.querySelector('.p12-timeout-text'), feedback.timeout);
         renderRoundCards(0);
         updateRoundIndicator(0, roundCards.length, 'idle');
         showIdlePyramid();

@@ -1842,6 +1842,51 @@ textarea[readonly] {
     gap: 8px;
 }
 
+.sim-p4-solution-rounds {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+
+.sim-p4-solution-round h4 {
+    margin: 0 0 8px;
+    color: var(--gm-ink, #12384b);
+    font-size: 1rem;
+}
+
+.sim-p4-solution-sequence {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sim-p4-solution-sequence li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sim-p4-solution-sequence li:not(:last-child)::after {
+    content: '→';
+    color: var(--gm-muted, #2d4757);
+}
+
+.sim-p4-solution-sequence strong {
+    display: grid;
+    place-items: center;
+    min-width: 40px;
+    min-height: 40px;
+    border: 1px solid var(--gm-line, #d4dfe6);
+    border-radius: 5px;
+    background: var(--gm-panel-soft, #f4f8fb);
+    color: var(--gm-ink, #12384b);
+    font-size: 1.25rem;
+    font-variant-numeric: tabular-nums;
+}
+
 .sim-solution-item {
     display: flex;
     justify-content: space-between;

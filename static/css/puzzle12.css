@@ -31,6 +31,10 @@
     transition: opacity 200ms ease, transform 200ms ease;
 }
 
+.p12-phase-popup.hidden {
+    display: none !important;
+}
+
 .p12-phase-popup.is-visible {
     opacity: 1;
     transform: translateX(-50%) translateY(-50%) scale(1);
@@ -298,7 +302,6 @@ body.p12-danger-state #final-viewport {
     height: calc(100% - 24px);
 }
 
-#good-img,
 #wait-img {
     object-fit: contain;
     object-position: center center;
@@ -390,5 +393,65 @@ body.p12-danger-state #final-viewport {
 
     #final-main {
         padding: 8px;
+    }
+}
+
+/* Phase results replace the large pyramid; the compact progress HUD stays. */
+body.pyramid-game.game-surface[data-puzzle="12"].p12-success-state {
+    --p12-feedback-rgb: 45, 255, 155;
+}
+
+body.pyramid-game.game-surface[data-puzzle="12"].p12-danger-state {
+    --p12-feedback-rgb: 241, 92, 104;
+}
+
+body.pyramid-game.game-surface[data-puzzle="12"]:is(.p12-success-state, .p12-danger-state)::before {
+    display: none;
+}
+
+body.pyramid-game.game-surface[data-puzzle="12"]:is(.p12-success-state, .p12-danger-state) #final-viewport {
+    background: #0a1016;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+body.pyramid-game.game-surface[data-puzzle="12"]:is(.p12-success-state, .p12-danger-state) #final-viewport::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center,
+        rgba(var(--p12-feedback-rgb), 0.5) 0%,
+        rgba(var(--p12-feedback-rgb), 0.22) 38%,
+        transparent 75%);
+    animation: p12FeedbackPulse 1800ms ease-in-out infinite alternate;
+}
+
+body.pyramid-game.game-surface[data-puzzle="12"] :is(#good-img, #wrong-img) {
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    text-align: center;
+}
+
+body.pyramid-game.game-surface[data-puzzle="12"] .p12-feedback-text {
+    max-width: 92%;
+    color: #f3eee4;
+    font-family: PiramideDisplay, 'Arial Narrow', Arial, sans-serif;
+    font-size: clamp(3rem, 6cqw, 8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    text-wrap: balance;
+    text-shadow: 0 0 28px rgba(var(--p12-feedback-rgb), 0.5);
+}
+
+@keyframes p12FeedbackPulse {
+    from { opacity: 0.45; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.pyramid-game.game-surface[data-puzzle="12"]:is(.p12-success-state, .p12-danger-state) #final-viewport::before {
+        animation: none;
     }
 }
