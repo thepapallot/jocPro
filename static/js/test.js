@@ -598,6 +598,7 @@
   }
 
   function getPuzzleDisplayName(puzzleId) {
+    if(window.PyramidPuzzleNames?.catalog[puzzleId])return window.PyramidPuzzleNames.name(puzzleId,'es');
     const aliasLabel = formatAliasLabel(getAliasForPuzzle(puzzleId));
     if (aliasLabel) {
       return aliasLabel;
@@ -4373,7 +4374,7 @@
       return;
     }
 
-    const assets = ['css/presentation.css','css/game-theme.css','js/presentation-flow.js','js/presentation-pilot.js','js/presentation-visuals.js','js/game-shell.js','js/game-theme.js','js/pyramid-logo.js','fonts/PiramideDisplay-Black.ttf','images/shared/gameplay/token_card.png','images/shared/gameplay/terminal_box.png'];
+    const assets = ['css/presentation.css','css/game-theme.css','js/puzzle-names.js','js/presentation-flow.js','js/presentation-pilot.js','js/presentation-visuals.js','js/game-shell.js','js/game-theme.js','js/pyramid-logo.js','fonts/PiramideDisplay-Black.ttf','images/shared/gameplay/token_card.png','images/shared/gameplay/terminal_box.png'];
     const checks=await Promise.all(assets.map(async path=>({path,ok:await resourceExists('/static/'+path)})));
     const missing=checks.filter(item=>!item.ok);
     els.sceneHealth.innerHTML=`<div class="state-empty">${missing.length ? 'Faltan recursos: '+missing.map(item=>escapeHtml(item.path)).join(', ') : 'Presentaciones y diseño común: todos los recursos disponibles.'}</div>`;
@@ -4461,7 +4462,7 @@
         <div class="state-summary">
           <div class="state-grid">
             <section class="state-card">
-              <h3>Laberinto</h3>
+              <h3>Tras la Serpiente</h3>
               <div class="state-metrics">
                 ${stateMetric("Modo alarma", data.alarm_mode)}
                 ${stateMetric("Terminales completos", `${completed}/${players.length || 10}`)}

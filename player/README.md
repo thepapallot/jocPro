@@ -5,7 +5,7 @@ El recorregut de producció s’obre a `/`. La pàgina exterior manté la pantal
 ## Ús
 
 1. Obrir la pantalla de jugadors des de Test. A la pantalla compartida, clicar per entrar en pantalla completa.
-2. La benvinguda és una pantalla d’espera fins que el GM prem **Comenzar presentación inicial**. La introducció avança sola en quatre moments (6 s, 6,5 s, 8,5 s i 6 s provisionals), amb transicions suaus i controls de pausa/reprendre a Test. S’atura abans de la pràctica; els temps es defineixen a `presentation-flow.js` i s’ajustaran quan hi hagi locució i subtítols. A partir de la pràctica, fer servir **Anterior / Siguiente** i els passos del panell per explicar cada presentació. No hi ha avanç automàtic per àudio.
+2. La benvinguda és una pantalla d’espera fins que el GM prem **Comenzar presentación inicial**. La introducció avança sola en cinc moments (6 s, 6,5 s, 8,5 s, 12 s de mapa i 6 s provisionals), amb transicions suaus i controls de pausa/reprendre a Test. S’atura abans de la pràctica; els temps es defineixen a `presentation-flow.js` i s’ajustaran quan hi hagi locució i subtítols. A partir de la pràctica, fer servir **Anterior / Siguiente** i els passos del panell per explicar cada presentació. No hi ha avanç automàtic per àudio.
 3. A l’últim pas de cada presentació (objectiu o regla), prémer **Comenzar**. El compte enrere es pot cancel·lar; en acabar, s’obre el puzzle real.
 4. Quan el puzzle es completa, apareix una transició. El GM decideix quan continuar.
 
@@ -16,6 +16,7 @@ El recorregut de producció s’obre a `/`. La pàgina exterior manté la pantal
 - `templates/welcome.html`: superfície persistent i benvinguda.
 - `templates/presentation.html` i `_presentation_screen.html`: HTML de cada presentació.
 - `static/js/game-shell.js`: navegació i connexió amb Test.
+- `static/js/puzzle-names.js`: catàleg únic de noms editorials en tres idiomes; compartit amb les cabeceres i el GM. Vegeu la guia `docs/MARCA_DISENO_ESTILO.md`.
 - `static/js/presentation-flow.js`: seqüència i textos en català, castellà i anglès.
 - `static/js/presentation-visuals.js`: exemples visuals de les proves.
 - `static/js/presentation-pilot.js`: passos, idioma i compte enrere.

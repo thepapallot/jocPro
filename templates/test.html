@@ -228,6 +228,7 @@
         window.TEST_PUZZLE_FINAL = {{ test_puzzle_final|tojson }};
         window.TEST_DEFAULT_SUBTITLE_LANG = {{ game_language|tojson }};
     </script>
+    <script src="{{ url_for('static', filename='js/puzzle-names.js') }}"></script>
     <script src="{{ url_for('static', filename='js/test.js') }}"></script>
     <script src="{{ url_for('static', filename='js/presentation-gm.js') }}"></script>
     <script src="{{ url_for('static', filename='js/game-director.js') }}"></script>

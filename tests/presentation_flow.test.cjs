@@ -6,19 +6,20 @@ const path=require('node:path');
 const script=name=>fs.readFileSync(path.join(__dirname,'../static/js',name),'utf8');
 function flow(order){
   const context=vm.createContext({window:{},URL,URLSearchParams,location:{search:'?flow=game'+(order?'&order='+order:'')},document:{currentScript:{src:'http://localhost/static/js/presentation-flow.js'}}});
+  vm.runInContext(script('puzzle-names.js'),context);
   vm.runInContext(script('presentation-flow.js'),context);
   return JSON.parse(JSON.stringify(context.window.PyramidFlow));
 }
 test('the journey has a manual lobby, compact briefings and a final earned summit',()=>{
   const scenes=flow(),games=scenes.filter(s=>s.kind==='puzzle');
-  assert.deepEqual(games.map(g=>g.puzzleId),[11,2,3,8,1,5,12,4,6]);
-  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),27);
-  assert.ok(games.every(g=>g.incremental&&g.steps.join(',')==='objective,tools,interaction'));
-  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),42);
+  assert.deepEqual(games.map(g=>g.puzzleId),[11,2,1,8,3,5,12,4,6]);
+  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),28);
+  assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>s!=='journey').join(',')==='objective,tools,interaction'));
+  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),44);
   assert.ok(games.every(g=>!g.steps.includes('example')));
   assert.ok(games.every(g=>!g.previewPath), 'rehearsal uses current diagrams, never the retired pilot');
   assert.equal(scenes[0].autoAdvanceMs,null);
-  assert.deepEqual(scenes[1].autoAdvanceMs,[6000,6500,8500,6000]);
+  assert.deepEqual(scenes[1].autoAdvanceMs,[6000,6500,8500,12000,6000]);
   assert.equal(scenes.find(s=>s.id==='success-11').completed,0);
   assert.equal(games.at(-1).completed,7);
   assert.equal(scenes.at(-1).completed,8);
@@ -63,4 +64,48 @@ test('earned progress survives refresh; navigation and unrelated messages cannot
   assert.equal(reloaded.run.snapshot().completedIds.length,1);
   reloaded.run.reset(reloaded.child);
   assert.equal(reloaded.run.snapshot().completedIds.length,0);
+});
+
+test('journey blocks follow the configured order, including empty and unequal blocks',()=>{
+  for(const [order,pre,post] of [['2,3,5,12,4,8',[2],[5,12,4,8]],['3,2,8',[],[2,8]],['2,8,3',[2,8],[]],['3',[],[]]]){
+    const scenes=flow(order),quiz=scenes.find(s=>s.puzzleId===3);
+    assert.deepEqual(quiz.journey.pre,pre);
+    assert.deepEqual(quiz.journey.post,post);
+    assert.deepEqual(quiz.steps,['journey','objective','tools','interaction']);
+    assert.deepEqual(scenes[1].journey,quiz.journey);
+    assert.equal(quiz.autoAdvanceMs,undefined);
+  }
+  const noQuiz=flow('2,8');
+  assert.equal(noQuiz[1].journey.trivialId,null);
+  assert.deepEqual(noQuiz[1].journey.pre,[2,8]);
+});
+
+test('Trivial intro shows the previous block completed even when opened without saved achievements',()=>{
+  const context=vm.createContext({window:{PYRAMID_PAGE:{order:[2,1,8,3,5,12,4],tutorialId:11,finalId:6}},URL,URLSearchParams,location:{search:''},document:{currentScript:{src:'http://localhost/static/js/presentation-flow.js'}},PyramidLogo:{markup:()=>'<svg></svg>'}});
+  vm.runInContext(script('puzzle-names.js'),context);
+  vm.runInContext(script('presentation-flow.js'),context);
+  vm.runInContext(script('presentation-visuals.js'),context);
+  const quiz=context.window.PyramidFlow.find(s=>s.puzzleId===3),opening=context.window.PyramidFlow[1];
+  for(const ids of [[],[2],[2,1,8,5]]){
+    quiz.completedIds=ids;
+    const markup=context.window.PyramidVisuals.body(quiz,'journey',quiz.copy.es,'es',false);
+    assert.equal((markup.match(/class="j-journey-cell earned"/g)||[]).length,3);
+    assert.equal((markup.match(/class="j-journey-cell "/g)||[]).length,3);
+    assert.equal(JSON.stringify(quiz.completedIds),JSON.stringify(ids),'diagram does not mutate earned progress');
+  }
+  const markup=context.window.PyramidVisuals.body(opening,'journey',opening.copy.es,'es',false);
+  assert.equal((markup.match(/class="j-journey-cell earned"/g)||[]).length,0);
+});
+
+test('every intro uses the shared editorial catalog in all three languages',()=>{
+  const context=vm.createContext({window:{},URL,URLSearchParams,location:{search:''},document:{currentScript:{src:'http://localhost/static/js/presentation-flow.js'}}});
+  vm.runInContext(script('puzzle-names.js'),context);
+  vm.runInContext(script('presentation-flow.js'),context);
+  for(const scene of context.window.PyramidFlow.filter(s=>s.kind==='puzzle'))for(const lang of ['ca','es','eng']){
+    assert.equal(scene.copy[lang].name,context.window.PyramidPuzzleNames.name(scene.puzzleId,lang));
+    assert.ok(scene.act.name[lang]);
+  }
+  assert.equal(context.window.PyramidPuzzleNames.name(2,'es'),'Tras la Serpiente');
+  assert.equal(context.window.PyramidPuzzleNames.name(3,'ca'),'QUIZ');
+  assert.equal(context.window.PyramidPuzzleNames.name(12,'es'),'Conexión Simultánea');
 });

@@ -1,6 +1,6 @@
 # Guía de marca diseño y estilo de La Piràmide
 
-Referencia editorial vigente del proyecto. Última actualización: **5 octubre
+Referencia editorial vigente del proyecto. Última actualización: **6 octubre
 2026**. Recoge las decisiones del equipo, la información publicada y la revisión
 de recursos gráficos. Leer antes de editar, como establece [AGENTS.md](../AGENTS.md).
 
@@ -58,6 +58,46 @@ Fuentes: [página comercial](https://www.enigmik.com/escaperoom/la-piramide/),
 [versión inglesa](https://www.enigmik.com/en/escaperoom/pyramid/).
 Información consultada mediante contenido indexado el 5 octubre 2026; el lector
 no pudo abrir directamente la página. Separar la oferta publicada del rediseño.
+
+## Nombres editoriales de las pruebas
+
+Acordado e implementado el 6 octubre 2026: recuperar los nombres históricos con
+las sustituciones **Tras la Serpiente**, **QUIZ** y **Conexión Simultánea**.
+El nombre editorial aparece en la intro, la cabecera del puzzle, las transiciones
+y los controles del GM. Las versiones catalanas e inglesas conservan el significado.
+
+| ID | Mecánica / alias técnico | Castellano | Catalán | Inglés |
+| --- | --- | --- | --- | --- |
+| 11 | Práctica / simulacro | Simulacro Inicial | Simulacre Inicial | Initial Simulation |
+| 2 | Serpientes / laberinto | Tras la Serpiente | Rere la Serp | Follow the Snake |
+| 1 | Sumas | Cálculo Extremo | Càlcul Extrem | Extreme Calculation |
+| 8 | Memory | Memoria Fantasma | Memòria Fantasma | Ghost Memory |
+| 3 | Trivial | QUIZ | QUIZ | QUIZ |
+| 5 | Cronómetro | Pulso de Tiempo | Pols del Temps | Pulse of Time |
+| 12 | Botones | Conexión Simultánea | Connexió Simultània | Simultaneous Connection |
+| 4 | Música | Código Sonoro | Codi Sonor | Sound Code |
+| 6 | Energía / final | Carga Final | Càrrega Final | Final Charge |
+| 9 | Token a lloc, fuera del recorrido | Arquitectos del Orden | Arquitectes de l’Ordre | Architects of Order |
+| 10 | Segmentos, fuera del recorrido | Patrón Maestro | Patró Mestre | Master Pattern |
+| 7 | Segmentos difícil, fuera del recorrido | Segmentos avanzados | Segments avançats | Advanced Segments |
+
+La prueba 7 conserva su denominación descriptiva: no se ha acordado un nombre
+creativo nuevo para ella. Catálogo único de implementación:
+`static/js/puzzle-names.js`. Los IDs, `PUZZLE_ALIASES`, rutas, carpetas y mensajes
+MQTT mantienen sus identificadores técnicos; no usar los nombres editoriales
+para construir rutas ni comandos. Las pruebas 7, 9 y 10 no se añaden al recorrido.
+
+La explicación de Tras la Serpiente muestra una cabeza con el número del token
+y cinco formas en orden. El equipo busca cada forma en los terminales y pasa el
+token para completar la serpiente. Se mantiene la correspondencia de alarma.
+Se sustituye la explicación antigua de entradas y centro de un laberinto.
+
+Validación de los nombres: intros disponibles y cabeceras de los doce puzzles
+revisadas en castellano, catalán e inglés, a 1920 × 1080 y 1280 × 720.
+Fixtures aislados con plantillas reales; no se ejecutan los scripts que inician
+hardware. Catálogo y flujo comprobados con tests; controles del GM y rutas de
+presentación verificados. Solo simulación, pendiente lectura desde la sala.
+Capturas y resultados: `output/nombres/`.
 
 ## Personalidad y lenguaje
 
@@ -128,6 +168,25 @@ señales. Acompañar estados con texto, forma o símbolo. Contornear las fichas 
 sobre fondos oscuros. Consolidar variaciones existentes en variables compartidas
 al migrar cada pantalla; no recolorear el juego de forma indiscriminada.
 
+### Identidad de la etapa QUIZ
+
+Acordado e implementado el 6 octubre 2026: magenta `#DC68A7` como acento principal
+de la presentación y el puzzle del QUIZ, sobre grafito `#0A1016` y paneles
+`#14232C`. Preguntas y respuestas neutras en blanco cálido `#F3EEE4`; texto de
+apoyo `#A8BBC5`. El magenta identifica la etapa en títulos, números neutros,
+bordes y revelados; no expresa una respuesta ni un resultado.
+
+Se conservan los colores funcionales existentes de botones verde/rojo,
+respuestas sí/no, acierto/fallo, estados contestados y logros. Las imágenes del
+terminal y sus botones no se recolorean. La variante está acotada al puzzle 3
+en `static/css/trivial-theme.css`; el mapa general mantiene sus otras etapas.
+
+Verificación con fixtures aislados: intro en castellano, catalán e inglés y
+puzzle con estados neutro/verde/rojo/acierto/fallo a 1920 × 1080 y 1280 × 720.
+Colores funcionales del puzzle comparados antes/después, sin cambios. Solo
+simulación, sin MQTT ni hardware; revisión desde la sala pendiente.
+Capturas y resultados: `output/recorrido/trivial-*`.
+
 ### Tipografía
 
 - Titulares: `PiramideDisplay`, alias de **Noto Sans ExtraCondensed Black**.
@@ -169,11 +228,38 @@ ornamentales, paneles redundantes y animaciones continuas sobre el tablero.
    el siguiente. Navegar o previsualizar no otorga progreso.
 8. **Final y foto:** celebración y composición estable para el grupo.
 
-Recorrido actual de referencia: práctica 11 → Laberinto 2 → Trivial 3 → Memory 8 →
-Sumas 1 → Cronómetro 5 → Botones 12 → Música 4 → Energía 6 → cierre.
+Recorrido actual de referencia: Simulacro Inicial 11 → Tras la Serpiente 2 →
+Cálculo Extremo 1 → Memoria Fantasma 8 → QUIZ 3 → Pulso de Tiempo 5 →
+Conexión Simultánea 12 → Código Sonoro 4 → Carga Final 6 → cierre.
 Ocho retos puntuables; Segmentos 10 queda fuera del recorrido activo. Consultar
 `config.py` y el flujo antes de cambiar el orden. El progreso actual no debe
 suponerse persistente entre ventanas o reinicios sin comprobarlo.
+
+Acordado: el QUIZ constituye una etapa central entre dos bloques de retos,
+con tres pruebas por bloque como configuración inicial, sin exigir esa cantidad.
+Implementado en `config.py`: `PUZZLE_PRE_TRIVIAL`, `PUZZLE_TRIVIAL` y
+`PUZZLE_POST_TRIVIAL` generan la lista completa `PUZZLE_ORDER`, que conserva el
+contrato de navegación y MQTT. El Trivial sigue contando como reto puntuable.
+Implementado: diagrama común en la apertura automática y como primer paso manual
+de la presentación del QUIZ. Muestra práctica → primer bloque → QUIZ →
+segundo bloque → final, con cantidades y casillas derivadas de `PUZZLE_ORDER`.
+«Estáis aquí» identifica la etapa. Decisión actualizada el 6 octubre 2026: en la
+intro del QUIZ el mapa presenta las pruebas del primer bloque como superadas
+y las del segundo bloque pendientes, también al abrir directamente la intro.
+Es un esquema explicativo de esa etapa; no modifica los logros registrados,
+la puntuación ni el progreso real de la pirámide. La apertura muestra todos los
+retos pendientes, reserva 12 segundos al mapa y permite pausar o repetir.
+
+Explicación del GM al llegar al Trivial: «Ahora llega el QUIZ: compartid lo que
+sabéis y decidid juntos. Después vendrá el segundo bloque de retos y el final».
+Esta nota aparece en el control de presentación. A continuación siguen los tres
+revelados habituales: objetivo, terminales y tokens, interacción. La cuenta atrás
+solo se habilita después de la interacción, también con el nuevo paso de recorrido.
+
+Verificado el 6 octubre 2026: Chrome con fixtures aislados, tres idiomas a
+1920 × 1080 y 1280 × 720; bloques vacíos/desiguales, progreso parcial y retorno
+desde las reglas al mapa. Solo simulación; legibilidad desde la sala y ritmo con
+público pendientes. Capturas y comprobaciones: `output/recorrido/`.
 
 ### Tres revelados dentro de una única composición
 
@@ -210,11 +296,24 @@ Cabecera compacta aprobada y aplicada a los doce HTML de puzzles, incluida la
 práctica y las pruebas fuera del recorrido. Memory y Laberinto conservan además
 su superficie piloto. La revisión individual de cada tablero sigue pendiente.
 
-- Esquina superior izquierda: nombre del puzzle y posición del reto.
-- Esquina superior derecha: pirámide compacta y progreso colectivo.
+- Esquina superior izquierda: solo el nombre editorial del puzzle.
+- Esquina superior derecha: solo la pirámide compacta, con los bloques de los
+  retos realmente superados pintados; sin contador numérico ni texto de progreso.
 - Centro superior: solo información funcional que el puzzle requiera.
 - Tablero: ocupar casi toda la pantalla. No recuperar la gran cabecera anterior.
 - Mantener disposición y señales particulares de cada mecánica.
+
+Decisión actualizada e implementada el 6 octubre 2026: retirar número/posición de
+reto y contadores de rondas/preguntas de las pantallas de juego. Los nodos que
+actualizan los scripts se conservan ocultos para no modificar su funcionamiento.
+Memory conserva el título de fase, las instrucciones y el tiempo; se oculta su
+etiqueta «Paso X de 3». Se mantienen los tiempos, objetivos, errores y pistas que
+sirven para resolver las pruebas. El GM conserva sus datos de conducción.
+
+Verificado con las doce plantillas en fixtures aislados a 1920 × 1080 y
+1280 × 720: cabeceras sin número de reto ni contador de rondas, pirámide presente
+con progreso pintado simulado y sin cifras visibles. Solo simulación; sin hardware.
+Capturas y resultados: `output/cabeceras/`.
 
 Memory conserva su cuadrícula de diez fichas y su jerarquía de fase e instrucción.
 Laberinto usa el tablero actual de secuencias móviles; no recuperar automáticamente

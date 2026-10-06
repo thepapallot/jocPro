@@ -6,7 +6,7 @@
   const $=id=>document.getElementById('director-'+id);
   const api=window.PyramidTest,player=window.PyramidGM;
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const names={11:'Práctica',2:'Laberinto',3:'Trivial',8:'Memory',1:'Sumas',5:'Cronómetro',12:'Botones',4:'Música',6:'Energía'};
+  const names=Object.fromEntries(Object.keys(window.PyramidPuzzleNames.catalog).map(id=>[id,window.PyramidPuzzleNames.name(id,'es')]));
   const order=[Number(window.TEST_PUZZLE_TUTORIAL),...(window.TEST_ACTIVE_PUZZLE_ORDER||[]).map(Number),Number(window.TEST_PUZZLE_FINAL)].filter((id,i,all)=>Number.isFinite(id)&&all.indexOf(id)===i);
   const board=document.getElementById('test-sim-content'),home=document.createComment('Shared puzzle board');
   board.before(home);
@@ -63,7 +63,7 @@
     $('game').hidden=!playing;
     $('progress').textContent=matched?game.progress.progress:'';
     const memoryWaiting=matched&&activeId===8&&game.state.phase!=='input';
-    $('game-state').textContent=!matched?'Esperando el estado del puzzle que aparece en pantalla…':game.state.puzzle_solved?'Puzzle completado. Esperando la celebración…':memoryWaiting?'Memory está mostrando las formas. Las ayudas se activarán en la fase de respuesta.':activeId===6&&game.state.solve_mode?'Ayuda de energía activada. El juego terminará al acabar su temporizador.':game.progress.status;
+    $('game-state').textContent=!matched?'Esperando el estado del puzzle que aparece en pantalla…':game.state.puzzle_solved?'Puzzle completado. Esperando la celebración…':memoryWaiting?'Memoria Fantasma está mostrando las formas. Las ayudas se activarán en la fase de respuesta.':activeId===6&&game.state.solve_mode?'Ayuda de energía activada. El juego terminará al acabar su temporizador.':game.progress.status;
     const actions=activeId?api.actions(activeId):[];
     const actionKey=JSON.stringify([activeId,actions]);
     if(actionKey!==gameSignature){gameSignature=actionKey;$('resolvers').innerHTML=actions.map(action=>`<button type="button" data-director-resolve="${escape(action.id)}" class="primary-action" title="${escape(action.detail)}">${escape(activeId===6?'Mantener energía hasta el final':action.label)}</button>`).join('');}

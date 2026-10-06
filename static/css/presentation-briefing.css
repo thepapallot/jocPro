@@ -53,3 +53,7 @@
 @media(prefers-reduced-motion:reduce){.b-layer{transition:none}.b-tools-zone,.b-interaction-zone{transform:none}}
 
 .b-intro-mark{position:absolute;right:85px;top:10px;width:570px;height:395px;display:grid;place-content:center;opacity:.55;transition:opacity .65s;pointer-events:none}.b-intro-mark svg{width:570px;height:395px}.j-blueprint[data-reveal="1"] .b-intro-mark,.j-blueprint[data-reveal="2"] .b-intro-mark{opacity:0}
+
+.b-snake{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:36px 0}
+.b-snake>b{display:grid;place-content:center;width:80px;height:80px;border-radius:8px;background:#edb970;color:#0a1016;font:900 48px var(--p-display);flex:none}
+.b-snake .b-symbol{width:78px;height:78px;border:1px solid #647b88;padding:8px;background:#14232c}

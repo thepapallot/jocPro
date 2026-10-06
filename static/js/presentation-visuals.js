@@ -38,9 +38,24 @@
     if(screen==='equipment')art=`<div class="j-equipment">${device(c,'token')}${device(c,'terminal')}<div class="j-scan-waves"><i></i><i></i><i></i></div></div>`;
     return `<div class="j-cinema j-cinema-${screen}"><div class="j-cinema-copy"><span class="j-eyebrow">LA PIRÀMIDE</span><h1>${title}</h1><p>${lead}</p></div><div class="j-cinema-art">${art}</div><div class="j-cinema-line"></div></div>`;
   }
+  function journey(c,lang){
+    const j=c.journey,quiz=c.kind==='puzzle';
+    // The intro explains the route at this stage, including when opened directly.
+    // These diagram marks do not award progress in PyramidRun or the live game.
+    const completed=new Set(quiz?j.pre:[]);
+    const count=n=>`${n} ${n===1?L(lang,'repte','reto','challenge'):L(lang,'reptes','retos','challenges')}`;
+    const current=L(lang,'Sou aquí','Estáis aquí','You are here');
+    const earned=L(lang,'Superat','Superado','Completed');
+    const cell=id=>`<span class="j-journey-cell ${completed.has(id)?'earned':''}" aria-label="${L(lang,'Repte','Reto','Challenge')} ${[...j.pre,j.trivialId,...j.post].indexOf(id)+1}${completed.has(id)?' · '+earned:''}">${completed.has(id)?'✓':'◆'}</span>`;
+    const marker=(active)=>active?`<span class="j-journey-current">${current}</span>`:'';
+    const node=(label,detail,active,cls,glyph)=>`<li class="j-journey-node ${cls} ${active?'current':''}">${marker(active)}<div class="j-journey-art" aria-hidden="true">${glyph}</div><h2>${label}</h2><p>${detail}</p></li>`;
+    const block=(ids,label)=>`<li class="j-journey-node block"><div class="j-journey-cells">${ids.map(cell).join('')||'<span class="j-journey-empty">—</span>'}</div><h2>${count(ids.length)}</h2><p>${label}</p></li>`;
+    return `<div class="j-journey ${quiz?'at-quiz':'at-opening'}"><div class="j-journey-heading"><span class="j-eyebrow">${quiz?L(lang,'CANVI DE RITME','CAMBIO DE RITMO','A CHANGE OF PACE'):L(lang,'EL VOSTRE RECORREGUT','VUESTRO RECORRIDO','YOUR JOURNEY')}</span><h1>${quiz?L(lang,'ARA, EL QUIZ.','AHORA, EL QUIZ.','NOW, THE QUIZ.'):L(lang,'UN EQUIP. TOT UN RECORREGUT.','UN EQUIPO. TODO UN RECORRIDO.','ONE TEAM. A SHARED JOURNEY.')}</h1><p>${quiz?L(lang,'Compartiu el que sabeu. Decidiu junts.','Compartid lo que sabéis. Decidid juntos.','Share what you know. Decide together.'):L(lang,'Practiqueu, resoleu els reptes i arribeu junts al final.','Practicad, resolved los retos y llegad juntos al final.','Practise, solve the challenges and reach the final together.')}</p></div><ol class="j-journey-route" aria-label="${L(lang,'Recorregut del joc','Recorrido del juego','Game journey')}">${node(L(lang,'Pràctica','Práctica','Practice'),L(lang,'Coneixeu el sistema','Conoced el sistema','Learn the system'),!quiz,'practice','◎')}${block(j.pre,j.trivialId?L(lang,'Primer bloc','Primer bloque','First block'):L(lang,'Reptes en equip','Retos en equipo','Team challenges'))}${j.trivialId?node('QUIZ',L(lang,'Decidiu junts','Decidid juntos','Decide together'),quiz,'quiz','?'):''}${j.trivialId?block(j.post,L(lang,'Segon bloc','Segundo bloque','Second block')):''}${node(L(lang,'Final','Final','Final'),L(lang,'L’últim impuls','El último impulso','The final push'),false,'final',PyramidLogo.markup({className:'j-journey-pyramid',progress:0,bloom:.15}))}</ol><div class="j-journey-caption">${quiz?`<span>◆ ${L(lang,'Reptes del recorregut','Retos del recorrido','Journey challenges')}</span><span class="earned">✓ ${L(lang,'Reptes superats','Retos superados','Completed challenges')}</span>`:L(lang,'La pràctica us prepara. Cada repte superat fa créixer la piràmide.','La práctica os prepara. Cada reto superado hace crecer la pirámide.','Practice prepares you. Each completed challenge builds the pyramid.')}</div></div>`;
+  }
   window.PyramidVisuals={
     body(c,screen,t,lang,revealed){
       if(!c.kind)return null;
+      if(screen==='journey')return journey(c,lang);
       if(c.kind==='puzzle'&&c.incremental&&['objective','tools','interaction'].includes(screen))return PyramidBriefing.markup(c,t,lang);
       if(c.kind==='opening')return intro(c,screen,t,lang);
       if(c.kind==='welcome')return `<div class="j-welcome"><div><span class="j-eyebrow">${L(lang,'EL REPTE ÉS DE TOTS.','EL RETO ES DE TODOS.','ONE TEAM. ONE SHARED CHALLENGE.')}</span><h1>LA<br>PIRÀMIDE</h1><p>${L(lang,'Deu terminals. Un únic equip.','Diez terminales. Un único equipo.','Ten terminals. One team.')}</p><span class="j-wait"><i></i>${L(lang,'Benvinguts','Bienvenidos','Welcome')}</span></div>${beam(c,lang)}</div>`;

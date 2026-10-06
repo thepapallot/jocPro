@@ -14,6 +14,7 @@
     config.previous=snapshot.previousIds.filter(id=>ids.includes(id)).length;
     if(config.kind==='success'&&snapshot.lastCompleted!==config.afterPuzzle)config.previous=config.completed;
     config.actualProgress=true;
+    config.completedIds=snapshot.completedIds;
   }
   const $ = id => document.getElementById(id);
   const stage = $('p-stage'), viewport = $('p-viewport');
@@ -61,7 +62,7 @@
     const host=page&&window.parent!==window?window.parent:window.opener;
     if (host && !host.closed) host.postMessage({
       type: 'pyramid-presentation-state', realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
-      incremental:!!config.incremental,nextLabel:config.incremental?(step===0?'Mostrar terminales y tokens →':'Mostrar interacción →'):null,
+      incremental:!!config.incremental,nextLabel:config.incremental?({objective:'Mostrar objetivo →',tools:'Mostrar terminales y tokens →',interaction:'Mostrar interacción →'}[config.steps[step+1]]||null):null,
       name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
       labels: text().stepLabels, kind: config.kind || 'puzzle',
       sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
@@ -71,6 +72,7 @@
   }
   function render() {
     restoreProgress();
+    document.title=text().name;
     stage.hidden = false;
     stage.dataset.flow = String(!!flow);
     stage.dataset.kind = config.kind || 'puzzle';
@@ -79,13 +81,15 @@
     viewport.querySelector('.p-game-frame')?.remove();
     document.documentElement.lang = language === 'eng' ? 'en' : language;
     stage.dataset.scene=config.id;
-    stage.style.setProperty('--act-colour',config.act?.colour||'#39d6e5');
+    stage.dataset.puzzle=config.puzzleId||'';
+    stage.style.setProperty('--act-colour',config.accent||config.act?.colour||'#39d6e5');
     const immersive=flow&&['welcome','opening','success','closing'].includes(config.kind);
     // Keep the same diagram nodes in place while revealing the next layer.
     const current=stage.querySelector('.p-screen:not(.j-leaving)');
-    const persistent=config.incremental&&phase==='slides'&&current?.dataset.scene===config.id&&current.dataset.language===language&&current.querySelector('.j-blueprint');
+    const revealStep=['objective','tools','interaction'].indexOf(config.steps[step]);
+    const persistent=config.incremental&&revealStep>=0&&phase==='slides'&&current?.dataset.scene===config.id&&current.dataset.language===language&&current.querySelector('.j-blueprint');
     if(persistent){
-      PyramidBriefing.reveal(persistent,step);
+      PyramidBriefing.reveal(persistent,revealStep);
       current.querySelector('.p-footer').innerHTML=footer(text().footers[step]).replace(/^<footer[^>]*>|<\/footer>$/g,'');
       updateControls();size();scheduleOpening();return;
     }
@@ -96,7 +100,7 @@
     stage.querySelectorAll('.j-leaving').forEach(node=>node.remove());
     if(old){old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
     stage.append(section);
-    if(config.incremental&&section.querySelector('.j-blueprint'))PyramidBriefing.reveal(section.querySelector('.j-blueprint'),step);
+    if(config.incremental&&section.querySelector('.j-blueprint'))PyramidBriefing.reveal(section.querySelector('.j-blueprint'),revealStep);
     if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
       section.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:750,easing:'cubic-bezier(.2,.7,.2,1)'});
       if(old)old.animate([{opacity:1},{opacity:0}],{duration:450,fill:'forwards'}).finished.then(()=>old.remove());
