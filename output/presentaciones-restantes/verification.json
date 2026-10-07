@@ -1,0 +1,745 @@
+{
+  "results": [
+    {
+      "id": 8,
+      "width": 1920,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "MEMORIA EXTREMA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nRecordar las formas y sus colores.\n\nMemoria Extrema. Objetivo",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 8,
+      "width": 1920,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "MEMORIA EXTREMA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nRecordar las formas y sus colores.\n\n02\nHERRAMIENTAS\nMemoria Extrema. Herramientas",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 8,
+      "width": 1920,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "MEMORIA EXTREMA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nRecordar las formas y sus colores.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nBUSCAD VUESTRO TOKEN\n→\nMEMORIZAD LAS FORMAS Y SUS COLORES\n→\nBUSCAD LAS FORMAS\n→\nINTRODUCID LOS COLORES\nMemoria Extrema. Acción",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 8,
+      "width": 1920,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "MEMORIA EXTREMA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nRecordar las formas y sus colores.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nBUSCAD VUESTRO TOKEN\n→\nMEMORIZAD LAS FORMAS Y SUS COLORES\n→\nBUSCAD LAS FORMAS\n→\nINTRODUCID LOS COLORES\n04 · ATENCIÓN\n\nLas formas se pueden introducir en cualquier orden.\n\nUn solo error reinicia la ronda.\n\nMemoria Extrema. Atención",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 1,
+      "width": 1920,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÁLCULO EXTREMO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nResolver las sumas antes de que la cuenta atrás llegue a 0.\n\nCálculo Extremo. Objetivo",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 1,
+      "width": 1920,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÁLCULO EXTREMO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nResolver las sumas antes de que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\n13\n5\nCálculo Extremo. Herramientas",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 1,
+      "width": 1920,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÁLCULO EXTREMO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nResolver las sumas antes de que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\n13\n5\n03\nACCIÓN\nIDENTIFICAD EL NÚMERO DE VUESTRO TOKEN\n→\nBUSCAD EL NÚMERO QUE COMPLETA LA SUMA\n→\nACERCAD EL TOKEN AL TERMINAL\nCálculo Extremo. Acción",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 1,
+      "width": 1920,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÁLCULO EXTREMO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nResolver las sumas antes de que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\n13\n5\n03\nACCIÓN\nIDENTIFICAD EL NÚMERO DE VUESTRO TOKEN\n→\nBUSCAD EL NÚMERO QUE COMPLETA LA SUMA\n→\nACERCAD EL TOKEN AL TERMINAL\n04 · ATENCIÓN\n\nSi resolvéis una suma incorrectamente, la ronda se reiniciará.\n\nSi resolvéis una suma que ya ha sido completada, la ronda se reiniciará.\n\nCálculo Extremo. Atención",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 5,
+      "width": 1920,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "PULSO DE TIEMPO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nContar el tiempo exacto que aparece en pantalla.\n\nPulso de Tiempo. Objetivo",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 5,
+      "width": 1920,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "PULSO DE TIEMPO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nContar el tiempo exacto que aparece en pantalla.\n\n02\nHERRAMIENTAS\nPulso de Tiempo. Herramientas",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 5,
+      "width": 1920,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "PULSO DE TIEMPO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nContar el tiempo exacto que aparece en pantalla.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nMEMORIZAD EL TIEMPO\n→\nESPERAD LA SEÑAL\n→\nCONTAD EL TIEMPO\n→\nACERCAD EL TOKEN AL TERMINAL\nPulso de Tiempo. Acción",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 5,
+      "width": 1920,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "PULSO DE TIEMPO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nContar el tiempo exacto que aparece en pantalla.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nMEMORIZAD EL TIEMPO\n→\nESPERAD LA SEÑAL\n→\nCONTAD EL TIEMPO\n→\nACERCAD EL TOKEN AL TERMINAL\n04 · ATENCIÓN\n\nLos segundos de más o de menos se sumarán al error común. Si se supera el margen de error permitido, la ronda se reiniciará.\n\nPulso de Tiempo. Atención",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 12,
+      "width": 1920,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CONEXIÓN SIMULTÁNEA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nPulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.\n\nConexión Simultánea. Objetivo",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 12,
+      "width": 1920,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CONEXIÓN SIMULTÁNEA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nPulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.\n\n02\nHERRAMIENTAS\nConexión Simultánea. Herramientas",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 12,
+      "width": 1920,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CONEXIÓN SIMULTÁNEA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nPulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nCONTAD LAS BOLAS\n→\nCOORDINAD AL EQUIPO\n→\nPULSAD EL NÚMERO EXACTO DE BOTONES\n→\nMANTENEDLOS PULSADOS DURANTE 3 SEGUNDOS\nConexión Simultánea. Acción",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 12,
+      "width": 1920,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CONEXIÓN SIMULTÁNEA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nPulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nCONTAD LAS BOLAS\n→\nCOORDINAD AL EQUIPO\n→\nPULSAD EL NÚMERO EXACTO DE BOTONES\n→\nMANTENEDLOS PULSADOS DURANTE 3 SEGUNDOS\n04 · ATENCIÓN\n\nSi la cuenta atrás llega a 0, los botones indicados en pantalla cambiarán.\n\nConexión Simultánea. Atención",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 4,
+      "width": 1920,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÓDIGO SONORO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nReconstruir y ordenar los fragmentos de la canción.\n\nCódigo Sonoro. Objetivo",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 4,
+      "width": 1920,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÓDIGO SONORO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nReconstruir y ordenar los fragmentos de la canción.\n\n02\nHERRAMIENTAS\nCódigo Sonoro. Herramientas",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 4,
+      "width": 1920,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÓDIGO SONORO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nReconstruir y ordenar los fragmentos de la canción.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nESCUCHAD LA CANCIÓN\n→\nIDENTIFICAD EL FRAGMENTO\n→\nMARCADLO\n→\nBUSCAD EL SIGUIENTE\nCódigo Sonoro. Acción",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 4,
+      "width": 1920,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÓDIGO SONORO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nReconstruir y ordenar los fragmentos de la canción.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nESCUCHAD LA CANCIÓN\n→\nIDENTIFICAD EL FRAGMENTO\n→\nMARCADLO\n→\nBUSCAD EL SIGUIENTE\n04 · ATENCIÓN\n\nEsta prueba tiene dos rondas.\n\nCódigo Sonoro. Atención",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 6,
+      "width": 1920,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CARGA FINAL\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nOBJETIVO\n\nMantener las luces encendidas hasta que la cuenta atrás llegue a 0.\n\nCarga Final. Objetivo",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 6,
+      "width": 1920,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CARGA FINAL\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nOBJETIVO\n\nMantener las luces encendidas hasta que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\nCarga Final. Herramientas",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 6,
+      "width": 1920,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CARGA FINAL\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nOBJETIVO\n\nMantener las luces encendidas hasta que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nIDENTIFICAD EL COLOR DE VUESTRO TOKEN\n→\nBUSCAD LA LUZ DEL MISMO COLOR\n→\nACERCAD EL TOKEN\n→\nCONTINUAD CON EL SIGUIENTE COLOR\nCarga Final. Acción",
+      "objectiveRect": {
+        "x": 64,
+        "y": 383.09375,
+        "width": 864,
+        "height": 350
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 8,
+      "width": 1280,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "MEMORIA EXTREMA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nRecordar las formas y sus colores.\n\nMemoria Extrema. Objetivo",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 8,
+      "width": 1280,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "MEMORIA EXTREMA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nRecordar las formas y sus colores.\n\n02\nHERRAMIENTAS\nMemoria Extrema. Herramientas",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 8,
+      "width": 1280,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "MEMORIA EXTREMA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nRecordar las formas y sus colores.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nBUSCAD VUESTRO TOKEN\n→\nMEMORIZAD LAS FORMAS Y SUS COLORES\n→\nBUSCAD LAS FORMAS\n→\nINTRODUCID LOS COLORES\nMemoria Extrema. Acción",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 8,
+      "width": 1280,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "MEMORIA EXTREMA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nRecordar las formas y sus colores.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nBUSCAD VUESTRO TOKEN\n→\nMEMORIZAD LAS FORMAS Y SUS COLORES\n→\nBUSCAD LAS FORMAS\n→\nINTRODUCID LOS COLORES\n04 · ATENCIÓN\n\nLas formas se pueden introducir en cualquier orden.\n\nUn solo error reinicia la ronda.\n\nMemoria Extrema. Atención",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 1,
+      "width": 1280,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÁLCULO EXTREMO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nResolver las sumas antes de que la cuenta atrás llegue a 0.\n\nCálculo Extremo. Objetivo",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 1,
+      "width": 1280,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÁLCULO EXTREMO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nResolver las sumas antes de que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\n13\n5\nCálculo Extremo. Herramientas",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 1,
+      "width": 1280,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÁLCULO EXTREMO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nResolver las sumas antes de que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\n13\n5\n03\nACCIÓN\nIDENTIFICAD EL NÚMERO DE VUESTRO TOKEN\n→\nBUSCAD EL NÚMERO QUE COMPLETA LA SUMA\n→\nACERCAD EL TOKEN AL TERMINAL\nCálculo Extremo. Acción",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 1,
+      "width": 1280,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÁLCULO EXTREMO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nResolver las sumas antes de que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\n13\n5\n03\nACCIÓN\nIDENTIFICAD EL NÚMERO DE VUESTRO TOKEN\n→\nBUSCAD EL NÚMERO QUE COMPLETA LA SUMA\n→\nACERCAD EL TOKEN AL TERMINAL\n04 · ATENCIÓN\n\nSi resolvéis una suma incorrectamente, la ronda se reiniciará.\n\nSi resolvéis una suma que ya ha sido completada, la ronda se reiniciará.\n\nCálculo Extremo. Atención",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 5,
+      "width": 1280,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "PULSO DE TIEMPO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nContar el tiempo exacto que aparece en pantalla.\n\nPulso de Tiempo. Objetivo",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 5,
+      "width": 1280,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "PULSO DE TIEMPO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nContar el tiempo exacto que aparece en pantalla.\n\n02\nHERRAMIENTAS\nPulso de Tiempo. Herramientas",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 5,
+      "width": 1280,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "PULSO DE TIEMPO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nContar el tiempo exacto que aparece en pantalla.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nMEMORIZAD EL TIEMPO\n→\nESPERAD LA SEÑAL\n→\nCONTAD EL TIEMPO\n→\nACERCAD EL TOKEN AL TERMINAL\nPulso de Tiempo. Acción",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 5,
+      "width": 1280,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "PULSO DE TIEMPO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nContar el tiempo exacto que aparece en pantalla.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nMEMORIZAD EL TIEMPO\n→\nESPERAD LA SEÑAL\n→\nCONTAD EL TIEMPO\n→\nACERCAD EL TOKEN AL TERMINAL\n04 · ATENCIÓN\n\nLos segundos de más o de menos se sumarán al error común. Si se supera el margen de error permitido, la ronda se reiniciará.\n\nPulso de Tiempo. Atención",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 12,
+      "width": 1280,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CONEXIÓN SIMULTÁNEA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nPulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.\n\nConexión Simultánea. Objetivo",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 12,
+      "width": 1280,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CONEXIÓN SIMULTÁNEA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nPulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.\n\n02\nHERRAMIENTAS\nConexión Simultánea. Herramientas",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 12,
+      "width": 1280,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CONEXIÓN SIMULTÁNEA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nPulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nCONTAD LAS BOLAS\n→\nCOORDINAD AL EQUIPO\n→\nPULSAD EL NÚMERO EXACTO DE BOTONES\n→\nMANTENEDLOS PULSADOS DURANTE 3 SEGUNDOS\nConexión Simultánea. Acción",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 12,
+      "width": 1280,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CONEXIÓN SIMULTÁNEA\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nPulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nCONTAD LAS BOLAS\n→\nCOORDINAD AL EQUIPO\n→\nPULSAD EL NÚMERO EXACTO DE BOTONES\n→\nMANTENEDLOS PULSADOS DURANTE 3 SEGUNDOS\n04 · ATENCIÓN\n\nSi la cuenta atrás llega a 0, los botones indicados en pantalla cambiarán.\n\nConexión Simultánea. Atención",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 4,
+      "width": 1280,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÓDIGO SONORO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nReconstruir y ordenar los fragmentos de la canción.\n\nCódigo Sonoro. Objetivo",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 4,
+      "width": 1280,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÓDIGO SONORO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nReconstruir y ordenar los fragmentos de la canción.\n\n02\nHERRAMIENTAS\nCódigo Sonoro. Herramientas",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 4,
+      "width": 1280,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÓDIGO SONORO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nReconstruir y ordenar los fragmentos de la canción.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nESCUCHAD LA CANCIÓN\n→\nIDENTIFICAD EL FRAGMENTO\n→\nMARCADLO\n→\nBUSCAD EL SIGUIENTE\nCódigo Sonoro. Acción",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 4,
+      "width": 1280,
+      "step": "attention",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CÓDIGO SONORO\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n04\nAtención\n01\nOBJETIVO\n\nReconstruir y ordenar los fragmentos de la canción.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nESCUCHAD LA CANCIÓN\n→\nIDENTIFICAD EL FRAGMENTO\n→\nMARCADLO\n→\nBUSCAD EL SIGUIENTE\n04 · ATENCIÓN\n\nEsta prueba tiene dos rondas.\n\nCódigo Sonoro. Atención",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": true
+    },
+    {
+      "id": 6,
+      "width": 1280,
+      "step": "objective",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CARGA FINAL\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nOBJETIVO\n\nMantener las luces encendidas hasta que la cuenta atrás llegue a 0.\n\nCarga Final. Objetivo",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 6,
+      "width": 1280,
+      "step": "tools",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CARGA FINAL\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nOBJETIVO\n\nMantener las luces encendidas hasta que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\nCarga Final. Herramientas",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    },
+    {
+      "id": 6,
+      "width": 1280,
+      "step": "interaction",
+      "overflow": [],
+      "textOverflow": [],
+      "images": [],
+      "text": "CARGA FINAL\nLA PIRÁMIDE\n01\nObjetivo\n02\nHerramientas\n03\nAcción\n01\nOBJETIVO\n\nMantener las luces encendidas hasta que la cuenta atrás llegue a 0.\n\n02\nHERRAMIENTAS\n03\nACCIÓN\nIDENTIFICAD EL COLOR DE VUESTRO TOKEN\n→\nBUSCAD LA LUZ DEL MISMO COLOR\n→\nACERCAD EL TOKEN\n→\nCONTINUAD CON EL SIGUIENTE COLOR\nCarga Final. Acción",
+      "objectiveRect": {
+        "x": 42.66666793823242,
+        "y": 255.39584350585938,
+        "width": 576,
+        "height": 233.33334350585938
+      },
+      "attentionVisible": false
+    }
+  ],
+  "errors": [],
+  "startGate": true,
+  "attentionNavigation": true,
+  "stableObjective": true,
+  "translationFallback": true
+}

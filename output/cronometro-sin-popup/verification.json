@@ -1,0 +1,74 @@
+[
+  {
+    "width": 1920,
+    "success": {
+      "popup": false,
+      "success": true,
+      "failure": false,
+      "objective": "10",
+      "finalVisible": false,
+      "overflow": false
+    },
+    "next": {
+      "popup": false,
+      "success": false,
+      "failure": false,
+      "objective": "30",
+      "finalVisible": false,
+      "overflow": false
+    },
+    "failure": {
+      "popup": false,
+      "success": false,
+      "failure": true,
+      "objective": "30",
+      "finalVisible": false,
+      "overflow": false
+    },
+    "final": {
+      "popup": false,
+      "success": false,
+      "failure": true,
+      "objective": "30",
+      "finalVisible": true,
+      "overflow": false
+    },
+    "errors": []
+  },
+  {
+    "width": 1280,
+    "success": {
+      "popup": false,
+      "success": true,
+      "failure": false,
+      "objective": "10",
+      "finalVisible": false,
+      "overflow": false
+    },
+    "next": {
+      "popup": false,
+      "success": false,
+      "failure": false,
+      "objective": "30",
+      "finalVisible": false,
+      "overflow": false
+    },
+    "failure": {
+      "popup": false,
+      "success": false,
+      "failure": true,
+      "objective": "30",
+      "finalVisible": false,
+      "overflow": false
+    },
+    "final": {
+      "popup": false,
+      "success": false,
+      "failure": true,
+      "objective": "30",
+      "finalVisible": true,
+      "overflow": false
+    },
+    "errors": []
+  }
+]

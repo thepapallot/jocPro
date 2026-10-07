@@ -11,7 +11,7 @@
     gamePath: '/puzzle/1',
     steps: ['cover', 'objective', 'example', 'coordination', 'ready'],
     example: Object.freeze({token: 13, terminal: 5, result: 18, targets: [18, 23, 31, 40]}),
-    assets: Object.freeze({token: asset('shared/gameplay/token_card.png'), terminal: asset('shared/gameplay/terminal_box.png')}),
+    assets: Object.freeze({token: asset('shared/gameplay/token_card.png'), terminal: asset('shared/gameplay/terminal_box.png'), buttonsPanel: asset('shared/terminal_3d/buttons_panel_front.png')}),
     copy: {
       ca: {
         name: window.PyramidPuzzleNames.name(1,'ca'), nextChallenge: 'La següent prova', brand: 'La Piràmide',
@@ -121,6 +121,15 @@
   const actFor=id=>acts[[tutorialId,2,3].includes(id)?0:[8,1,5].includes(id)?1:2];
   let completed=0;
   const total=order.length+1; // The final challenge earns the summit; practice earns confidence.
+  // Approved Spanish briefings. Other languages await the complete editorial review.
+  const reviewedCopy={
+    8:{objective:'Recordar las formas y sus colores.',tools:'Tokens y botones de colores.',action:'Buscad vuestro token → memorizad las formas y sus colores → buscad las formas → introducid los colores.',attention:['Las formas se pueden introducir en cualquier orden.','Un solo error reinicia la ronda.']},
+    1:{objective:'Resolver las sumas antes de que la cuenta atrás llegue a 0.',tools:'Tokens y números de los terminales.',action:'Identificad el número de vuestro token → buscad el número que completa la suma → acercad el token al terminal.',attention:['Si resolvéis una suma incorrectamente, la ronda se reiniciará.','Si resolvéis una suma que ya ha sido completada, la ronda se reiniciará.']},
+    5:{objective:'Contar el tiempo exacto que aparece en pantalla.',tools:'Token y terminal.',action:'Memorizad el tiempo → esperad a que se encienda vuestro terminal → contad el tiempo → acercad el token al terminal.',attention:['Los segundos de más o de menos se sumarán al error común. Si se supera el margen de error permitido, la ronda se reiniciará.']},
+    12:{objective:'Pulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.',tools:'Botones de los terminales.',action:'Contad las bolas → coordinad al equipo → pulsad el número exacto de botones → mantenedlos pulsados durante 3 segundos.',attention:['Si la cuenta atrás llega a 0, los botones indicados en pantalla cambiarán.']},
+    4:{objective:'Reconstruir y ordenar los fragmentos de la canción.',tools:'Tokens y terminales.',action:'Escuchad la canción → identificad el fragmento → marcadlo → buscad el siguiente.',attention:['Esta prueba tiene dos rondas.']},
+    6:{objective:'Mantener las luces encendidas hasta que la cuenta atrás llegue a 0.',tools:'Tokens y luces de los terminales.',action:'Identificad el color de vuestro token → buscad la luz del mismo color → acercad el token → continuad con el siguiente color.'}
+  };
   for(const id of [tutorialId,...order,finalId]) {
     const intro=byId.get(id);intro.completed=completed;intro.total=total;
     intro.act=actFor(id);intro.isFinal=id===finalId;
@@ -130,6 +139,20 @@
       intro.attentionCopy={es:{text:'Cuando suene la alarma, las serpientes se pondrán rojas. Los símbolos de la pantalla no cambian: buscad en los terminales el mismo símbolo con los colores invertidos.',before:4,after:3}};
       intro.steps.push('attention');
       Object.assign(intro.copy.es,{objectiveTitle:'Completar la serpiente correspondiente a cada token.',objectiveLead:'Completar la serpiente correspondiente a cada token.',exampleLead:'Tokens y símbolos de los terminales.',warning:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.',coordinateLead:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.'});
+    }
+    if(id===3){
+      intro.attentionCopy={es:{text:'Las respuestas de cada terminal se pueden cambiar hasta que se haya introducido una respuesta en todos los terminales.'}};
+      intro.steps.push('attention');
+      Object.assign(intro.copy.es,{objectiveTitle:'Identificar las 4 respuestas correctas.',objectiveLead:'Identificar las 4 respuestas correctas.',exampleLead:'Botones de los terminales.',warning:'Leed la pregunta → identificad las respuestas correctas → marcad cada respuesta en su terminal.',coordinateLead:'Leed la pregunta → identificad las respuestas correctas → marcad cada respuesta en su terminal.'});
+    }
+    if(reviewedCopy[id]){
+      const approved=reviewedCopy[id];
+      intro.reviewedBriefing=true;
+      Object.assign(intro.copy.es,{objectiveTitle:approved.objective,objectiveLead:approved.objective,exampleLead:approved.tools,warning:approved.action,coordinateLead:approved.action});
+      if(approved.attention){
+        intro.attentionCopy={es:{text:approved.attention.join(' '),paragraphs:approved.attention}};
+        intro.steps.push('attention');
+      }
     }
     intro.journey=journey;
     if(id===3)intro.accent='#dc68a7';
@@ -142,11 +165,15 @@
       t.notes=[t.objectiveLead,t.exampleLead,rule];
       t.footers=[local('Observeu el repte.','Observad el reto.','Look at the challenge.')[lang],local('Aquestes són les vostres eines.','Estas son vuestras herramientas.','These are your tools.')[lang],intro.act.role[lang]];
       t.guidance={role:intro.act.role[lang],hints:[t.objectiveLead,t.exampleLead,rule],rhythm:local('Doneu temps per pensar. Si el grup no sap què fer, oferiu una ajuda; si està provant un pla, deixeu-lo jugar.','Dad tiempo para pensar. Si el grupo no sabe qué hacer, ofreced una ayuda; si está probando un plan, dejadlo jugar.','Allow thinking time. Offer a hint if the group does not know what to do; let them play if they are testing a plan.')[lang]};
+      if(lang==='es'&&intro.reviewedBriefing)t.stepLabels=['Objetivo','Herramientas','Acción'];
       if(intro.attentionCopy){
         if(lang==='es')t.stepLabels=['Objetivo','Herramientas','Acción'];
         t.stepLabels.push('Atención');
         t.notes.push(intro.attentionCopy.es.text);
         t.footers.push('');
+      }
+      if(id===5) {
+        t.notes[t.notes.length-1]+=' Al iniciar se abre la preparación: memorizad el tiempo objetivo durante la cuenta atrás y empezad a contar cuando se encienda vuestro terminal.';
       }
       if(id===tutorialId){
         if(lang==='es')t.stepLabels=['Objetivo','Herramientas','Acción'];

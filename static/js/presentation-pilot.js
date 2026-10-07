@@ -301,6 +301,7 @@
   }
   function start() {
     if (phase !== 'slides' || step !== config.steps.length-1 || (flow && config.kind!=='puzzle')) return;
+    if (config.puzzleId === 5) { enterGame(); return; }
     phase = 'countdown';
     countdownStart = performance.now();
     lastCount = null;

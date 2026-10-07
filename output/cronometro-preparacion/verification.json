@@ -1,0 +1,66 @@
+[
+  {
+    "width": 1920,
+    "prep": {
+      "objective": "30",
+      "brief": "30",
+      "countdown": "5 s",
+      "prep": true,
+      "signal": false,
+      "overflow": []
+    },
+    "expired": {
+      "objective": "30",
+      "brief": "30",
+      "countdown": "…",
+      "prep": true,
+      "signal": false,
+      "overflow": []
+    },
+    "start": {
+      "objective": "30",
+      "brief": "30",
+      "countdown": "…",
+      "prep": false,
+      "signal": false,
+      "overflow": []
+    },
+    "errors": []
+  },
+  {
+    "width": 1280,
+    "prep": {
+      "objective": "30",
+      "brief": "30",
+      "countdown": "5 s",
+      "prep": true,
+      "signal": false,
+      "overflow": []
+    },
+    "expired": {
+      "objective": "30",
+      "brief": "30",
+      "countdown": "…",
+      "prep": true,
+      "signal": false,
+      "overflow": []
+    },
+    "start": {
+      "objective": "30",
+      "brief": "30",
+      "countdown": "…",
+      "prep": false,
+      "signal": false,
+      "overflow": []
+    },
+    "errors": []
+  },
+  {
+    "id": 5,
+    "start": "verified"
+  },
+  {
+    "id": 1,
+    "start": "verified"
+  }
+]

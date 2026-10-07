@@ -9,7 +9,7 @@
     5: {ca:'Pols del Temps', es:'Pulso de Tiempo', eng:'Pulse of Time'},
     6: {ca:'Càrrega Final', es:'Carga Final', eng:'Final Charge'},
     7: {ca:'Segments avançats', es:'Segmentos avanzados', eng:'Advanced Segments'},
-    8: {ca:'Memòria Fantasma', es:'Memoria Fantasma', eng:'Ghost Memory'},
+    8: {ca:'Memòria Fantasma', es:'Memoria Extrema', eng:'Ghost Memory'},
     9: {ca:'Arquitectes de l’Ordre', es:'Arquitectos del Orden', eng:'Architects of Order'},
     10: {ca:'Patró Mestre', es:'Patrón Maestro', eng:'Master Pattern'},
     11: {ca:'Simulacre Inicial', es:'Simulacro Inicial', eng:'Initial Simulation'},

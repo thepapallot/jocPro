@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block puzzle_content %}
-<div id="puzzle5-shell">
+<div id="puzzle5-shell" class="is-countdown">
     <aside id="time-brief" class="time-panel">
         <div id="p5-clock-display" aria-hidden="true">
             <div class="p5-clock-aura"></div>
@@ -32,7 +32,7 @@
             </div>
             <div class="brief-label">Objetivo</div>
             <div id="brief-objective-value-wrap">
-                <div id="brief-objective-value">10</div>
+                <div id="brief-objective-value">—</div>
                 <div id="brief-objective-unit">SEC</div>
             </div>
         </div>
@@ -40,9 +40,12 @@
     </aside>
 
     <section id="chrono-stage" class="time-panel">
-        <div id="objective-card">
-            <div id="objective-text">10</div>
-            <div id="objective-subtext">sec</div>
+        <div id="objective-card" class="is-countdown">
+            <h1 id="p5-preparation-title">Preparados: memorizad el tiempo</h1>
+            <div id="objective-text">—</div>
+            <div id="objective-subtext">segundos</div>
+            <div id="p5-preparation-countdown">Preparación · <strong id="p5-countdown-value">—</strong></div>
+            <p id="p5-preparation-hint">Empezad a contar cuando se encienda vuestro terminal.</p>
             <div id="countdown-orbit" aria-hidden="true">
                 <div class="orbit-ring orbit-ring-a"></div>
                 <div class="orbit-ring orbit-ring-b"></div>
@@ -92,10 +95,6 @@
 {% endblock %}
 
 {% block after_body %}
-<div id="p5-phase-popup" class="p5-phase-popup hidden" aria-live="polite">
-    <div id="p5-phase-popup-line1" class="p5-phase-popup-line" data-i18n="game.firstPhase">Primera fase</div>
-    <div id="p5-phase-popup-line2" class="p5-phase-popup-line" data-i18n="game.phaseCleared">superada</div>
-</div>
 <div id="p5-solved-banner" class="p5-solved-banner hidden">
     <div class="p5-solved-text" data-i18n="game.levelCompleted">NIVEL COMPLETADO</div>
 </div>

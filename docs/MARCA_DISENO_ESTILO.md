@@ -1,6 +1,6 @@
 # Guía de marca diseño y estilo de La Piràmide
 
-Referencia editorial vigente del proyecto. Última actualización: **6 octubre
+Referencia editorial vigente del proyecto. Última actualización: **7 octubre
 2026**. Recoge las decisiones del equipo, la información publicada y la revisión
 de recursos gráficos. Leer antes de editar, como establece [AGENTS.md](../AGENTS.md).
 
@@ -74,7 +74,7 @@ y los controles del GM. Las versiones catalanas e inglesas conservan el signific
 | 11 | Práctica / simulacro | Simulacro Inicial | Simulacre Inicial | Initial Simulation |
 | 2 | Serpientes / laberinto | Tras la Serpiente | Rere la Serp | Follow the Snake |
 | 1 | Sumas | Cálculo Extremo | Càlcul Extrem | Extreme Calculation |
-| 8 | Memory | Memoria Fantasma | Memòria Fantasma | Ghost Memory |
+| 8 | Memory | Memoria Extrema | Memòria Fantasma | Ghost Memory |
 | 3 | Trivial | QUIZ | QUIZ | QUIZ |
 | 5 | Cronómetro | Pulso de Tiempo | Pols del Temps | Pulse of Time |
 | 12 | Botones | Conexión Simultánea | Connexió Simultània | Simultaneous Connection |
@@ -83,6 +83,10 @@ y los controles del GM. Las versiones catalanas e inglesas conservan el signific
 | 9 | Token a lloc, fuera del recorrido | Arquitectos del Orden | Arquitectes de l’Ordre | Architects of Order |
 | 10 | Segmentos, fuera del recorrido | Patrón Maestro | Patró Mestre | Master Pattern |
 | 7 | Segmentos difícil, fuera del recorrido | Segmentos avanzados | Segments avançats | Advanced Segments |
+
+Decisión del 7 octubre 2026, implementada en castellano: Memory pasa a llamarse
+**Memoria Extrema** en presentación, tablero, transiciones y controles del GM.
+Sus nombres en catalán e inglés quedan pendientes de la traducción del conjunto.
 
 La prueba 7 conserva su denominación descriptiva: no se ha acordado un nombre
 creativo nuevo para ella. Las pruebas 7, 9 y 10 no se añaden al recorrido.
@@ -221,7 +225,7 @@ ornamentales, paneles redundantes y animaciones continuas sobre el tablero.
 8. **Final y foto:** celebración y composición estable para el grupo.
 
 Recorrido actual de referencia: Simulacro Inicial 11 → Tras la Serpiente 2 →
-Cálculo Extremo 1 → Memoria Fantasma 8 → QUIZ 3 → Pulso de Tiempo 5 →
+Cálculo Extremo 1 → Memoria Extrema 8 → QUIZ 3 → Pulso de Tiempo 5 →
 Conexión Simultánea 12 → Código Sonoro 4 → Carga Final 6 → cierre.
 Ocho retos puntuables; Segmentos 10 queda fuera del recorrido activo. Consultar
 el recorrido vigente antes de cambiar su representación.
@@ -244,7 +248,8 @@ Explicación del GM al llegar al Trivial: «Ahora llega el QUIZ: compartid lo qu
 sabéis y decidid juntos. Después vendrá el segundo bloque de retos y el final».
 Esta nota aparece en el control de presentación. A continuación siguen los tres
 revelados habituales: objetivo, terminales y tokens, interacción. La cuenta atrás
-solo se habilita después de la interacción, también con el nuevo paso de recorrido.
+solo se habilita después de Atención, incorporada el 7 octubre 2026,
+también con el paso previo de recorrido.
 
 Verificado el 6 octubre 2026: Chrome con fixtures aislados, tres idiomas a
 1920 × 1080 y 1280 × 720; bloques vacíos/desiguales, progreso parcial y retorno
@@ -443,6 +448,113 @@ Las notas del GM acompañan cada paso. Las traducciones del contenido nuevo qued
 pendientes: Atención usa el borrador castellano también en los otros idiomas.
 Verificación aislada a 1920 × 1080 y 1280 × 720: `output/serpiente-presentacion/`.
 
+QUIZ, revisión en castellano implementada con el formato del Simulacro el
+7 octubre 2026:
+
+- **Objetivo:** «Identificar las 4 respuestas correctas».
+- **Herramientas:** botones de los terminales. Mostrar el panel frontal completo
+  `static/images/shared/terminal_3d/buttons_panel_front.png`, sin token ni rótulo
+  inferior y conservando sus seis colores originales.
+- **Acción:** «Leed la pregunta → identificad las respuestas correctas → marcad
+  cada respuesta en su terminal».
+- **Atención:** «Las respuestas de cada terminal se pueden cambiar hasta que se
+  haya introducido una respuesta en todos los terminales».
+
+Se conserva el mapa previo del recorrido y el acento magenta de la etapa.
+Atención es el cuarto revelado del esquema, en una ventana superpuesta sin
+cierre opcional ni ejemplo de símbolos. El GM puede retroceder y repetirla;
+el inicio solo se habilita al llegar a ese paso. Las notas del GM usan el mismo
+texto. Catalán e inglés mantienen su contenido anterior hasta traducir el
+conjunto; el nuevo aviso usa el borrador castellano en esos idiomas.
+Verificación con fixture aislado a 1920 × 1080 y 1280 × 720:
+`output/quiz-presentacion/`. Solo simulación, sin MQTT ni hardware.
+
+### Presentaciones restantes revisadas en castellano
+
+Textos aprobados e implementados el 7 octubre 2026. Las seis presentaciones
+adoptan la composición del Simulacro: objetivo en el panel, herramientas sin
+rótulo inferior y acción con flechas. Las acciones de cuatro partes mantienen
+las cuatro instrucciones en una misma franja. Las notas del GM usan el mismo
+contenido. Los avisos aparecen en el cuarto revelado obligatorio antes del
+inicio; cuando hay dos, se muestran como dos párrafos de una única ventana.
+Carga Final no añade Atención. Catalán e inglés conservan sus textos anteriores;
+los avisos nuevos usan el borrador castellano hasta traducir el conjunto.
+
+**Memoria Extrema (Memory):**
+
+- Objetivo: «Recordar las formas y sus colores».
+- Herramientas: tokens y botones de colores. Decisión actualizada e implementada
+  el 7 octubre 2026: token y panel frontal completo
+  `static/images/shared/terminal_3d/buttons_panel_front.png`, con sus seis colores
+  originales, sustituyen el recorte del terminal. Uso conjunto aprobado para
+  esta presentación. Verificación aislada a ambas resoluciones:
+  `output/memoria-botones/`, sin MQTT ni hardware.
+- Acción: «Buscad vuestro token → memorizad las formas y sus colores → buscad las
+  formas → introducid los colores».
+- Atención: «Las formas se pueden introducir en cualquier orden» y «Un solo error
+  reinicia la ronda».
+
+**Cálculo Extremo (Sumas):**
+
+- Objetivo: «Resolver las sumas antes de que la cuenta atrás llegue a 0».
+- Herramientas: tokens y números de los terminales; token y terminal con números
+  ilustrativos, sin mostrar una solución.
+- En el tablero, la operación muestra **token + número del terminal**. Decisión
+  implementada el 7 octubre 2026: sustituir la pirámide SVG del primer operando
+  por `static/images/shared/gameplay/token_card.png`. La pirámide de la cabecera
+  conserva su función de progreso. Verificación visual aislada en ambas
+  resoluciones: `output/sumas-token/`, sin MQTT ni hardware.
+- Acción: «Identificad el número de vuestro token → buscad el número que completa
+  la suma → acercad el token al terminal».
+- Atención: «Si resolvéis una suma incorrectamente, la ronda se reiniciará» y
+  «Si resolvéis una suma que ya ha sido completada, la ronda se reiniciará».
+
+**Pulso de Tiempo (Cronómetro):**
+
+- Objetivo: «Contar el tiempo exacto que aparece en pantalla».
+- Herramientas: token y terminal.
+- Acción: «Memorizad el tiempo → esperad a que se encienda vuestro terminal →
+  contad el tiempo → acercad el token al terminal».
+- Atención: «Los segundos de más o de menos se sumarán al error común. Si se supera
+  el margen de error permitido, la ronda se reiniciará».
+
+**Conexión Simultánea (Botones):**
+
+- Objetivo: «Pulsar tantos botones como aparezcan en pantalla antes de que se acabe
+  el tiempo».
+- Herramientas: botones de los terminales; panel frontal completo del mismo
+  recurso autorizado que usa el QUIZ, con sus seis colores originales.
+- Acción: «Contad las bolas → coordinad al equipo → pulsad el número exacto de
+  botones → mantenedlos pulsados durante 3 segundos».
+- Atención: «Si la cuenta atrás llega a 0, los botones indicados en pantalla cambiarán».
+
+**Código Sonoro (Música):**
+
+- Objetivo: «Reconstruir y ordenar los fragmentos de la canción».
+- Herramientas: tokens y terminales.
+- Acción: «Escuchad la canción → identificad el fragmento → marcadlo → buscad el siguiente».
+- Atención: «Esta prueba tiene dos rondas».
+
+**Carga Final (Energía):**
+
+- Objetivo: «Mantener las luces encendidas hasta que la cuenta atrás llegue a 0».
+- Herramientas: tokens y luces de los terminales; token con indicador de color y
+  terminal con luz del mismo color, sin recolorear la ilustración.
+- Acción: «Identificad el color de vuestro token → buscad la luz del mismo color
+  → acercad el token → continuad con el siguiente color».
+
+Verificación visual aislada a 1920 × 1080 y 1280 × 720:
+`output/presentaciones-restantes/`. Solo simulación, sin MQTT ni hardware.
+
+Decisión ampliada e implementada el 7 octubre 2026: usar el panel frontal
+completo de seis botones en las herramientas de **QUIZ, Memoria Extrema y
+Conexión Simultánea**, en los tres idiomas. El recurso se muestra entero,
+sin recortes ni cambios de color. Memoria Extrema conserva el token junto al
+panel. Las presentaciones que explican el terminal en conjunto, sus números,
+símbolos o luces conservan su ilustración completa. Esta sustitución gráfica
+no anticipa traducciones de los textos pendientes. Verificación visual aislada
+a 1920 × 1080 y 1280 × 720: `output/paneles-botones/`, sin MQTT ni hardware.
+
 ### Tres revelados dentro de una única composición
 
 1. Objetivo y elementos de la pantalla compartida.
@@ -526,6 +638,22 @@ ni logros de fases intermedias. En Carga Final, la confirmación verde de
   serpientes completadas en verde `#2DFF9B`; siguiente casilla en ámbar `#EDB970`.
   Error con cruz roja `#F15C68`. Alarma con resplandor radial rojo que se desvanece
   hacia los bordes, sin relleno rectangular. Conservar las imágenes de símbolos.
+- **Cronómetro:** decisión implementada el 7 octubre 2026: retirar el popup
+  «Primera fase superada» al finalizar la primera ronda. El resultado permanece
+  en el tablero con su señal de acierto o fallo, el error común y el sonido
+  correspondiente. El inicio de otra ronda sigue las instrucciones del juego;
+  la resolución completa conserva el cierre final común «NIVEL SUPERADO».
+  Verificación aislada a 1920 × 1080 y 1280 × 720 en
+  `output/cronometro-sin-popup/`, sin MQTT ni hardware.
+  Decisión implementada el 7 octubre 2026: el GM abre directamente la preparación
+  del Cronómetro, sin la cuenta atrás adicional de la presentación. La preparación
+  muestra «Preparados: memorizad el tiempo», el objetivo grande en segundos y la
+  cuenta atrás de preparación separada. Corrección del 7 octubre 2026,
+  implementada: cada jugador empieza a contar cuando se enciende su terminal.
+  Se retira el aviso general «CONTAD EL TIEMPO», que confundía esa señal
+  individual con el cambio de pantalla. La preparación y la intro explican
+  expresamente el encendido del terminal; no se añade un paso manual del GM.
+  Los reintentos conservan su preparación correspondiente.
 - **Memory:** confirmación verde común con «NIVEL SUPERADO», localizada al idioma
   de sesión, sin popup adicional ni destello.
 - **Botons:** logro de fase con resplandor radial verde y «NIVEL SUPERADO»;
@@ -590,7 +718,10 @@ SVG o CSS sencillo. No recuperar las ilustraciones descartadas desde copias anti
   secuencias, tiempos y señales reales. Los iconos no sustituyen esos datos.
 - `terminal_3d/` queda como referencia física y apoyo puntual, especialmente
   `buttons_panel_front.png` y `terminal_box_buttons_numbers_front.png`. No mezclar
-  estos renders con los objetos principales dentro de una misma explicación.
+  estos renders con los objetos principales dentro de una misma explicación,
+  salvo el panel frontal aprobado para las explicaciones de botones en QUIZ,
+  Memoria Extrema y Conexión Simultánea; se combina con el token cuando este
+  forma parte de las herramientas.
 - Verificar contenido antes de usar `terminal_3d`: hay nombres incorrectos y su
   README enumera archivos ausentes. `symbol_plate_o.png` muestra una caja;
   `scanner_bar_perspective.png` muestra una placa triangular.

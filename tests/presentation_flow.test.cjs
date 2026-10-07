@@ -14,9 +14,9 @@ function flow(order){
 test('the journey has a manual lobby, compact briefings and a final earned summit',()=>{
   const scenes=flow(),games=scenes.filter(s=>s.kind==='puzzle');
   assert.deepEqual(games.map(g=>g.puzzleId),[11,2,1,8,3,5,12,4,6]);
-  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),30);
+  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),36);
   assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>!['journey','elements','attention'].includes(s)).join(',')==='objective,tools,interaction'));
-  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),58);
+  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),64);
   assert.ok(games.every(g=>!g.steps.includes('example')));
   assert.ok(games.every(g=>!g.previewPath), 'rehearsal uses current diagrams, never the retired pilot');
   assert.equal(scenes[0].autoAdvanceMs,null);
@@ -90,7 +90,7 @@ test('journey blocks follow the configured order, including empty and unequal bl
     const scenes=flow(order),quiz=scenes.find(s=>s.puzzleId===3);
     assert.deepEqual(quiz.journey.pre,pre);
     assert.deepEqual(quiz.journey.post,post);
-    assert.deepEqual(quiz.steps,['journey','objective','tools','interaction']);
+    assert.deepEqual(quiz.steps,['journey','objective','tools','interaction','attention']);
     assert.deepEqual(scenes[1].journey,quiz.journey);
     assert.equal(quiz.autoAdvanceMs,undefined);
   }
@@ -133,6 +133,7 @@ test('every intro uses the shared editorial catalog in all three languages',()=>
   assert.equal(context.window.PyramidPuzzleNames.name(2,'es'),'Tras la Serpiente');
   assert.equal(context.window.PyramidPuzzleNames.name(3,'ca'),'QUIZ');
   assert.equal(context.window.PyramidPuzzleNames.name(12,'es'),'Conexión Simultánea');
+  assert.equal(context.window.PyramidPuzzleNames.name(8,'es'),'Memoria Extrema');
 });
 
 test('opening subtitles preserve the narration and cover each beat without gaps',()=>{
@@ -183,4 +184,44 @@ test('snake briefing always includes the alarm warning before its final start st
   assert.doesNotMatch(snake.copy.es.notes.join(' '),/memoriz/i);
   assert.equal(snake.attentionCopy.es.before,4);
   assert.equal(snake.attentionCopy.es.after,3);
+});
+
+test('QUIZ keeps its journey and requires the answer-change warning before starting',()=>{
+  const quiz=flow().find(s=>s.puzzleId===3&&s.kind==='puzzle');
+  assert.deepEqual(quiz.steps,['journey','objective','tools','interaction','attention']);
+  for(const lang of ['ca','es','eng']){
+    assert.equal(quiz.copy[lang].stepLabels.at(-1),'Atención');
+    assert.equal(quiz.copy[lang].notes.at(-1),quiz.attentionCopy.es.text);
+  }
+  const context=vm.createContext({window:{},PyramidLogo:{markup:()=>'<svg></svg>'}});
+  vm.runInContext(script('presentation-briefing.js'),context);
+  const markup=context.window.PyramidBriefing.markup(quiz,quiz.copy.es,'es');
+  assert.ok(markup.includes('role="dialog"'));
+  assert.ok(markup.includes('b-buttons-panel'));
+  assert.ok(!markup.includes('b-attention-example'),'text-only warning has no snake symbol example');
+  assert.ok(!markup.includes('symbol_undefined'),'no missing image references');
+});
+
+test('reviewed Spanish briefings require their warnings; the final has only three reveals',()=>{
+  const scenes=flow();
+  const context=vm.createContext({window:{},PyramidLogo:{markup:()=>'<svg></svg>'}});
+  vm.runInContext(script('presentation-briefing.js'),context);
+  for(const id of [8,1,5,12,4,6]){
+    const scene=scenes.find(s=>s.puzzleId===id&&s.kind==='puzzle');
+    assert.deepEqual(scene.steps,id===6?['objective','tools','interaction']:['objective','tools','interaction','attention']);
+    assert.equal(scene.copy.es.stepLabels[2],'Acción');
+    const markup=context.window.PyramidBriefing.markup(scene,scene.copy.es,'es');
+    assert.ok(markup.includes('b-practice-layout'));
+    assert.equal((markup.match(/class="b-action"/g)||[]).length,id===1?3:4);
+    if(id===6)assert.ok(!markup.includes('role="dialog"'));
+    else{
+      if(id===5) {
+        assert.ok(scene.copy.es.notes.at(-1).startsWith(scene.attentionCopy.es.text));
+        assert.match(scene.copy.es.notes.at(-1),/memorizad el tiempo objetivo.*cuando se encienda vuestro terminal/);
+      } else assert.equal(scene.copy.es.notes.at(-1),scene.attentionCopy.es.text);
+      assert.ok(markup.includes('role="dialog"'));
+      assert.ok(!markup.includes('b-attention-example'));
+      for(const text of scene.attentionCopy.es.paragraphs)assert.ok(markup.includes(`<p>${text}</p>`));
+    }
+  }
 });
