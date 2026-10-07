@@ -685,12 +685,13 @@
   }
 
   function collectSessionForm() {
-    const fields = ["sessionName", "company", "date", "time", "place", "players", "gameLanguage", "additionalNotes"];
+    const fields = ["sessionName", "company", "date", "time", "place", "players", "gameLanguage", "additionalNotes", "sessionType", "gameMaster", "observations"];
     const data = {};
     fields.forEach((field) => {
       const input = getSessionField(field);
       data[field] = input ? String(input.value || "").trim() : "";
     });
+    data.sessionType = data.sessionType === "test" ? "test" : "real";
     data.gameLanguage = window.PyramidLanguage.normalize(data.gameLanguage);
     data.id = selectedSessionId || `session_${Date.now()}`;
     data.updatedAt = new Date().toISOString();
@@ -711,6 +712,7 @@
     document.getElementById("gm-session-form")?.reset();
     const lang = getSessionField("gameLanguage");
     if (lang) lang.value = "es";
+    window.PyramidSessions?.fresh("real");
   }
 
   function renderSessionList() {
@@ -729,12 +731,19 @@
     els.sessionList.querySelectorAll("[data-session-id]").forEach((button) => {
       button.addEventListener("click", () => {
         selectedSessionId = button.dataset.sessionId;
+        const draft = sessions.find(item => item.id === selectedSessionId);
+        _loadedDbSessionId = draft?.dbSessionId ?? null;
+        fillSessionForm(draft || {});
         renderSessionList();
       });
     });
   }
 
   function renderDbSessionList(sessions) {
+    if (window.PyramidSessions) {
+      window.PyramidSessions.agenda({sessions, active_session_id: activeSession?.dbSessionId ?? null});
+      return;
+    }
     if (!els.sessionList) return;
     if (!sessions || !sessions.length) {
       els.sessionList.innerHTML = `<div class="gm-empty">No hay sesiones guardadas.</div>`;
@@ -774,13 +783,15 @@
 
   async function refreshDbSessionList() {
     try {
-      const response = await fetch("/test/sessions/pending", { cache: "no-store" });
+      const response = await fetch("/test/sessions", { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const sessions = await response.json();
-      renderDbSessionList(sessions);
+      const result = await response.json();
+      if (window.PyramidSessions) window.PyramidSessions.agenda(result);
+      else renderDbSessionList(result.sessions || []);
     } catch (err) {
       console.warn("[telemetry] refreshDbSessionList failed:", err);
       renderSessionList();
+      window.PyramidSessions?.offline();
     }
   }
 
@@ -795,6 +806,9 @@
       players_num: session.players ? parseInt(session.players, 10) || null : null,
       language: window.PyramidLanguage.normalize(session.gameLanguage),
       notes: session.additionalNotes || null,
+      session_type: session.sessionType || "real",
+      game_master: session.gameMaster || null,
+      observations: session.observations || null,
     };
     if (!forceInsert && _loadedDbSessionId !== null) {
       // UPDATE existing row
@@ -803,7 +817,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.error || `HTTP ${response.status}`); }
     } else {
       // INSERT new row
       const response = await fetch("/test/session/save", {
@@ -811,14 +825,16 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.error || `HTTP ${response.status}`); }
       const result = await response.json();
       _loadedDbSessionId = result.session_id ?? null;
     }
     await refreshDbSessionList();
+    window.PyramidSessions?.saved(_loadedDbSessionId);
   }
 
   async function saveSession(options = {}) {
+    if (window.PyramidSessions && !window.PyramidSessions.validate()) throw new Error("Completa los datos de la sesión.");
     const session = collectSessionForm();
     const sessions = readSessions();
     const index = sessions.findIndex((item) => item.id === session.id);
@@ -828,6 +844,8 @@
     writeSessions(sessions);
     try {
       await saveSessionToDb(session, options);
+      session.dbSessionId = _loadedDbSessionId;
+      writeSessions(sessions);
       if (activeSession?.dbSessionId === _loadedDbSessionId) await syncConfirmedSession();
     } catch (error) {
       setStatus("Sesión guardada solo en este navegador. No se ha podido guardar en el servidor.");
@@ -861,9 +879,12 @@
       ...(source || {}),
       id: `session_${Date.now()}`,
       sessionName: `${source?.sessionName || "Sesión"} copia`,
+      observations: "",
       updatedAt: new Date().toISOString()
     };
+    _loadedDbSessionId = null;
     selectedSessionId = duplicate.id;
+    window.PyramidSessions?.fresh(source.sessionType || "real");
     fillSessionForm(duplicate);
     await saveSession({ forceInsert: true });
   }
@@ -874,14 +895,17 @@
       return;
     }
 
+    if (window.PyramidSessions && !(await window.PyramidSessions.confirmDelete(getSessionField("sessionName")?.value))) return;
+    const deletedId = _loadedDbSessionId;
     const response = await fetch(`/test/session/${_loadedDbSessionId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || `HTTP ${response.status}`);
     }
-
+    writeSessions(readSessions().filter(item => item.dbSessionId !== deletedId && item.id !== selectedSessionId));
     clearSessionForm();
     await refreshDbSessionList();
     await syncConfirmedSession();
@@ -919,17 +943,20 @@
       players: session.players_num != null ? String(session.players_num) : "",
       gameLanguage: window.PyramidLanguage.normalize(session.language),
       additionalNotes: session.notes || "",
+      sessionType: session.session_type || "real",
+      gameMaster: session.game_master || "",
+      observations: session.observations || "",
       confirmedAt: new Date().toISOString(),
       status: "confirmed",
     };
 
     window.localStorage.setItem(activeSessionKey, JSON.stringify(activeSession));
     renderActiveSession();
-    resetGameState();
+    if (!session.started_at) resetGameState();
 
     if (!silent) {
       addSimpleEvent("Sesión confirmada");
-      setStatus("Sesión confirmada");
+      setStatus("Sesión activa. Abre la partida cuando el grupo esté preparado.");
     }
     // Sync against backend to keep state authoritative
     syncConfirmedSession().catch(console.warn);
@@ -958,6 +985,7 @@
 
   function renderActiveSession() {
     const s = activeSession;
+    window.PyramidSessions?.active(s);
     const sessionStarted = Boolean(puzzleRuntime.startedAt);
     const languageSignature = JSON.stringify([s?.dbSessionId, s?.gameLanguage]);
     if (languageSignature !== publishedSessionLanguage) {
@@ -1059,10 +1087,13 @@
       players: session.players_num != null ? String(session.players_num) : "",
       gameLanguage: window.PyramidLanguage.normalize(session.language),
       additionalNotes: session.notes || "",
+      sessionType: session.session_type || "real",
+      gameMaster: session.game_master || "",
+      observations: session.observations || "",
       startedAt: session.started_at || null,
       status: "confirmed",
     };
-    _loadedDbSessionId = newDbId;
+    // Updating the active session must never change which row the editor saves.
     window.localStorage.setItem(activeSessionKey, JSON.stringify(activeSession));
     syncTimerFromBackendSession(session);
     renderActiveSession();
@@ -1857,18 +1888,18 @@
         element: [manualPayloadAction],
         phase: [{
           id: "p12-solve-round",
-          label: "Igualar objetivo actual",
-          detail: "Iguala el objetivo actual",
+          label: "Resolver puzzle",
+          detail: "Marca el puzzle como superado aunque el equipo siga pulsando botones.",
           tone: "primary",
-          getPayloads: getPuzzle12RoundPayloads
+          run: forceEndCurrentPuzzle
         }],
         all: [{
           id: "p12-solve-round-confirm",
-          label: "Igualar objetivo actual",
-          detail: "Actúa sobre el objetivo actual",
+          label: "Resolver puzzle",
+          detail: "Marca el puzzle como superado aunque el equipo siga pulsando botones.",
           tone: "danger",
           confirm: true,
-          getPayloads: getPuzzle12RoundPayloads
+          run: forceEndCurrentPuzzle
         }]
       };
     }
@@ -2168,19 +2199,6 @@
       return Array.from({ length: puzzle11Steps.length - step }, (_, index) => p11StepPayloads(step + index).slice(index===0?Number(data.current_substep||0):0)).flat();
     }
     return p11StepPayloads(step).slice(Number(data.current_substep||0));
-  }
-
-  async function getPuzzle12RoundPayloads() {
-    const data = await fetchCurrentStateForPuzzle(12);
-    const target = data.target;
-    if (!Array.isArray(target) || target.length !== 6) {
-      throw new Error("sin_target");
-    }
-    // Include releases on terminals outside the target, which may already be held.
-    return Array.from({ length: 10 }, (_, index) => {
-      const buttons = target.map((value) => (Number(value) > index ? "1" : "0")).join("");
-      return `P12,${index + 1},${buttons}`;
-    });
   }
 
   function renderSimulator() {
@@ -3370,7 +3388,7 @@
 
   function renderPuzzle12Simulator() {
     els.simContent.innerHTML = `
-      <div class="sim-note">Igualar el objetivo envía los mensajes necesarios para la combinación actual de botones y GIF.</div>
+      <div class="sim-note">Resolver puzzle marca la prueba como superada aunque los jugadores sigan pulsando botones.</div>
       <div class="sim-actions">
 	        <button type="button" class="sim-button" data-sim-p12-refresh-state>Actualizar estado</button>
       </div>
@@ -4905,14 +4923,10 @@
     });
     if (els.saveSessionBtn) els.saveSessionBtn.addEventListener("click", () => runSessionAction(() => saveSession()));
     if (els.deleteSessionBtn) {
-      els.deleteSessionBtn.addEventListener("click", () => {
-        deleteSelectedSession().catch((err) => {
-          console.warn("[telemetry] deleteSelectedSession failed:", err);
-          setStatus("No se pudo eliminar la sesión");
-        });
-      });
+      els.deleteSessionBtn.addEventListener("click", () => runSessionAction(deleteSelectedSession));
     }
     if (els.newSessionBtn) els.newSessionBtn.addEventListener("click", () => {
+      if (sessionActionBusy) return;
       clearSessionForm();
       refreshDbSessionList();
       setStatus("Nueva sesión preparada");
@@ -4957,12 +4971,12 @@
   async function runSessionAction(action) {
     if (sessionActionBusy) return;
     sessionActionBusy = true;
-    const controls = [...document.querySelectorAll('#gm-session-form input, #gm-session-form select, #gm-session-form textarea, #gm-session-form button'), els.duplicateSessionBtn, els.newSessionBtn].filter(Boolean);
+    const controls = [...document.querySelectorAll('#gm-session-form input, #gm-session-form select, #gm-session-form textarea, #gm-session-form button'), els.duplicateSessionBtn, els.newSessionBtn, document.getElementById('gm-new-test-session-btn')].filter(Boolean);
     const disabled = controls.map(control => control.disabled);
     controls.forEach(control => { control.disabled = true; });
     try { await action(); }
-    catch (error) { console.warn('[session]', error); setStatus('No se ha podido guardar o confirmar la sesión. Revisa la conexión y vuelve a intentarlo.'); }
-    finally { sessionActionBusy = false; controls.forEach((control,i) => { control.disabled = disabled[i]; }); }
+    catch (error) { console.warn('[session]', error); const message = error.message || 'No se ha podido guardar la sesión. Revisa la conexión.'; window.PyramidSessions?.error(message); setStatus(message); }
+    finally { sessionActionBusy = false; controls.forEach((control,i) => { control.disabled = disabled[i]; }); window.PyramidSessions?.refreshEditor(); }
   }
 
   // Shared operations for the unified director; the original panels use the same logic.
@@ -4992,6 +5006,20 @@
     }
   };
 
+  window.PyramidSessions?.init({
+    busy:()=>sessionActionBusy,
+    selectedId:()=>_loadedDbSessionId,
+    refresh:refreshDbSessionList,
+    create(kind){
+      if(sessionActionBusy)return;
+      clearSessionForm();window.PyramidSessions.fresh(kind);
+      setStatus(kind==='test'?'Sesión de prueba preparada. Elige el idioma y usa esta sesión.':'Nueva sesión preparada.');
+    },
+    select(session){
+      _loadedDbSessionId=session.session_id;selectedSessionId=`db_${session.session_id}`;
+      fillSessionForm({id:selectedSessionId,sessionName:session.name,company:session.company,date:session.expected_day,time:session.expected_time,place:session.place,players:session.players_num,gameLanguage:session.language,additionalNotes:session.notes,sessionType:session.session_type||'real',gameMaster:session.game_master,observations:session.observations});
+    }
+  });
   resetGameState();
   loadActiveSession();
   syncConfirmedSession().catch(console.warn);

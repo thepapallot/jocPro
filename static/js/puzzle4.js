@@ -1,4 +1,6 @@
 (function() {
+    const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
+
     const ACTION_FEEDBACK_MS = 2000;
     const PHASE_POPUP_DELAY_MS = 500;
     const PHASE_POPUP_VISIBLE_MS = 3000;
@@ -67,7 +69,7 @@
         }
         delayedPopupTimer = setTimeout(() => {
             delayedPopupTimer = null;
-            showPhasePopup('Primera fase superada');
+            showPhasePopup(tr('phaseSuccess', "Primera fase superada"));
         }, PHASE_POPUP_DELAY_MS);
 
         if (interRoundPauseTimer) {
@@ -324,7 +326,7 @@
 
     function runValidationFeedback(isCorrect) {
         const soundUrl = isCorrect ? FASE_OK_SOUND_URL : FASE_KO_SOUND_URL;
-        const statusText = isCorrect ? 'Secuencia correcta' : 'Secuencia incorrecta';
+        const statusText = isCorrect ? tr('sequenceCorrect', "Secuencia correcta") : tr('sequenceWrong', "Secuencia incorrecta");
         const statusTone = isCorrect ? 'completed' : 'failure';
 
         if (!solved) {
@@ -358,7 +360,7 @@
             if (token !== samplePlaybackToken || solved) return;
             currentSampleUrl = null;
             if (!showingCompletion) {
-                setStatus('Esperando registro', 'idle');
+                setStatus(tr('waitingRecord', "Esperando registro"), 'idle');
             }
         });
     }
@@ -388,13 +390,13 @@
         }
 
         if (d.reset_attempt) {
-            showActionFeedback('action-white', 'Reseteando', 'action-white');
+            showActionFeedback('action-white', tr('restarting', "Reiniciando"), 'action-white');
         } else if (d.play_mostra) {
-            showActionFeedback('action-blue', 'Reproduciendo cancion completa', 'action-blue');
+            showActionFeedback('action-blue', tr('playingSong', "Reproduciendo canción completa"), 'action-blue');
         } else if (d.storing === true) {
-            showActionFeedback('action-green', 'Registrando secuencia', 'action-green');
+            showActionFeedback('action-green', tr('storingSequence', "Registrando secuencia"), 'action-green');
         } else if (d.removed_last) {
-            showActionFeedback('action-red', 'Ultima pista eliminada', 'action-red');
+            showActionFeedback('action-red', tr('lastRecordDeleted', "Último registro eliminado"), 'action-red');
             playSound(REMOVE_SOUND_URL);
         }
 
@@ -413,7 +415,7 @@
 
         if (typeof d.sample_countdown_seconds !== 'undefined' && d.sample_countdown_seconds > 0) {
             showingCompletion = false;
-            setStatus(`Reproduciendo muestra en ${d.sample_countdown_seconds} segundos`, 'countdown');
+            setStatus(tr('sampleCountdown', 'Reproduciendo muestra en {count} segundos', {count: d.sample_countdown_seconds}), 'countdown');
         }
 
         if (d.show_completion && !solved) {
@@ -445,7 +447,7 @@
             maybePlayTrack(d.play, () => {
                 if (solved || showingCompletion) return;
                 if (deferIdleUntilTrackEnd) {
-                    setStatus('Esperando muestras', 'idle');
+                    setStatus(tr('waitingSample', "Esperando muestras"), 'idle');
                 }
             });
         }
@@ -464,7 +466,7 @@
             samplePlaybackToken += 1;
             currentSampleUrl = null;
             clearFeedbackTimer();
-            setStatus('Cancion completada', 'solved');
+            setStatus(tr('songCompleted', "Canción completada"), 'solved');
             //playSound((d.play_final && d.play_final.url) || PUZZLE_COMPLETE_SOUND_URL);
             playSound(PUZZLE_COMPLETE_SOUND_URL);
             // Show solved banner and flash
@@ -494,16 +496,16 @@
 
         if (!showingCompletion && !solved) {
             if (d.playing_sample) {
-                setStatus('Reproduciendo muestra', 'playing-sample');
+                setStatus(tr('playingSample', "Reproduciendo muestra"), 'playing-sample');
             } else if (d.sample_countdown_seconds > 0) {
-                setStatus(`Reproduciendo muestra en ${d.sample_countdown_seconds} segundos`, 'countdown');
+                setStatus(tr('sampleCountdown', 'Reproduciendo muestra en {count} segundos', {count: d.sample_countdown_seconds}), 'countdown');
             } else if (d.listening) {
-                setStatus('Escuchando muestra', 'listening');
+                setStatus(tr('listeningSample', "Escuchando muestra"), 'listening');
             } else if (d.storing === true) {
                 playSound(BTN_SOUND_URL);
-                setStatus('Registrando secuencia', 'storing');
+                setStatus(tr('storingSequence', "Registrando secuencia"), 'storing');
             } else if (d.storing === false && !deferIdleUntilTrackEnd) {
-                setStatus('Esperando muestras', 'idle');
+                setStatus(tr('waitingSample', "Esperando muestras"), 'idle');
             }
         }
     }
@@ -639,7 +641,7 @@
         document.getElementById('p4-phase-popup-line2').textContent = popupCopy[1];
 
         //installDebugHelpers();
-        setStatus('Preparando muestra', 'listening');
+        setStatus(tr('preparingSample', "Preparando muestra"), 'listening');
         setSampleWaveActive(false);
         updateProgressBoxes(-1, []);
         updateRoundHud(0, 2);

@@ -9,7 +9,7 @@
 
 {% block top_right %}
 <div id="streak-panel">
-    <div class="hud-label">Progreso</div>
+    <div class="hud-label" data-i18n="game.progress">Progreso</div>
     <div id="streak">1/6</div>
 </div>
 {% endblock %}
@@ -19,19 +19,19 @@
     <section id="quiz-stage" class="quiz-panel">
         <div id="question-area">
             <div id="question-text"></div>
-            <div class="answer-reminder" role="note" aria-label="Hay 4 respuestas correctas y 6 incorrectas. Marca las correctas con verde y las incorrectas con rojo.">
+            <div class="answer-reminder" role="note" aria-label="Hay 4 respuestas correctas y 6 incorrectas. Marca las correctas con verde y las incorrectas con rojo." data-i18n-aria-label="game.quizReminder">
                 <div class="answer-reminder-badge answer-reminder-badge--correct">
                     <span class="answer-reminder-count">4</span>
                     <div class="answer-reminder-copy">
-                        <strong>CORRECTAS</strong>
-                        <span>Botón verde <span aria-hidden="true">✓</span></span>
+                        <strong data-i18n="game.correctAnswers">CORRECTAS</strong>
+                        <span><span data-i18n="game.greenButton">Botón verde</span> <span aria-hidden="true">✓</span></span>
                     </div>
                 </div>
                 <div class="answer-reminder-badge answer-reminder-badge--incorrect">
                     <span class="answer-reminder-count">6</span>
                     <div class="answer-reminder-copy">
-                        <strong>INCORRECTAS</strong>
-                        <span>Botón rojo <span aria-hidden="true">✕</span></span>
+                        <strong data-i18n="game.incorrectAnswers">INCORRECTAS</strong>
+                        <span><span data-i18n="game.redButton">Botón rojo</span> <span aria-hidden="true">✕</span></span>
                     </div>
                 </div>
             </div>

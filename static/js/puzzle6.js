@@ -1,11 +1,13 @@
 (function() {
+    const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
+
     const countdownEl = document.getElementById('countdown');
     const messageEl = document.getElementById('message');
     const statusBadgeEl = document.getElementById('status-badge');
     const trackerPanelEl = document.getElementById('tracker-panel');
     const shellEl = document.getElementById('puzzle6-shell');
-    const DEFAULT_MESSAGE = 'Alinea cada token con su color antes de que desaparezca.';
-    const WAITING_MESSAGE = 'Esperando sincronizacion del sistema.';
+    const DEFAULT_MESSAGE = tr('energyAction', "Alinea cada token con su color antes de que desaparezca.");
+    const WAITING_MESSAGE = tr('waitingSync', "Esperando sincronizacion del sistema.");
 
     let solved = false;
     let active = false;
@@ -50,7 +52,7 @@
         } else if (state === 'solved') {
             statusBadgeEl.classList.add('solved');
         }
-        statusBadgeEl.textContent = text || (state === 'failure' ? 'Recargando' : state === 'solved' ? 'Completado' : 'Activa');
+        statusBadgeEl.textContent = text || (state === 'failure' ? tr('recharging', "Recargando") : state === 'solved' ? tr('completed', "Completado") : 'Activa');
     }
 
     function setTrackerState(state = 'active') {
@@ -182,7 +184,7 @@
         // Add failure class to make countdown red
         countdownEl.classList.add('failure');
         countdownEl.classList.remove('expired');
-        setStatusBadge('failure', 'Recargando');
+        setStatusBadge('failure', tr('recharging', "Recargando"));
         setTrackerState('failure');
         setUrgency(null);
         triggerBurst('error');
@@ -216,8 +218,8 @@
         countdownEl.textContent = '0';
         countdownEl.classList.add('expired');
         countdownEl.classList.remove('failure');
-        setMessage('Secuencia completada.', false);
-        setStatusBadge('solved', 'Completado');
+        setMessage(tr('sequenceCompleted', "Secuencia completada."), false);
+        setStatusBadge('solved', tr('completed', "Completado"));
         setTrackerState('solved');
         setUrgency(null);
         triggerBurst('solved');
@@ -233,7 +235,7 @@
             return;
         }
         if (d.restart_pending) {
-            const msg = d.last_reset_message || 'Reiniciando...';
+            const msg = window.PyramidLanguage?.current() === 'ca' ? tr('energyRestart', 'Reiniciant…') : (d.last_reset_message || 'Reiniciando...');
             handleReset(d.waiting_seconds || 5, msg);
             return;
         }
@@ -251,7 +253,7 @@
         countdownEl.classList.remove('failure', 'expired');
         countdownEl.textContent = format(d.remaining ?? 60);
         setMessage(WAITING_MESSAGE, false);
-        setStatusBadge('active', 'En espera');
+        setStatusBadge('active', tr('waiting', "En espera"));
         setTrackerState('waiting');
         setUrgency(null);
         shellEl?.classList.remove('tick-pulse', 'tick-pulse-warning', 'tick-pulse-low', 'tick-pulse-critical');
@@ -277,7 +279,7 @@
 
         if (d.countdown_reset) {
             const r = d.countdown_reset;
-            const msg = r.message || `Error: Caja ${r.box} sin energía. Vuelta a empezar en 10 segundos`;
+            const msg = window.PyramidLanguage?.current() === 'ca' ? tr('energyReset', '', {box: r.box, count: r.waiting_seconds || 10}) : (r.message || `Error: Caja ${r.box} sin energía. Vuelta a empezar en 10 segundos`);
             handleReset(r.waiting_seconds || 10, msg);
         }
 

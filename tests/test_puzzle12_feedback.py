@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const messages = {
         es: ['NIVEL SUPERADO', 'SE ACABÓ EL TIEMPO'],
         ca: ['NIVELL SUPERAT', 'TEMPS ESGOTAT'],
-        en: ['LEVEL COMPLETED', 'TIME IS UP']
+        eng: ['LEVEL COMPLETED', 'TIME IS UP']
     }[language];
     test('success translation', good.textContent.trim() === messages[0]);
     start(2);
@@ -128,10 +128,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('timer-overlay').textContent === '00:02');
     window.puzzle12Debug.success();
     window.puzzle12Debug.solved();
-    test('final success uses same green feedback', success() && shown(good) && !shown(wait) &&
-        !shown(document.getElementById('p12-solved-banner')));
-    window.advancePreview(1300);
-    test('completion navigation unchanged', window.previewCompleted.join(',') === '12');
+    test('final success uses common full-screen confirmation', success() && !shown(wait) &&
+        shown(document.getElementById('p12-solved-banner')));
+    window.advancePreview(3999);
+    test('final confirmation stays visible for four seconds', window.previewCompleted.length === 0);
+    window.advancePreview(1);
+    test('completion follows final confirmation', window.previewCompleted.join(',') === '12');
     document.body.dataset.feedbackResult = JSON.stringify({width: innerWidth, height: innerHeight, checks});
 });
 """

@@ -7,7 +7,7 @@
   const sym=id=>`<img class="b-symbol" src="/static/images/puzzle2/symbols/symbol_${id}.png" alt="${id}">`;
   const greek=(name,colour)=>`<i class="b-greek" style="--shape:url('/static/images/puzzle8/${name}.svg');--ink:${colours[colour]}" aria-label="${name} ${colour}" role="img"></i>`;
   const device=(c,type,value='')=>`<div class="b-device b-${type}"><img src="${c.assets[type]}" alt="${type==='token'?'Token':'Terminal'}">${value?`<b>${value}</b>`:''}</div>`;
-  const terminalButtons=c=>`<img class="b-buttons-panel" src="${c.assets.buttonsPanel}" alt="Panel frontal de seis botones de colores">`;
+  const terminalButtons=(c,lang)=>`<img class="b-buttons-panel" src="${c.assets.buttonsPanel}" alt="${L(lang,'Panell frontal de sis botons de colors','Panel frontal de seis botones de colores','Front panel with six coloured buttons')}">`;
   const button=(colour,label)=>`<span class="b-press" style="--ink:${colours[colour]}">${label}</span>`;
   const wave=()=>`<div class="b-wave" aria-hidden="true">${[25,55,90,40,70,110,65,35,85,50,100,45].map((h,i)=>`<i style="--h:${h}px;--i:${i}"></i>`).join('')}</div>`;
   function graphics(c,lang){
@@ -29,12 +29,12 @@
         rule:`${text('ALARMA: canvia la correspondència','ALARMA: cambia la correspondencia','ALARM: the symbol mapping changes')} <span class="b-rule-symbols">${sym(0)}${arrow}${sym(2)}</span>`};
       case 3:return {
         screen:`<div class="b-question">${text('COMPLEIX LA CONDICIÓ?','¿CUMPLE LA CONDICIÓN?','DOES IT MATCH?')}</div><div class="b-options">${Array.from({length:10},(_,i)=>`<div><b>${i+1}</b><span></span><i>?</i></div>`).join('')}</div>`,
-        tools:row(terminalButtons(c)),
+        tools:row(terminalButtons(c,lang)),
         interaction:route(action('3',text('La vostra opció','Vuestra opción','Your option'))+arrow+action('?',text('Decidiu en equip','Decidid en equipo','Decide together'))+arrow+action('✓ / ×',text('Respon cada terminal','Responde cada terminal','Each terminal answers'))),
         rule:text('Número de l’opció = número del terminal. Verd: sí. Vermell: no.','Número de la opción = número del terminal. Verde: sí. Rojo: no.','Option number = terminal number. Green: yes. Red: no.')};
       case 8:return {
         screen:`<div class="b-memory-card"><span>TOKEN <b>13</b></span><div>${greek('alpha','red')}${greek('beta','blue')}</div></div>${label(text('Recordeu les dues formes i els colors','Recordad las dos formas y los colores','Remember both shapes and their colours'))}`,
-        tools:row(device(c,'token')+terminalButtons(c)),
+        tools:row(device(c,'token')+terminalButtons(c,lang)),
         interaction:route(action('α β',text('Mireu i memoritzeu','Mirad y memorizad','Look and remember'))+arrow+action('? ?',text('Les formes desapareixen','Las formas desaparecen','The shapes disappear'))+arrow+action('◎ ◎',text('Token als dos terminals','Token en los dos terminales','Scan at both terminals'))),
         rule:text('Busqueu cada forma i el seu color. Els dos terminals, en qualsevol ordre.','Buscad cada forma y su color. Los dos terminales, en cualquier orden.','Match each shape and its colour. Visit both terminals, in either order.')};
       case 1:return {
@@ -49,7 +49,7 @@
         rule:text('Comenceu amb el vostre senyal. Els errors de temps se sumen per a tot l’equip.','Empezad con vuestra señal. Los errores de tiempo se suman para todo el equipo.','Start on your own signal. Timing errors add up for the whole team.')};
       case 12:return {
         screen:`<div class="b-ball-pattern">${['green','red','yellow','blue','white','black'].map((co,i)=>`<div>${dot(co)}${i%2===0?dot(co):''}</div>`).join('')}</div>${label(text('Cada bola és un botó del seu color','Cada bola es un botón de su color','Each ball is one button of that colour'))}`,
-        tools:row(terminalButtons(c)),
+        tools:row(terminalButtons(c,lang)),
         interaction:route(action('● ●',text('Compteu per colors','Contad por colores','Count by colour'))+arrow+action('↓ ↓',text('Repartiu les pulsacions','Repartid las pulsaciones','Share the presses'))+arrow+action('━',text('Manteniu-les alhora','Mantenedlas a la vez','Hold them together'))),
         rule:text('La suma de tots els terminals ha de coincidir amb el patró complet.','La suma de todos los terminales debe coincidir con el patrón completo.','All terminals together must match the complete pattern.')};
       case 4:return {
@@ -67,11 +67,11 @@
   }
   function markup(c,t,lang){
     const g=graphics(c,lang);
-    const reviewedBriefing=([11,2,3].includes(c.puzzleId)||c.reviewedBriefing)&&lang==='es';
+    const reviewedBriefing=([11,2,3].includes(c.puzzleId)||c.reviewedBriefing)&&['es','ca'].includes(lang);
     if(reviewedBriefing){
       g.screen=`<p class="b-practice-objective">${t.objectiveTitle}</p>`;
-      if([3,12].includes(c.puzzleId))g.tools=terminalButtons(c);
-      else if(c.puzzleId===8)g.tools=`<div class="b-art-row">${device(c,'token')}${terminalButtons(c)}</div>`;
+      if([3,12].includes(c.puzzleId))g.tools=terminalButtons(c,lang);
+      else if(c.puzzleId===8)g.tools=`<div class="b-art-row">${device(c,'token')}${terminalButtons(c,lang)}</div>`;
       else if(c.puzzleId===1)g.tools=`<div class="b-art-row">${device(c,'token','13')}${device(c,'terminal','5')}</div>`;
       else if(c.puzzleId===6)g.tools=`<div class="b-art-row"><div class="b-colour-token">${device(c,'token')}${dot('blue')}</div><div class="b-terminal-light blue">${device(c,'terminal')}<i></i></div></div>`;
       else g.tools=`<div class="b-art-row">${device(c,'token')}${device(c,'terminal')}${c.puzzleId===2?sym(4):''}</div>`;
@@ -79,17 +79,17 @@
       g.interaction=`<div class="b-action-route${actions.length===4?' b-action-four':''}">${actions.map(txt=>`<span class="b-action"><span>${txt.replace(/\.$/,'')}</span></span>`).join(arrow)}</div>`;
       g.rule='';
     }
-    return `<div class="j-blueprint${reviewedBriefing?' b-practice-layout':''}" data-reveal="0" data-puzzle="${c.puzzleId}"><div class="b-heading"><div><h1>${t.name}</h1>${reviewedBriefing?'':`<p>${t.objectiveTitle.replaceAll('<br>',' ')}</p>`}</div>${reviewedBriefing?`<div class="p-brand b-practice-brand">${PyramidLogo.markup({progress:100*(c.completed||0)/(c.total||1),bloom:.28})}<span>${t.brand}</span></div>`:''}<div class="b-reveal-track" aria-hidden="true">${[L(lang,'Objectiu','Objetivo','Goal'),L(lang,'Eines','Herramientas','Tools'),L(lang,'Acció','Acción','Action'),...(c.attentionCopy?['Atención']:[])].map((label,i)=>`<span data-track="${i}"><b>0${i+1}</b>${label}</span>`).join('')}</div></div><div class="b-map"><div class="b-intro-mark" aria-hidden="true">${PyramidLogo.markup({className:'b-brand-pyramid',progress:100*(c.completed||0)/(c.total||8),bloom:.25})}</div><section class="b-screen-zone b-layer" data-layer="0"><h2><b>01</b>${reviewedBriefing?'OBJETIVO':L(lang,'A LA PANTALLA','EN LA PANTALLA','ON THE SCREEN')}</h2><div class="b-monitor">${reviewedBriefing?'':'<div class="b-monitor-top"><i></i><i></i><i></i><span>LA PIRÀMIDE</span></div>'}<div class="b-monitor-art">${g.screen}</div></div></section><section class="b-tools-zone b-layer" data-layer="1" aria-hidden="true"><h2><b>02</b>${L(lang,'A LES VOSTRES MANS','HERRAMIENTAS','IN YOUR HANDS')}</h2><div class="b-tools-art">${g.tools}</div></section><section class="b-interaction-zone b-layer" data-layer="2" aria-hidden="true"><h2><b>03</b>${reviewedBriefing?'ACCIÓN':L(lang,'COM ACTUEU JUNTS','CÓMO ACTUÁIS JUNTOS','HOW YOU ACT TOGETHER')}</h2>${g.interaction}${g.rule?`<p class="b-rule">${g.rule}</p>`:''}</section></div>${attention(c,lang)}</div>`;
+    return `<div class="j-blueprint${reviewedBriefing?' b-practice-layout':''}" data-reveal="0" data-puzzle="${c.puzzleId}"><div class="b-heading"><div><h1>${t.name}</h1>${reviewedBriefing?'':`<p>${t.objectiveTitle.replaceAll('<br>',' ')}</p>`}</div>${reviewedBriefing?`<div class="p-brand b-practice-brand">${PyramidLogo.markup({progress:100*(c.completed||0)/(c.total||1),bloom:.28})}<span>${t.brand}</span></div>`:''}<div class="b-reveal-track" aria-hidden="true">${[L(lang,'Objectiu','Objetivo','Goal'),L(lang,'Eines','Herramientas','Tools'),L(lang,'Acció','Acción','Action'),...(c.attentionCopy?[L(lang,'Atenció','Atención','Attention')]:[])].map((label,i)=>`<span data-track="${i}"><b>0${i+1}</b>${label}</span>`).join('')}</div></div><div class="b-map"><div class="b-intro-mark" aria-hidden="true">${PyramidLogo.markup({className:'b-brand-pyramid',progress:100*(c.completed||0)/(c.total||8),bloom:.25})}</div><section class="b-screen-zone b-layer" data-layer="0"><h2><b>01</b>${reviewedBriefing?L(lang,'OBJECTIU','OBJETIVO','GOAL'):L(lang,'A LA PANTALLA','EN LA PANTALLA','ON THE SCREEN')}</h2><div class="b-monitor">${reviewedBriefing?'':'<div class="b-monitor-top"><i></i><i></i><i></i><span>LA PIRÀMIDE</span></div>'}<div class="b-monitor-art">${g.screen}</div></div></section><section class="b-tools-zone b-layer" data-layer="1" aria-hidden="true"><h2><b>02</b>${L(lang,'EINES','HERRAMIENTAS','IN YOUR HANDS')}</h2><div class="b-tools-art">${g.tools}</div></section><section class="b-interaction-zone b-layer" data-layer="2" aria-hidden="true"><h2><b>03</b>${reviewedBriefing?L(lang,'ACCIÓ','ACCIÓN','ACTION'):L(lang,'COM ACTUEU JUNTS','CÓMO ACTUÁIS JUNTOS','HOW YOU ACT TOGETHER')}</h2>${g.interaction}${g.rule?`<p class="b-rule">${g.rule}</p>`:''}</section></div>${attention(c,lang)}</div>`;
   }
   function attention(c,lang){
     const t=c.attentionCopy?.[lang]||c.attentionCopy?.es;
     if(!t)return '';
-    const example=Number.isInteger(t.before)&&Number.isInteger(t.after)?`<div class="b-attention-example"><div>${sym(t.before)}<span>SÍMBOLO EN PANTALLA</span></div>${arrow}<div>${sym(t.after)}<span>SÍMBOLO QUE DEBÉIS BUSCAR</span></div></div>`:'';
-    return `<div class="b-attention" hidden><section class="b-attention-card" role="dialog" aria-modal="true" aria-labelledby="b-attention-title"><h2 id="b-attention-title">04 · ATENCIÓN</h2>${(t.paragraphs||[t.text]).map(txt=>`<p>${txt}</p>`).join('')}${example}</section></div>`;
+    const example=Number.isInteger(t.before)&&Number.isInteger(t.after)?`<div class="b-attention-example"><div>${sym(t.before)}<span>${L(lang,'SÍMBOL A LA PANTALLA','SÍMBOLO EN PANTALLA','SYMBOL ON THE SCREEN')}</span></div>${arrow}<div>${sym(t.after)}<span>${L(lang,'SÍMBOL QUE HEU DE BUSCAR','SÍMBOLO QUE DEBÉIS BUSCAR','SYMBOL TO FIND')}</span></div></div>`:'';
+    return `<div class="b-attention" hidden><section class="b-attention-card" role="dialog" aria-modal="true" aria-labelledby="b-attention-title"><h2 id="b-attention-title">04 · ${L(lang,'ATENCIÓ','ATENCIÓN','ATTENTION')}</h2>${(t.paragraphs||[t.text]).map(txt=>`<p>${txt}</p>`).join('')}${example}</section></div>`;
   }
   function elements(c,lang){
     const t=c.elementsCopy[lang]||c.elementsCopy.es;
-    return `<div class="b-elements"><h1>${t.title}</h1><div class="b-elements-items"><section><img src="${c.assets.token}" alt="Token personal"><h2>${t.tokenTitle}</h2><p>${t.tokenLead}</p></section><span class="b-elements-arrow" aria-hidden="true">→</span><section><img src="${c.assets.terminal}" alt="Terminal"><h2>${t.terminalTitle}</h2><p>${t.terminalLead}</p></section></div><p class="b-elements-action">${t.action}</p></div>`;
+    return `<div class="b-elements"><h1>${t.title}</h1><div class="b-elements-items"><section><img src="${c.assets.token}" alt="${L(lang,'Token personal','Token personal','Personal token')}"><h2>${t.tokenTitle}</h2><p>${t.tokenLead}</p></section><span class="b-elements-arrow" aria-hidden="true">→</span><section><img src="${c.assets.terminal}" alt="Terminal"><h2>${t.terminalTitle}</h2><p>${t.terminalLead}</p></section></div><p class="b-elements-action">${t.action}</p></div>`;
   }
   function reveal(root,index){
     root.dataset.reveal=Math.min(index,2);

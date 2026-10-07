@@ -10,7 +10,6 @@
   document.body.dataset.puzzle=game.puzzleId;
   const title=document.querySelector('.level-title');
   if(title)title.textContent=game.name;
-  for(const id of ['p11-pyramid']){const image=document.getElementById(id);if(image)image.src='/static/branding/piramide-vector.svg';}
   const order=game.order||[];
   const stage=document.getElementById('game-stage');
   if(!stage)return;

@@ -1,4 +1,5 @@
 (function() {
+    const tr = (key, fallback) => window.PyramidLanguage?.t?.('game.' + key, fallback) ?? fallback;
     const puzzleShellEl = document.getElementById('puzzle5-shell');
     const objectiveCardEl = document.getElementById('objective-card');
     const briefObjectiveEl = document.getElementById('brief-objective');
@@ -52,18 +53,18 @@
         }
     }
 
-    function setObjectiveValue(value, unit = 'sec') {
+    function setObjectiveValue(value, unit = 's') {
         if (objectiveEl) {
             objectiveEl.textContent = String(value);
         }
         if (objectiveSubtextEl) {
-            objectiveSubtextEl.textContent = unit;
+            objectiveSubtextEl.textContent = unit === 'segundos' ? tr('seconds', unit) : unit;
         }
         if (briefObjectiveValueEl && value !== '') {
             briefObjectiveValueEl.textContent = `${value}`;
         }
         if (briefObjectiveUnitEl) {
-            briefObjectiveUnitEl.textContent = unit ? unit.toUpperCase() : '';
+            briefObjectiveUnitEl.textContent = unit === 'segundos' ? 's' : unit;
         }
     }
 
@@ -143,7 +144,7 @@
         errorSection.style.display = 'block';
         // Update objective text
         if (round && roundObjectives) {
-            setObjectiveValue(roundObjectives, 'sec');
+            setObjectiveValue(roundObjectives, 's');
         }
     }
 
@@ -155,7 +156,7 @@
                 pulseObjective();
             }
         }
-        setObjectiveValue(roundObjectives, 'sec');
+        setObjectiveValue(roundObjectives, 's');
     }
 
     function showWaitingState({ objective = roundObjectives, message = null,
@@ -423,6 +424,7 @@
             if (banner) banner.classList.remove('hidden');
             document.body.classList.add('p5-solved-flash');
             setTimeout(function () {
+    const tr = (key, fallback) => window.PyramidLanguage?.t?.('game.' + key, fallback) ?? fallback;
                 if (window.PyramidGameFlow?.complete(5)) return;
                 var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
                     ? NEXT_PUZZLE_ID : 1;
@@ -435,6 +437,7 @@
                         }
                     })
                     .catch(function () {
+    const tr = (key, fallback) => window.PyramidLanguage?.t?.('game.' + key, fallback) ?? fallback;
                         window.location.href = '/videoPuzzles/' + nextId;
                     });
             }, 4000);

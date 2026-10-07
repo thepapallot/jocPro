@@ -1,4 +1,6 @@
 (function () {
+    const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
+
     const TOTAL = 5;
     const PLAYER_COUNT = 10;
     const CELL_SIZE = 72;
@@ -28,8 +30,6 @@
     let movementProgress = 1;
 
     const snakeStageEl = document.getElementById('p2-snake-stage');
-    const completeOverlayEl = document.getElementById('p2-complete-overlay');
-    const completeCopyEl = document.getElementById('p2-complete-copy');
 
     function getSequence(player) {
         return DEFAULT_SEQUENCES[player] || [];
@@ -82,17 +82,6 @@
     function updateHudState() {
         const completed = getCompletedPlayers();
         const solved = completed >= PLAYER_COUNT;
-
-        if (completeOverlayEl) {
-            completeOverlayEl.setAttribute('aria-hidden', solved ? 'false' : 'true');
-            completeOverlayEl.classList.toggle('visible', solved);
-        }
-
-        if (completeCopyEl) {
-            completeCopyEl.textContent = solved
-                ? 'Todos los equipos han completado su secuencia.'
-                : `${PLAYER_COUNT - completed} rutas pendientes de sincronizar.`;
-        }
 
         document.body.classList.toggle('p2-solved', solved);
     }
@@ -219,7 +208,7 @@
         marker.className = 'snake-error-marker';
         marker.dataset.segmentIndex = String(index);
         marker.setAttribute('role', 'img');
-        marker.setAttribute('aria-label', `Respuesta incorrecta para el token ${TOKEN_BY_PLAYER[player - 1]}, símbolo ${index + 1}`);
+        marker.setAttribute('aria-label', tr('snakeWrong', 'Respuesta incorrecta para el token {token}, símbolo {symbol}', {token: TOKEN_BY_PLAYER[player - 1], symbol: index + 1}));
         snake.appendChild(marker);
         const timer = setTimeout(() => {
             marker.remove();
@@ -400,7 +389,12 @@
             stopAlarmAudio();
             playSound('/static/audios/effects/nivel_completado.wav');
             const banner = document.getElementById('p2-solved-banner');
-            if (banner) banner.classList.remove('hidden');
+            if (banner) {
+                const language = window.PyramidLanguage?.current() || 'es';
+                banner.querySelector('.level-success-title').textContent = language === 'ca'
+                    ? 'NIVELL SUPERAT' : language === 'eng' ? 'LEVEL COMPLETED' : 'NIVEL SUPERADO';
+                banner.classList.remove('hidden');
+            }
             document.body.classList.add('p2-solved-flash');
 
             setTimeout(() => {

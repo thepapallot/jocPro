@@ -27,6 +27,9 @@ CREATE TABLE IF NOT EXISTS sessions (
     players_num INTEGER,
     language TEXT,
     notes TEXT,
+    session_type TEXT NOT NULL DEFAULT 'real' CHECK (session_type IN ('real', 'test')),
+    game_master TEXT,
+    observations TEXT,
     started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     ended_at DATETIME
 );
@@ -106,6 +109,14 @@ def _rebuild_schema(cursor: sqlite3.Cursor) -> None:
 
 def _initialize_schema(cursor: sqlite3.Cursor) -> None:
     cursor.executescript(SCHEMA_DDL)
+    # Additive migration: preserve existing sessions, puzzles and events.
+    columns = {row[1] for row in cursor.execute("PRAGMA table_info(sessions)")}
+    for name, definition in {
+        "session_type": "TEXT NOT NULL DEFAULT 'real' CHECK (session_type IN ('real', 'test'))",
+        "game_master": "TEXT", "observations": "TEXT",
+    }.items():
+        if name not in columns:
+            cursor.execute(f"ALTER TABLE sessions ADD COLUMN {name} {definition}")
     cursor.executescript(INDEXES_DDL)
     cursor.execute(
         """

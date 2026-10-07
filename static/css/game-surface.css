@@ -13,7 +13,6 @@
 .game-surface[data-puzzle="2"] :is(#maze-stage,#image-area,#p2-snake-stage){background:transparent}
 .game-surface[data-puzzle="2"] #maze-stage::before{display:none}
 .game-surface[data-puzzle="2"] .snake-head{background:#edb970;color:#0a1016;border-color:#edb970;box-shadow:none;font-family:Arial,sans-serif;font-weight:900;border-radius:6px}
-.game-surface[data-puzzle="2"] #p2-complete-overlay{background:#14232cef;border:1px solid #71e7db66;border-radius:8px;box-shadow:none}
 .game-surface[data-puzzle="2"] .panel-title{color:#f3eee4;text-shadow:none}
 .game-surface[data-puzzle="8"]{--surface-accent:#dc68a7;--p8-cyan:#71e7db;--p8-line:#5d74825e}
 .game-surface[data-puzzle="8"] #p8-shell{padding:92px 24px 24px;display:flex;flex-direction:column;gap:0}
@@ -61,3 +60,16 @@
 .game-surface :is(#streak-panel,#final-round-indicator,#final-levels,.round-step){display:none!important}
 .game-surface[data-puzzle="8"] #p8-instruction-step{display:none}
 .game-surface #round-indicator .phase-step{display:none}
+
+/* Timers share the amber time accent; expired states retain their error colour. */
+body.pyramid-game.game-surface[data-puzzle="1"] #objective-panel #timer:not(.expired),
+body.pyramid-game.game-surface[data-puzzle="12"] #timer-overlay {
+    color: #edb970;
+    text-shadow: none;
+}
+body.pyramid-game.game-surface[data-puzzle="12"] #timer-overlay {
+    font-family: PiramideDisplay, 'Arial Narrow', Arial, sans-serif;
+    border-radius: 4px;
+    border-color: #4f6674;
+    background: #14232c;
+}

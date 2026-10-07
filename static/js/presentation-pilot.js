@@ -159,7 +159,7 @@
     const host=page&&window.parent!==window?window.parent:window.opener;
     if (host && !host.closed) host.postMessage({
       type: 'pyramid-presentation-state', realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
-      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el simulacre →',es:'Tokens repartidos · explicar el simulacro →',eng:'Tokens handed out · explain the simulation →'}[language]:config.incremental?({elements:'La misión está en vuestras manos →',objective:'Mostrar objetivo →',tools:'Mostrar herramientas →',interaction:'Mostrar interacción →',attention:'Mostrar atención →'}[config.steps[step+1]]||null):null,
+      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el simulacre →',es:'Tokens repartidos · explicar el simulacro →',eng:'Tokens handed out · explain the simulation →'}[language]:config.incremental?({elements:language==='ca'?'La missió és a les vostres mans →':'La misión está en vuestras manos →',objective:language==='ca'?'Mostrar objectiu →':'Mostrar objetivo →',tools:language==='ca'?'Mostrar eines →':'Mostrar herramientas →',interaction:language==='ca'?'Mostrar interacció →':'Mostrar interacción →',attention:language==='ca'?'Mostrar atenció →':'Mostrar atención →'}[config.steps[step+1]]||null):null,
       name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
       labels: text().stepLabels, kind: config.kind || 'puzzle',
       sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
@@ -170,6 +170,7 @@
   function render(preserveNarration=false) {
     restoreProgress();
     document.title=text().name;
+    document.getElementById('p-viewport')?.setAttribute('aria-label', {ca:'Pantalla compartida dels jugadors',es:'Pantalla compartida de los jugadores',eng:'Shared player screen'}[language]);
     stage.hidden = false;
     stage.dataset.flow = String(!!flow);
     stage.dataset.kind = config.kind || 'puzzle';
@@ -291,13 +292,13 @@
   }
   function tickCountdown() {
     const elapsed = performance.now()-countdownStart;
-    if (elapsed >= 3400) { enterGame(); return; }
-    const count = Math.max(0,3-Math.floor(elapsed/1000));
+    if (elapsed >= 3000) { enterGame(); return; }
+    const count = 3-Math.floor(elapsed/1000);
     if (count === lastCount) return;
     lastCount = count;
     stage.dataset.step = 'countdown';
-    stage.innerHTML = `<section class="p-screen">${header(text().name)}<div class="p-countdown"><div class="p-kicker">${text().countdownLabel}</div><div class="p-count-number ${count===0?'go':''}">${count||text().go}</div><div class="p-pulse" aria-hidden="true">${[3,2,1].map(n=>`<i class="${n>=count?'active':''}"></i>`).join('')}</div></div>${footer(text().readyLead)}</section>`;
-    $('p-announcement').textContent = count ? String(count) : text().go;
+    stage.innerHTML = `<section class="p-screen">${header(text().name)}<div class="p-countdown"><div class="p-kicker">${text().countdownLabel}</div><div class="p-count-number">${count}</div><div class="p-pulse" aria-hidden="true">${[3,2,1].map(n=>`<i class="${n>=count?'active':''}"></i>`).join('')}</div></div>${footer(text().readyLead)}</section>`;
+    $('p-announcement').textContent = String(count);
   }
   function start() {
     if (phase !== 'slides' || step !== config.steps.length-1 || (flow && config.kind!=='puzzle')) return;

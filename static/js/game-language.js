@@ -12,7 +12,7 @@
     return String(text).replace(/\{(\w+)\}/g,(match,name)=>Object.hasOwn(values,name)?String(values[name]):match);
   }
   function apply(root=document){
-    const attributes=['aria-label','title','placeholder'];
+    const attributes=['aria-label','title','placeholder','alt'];
     const selector=['[data-i18n]',...attributes.map(attr=>`[data-i18n-${attr}]`)].join(',');
     const nodes=[...(root.matches?.(selector)?[root]:[]),...root.querySelectorAll(selector)];
     for(const node of nodes){

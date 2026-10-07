@@ -1,4 +1,6 @@
 (function() {
+    const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
+
     const PHASE_POPUP_DELAY_MS = 500;
     const PHASE_POPUP_VISIBLE_MS = 3000;
     const totalRounds = 1;
@@ -16,7 +18,7 @@
     if (!roundIndicator) {
         roundIndicator = document.createElement('div');
         roundIndicator.id = 'round-indicator';
-        roundIndicator.setAttribute('aria-label', 'Ronda única');
+        roundIndicator.setAttribute('aria-label', tr('singleRound', 'Ronda única'));
         roundIndicator.innerHTML = `
             <span class="phase-step is-active"></span>
             <span id="p1-progress" role="status" aria-live="polite" aria-atomic="true">0/16 COMPLETADOS</span>
@@ -99,7 +101,7 @@
         const completed = puzzleContainer.querySelectorAll('.op.correct').length;
         const total = puzzleContainer.querySelectorAll('.op').length || currentRoundSize || 16;
         if (progressElement) {
-            const label = `${completed}/${total} COMPLETADOS`;
+            const label = tr('objectivesCompleted', '{count}/{total} COMPLETADOS', {count: completed, total});
             if (progressElement.textContent !== label) progressElement.textContent = label;
         }
     }
@@ -415,7 +417,7 @@
                 // Only show the phase popup when another round follows.
                 const popupRound = Number(data.round) || Number(currentRound) || null;
                 if (popupRound && popupRound < totalRounds) {
-                    showPhasePopup('Primera fase superada');
+                    showPhasePopup(tr('phaseSuccess', "Primera fase superada"));
                 }
 
                 clearInterval(timerInterval);
@@ -496,7 +498,9 @@
                 playEffect('incorrecte.wav');
                 setDangerScreenActive(true);
                 clearSolvedContainer();
-                setObjectiveMessage(data.incorrect.text, 'error');
+                const incorrectLabel = data.incorrect.reason === 'already_solved'
+                    ? tr('sumAlreadySolved', 'Suma ya realizada') : tr('sumNotExisting', 'Suma no existente');
+                setObjectiveMessage(window.PyramidLanguage?.current() === 'ca' ? incorrectLabel : data.incorrect.text, 'error');
                 setObjectiveFormula(data.incorrect.text, 'error', false, incorrectDisplayMs);
 
                 clearInterval(timerInterval);
@@ -696,7 +700,7 @@
                 if (objectivePanel) {
                     objectivePanel.classList.add('p1-formula-error');
                 }
-                setObjectiveMessage('Tiempo agotado', 'error');
+                setObjectiveMessage(tr('timeExpired', "Tiempo agotado"), 'error');
 
                 setTimeout(() => {
                     clearSolvedContainer();

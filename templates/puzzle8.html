@@ -8,14 +8,14 @@
 
 {% block top_right %}
 <div id="p8-instruction" data-phase="numbers">
-    <span id="p8-instruction-step">PASO 1 DE 3 · PREPARACIÓN</span>
+    <span id="p8-instruction-step" data-i18n="game.memoryStep1">PASO 1 DE 3 · PREPARACIÓN</span>
     <div class="p8-instruction-heading">
-        <span id="p8-instruction-title" aria-live="polite">ATENTOS A LA PANTALLA</span>
+        <span id="p8-instruction-title" aria-live="polite" data-i18n="game.memoryPrepare">ATENTOS A LA PANTALLA</span>
         <span id="p8-countdown" role="timer" aria-live="off">
             <span id="p8-countdown-value">5</span><span class="p8-countdown-unit">s</span>
         </span>
     </div>
-    <span id="p8-instruction-detail">Prepárate: aparecerán dos formas</span>
+    <span id="p8-instruction-detail" data-i18n="game.memoryPrepareDetail">Preparaos: aparecerán dos formas</span>
     <div id="p8-time-track" aria-hidden="true"><span id="p8-time-fill"></span></div>
 </div>
 {% endblock %}
@@ -33,7 +33,7 @@
                     </div>
                     <div class="p8-slot" data-index="{{ index }}">
                         {% for step in range(2) %}
-                        <div class="p8-answer" aria-label="Forma pendiente">
+                        <div class="p8-answer" aria-label="Forma pendiente" data-i18n-aria-label="game.formPending">
                             <div class="p8-answer-content">
                                 <span class="p8-placeholder" aria-hidden="true"><span class="p8-terminal-mark"></span></span>
                             </div>

@@ -2,8 +2,6 @@
     var CORRECT_SOUND_URL         = '/static/audios/effects/correcte.wav';
     var PHASE_COMPLETE_SOUND_URL  = '/static/audios/effects/fase_completada.wav';
     var COMPLETE_SOUND_URL        = '/static/audios/effects/nivel_completado.wav';
-    // Toggle this to quickly enable/disable the English line below each instruction.
-    var SHOW_ENGLISH_TRANSLATION  = true;
 
     function playSound(url) {
         var a = new Audio(url);
@@ -37,11 +35,25 @@
         'Token 31 must pass through terminal 7 twice and then press the red button',
         'Token 35 must pass through the terminal with the "pi" symbol',
     ];
+    var STEPS_CA = [
+        'El token 5 ha de passar pel terminal 6 i prémer el botó verd',
+        'El token 10 ha de passar pel terminal 2 i seguidament pel terminal 5',
+        'El token 13 ha de passar 3 vegades pel terminal 2',
+        'El token 14 ha de passar pel terminal 1 i prémer el botó vermell, després el botó verd i després el botó groc',
+        'El token 17 ha de passar pel terminal 1, després pel terminal 2 i després pel terminal 3',
+        'El token 18 ha de passar pel terminal 9 i prémer el botó negre dues vegades',
+        'El token 20 ha de passar pel terminal que tingui un símbol amb una sola ona i dos punts',
+        'El token 22 ha de passar pel terminal 3, després pel terminal 4 i allà prémer el botó groc',
+        'El token 31 ha de passar pel terminal 7 dues vegades i després prémer el botó vermell',
+        'El token 35 ha de passar pel terminal que té el símbol "pi"',
+    ];
+    function language() {
+        return window.PyramidLanguage?.current() || 'es';
+    }
 
     var timeline     = document.getElementById('p11-timeline');
     var stepText     = document.getElementById('p11-step-text');
     var stepMain     = document.getElementById('p11-step-main');
-    var stepTranslation = document.getElementById('p11-step-translation');
     var currentCard  = document.getElementById('p11-current-card');
     var solvedBanner = document.getElementById('p11-solved-banner');
 
@@ -56,6 +68,7 @@
             var dot = document.createElement('div');
             dot.className = 'p11-timeline-dot';
             dot.setAttribute('data-step', String(idx));
+            dot.textContent = String(idx + 1);
             timeline.appendChild(dot);
 
             if (idx < STEPS.length - 1) {
@@ -74,6 +87,12 @@
 
         var dots = timeline.querySelectorAll('.p11-timeline-dot');
         var connectors = timeline.querySelectorAll('.p11-timeline-connector');
+        var lang = language();
+        var labels = lang === 'ca' ? ['Pas', 'Completat', 'Actual', 'Pendent']
+            : lang === 'eng' ? ['Step', 'Completed', 'Current', 'Pending']
+            : ['Paso', 'Completado', 'Actual', 'Pendiente'];
+        timeline.setAttribute('aria-label', lang === 'ca' ? 'Progrés del simulacre'
+            : lang === 'eng' ? 'Simulation progress' : 'Progreso del simulacro');
 
         dots.forEach(function (dot, idx) {
             dot.classList.remove('is-completed', 'is-current');
@@ -83,6 +102,11 @@
             } else if (idx === currentStep) {
                 dot.classList.add('is-current');
             }
+            var completed = solved || idx < currentStep;
+            dot.textContent = completed ? '✓' : String(idx + 1);
+            dot.setAttribute('aria-label', labels[0] + ' ' + (idx + 1) + ': ' + labels[completed ? 1 : idx === currentStep ? 2 : 3]);
+            if (!solved && idx === currentStep) dot.setAttribute('aria-current', 'step');
+            else dot.removeAttribute('aria-current');
         });
 
         connectors.forEach(function (connector, idx) {
@@ -96,23 +120,16 @@
         if (solved) {
             timeline.classList.add('hidden');
             currentCard.classList.add('hidden');
+            solvedBanner.querySelector('.level-success-title').textContent = language() === 'ca'
+                ? 'NIVELL SUPERAT' : language() === 'eng' ? 'LEVEL COMPLETED' : 'NIVEL SUPERADO';
             solvedBanner.classList.remove('hidden');
         } else {
             timeline.classList.remove('hidden');
+            var instructions = language() === 'ca' ? STEPS_CA : language() === 'eng' ? STEPS_EN : STEPS;
             if (stepMain) {
-                stepMain.textContent = STEPS[currentStep] || '';
+                stepMain.textContent = instructions[currentStep] || '';
             } else if (stepText) {
-                stepText.textContent = STEPS[currentStep] || '';
-            }
-
-            if (stepTranslation) {
-                if (SHOW_ENGLISH_TRANSLATION) {
-                    stepTranslation.textContent = STEPS_EN[currentStep] || '';
-                    stepTranslation.classList.remove('hidden');
-                } else {
-                    stepTranslation.textContent = '';
-                    stepTranslation.classList.add('hidden');
-                }
+                stepText.textContent = instructions[currentStep] || '';
             }
             currentCard.classList.remove('hidden');
             solvedBanner.classList.add('hidden');

@@ -132,6 +132,9 @@ class TelemetryWriter:
         notes: Optional[str] = None,
         started_at: Optional[str] = None,
         ended_at: Optional[str] = None,
+        session_type: str = 'real',
+        game_master: Optional[str] = None,
+        observations: Optional[str] = None,
     ) -> int:
         """
         Record session start and return session_id.
@@ -164,9 +167,9 @@ class TelemetryWriter:
                     language,
                     notes,
                     started_at,
-                    ended_at
+                    ended_at, session_type, game_master, observations
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     company,
@@ -178,7 +181,7 @@ class TelemetryWriter:
                     language,
                     notes,
                     started_at,
-                    ended_at,
+                    ended_at, session_type, game_master, observations,
                 ),
             )
             self.db.commit()
@@ -267,6 +270,9 @@ class TelemetryWriter:
         players_num: Optional[int] = None,
         language: Optional[str] = None,
         notes: Optional[str] = None,
+        session_type: str = 'real',
+        game_master: Optional[str] = None,
+        observations: Optional[str] = None,
     ) -> None:
         """Update editable fields of an existing session row."""
         with self._flush_lock:
@@ -274,10 +280,11 @@ class TelemetryWriter:
                 """
                 UPDATE sessions
                 SET company = ?, name = ?, expected_day = ?, expected_time = ?,
-                    place = ?, players_num = ?, language = ?, notes = ?
+                    place = ?, players_num = ?, language = ?, notes = ?,
+                    session_type = ?, game_master = ?, observations = ?
                 WHERE session_id = ?
                 """,
-                (company, name, expected_day, expected_time, place, players_num, language, notes, session_id),
+                (company, name, expected_day, expected_time, place, players_num, language, notes, session_type, game_master, observations, session_id),
             )
             self.db.commit()
 

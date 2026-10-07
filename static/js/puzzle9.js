@@ -1,4 +1,6 @@
 (function () {
+    const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
+
     const statusMessage = document.getElementById('status-message');
     const statusBadge = document.getElementById('p9-status-badge');
     const boxEls = Array.from(document.querySelectorAll('.p9-box'));
@@ -321,22 +323,22 @@
 
         if (status === 'good') {
             statusBadge.classList.add('status-good');
-            statusBadge.textContent = 'Validado';
+            statusBadge.textContent = tr('validated', "Validado");
             return;
         }
         if (status === 'wrong') {
             statusBadge.classList.add('status-wrong');
-            statusBadge.textContent = 'Revisar';
+            statusBadge.textContent = tr('review', "Revisar");
             return;
         }
         if (status === 'half') {
             statusBadge.classList.add('status-half');
-            statusBadge.textContent = 'En curso';
+            statusBadge.textContent = tr('inProgress', "En curso");
             return;
         }
 
         statusBadge.classList.add('status-start');
-        statusBadge.textContent = 'Sin validar';
+        statusBadge.textContent = tr('unvalidated', "Sin validar");
     }
 
     function renderStatus(status, hasBoxUpdate) {
@@ -351,8 +353,8 @@
             statusMessage.classList.toggle('status-good', status === 'good');
             statusMessage.classList.toggle('status-wrong', status === 'wrong');
             statusMessage.textContent = status === 'good'
-                ? 'Tokens correctamente colocados'
-                : 'Tokens mal colocados';
+                ? tr('tokensCorrect', "Tokens correctamente colocados")
+                : tr('tokensWrong', "Tokens mal colocados");
             if (!isRepeatedStatus) {
                 if (status === 'good') {
                     playSound(PUZZLE_CORRECTE_SOUND_URL);

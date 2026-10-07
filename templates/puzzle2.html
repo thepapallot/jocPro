@@ -15,14 +15,12 @@
         <section id="maze-stage">
             <div id="image-area">
                 <div id="p2-snake-stage" aria-live="polite"></div>
-                <div id="p2-complete-overlay" aria-live="polite" aria-hidden="true">
-                    <div class="panel-kicker">Restablecimiento completo</div>
-                    <h2 class="panel-title">10 rutas sincronizadas</h2>
-                    <p id="p2-complete-copy">Todos los equipos han completado su secuencia.</p>
-                </div>
             </div>
         </section>
     </div>
+</div>
+<div id="p2-solved-banner" class="p2-solved-banner hidden">
+    <div class="p2-solved-text level-success-title">NIVEL SUPERADO</div>
 </div>
 {% endblock %}
 
@@ -32,8 +30,3 @@
 </script>
 <script src="{{ url_for('static', filename='js/puzzle2.js') }}"></script>
 {% endblock %}
-
-<!-- Solved banner -->
-<div id="p2-solved-banner" class="p2-solved-banner hidden">
-        <div class="p2-solved-text" data-i18n="game.levelCompleted">NIVEL COMPLETADO</div>
-</div>

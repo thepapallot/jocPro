@@ -582,3 +582,17 @@ Validació: 81 estats visuals (9 esquemes × 3 revelacions × 3 idiomes) en Chro
 Autorització: provar una identitat comuna compacta als puzzles 8 i 2 abans d’estendre-la a la resta. Canvis a `game-theme.js`, `game-surface.css` i càrrega d’estils a `base.html`. No s’ha modificat lògica de puzzles, backend, MQTT ni sons funcionals.
 
 La informació de fase de Memory es mou dins del seu contenidor mantenint IDs i controladors. El HUD de cantonades utilitza el progrés guanyat de `PyramidRun`. Validat amb estats simulats en dues resolucions, sense terminal físic.
+
+### 2026-10-07 — Agenda, historial i sessions de prova al panel Test
+
+Autorització: després de proposar agenda/historial, resum de resultats i persistència de sessions de prova al servidor, l’usuari demana «ok, haz los cambios». Una sola modalitat de prova, independentment de si el hardware està muntat.
+
+- `app.py`: afegeix GET `/test/sessions` (agenda i historial amb ID actiu) i GET `/test/session/<id>` (metadades i temps de puzzles). Guardar/editar valida nom, empresa, data, hora, idioma i jugadors. Partides reals: 10–20; proves: 1–20 com a metadada, sense canviar la configuració dels terminals. Impedeix eliminar la sessió activa, canviar el tipus després d’iniciar-la o substituir una partida en curs per una altra.
+- `telemetry/schema.py`: afegeix `session_type`, `game_master` i `observations` amb migració additiva de l’esquema vigent, versió 3. Les sessions existents es consideren reals. No incrementa la versió perquè el mecanisme existent de canvi de versió reconstrueix les taules. No s’ha executat la migració sobre la base real.
+- `telemetry/writer.py`: persisteix els tres camps nous a sessions; conserva els arguments posicionals anteriors.
+- `telemetry/queries.py`: retorna metadades i agenda completa; les estadístiques agregades de sessions, puzzles i esdeveniments exclouen proves. La consulta individual i l’agenda les mantenen visibles.
+- Frontend: seleccionat i actiu són independents; crear prova emplena dades inicials, mostra MODO PRUEBA al GM i reutilitza els controls existents. Duplicar no copia observacions finals. Eliminar requereix confirmació i elimina també registres associats, com ja feia el backend.
+
+Impacte/revisió per Pep: revisar la migració additiva, el filtratge de les estadístiques i les proteccions d’estat. Reiniciar el servidor és necessari per carregar rutes/camps nous. No es modifica MQTT, regles, timers ni validació de puzzles. Els resultats mostren temps registrats i tancament; no atribueixen automàticament errors, ajudes o èxit als registres sense aquesta informació.
+
+Validació: quatre tests Python amb SQLite temporal (persistència, agregats, validació, proteccions i migració idempotent); revisió en Chrome sobre Flask aïllat amb dades temporals a 1920 × 1080 i 1280 × 720. Crear, activar, guardar una altra sessió sense sobreescriure l’activa, duplicar, cancel·lar/confirmar eliminació, validar i consultar historial/resultats. Fixtures reproduïbles a `tests/sessions_browser_fixture.py` i `tests/sessions_browser.cjs`. Captures a `output/revision-sesiones/`. Regressió completa: 33 tests Python i 11 fitxers de tests Node passats. Només simulació, sense terminals físics ni servidor real.

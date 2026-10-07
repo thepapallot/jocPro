@@ -1,4 +1,6 @@
 (function () {
+    const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
+
     const COLOR_PREFIX = 'p8-color-';
     const grid = document.getElementById('p8-grid');
     const slots = Array.from(grid.querySelectorAll('.p8-slot'));
@@ -17,10 +19,10 @@
 
     const instructions = {
         idle: ['', '', ''],
-        numbers: ['ATENTOS A LA PANTALLA', 'Prepárate: aparecerán dos formas', 'PASO 1 DE 3 · PREPARACIÓN'],
-        tokens: ['MEMORIZA LAS DOS FORMAS', 'Recuerda también sus colores', 'PASO 2 DE 3 · MEMORIA'],
-        input: ['COMPLETA LAS DOS FORMAS', 'Pasa tu token por dos terminales, en cualquier orden', 'PASO 3 DE 3 · RESPUESTA'],
-        completed: ['NIVEL COMPLETADO', '', '']
+        numbers: [tr('memoryPrepare', "ATENTOS A LA PANTALLA"), tr('memoryPrepareDetail', "Preparaos: aparecerán dos formas"), tr('memoryStep1', "PASO 1 DE 3 · PREPARACIÓN")],
+        tokens: [tr('memoryObserve', "MEMORIZAD LAS DOS FORMAS"), tr('memoryObserveDetail', "Recordad también sus colores"), tr('memoryStep2', "PASO 2 DE 3 · MEMORIA")],
+        input: [tr('memoryInput', "COMPLETAD LAS DOS FORMAS"), tr('memoryInputDetail', "Buscad las formas e introducid sus colores con vuestro token, en cualquier orden"), tr('memoryStep3', "PASO 3 DE 3 · RESPUESTA")],
+        completed: [tr('levelCompleted', "NIVEL SUPERADO"), '', '']
     };
 
     function stopCountdown() {
@@ -85,7 +87,7 @@
             slot.closest('.p8-frame').classList.remove('p8-correct', 'p8-wrong');
             slot.querySelectorAll('.p8-answer').forEach(answer => {
                 answer.classList.remove('is-filled');
-                answer.setAttribute('aria-label', 'Forma pendiente');
+                answer.setAttribute('aria-label', tr('formPending', "Forma pendiente"));
                 const placeholder = document.createElement('span');
                 placeholder.className = 'p8-placeholder';
                 placeholder.setAttribute('aria-hidden', 'true');
@@ -103,13 +105,13 @@
         element.className = `p8-symbol-mask p8-${symbol}`;
         element.dataset.symbol = symbol;
         element.setAttribute('role', 'img');
-        element.setAttribute('aria-label', `${symbol}, ${color || ''}`);
+        element.setAttribute('aria-label', `${symbol}, ${tr('colour' + (color || ''), color || '')}`);
         if (typeof color === 'string' && color) {
             element.classList.add(`${COLOR_PREFIX}${color}`);
         }
         answer.querySelector('.p8-answer-content').replaceChildren(element);
         answer.classList.add('is-filled');
-        answer.setAttribute('aria-label', 'Forma registrada');
+        answer.setAttribute('aria-label', tr('formRegistered', "Forma registrada"));
     }
 
     function renderSymbolSets(symbolSets) {

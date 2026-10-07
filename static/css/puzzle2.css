@@ -1,4 +1,8 @@
 /* Solved banner styles (matching puzzle8 green) */
+body.p2-solved-flash .game-corner-hud {
+    display: none;
+}
+
 .p2-solved-banner {
     position: fixed;
     top: 0;
@@ -865,39 +869,8 @@ body.p2-solved #p2-status-copy {
     }
 }
 
-#p2-complete-overlay {
-    position: absolute;
-    inset: auto 50% 32px auto;
-    transform: translateX(50%) translateY(14px);
-    width: min(440px, calc(100% - 48px));
-    padding: 20px 24px 22px;
-    border: 1px solid rgba(103, 217, 255, 0.34);
-    border-radius: 22px;
-    background:
-        linear-gradient(180deg, rgba(10, 24, 42, 0.9) 0%, rgba(8, 16, 31, 0.84) 100%);
-    box-shadow:
-        0 0 36px rgba(103, 217, 255, 0.14),
-        inset 0 0 22px rgba(69, 230, 255, 0.08);
-    text-align: center;
-    opacity: 0;
-    pointer-events: none;
-    transition:
-        opacity 0.3s ease,
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-}
 
-#p2-complete-copy {
-    margin-top: 10px;
-    color: rgba(224, 247, 255, 0.82);
-    font-size: 0.95rem;
-    line-height: 1.45;
-}
 
-body.p2-solved #p2-complete-overlay {
-    opacity: 1;
-    transform: translateX(50%) translateY(0);
-}
 
 body.p2-solved #image-area img {
     filter:
@@ -1159,15 +1132,7 @@ body.alarm-mode #p2-maze-frame {
         flex: 0 0 auto;
     }
 
-    #p2-complete-overlay {
-        inset: auto 24px 24px 24px;
-        width: auto;
-        transform: translateY(14px);
-    }
 
-    body.p2-solved #p2-complete-overlay {
-        transform: translateY(0);
-    }
 }
 
 @media (max-width: 640px) {
@@ -1324,14 +1289,7 @@ body.alarm-mode #p2-maze-frame {
         letter-spacing: 0.1em;
     }
 
-    #p2-complete-overlay {
-        padding: 16px 18px 18px;
-        border-radius: 18px;
-    }
 
-    #p2-complete-copy {
-        font-size: 0.84rem;
-    }
 }
 
 #maze-stage,
