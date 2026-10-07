@@ -69,7 +69,7 @@
       if (action==='previous') button.disabled=!online||state.phase==='countdown'||(state.phase==='game'&&state.mode==='live'&&state.scenes)||(!state.sceneIndex&&state.step===0&&state.phase==='slides');
       if (action==='next') { button.hidden=!state.canNext;button.textContent=state.phase==='game'?'Simular prueba superada →':state.kind==='welcome'?'Comenzar presentación inicial →':state.nextLabel||'Siguiente →'; }
       if (action==='reveal') { button.hidden=state.screen!=='example'||state.phase!=='slides';button.textContent=state.revealed?'Restablecer ejemplo':'Demostrar ejemplo'; }
-      if (action==='start') { button.hidden=state.kind!=='puzzle'||state.step!==state.labels.length-1||state.phase!=='slides';button.textContent=state.mode==='live'?'Comenzar partida real · 3, 2, 1':'Comenzar ensayo · 3, 2, 1'; }
+      if (action==='start') { button.hidden=state.kind!=='puzzle'||state.step!==state.labels.length-1||state.phase!=='slides';button.textContent=state.puzzleId===5?(state.mode==='live'?'Abrir preparación del Cronómetro':'Abrir ensayo del Cronómetro'):(state.mode==='live'?'Comenzar partida real · 3, 2, 1':'Comenzar ensayo · 3, 2, 1'); }
       if (action==='cancel') button.hidden=state.phase!=='countdown';
       if (action==='pause') {button.hidden=!state.automatic||state.phase!=='slides';button.textContent=state.autoPaused?'Reanudar secuencia':'Pausar secuencia';}
       if (action==='restart') button.disabled=!online||state.phase==='countdown'||(state.phase==='game'&&state.mode==='live'&&state.scenes);

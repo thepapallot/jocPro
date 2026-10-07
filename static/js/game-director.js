@@ -34,7 +34,7 @@
     $('note').textContent=connected?(matched&&game.instruction?game.instruction:s.note):'Abrir recupera la misma ventana de jugadores. Si está cerrada, abre la bienvenida.';
     $('language').disabled=true;
     $('language').value=window.PyramidLanguage.normalize(api.session?.()?.gameLanguage || window.TEST_DEFAULT_SUBTITLE_LANG);
-    const key=JSON.stringify([connected,s?.phase,s?.step,s?.screen,s?.labels,s?.kind,s?.canNext,s?.automatic,s?.autoPaused,s?.revealed,s?.sceneIndex]);
+    const key=JSON.stringify([connected,s?.phase,s?.step,s?.screen,s?.labels,s?.kind,s?.puzzleId,s?.canNext,s?.automatic,s?.autoPaused,s?.revealed,s?.sceneIndex]);
     if(key!==signature){
       signature=key;
       $('steps').innerHTML=connected&&!playing&&s.labels.length>1?s.labels.map((label,i)=>`<button type="button" data-director-step="${i}" aria-pressed="${i===s.step}">${i+1}. ${escape(label)}</button>`).join(''):'';
@@ -44,7 +44,7 @@
         controls=button('← Anterior','previous');
         if(s.automatic)controls+=button(s.autoPaused?'Reanudar secuencia':'Pausar secuencia','pause');
         if(s.canNext)controls+=button(s.kind==='welcome'?'Empezar presentación inicial →':s.nextLabel||'Siguiente pantalla →','next',true);
-        if(s.kind==='puzzle'&&s.step===s.labels.length-1)controls+=button('Empezar juego · 3, 2, 1','start',true);
+        if(s.kind==='puzzle'&&s.step===s.labels.length-1)controls+=button(s.puzzleId===5?'Abrir preparación del Cronómetro':'Empezar juego · 3, 2, 1','start',true);
       }
       $('navigation').innerHTML=controls;
     }
@@ -63,7 +63,7 @@
     $('game').hidden=!playing;
     $('progress').textContent=matched?game.progress.progress:'';
     const memoryWaiting=matched&&activeId===8&&game.state.phase!=='input';
-    $('game-state').textContent=!matched?'Esperando el estado del puzzle que aparece en pantalla…':game.state.puzzle_solved?'Puzzle completado. Esperando la celebración…':memoryWaiting?'Memoria Fantasma está mostrando las formas. Las ayudas se activarán en la fase de respuesta.':activeId===6&&game.state.solve_mode?'Ayuda de energía activada. El juego terminará al acabar su temporizador.':game.progress.status;
+    $('game-state').textContent=!matched?'Esperando el estado del puzzle que aparece en pantalla…':game.state.puzzle_solved?'Puzzle completado. Esperando la celebración…':memoryWaiting?'Memoria Extrema está mostrando las formas. Las ayudas se activarán en la fase de respuesta.':activeId===6&&game.state.solve_mode?'Ayuda de energía activada. El juego terminará al acabar su temporizador.':game.progress.status;
     const actions=activeId?api.actions(activeId):[];
     const actionKey=JSON.stringify([activeId,actions]);
     if(actionKey!==gameSignature){gameSignature=actionKey;$('resolvers').innerHTML=actions.map(action=>`<button type="button" data-director-resolve="${escape(action.id)}" class="primary-action" title="${escape(action.detail)}">${escape(activeId===6?'Mantener energía hasta el final':action.label)}</button>`).join('');}
