@@ -1,4 +1,7 @@
 /* Final level completion only: keep intermediate phase feedback untouched. */
+body.level-success-visible .game-corner-hud {
+    display: none;
+}
 .pyramid-game :is(#p1-solved-banner, #p2-solved-banner, #p3-solved-banner, #p4-solved-banner, #p5-solved-banner, #p6-solved-banner, #p7-solved-banner, #p8-solved-banner, #p9-solved-banner, #p10-solved-banner, #p11-solved-banner, #p12-solved-banner) {
     position: fixed;
     inset: 0;
@@ -33,7 +36,7 @@
     margin: 0;
     padding: 0;
     color: #0A1016;
-    font: 900 clamp(64px, 8vw, 160px)/1.1 PiramideDisplay, 'Arial Narrow', Arial, sans-serif;
+    font: 900 154px/1.1 PiramideDisplay, 'Arial Narrow', Arial, sans-serif;
     letter-spacing: 0;
     text-transform: uppercase;
     text-shadow: none;

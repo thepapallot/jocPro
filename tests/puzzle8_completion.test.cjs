@@ -51,7 +51,7 @@ function memory() {
 test('a successful Memory round shows the green completion screen without navigating', () => {
     const game = memory();
     game.update({phase: 'input', input_result: {success: true, box_results: {}}});
-    assert.equal(game.elements.get('p8-instruction-title').textContent, 'NIVEL COMPLETADO');
+    assert.equal(game.elements.get('p8-instruction-title').textContent, 'NIVEL SUPERADO');
     assert.equal(game.elements.get('p8-instruction-detail').textContent, '');
     assert.equal(game.elements.get('p8-countdown').hidden, true);
     assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), false);
@@ -64,14 +64,14 @@ test('a successful Memory round shows the green completion screen without naviga
 test('an incorrect answer does not display completion', () => {
     const game = memory();
     game.update({phase: 'input', input_result: {success: false, box_results: {}}});
-    assert.equal(game.elements.get('p8-instruction-title').textContent, 'COMPLETA LAS DOS FORMAS');
+    assert.equal(game.elements.get('p8-instruction-title').textContent, 'COMPLETAD LAS DOS FORMAS');
 });
 
 test('final completion shows the green screen and schedules navigation only once', () => {
     const game = memory();
     game.update({puzzle_solved: true});
     game.update({puzzle_solved: true});
-    assert.equal(game.elements.get('p8-instruction-title').textContent, 'NIVEL COMPLETADO');
+    assert.equal(game.elements.get('p8-instruction-title').textContent, 'NIVEL SUPERADO');
     assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), false);
     assert.equal(game.timers.length, 1);
     assert.equal(game.timers[0].delay, 4000);

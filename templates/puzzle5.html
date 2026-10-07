@@ -30,10 +30,10 @@
                 <div class="brief-ring brief-ring-a"></div>
                 <div class="brief-ring brief-ring-b"></div>
             </div>
-            <div class="brief-label">Objetivo</div>
+            <div class="brief-label" data-i18n="game.objective">Objetivo</div>
             <div id="brief-objective-value-wrap">
                 <div id="brief-objective-value">—</div>
-                <div id="brief-objective-unit">SEC</div>
+                <div id="brief-objective-unit">s</div>
             </div>
         </div>
 
@@ -41,11 +41,11 @@
 
     <section id="chrono-stage" class="time-panel">
         <div id="objective-card" class="is-countdown">
-            <h1 id="p5-preparation-title">Preparados: memorizad el tiempo</h1>
+            <h1 id="p5-preparation-title" data-i18n="game.prepareTime">Preparados: memorizad el tiempo</h1>
             <div id="objective-text">—</div>
-            <div id="objective-subtext">segundos</div>
-            <div id="p5-preparation-countdown">Preparación · <strong id="p5-countdown-value">—</strong></div>
-            <p id="p5-preparation-hint">Empezad a contar cuando se encienda vuestro terminal.</p>
+            <div id="objective-subtext" data-i18n="game.seconds">segundos</div>
+            <div id="p5-preparation-countdown"><span data-i18n="game.preparation">Preparación</span> · <strong id="p5-countdown-value">—</strong></div>
+            <p id="p5-preparation-hint" data-i18n="game.startOnTerminal">Empezad a contar cuando se encienda vuestro terminal.</p>
             <div id="countdown-orbit" aria-hidden="true">
                 <div class="orbit-ring orbit-ring-a"></div>
                 <div class="orbit-ring orbit-ring-b"></div>
@@ -69,7 +69,7 @@
                     <div class="time-ring"></div>
                     <div class="box-time"></div>
                 </div>
-                <div class="box-error" aria-label="Error individual"></div>
+                <div class="box-error" aria-label="Error individual" data-i18n-aria-label="game.individualError"></div>
             </div>
             {% endfor %}
         </div>
@@ -77,7 +77,7 @@
         <div id="error-section">
             <div class="error-shell">
                 <div class="error-meta">
-                    <span class="error-label-inline">Margen de error:</span>
+                    <span class="error-label-inline" data-i18n="game.errorMargin">Margen de error:</span>
                     <span id="error-limit-text">15 S</span>
                 </div>
                 <span id="error-text">0.0 / 15</span>

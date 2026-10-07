@@ -12,25 +12,16 @@
 
 {% block puzzle_content %}
 <div id="p11-shell">
-    <div id="p11-timeline" aria-label="Progreso del tutorial"></div>
+    <div id="p11-timeline" aria-label="Progreso del simulacro" data-i18n-aria-label="game.practiceProgress"></div>
 
     <div id="p11-current-card">
-        <div id="p11-card-header">
-            <img
-                id="p11-pyramid"
-                src="{{ url_for('static', filename='branding/piramide-vector.svg') }}"
-                alt="Pirámide"
-            >
-            <div id="p11-phase-title">SIMULACIÓN</div>
-        </div>
         <div id="p11-step-text">
             <div id="p11-step-main"></div>
-            <div id="p11-step-translation" class="hidden"></div>
         </div>
     </div>
 
     <div id="p11-solved-banner" class="hidden">
-        <div class="p11-solved-main" data-i18n="game.practiceCompleted">SIMULACRO COMPLETADO</div>
+        <div class="p11-solved-main level-success-title">NIVEL SUPERADO</div>
         <!--div class="p11-solved-sub">fase de energía completada</div-->
     </div>
 

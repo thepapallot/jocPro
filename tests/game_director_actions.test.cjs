@@ -112,15 +112,40 @@ test('Chronometer uses 30 seconds before start and follows the live objective an
   assert.equal(simState.puzzle5Objective,45);
   assert.doesNotMatch(source,/objetivo 10 s|puzzle5Objective \?\? \(roundLabel === 1 \? 10/);
 });
-test('Buttons sets the requested totals and releases every unused terminal',async()=>{
-  const target=[2,1,3,0,2,1];
-  const solve=resolver('getPuzzle12RoundPayloads',{fetchCurrentStateForPuzzle:async()=>({target,box_states:{10:[1,1,1,1,1,1]}})});
-  const payloads=plain(await solve());
-  assert.equal(payloads.length,10);
-  assert.equal(payloads.at(-1),'P12,10,000000');
-  const totals=Array(6).fill(0);
-  payloads.forEach(p=>p.split(',')[2].split('').forEach((v,i)=>totals[i]+=Number(v)));
-  assert.deepEqual(totals,target);
+test('Buttons resolution requests GM completion despite changing physical button states',async()=>{
+  const requests=[];
+  const state={puzzle_id:12,box_states:{10:[1,1,1,1,1,1]}};
+  const finish=resolver('forceEndCurrentPuzzle',{
+    assertSelectedPuzzleActive:async()=>state,
+    getSelectedPuzzleIdForBackend:()=>12,
+    fetch:async(url,options)=>{
+      state.box_states[10]=[0,1,0,1,0,1];
+      requests.push({url,method:options.method,body:JSON.parse(options.body)});
+      return {ok:true,json:async()=>({puzzle_id:12,end_payload:'P12End'})};
+    },
+    appendLog(){},setStatus(){},getSelectedPuzzleLabel:()=> 'Conexión Simultánea'
+  });
+  const actions=resolver('getResolverActions',{forceEndCurrentPuzzle:finish})(12);
+  const run=resolver('runResolverAction',{appendLog(){}});
+  await run(actions.phase[0]);
+  assert.deepEqual(requests,[{url:'/test/force_end',method:'POST',body:{puzzle_id:12}}]);
+  assert.equal(actions.all[0].run,finish);
+  assert.equal(actions.all[0].confirm,true);
+});
+test('GM completion refuses a changed active puzzle without sending the end command',async()=>{
+  const finish=resolver('forceEndCurrentPuzzle',{
+    assertSelectedPuzzleActive:async()=>{throw new Error('El puzzle seleccionado ya no está en juego');},
+    fetch:async()=>assert.fail('Must not send completion to another puzzle')
+  });
+  await assert.rejects(finish,/ya no está en juego/);
+});
+test('GM completion reports backend failure rather than claiming success',async()=>{
+  const finish=resolver('forceEndCurrentPuzzle',{
+    assertSelectedPuzzleActive:async()=>({puzzle_id:12}),getSelectedPuzzleIdForBackend:()=>12,
+    fetch:async()=>({ok:false,json:async()=>({error:'puzzle_not_active'})}),
+    setStatus:()=>assert.fail('Must not report completion')
+  });
+  await assert.rejects(finish,/puzzle_not_active/);
 });
 test('Practice sends only the remaining substeps of the active instruction',async()=>{
   const state={current_step:0,current_substep:1};

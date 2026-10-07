@@ -1,4 +1,6 @@
 (function() {
+    const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
+
     const cards = new Map(
         Array.from(document.querySelectorAll('.led-card')).map(card => [Number(card.dataset.box), card])
     );
@@ -18,7 +20,7 @@
     function updateStatus() {
         if (!statusBadge) return;
         const solvedCount = Array.from(cards.values()).filter(card => card.classList.contains('is-solved')).length;
-        statusBadge.textContent = `${solvedCount} / 10 sincronizadas`;
+        statusBadge.textContent = tr('synchronized', '{count} / 10 sincronizadas', {count: solvedCount});
         statusBadge.classList.toggle('is-complete', solvedCount === cards.size);
     }
 

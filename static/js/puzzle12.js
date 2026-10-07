@@ -2,12 +2,12 @@
     const INTER_ROUND_PAUSE_MS = 6000;
     // Same order as Puzzle12.botons and the hardware button payload.
     const BUTTON_COLORS = [
-        { name: 'Negre', className: 'black' },
-        { name: 'Verd', className: 'green' },
-        { name: 'Vermell', className: 'red' },
-        { name: 'Groc', className: 'yellow' },
-        { name: 'Blau', className: 'blue' },
-        { name: 'Blanc', className: 'white' }
+        { name: 'Negro', className: 'black' },
+        { name: 'Verde', className: 'green' },
+        { name: 'Rojo', className: 'red' },
+        { name: 'Amarillo', className: 'yellow' },
+        { name: 'Azul', className: 'blue' },
+        { name: 'Blanco', className: 'white' }
     ];
     let timerInterval = null;
     let timeLeft = 0;
@@ -135,7 +135,7 @@
         wrongEl.style.display = 'flex';
         document.body.classList.add('p12-danger-state');
         setStatus('failure', 'Temps esgotat', 'Es tornarà a preparar el mateix nivell.', 'Error');
-        setPhase('Reiniciant la ronda', 'Prepara l’equip per a la següent combinació de colors.');
+        setPhase('Reiniciant la ronda', 'Prepareu l’equip per a la següent combinació de colors.');
     }
 
     function updateRoundHud(round) {
@@ -255,7 +255,7 @@
         resetViewport();
         patternEl.replaceChildren();
         patternEl.setAttribute('aria-label', BUTTON_COLORS.map((color, index) =>
-            `${color.name}: ${target[index]} botons`).join(', '));
+            `${window.PyramidLanguage?.t('game.colour' + color.className, color.name) || color.name}: ${target[index]} botons`).join(', '));
         const colors = [];
         BUTTON_COLORS.forEach((color, index) => {
             for (let count = 0; count < target[index]; count += 1) {
@@ -317,11 +317,11 @@
         setStatus(
             'countdown',
             'Compte enrere actiu',
-            'La pantalla està preparant la següent projecció. El cronòmetre començarà quan aparegui la seqüencia.',
+            'La pantalla està preparant la següent projecció. El cronòmetre començarà quan aparegui la seqüència.',
             'Preparant'
         );
         setPhase(
-            'Nova seqüencia imminent',
+            'Nova seqüència imminent',
             'Cada bola representa un botó del mateix color que cal mantenir premut.'
         );
 
@@ -376,7 +376,7 @@
                 'Correcte'
             );
             setPhase(
-                'Seqüencia consolidada',
+                'Seqüència consolidada',
                 'Nivell superat. Prepareu l’equip per a la següent ronda.'
             );
         }
@@ -404,12 +404,12 @@
                 setStatus(
                     'active',
                     `Ronda ${d.round} en curs`,
-                    'La projecció està activa. Mantén la combinació correcta fins que el temporitzador arribi a zero o la fase es validi.',
+                    'La projecció està activa. Manteniu la combinació correcta fins que el temporitzador arribi a zero o la fase es validi.',
                     'Activa'
                 );
                 setPhase(
-                    `Sincronitza el nivell ${currentLevelId}`,
-                    'Prem un botó per cada bola del mateix color i mantén la combinació fins que es validi.'
+                    `Sincronitzeu el nivell ${currentLevelId}`,
+                    'Premeu un botó per cada bola del mateix color i manteniu la combinació fins que es validi.'
                 );
             };
             if (hasStartedRound) {
@@ -513,7 +513,7 @@
         const messages = {
             es: { success: 'NIVEL SUPERADO', timeout: 'SE ACABÓ EL TIEMPO' },
             ca: { success: 'NIVELL SUPERAT', timeout: 'TEMPS ESGOTAT' },
-            en: { success: 'LEVEL COMPLETED', timeout: 'TIME IS UP' }
+            eng: { success: 'LEVEL COMPLETED', timeout: 'TIME IS UP' }
         };
         const language = window.PYRAMID_GAME?.language || 'es';
         const feedback = messages[language] || messages.es;

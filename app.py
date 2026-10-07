@@ -578,25 +578,78 @@ def test_force_end():
     return jsonify({"status": "sent", "puzzle_id": puzzle_id, "end_payload": end_payload}), 200
 
 
+def session_form_fields(data, existing=None):
+    """Validate operator metadata without changing puzzle mechanics."""
+    from datetime import date, time
+    existing = existing or {}
+    merged = {**existing, **data}
+    kind = merged.get('session_type', 'real')
+    if kind not in ('real', 'test'):
+        raise ValueError('El tipo de sesión no es válido.')
+    if existing.get('started_at') and kind != existing.get('session_type', 'real'):
+        raise ValueError('No se puede cambiar el tipo de una sesión que ya ha empezado.')
+    name = str(merged.get('name') or '').strip()
+    company = str(merged.get('company') or '').strip()
+    day = str(merged.get('expected_day') or '').strip()
+    hour = str(merged.get('expected_time') or '').strip()
+    if not name or not company or not day:
+        raise ValueError('Completa el nombre, la empresa y la fecha.')
+    try:
+        date.fromisoformat(day)
+        if hour:
+            time.fromisoformat(hour)
+        raw_players = merged.get('players_num')
+        players = int(raw_players)
+        if str(players) != str(raw_players).strip():
+            raise ValueError()
+    except (ValueError, TypeError):
+        raise ValueError('Revisa la fecha, la hora y el número entero de jugadores.')
+    if not (1 <= players <= 20 if kind == 'test' else 10 <= players <= 20):
+        raise ValueError('Indica entre 10 y 20 jugadores para una partida real, o entre 1 y 20 para una prueba.')
+    language = merged.get('language', 'es')
+    if language not in ('ca', 'es', 'eng'):
+        raise ValueError('Elige un idioma válido.')
+    return dict(name=name, company=company, expected_day=day, expected_time=hour or None,
+                players_num=players, language=language, session_type=kind,
+                place=str(merged.get('place') or '').strip() or None,
+                notes=str(merged.get('notes') or '').strip() or None,
+                game_master=str(merged.get('game_master') or '').strip() or None,
+                observations=str(merged.get('observations') or '').strip() or None)
+
+
+@app.route('/test/sessions', methods=['GET'])
+def test_sessions_agenda():
+    if _telemetry_queries is None:
+        return jsonify({'error': 'telemetry_unavailable'}), 503
+    with _active_game_lock:
+        active_id = _active_game_session_id
+    return jsonify({'sessions': _telemetry_queries.get_session_agenda(), 'active_session_id': active_id})
+
+
+@app.route('/test/session/<int:session_id>', methods=['GET'])
+def test_session_detail(session_id):
+    if _telemetry_queries is None:
+        return jsonify({'error': 'telemetry_unavailable'}), 503
+    session = _telemetry_queries.get_session_stats(session_id)
+    if not session:
+        return jsonify({'error': 'Sesión no encontrada.'}), 404
+    return jsonify({'session': session, 'puzzles': _telemetry_queries.get_session_puzzles(session_id)})
+
+
 @app.route('/test/session/<int:session_id>', methods=['PATCH'])
 def test_session_update(session_id):
     if _telemetry_writer is None:
         return jsonify({'error': 'telemetry_unavailable'}), 503
-    data = request.get_json(silent=True) or {}
+    existing = _telemetry_queries.get_session_stats(session_id) if _telemetry_queries else None
+    if not existing:
+        return jsonify({'error': 'Sesión no encontrada.'}), 404
     try:
-        _telemetry_writer.update_session_fields(
-            session_id=session_id,
-            company=str(data.get('company') or ''),
-            expected_day=str(data.get('expected_day') or ''),
-            name=data.get('name') or None,
-            expected_time=data.get('expected_time') or None,
-            place=data.get('place') or None,
-            players_num=int(data['players_num']) if data.get('players_num') else None,
-            language=data.get('language') or None,
-            notes=data.get('notes') or None,
-        )
-    except Exception as exc:
-        return jsonify({'error': 'update_failed', 'detail': str(exc)}), 500
+        fields = session_form_fields(request.get_json(silent=True) or {}, existing)
+        _telemetry_writer.update_session_fields(session_id=session_id, **fields)
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
+    except Exception:
+        return jsonify({'error': 'No se ha podido actualizar la sesión.'}), 500
     return jsonify({'session_id': session_id}), 200
 
 
@@ -605,6 +658,9 @@ def test_session_delete(session_id):
     global _active_game_session_id
     if _telemetry_writer is None:
         return jsonify({'error': 'telemetry_unavailable'}), 503
+    with _active_game_lock:
+        if _active_game_session_id == session_id:
+            return jsonify({'error': 'No se puede eliminar la sesión activa.'}), 409
     try:
         _telemetry_writer.delete_session(session_id)
     except Exception as exc:
@@ -642,6 +698,11 @@ def test_session_confirm():
     if session.get('ended_at'):
         return jsonify({'error': 'session_already_ended'}), 409
 
+    with _active_game_lock:
+        if _active_game_session_id not in (None, session_id):
+            active = _telemetry_queries.get_session_stats(_active_game_session_id)
+            if active and active.get('started_at') and not active.get('ended_at'):
+                return jsonify({'error': 'Hay una partida en curso. Finalízala antes de usar otra sesión.'}), 409
     with _active_game_lock:
         _active_game_session_id = session_id
     mqtt_client.set_active_session_id(session_id)
@@ -692,22 +753,13 @@ def test_session_start():
 def test_session_save():
     if _telemetry_writer is None:
         return jsonify({'error': 'telemetry_unavailable'}), 503
-    data = request.get_json(silent=True) or {}
     try:
-        session_id = _telemetry_writer.record_session_start(
-            company=str(data.get('company') or ''),
-            expected_day=str(data.get('expected_day') or ''),
-            name=data.get('name') or None,
-            expected_time=data.get('expected_time') or None,
-            place=data.get('place') or None,
-            players_num=int(data['players_num']) if data.get('players_num') else None,
-            language=data.get('language') or None,
-            notes=data.get('notes') or None,
-            started_at=None,
-            ended_at=None,
-        )
-    except Exception as exc:
-        return jsonify({'error': 'save_failed', 'detail': str(exc)}), 500
+        fields = session_form_fields(request.get_json(silent=True) or {})
+        session_id = _telemetry_writer.record_session_start(started_at=None, ended_at=None, **fields)
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
+    except Exception:
+        return jsonify({'error': 'No se ha podido guardar la sesión.'}), 500
     return jsonify({'session_id': session_id}), 201
 
 

@@ -14,8 +14,8 @@
         <div id="final-main">
             <div id="final-viewport-wrap">
                 <div id="final-viewport">
-                    <div id="button-pattern" role="group" aria-label="Botons que cal prémer per color" style="display:none;"></div>
-                    <div id="timer-overlay" role="timer" aria-label="Temps restant" aria-live="off" style="display:none;">00:00</div>
+                    <div id="button-pattern" role="group" aria-label="Botones que hay que pulsar por color" data-i18n-aria-label="game.buttonsPattern" style="display:none;"></div>
+                    <div id="timer-overlay" role="timer" aria-label="Tiempo restante" data-i18n-aria-label="game.timeLabel" aria-live="off" style="display:none;">00:00</div>
                     <div id="wrong-img" role="status" aria-live="assertive" style="display:none;">
                         <span class="p12-feedback-text p12-timeout-text">SE ACABÓ EL TIEMPO</span>
                     </div>
@@ -24,7 +24,7 @@
                     </div>
 
                     <div id="wait-screen">
-                        <img id="wait-img" src="{{ url_for('static', filename='images/puzzle12/wait.png') }}" alt="wait">
+                        <img id="wait-img" src="{{ url_for('static', filename='images/puzzle12/wait.png') }}" alt="Preparación" data-i18n-alt="game.preparation">
                         <div id="countdown-number"></div>
                     </div>
                 </div>

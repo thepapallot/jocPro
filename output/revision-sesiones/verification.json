@@ -1,0 +1,66 @@
+{
+  "reports": [
+    {
+      "name": "prueba-1920",
+      "width": 1920,
+      "height": 1080,
+      "text": "Panel Game Master\nMODO PRUEBA\nPrueba · 2026-10-07 · Pruebas · 1 jugadores · Català\nSESIÓN\nSesión confirmada\nTIEMPO\n--\nActualizar\nAbrir partida\nSesiones\nControl de juego\nPREPARAR PARTIDA\nSesiones\nCrear sesión real\nCrear sesión de prueba\nDuplicar sesión\nPrueba · 2026-10-07\nPrueba · Preparada\n\nGuardada en el servidor.\n\nTIPO DE SESIÓN\nPartida real\nPrueba\nNOMBRE DE LA SESIÓN\nEMPRESA / CLIENTE\nFECHA\nHORA PREVISTA\nLUGAR\nNÚMERO DE JUGADORES\nIDIOMA DEL JUEGO\nCastellano\nCatalà\nEnglish\nGAME MASTER RESPONSABLE\n\nEl idioma se aplica a toda la pantalla de jugadores. Castellano y catalán revisados; inglés pendiente de la traducción completa.\n\nNOTAS DE PREPARACIÓN\nOBSERVACIONES DESPUÉS DE LA PARTIDA\nGuardar cambios\nEliminar sesión\nUsar esta sesión\nAgenda e historial\nActualizar lista\nPendientes\nHistorial\nBuscar\nTipo\nPartidas reales\nPruebas\nTodas\nFecha\n\n1 sesiones pendientes o en curso\n\nPrueba · 2026-10-07\nPrueba · Preparada\nPruebas · 2026-10-07\n1 jugadores · Català\nSesión activa",
+      "success": null,
+      "images": [],
+      "overflow": [],
+      "resources": [
+        {
+          "name": "http://127.0.0.1:44307/favicon.ico",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "name": "historial-1920",
+      "width": 1920,
+      "height": 1080,
+      "text": "Panel Game Master\nMODO PRUEBA\nPrueba · 2026-10-07 · Pruebas · 1 jugadores · Català\nSESIÓN\nSesión confirmada\nTIEMPO\n--\nActualizar\nAbrir partida\nSesiones\nControl de juego\nPREPARAR PARTIDA\nSesiones\nCrear sesión real\nCrear sesión de prueba\nDuplicar sesión\nGrupo finalizado\nFinalizada\n\nGuardada en el servidor.\n\nTIPO DE SESIÓN\nPartida real\nPrueba\nNOMBRE DE LA SESIÓN\nEMPRESA / CLIENTE\nFECHA\nHORA PREVISTA\nLUGAR\nNÚMERO DE JUGADORES\nIDIOMA DEL JUEGO\nCastellano\nCatalà\nEnglish\nGAME MASTER RESPONSABLE\n\nEl idioma se aplica a toda la pantalla de jugadores. Castellano y catalán revisados; inglés pendiente de la traducción completa.\n\nNOTAS DE PREPARACIÓN\nOBSERVACIONES DESPUÉS DE LA PARTIDA\nGuardar cambios\nEliminar sesión\nUsar esta sesión\nAgenda e historial\nActualizar lista\nPendientes\nHistorial\nBuscar\nTipo\nPartidas reales\nPruebas\nTodas\nFecha\n\n1 sesiones finalizadas\n\nGrupo finalizado\nFinalizada\nEmpresa · 2026-10-07\n10 jugadores · Català\nResultado de Grupo finalizado\nEstado: Finalizada\nDuración total: 0 min 0 s\nGame Master: GM\nReto\tRonda\tDuración\tRegistro\nCàlcul Extrem\t1\t0 min 0 s\tCerrado\n\nLos tiempos reflejan los registros disponibles. Las ayudas y los errores detallados aún no se registran automáticamente.",
+      "success": null,
+      "images": [],
+      "overflow": [],
+      "resources": [
+        {
+          "name": "http://127.0.0.1:44307/favicon.ico",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "name": "historial-1280",
+      "width": 1280,
+      "height": 720,
+      "text": "Panel Game Master\nMODO PRUEBA\nPrueba · 2026-10-07 · Pruebas · 1 jugadores · Català\nSESIÓN\nSesión confirmada\nTIEMPO\n--\nActualizar\nAbrir partida\nSesiones\nControl de juego\nPREPARAR PARTIDA\nSesiones\nCrear sesión real\nCrear sesión de prueba\nDuplicar sesión\nGrupo finalizado\nFinalizada\n\nGuardada en el servidor.\n\nTIPO DE SESIÓN\nPartida real\nPrueba\nNOMBRE DE LA SESIÓN\nEMPRESA / CLIENTE\nFECHA\nHORA PREVISTA\nLUGAR\nNÚMERO DE JUGADORES\nIDIOMA DEL JUEGO\nCastellano\nCatalà\nEnglish\nGAME MASTER RESPONSABLE\n\nEl idioma se aplica a toda la pantalla de jugadores. Castellano y catalán revisados; inglés pendiente de la traducción completa.\n\nNOTAS DE PREPARACIÓN\nOBSERVACIONES DESPUÉS DE LA PARTIDA\nGuardar cambios\nEliminar sesión\nUsar esta sesión\nAgenda e historial\nActualizar lista\nPendientes\nHistorial\nBuscar\nTipo\nPartidas reales\nPruebas\nTodas\nFecha\n\n1 sesiones finalizadas\n\nGrupo finalizado\nFinalizada\nEmpresa · 2026-10-07\n10 jugadores · Català\nResultado de Grupo finalizado\nEstado: Finalizada\nDuración total: 0 min 0 s\nGame Master: GM\nReto\tRonda\tDuración\tRegistro\nCàlcul Extrem\t1\t0 min 0 s\tCerrado\n\nLos tiempos reflejan los registros disponibles. Las ayudas y los errores detallados aún no se registran automáticamente.",
+      "success": null,
+      "images": [],
+      "overflow": [],
+      "resources": [
+        {
+          "name": "http://127.0.0.1:44307/favicon.ico",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "name": "prueba-1280",
+      "width": 1280,
+      "height": 720,
+      "text": "Panel Game Master\nMODO PRUEBA\nPrueba · 2026-10-07 · Pruebas · 1 jugadores · Català\nSESIÓN\nSesión confirmada\nTIEMPO\n--\nActualizar\nAbrir partida\nSesiones\nControl de juego\nPREPARAR PARTIDA\nSesiones\nCrear sesión real\nCrear sesión de prueba\nDuplicar sesión\nPrueba · 2026-10-07\nPrueba · Preparada\n\nGuardada en el servidor.\n\nTIPO DE SESIÓN\nPartida real\nPrueba\nNOMBRE DE LA SESIÓN\nEMPRESA / CLIENTE\nFECHA\nHORA PREVISTA\nLUGAR\nNÚMERO DE JUGADORES\nIDIOMA DEL JUEGO\nCastellano\nCatalà\nEnglish\nGAME MASTER RESPONSABLE\n\nEl idioma se aplica a toda la pantalla de jugadores. Castellano y catalán revisados; inglés pendiente de la traducción completa.\n\nNOTAS DE PREPARACIÓN\nOBSERVACIONES DESPUÉS DE LA PARTIDA\nGuardar cambios\nEliminar sesión\nUsar esta sesión\nAgenda e historial\nActualizar lista\nPendientes\nHistorial\nBuscar\nTipo\nPartidas reales\nPruebas\nTodas\nFecha\n\n1 sesiones pendientes o en curso\n\nPrueba · 2026-10-07\nPrueba · Preparada\nPruebas · 2026-10-07\n1 jugadores · Català\nSesión activa",
+      "success": null,
+      "images": [],
+      "overflow": [],
+      "resources": [
+        {
+          "name": "http://127.0.0.1:44307/favicon.ico",
+          "status": 404
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "checks": "Create test, activate, real save, active/editor isolation, duplicate, delete cancel/confirm, validation, finished history and results"
+}

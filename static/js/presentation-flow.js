@@ -46,7 +46,7 @@
           'Explica que hay que completar todos los resultados de la pantalla. Los cuatro números son una muestra visual; no son la partida.',
           'Muestra el token 13 y el terminal 5. Pulsa «Mostrar resultat» para descubrir el 18 y repite el ejemplo si hace falta.',
           'Explica la coordinación y las condiciones actuales de Sumes: una suma incorrecta o repetida reinicia los objetivos.',
-          'Comprueba que los jugadores están preparados. Solo «Començar» o Enter activa la cuenta atrás y la entrada al juego.'
+          'Comprueba que los jugadores están preparados. El control «Comenzar partida real» del GM activa la cuenta atrás y la entrada al juego.'
         ]
       },
       eng: {
@@ -121,7 +121,7 @@
   const actFor=id=>acts[[tutorialId,2,3].includes(id)?0:[8,1,5].includes(id)?1:2];
   let completed=0;
   const total=order.length+1; // The final challenge earns the summit; practice earns confidence.
-  // Approved Spanish briefings. Other languages await the complete editorial review.
+  // Approved Spanish briefings and their complete Catalan equivalents.
   const reviewedCopy={
     8:{objective:'Recordar las formas y sus colores.',tools:'Tokens y botones de colores.',action:'Buscad vuestro token → memorizad las formas y sus colores → buscad las formas → introducid los colores.',attention:['Las formas se pueden introducir en cualquier orden.','Un solo error reinicia la ronda.']},
     1:{objective:'Resolver las sumas antes de que la cuenta atrás llegue a 0.',tools:'Tokens y números de los terminales.',action:'Identificad el número de vuestro token → buscad el número que completa la suma → acercad el token al terminal.',attention:['Si resolvéis una suma incorrectamente, la ronda se reiniciará.','Si resolvéis una suma que ya ha sido completada, la ronda se reiniciará.']},
@@ -130,6 +130,76 @@
     4:{objective:'Reconstruir y ordenar los fragmentos de la canción.',tools:'Tokens y terminales.',action:'Escuchad la canción → identificad el fragmento → marcadlo → buscad el siguiente.',attention:['Esta prueba tiene dos rondas.']},
     6:{objective:'Mantener las luces encendidas hasta que la cuenta atrás llegue a 0.',tools:'Tokens y luces de los terminales.',action:'Identificad el color de vuestro token → buscad la luz del mismo color → acercad el token → continuad con el siguiente color.'}
   };
+  const reviewedCatalan={
+  "11": {
+    "objective": "Familiaritzar-se amb el sistema seguint les instruccions de la pantalla.",
+    "tools": "Tokens i terminals.",
+    "action": "Mireu la pantalla → feu l’acció indicada → espereu la instrucció següent."
+  },
+  "2": {
+    "objective": "Completar la serp corresponent a cada token.",
+    "tools": "Tokens i símbols dels terminals.",
+    "action": "Identifiqueu la vostra serp → busqueu els símbols en l’ordre indicat → passeu el token per cada terminal.",
+    "attention": [
+      "Quan soni l’alarma, les serps es tornaran vermelles. Els símbols de la pantalla no canvien: busqueu als terminals el mateix símbol amb els colors invertits."
+    ]
+  },
+  "3": {
+    "objective": "Identificar les 4 respostes correctes.",
+    "tools": "Botons dels terminals.",
+    "action": "Llegiu la pregunta → identifiqueu les respostes correctes → marqueu cada resposta al seu terminal.",
+    "attention": [
+      "Les respostes de cada terminal es poden canviar fins que s’hagi introduït una resposta a tots els terminals."
+    ]
+  },
+  "8": {
+    "objective": "Recordar les formes i els seus colors.",
+    "tools": "Tokens i botons de colors.",
+    "action": "Busqueu el vostre token → memoritzeu les formes i els seus colors → busqueu les formes → introduïu els colors.",
+    "attention": [
+      "Les formes es poden introduir en qualsevol ordre.",
+      "Un sol error reinicia la ronda."
+    ]
+  },
+  "1": {
+    "objective": "Resoldre les sumes abans que el compte enrere arribi a 0.",
+    "tools": "Tokens i números dels terminals.",
+    "action": "Identifiqueu el número del vostre token → busqueu el número que completa la suma → acosteu el token al terminal.",
+    "attention": [
+      "Si resoleu una suma incorrectament, la ronda es reiniciarà.",
+      "Si resoleu una suma que ja s’ha completat, la ronda es reiniciarà."
+    ]
+  },
+  "5": {
+    "objective": "Comptar el temps exacte que apareix a la pantalla.",
+    "tools": "Token i terminal.",
+    "action": "Memoritzeu el temps → espereu que s’encengui el vostre terminal → compteu el temps → acosteu el token al terminal.",
+    "attention": [
+      "Els segons de més o de menys se sumaran a l’error comú. Si se supera el marge d’error permès, la ronda es reiniciarà."
+    ]
+  },
+  "12": {
+    "objective": "Prémer tants botons com apareguin a la pantalla abans que s’acabi el temps.",
+    "tools": "Botons dels terminals.",
+    "action": "Compteu les boles → coordineu l’equip → premeu el nombre exacte de botons → manteniu-los premuts durant 3 segons.",
+    "attention": [
+      "Si el compte enrere arriba a 0, els botons indicats a la pantalla canviaran."
+    ]
+  },
+  "4": {
+    "objective": "Reconstruir i ordenar els fragments de la cançó.",
+    "tools": "Tokens i terminals.",
+    "action": "Escolteu la cançó → identifiqueu el fragment → marqueu-lo → busqueu el següent.",
+    "attention": [
+      "Aquesta prova té dues rondes."
+    ]
+  },
+  "6": {
+    "objective": "Mantenir els llums encesos fins que el compte enrere arribi a 0.",
+    "tools": "Tokens i llums dels terminals.",
+    "action": "Identifiqueu el color del vostre token → busqueu el llum del mateix color → acosteu-hi el token → continueu amb el color següent."
+  }
+};
   for(const id of [tutorialId,...order,finalId]) {
     const intro=byId.get(id);intro.completed=completed;intro.total=total;
     intro.act=actFor(id);intro.isFinal=id===finalId;
@@ -154,6 +224,12 @@
         intro.steps.push('attention');
       }
     }
+    const catalan = reviewedCatalan[id];
+    if(catalan){
+      Object.assign(intro.copy.ca,{objectiveTitle:catalan.objective,objectiveLead:catalan.objective,exampleLead:catalan.tools,warning:catalan.action,coordinateLead:catalan.action});
+      if(catalan.attention)intro.attentionCopy.ca={text:catalan.attention.join(' '),paragraphs:catalan.attention,...(id===2?{before:4,after:3}:{})};
+    }
+    if(id===tutorialId)intro.elementsCopy.ca={title:'LA MISSIÓ ÉS A LES VOSTRES MANS',tokenTitle:'EL VOSTRE TOKEN ÉS PERSONAL',tokenLead:'Conserveu el vostre durant tota la partida.',terminalTitle:'ELS TERMINALS',terminalLead:'Botons, llums i símbols per resoldre els reptes.',action:'Acosteu el vostre token al lector del terminal per interactuar.',team:'Un únic equip: compartiu informació i coordineu-vos.',notes:'El token és personal: cada persona o parella conserva el seu durant tota la partida. Mostra el lector, els botons, els llums i els símbols del terminal. Per interactuar, cal acostar el token al lector.'};
     intro.journey=journey;
     if(id===3)intro.accent='#dc68a7';
     intro.incremental=true;
@@ -165,21 +241,21 @@
       t.notes=[t.objectiveLead,t.exampleLead,rule];
       t.footers=[local('Observeu el repte.','Observad el reto.','Look at the challenge.')[lang],local('Aquestes són les vostres eines.','Estas son vuestras herramientas.','These are your tools.')[lang],intro.act.role[lang]];
       t.guidance={role:intro.act.role[lang],hints:[t.objectiveLead,t.exampleLead,rule],rhythm:local('Doneu temps per pensar. Si el grup no sap què fer, oferiu una ajuda; si està provant un pla, deixeu-lo jugar.','Dad tiempo para pensar. Si el grupo no sabe qué hacer, ofreced una ayuda; si está probando un plan, dejadlo jugar.','Allow thinking time. Offer a hint if the group does not know what to do; let them play if they are testing a plan.')[lang]};
-      if(lang==='es'&&intro.reviewedBriefing)t.stepLabels=['Objetivo','Herramientas','Acción'];
+      if(['es','ca'].includes(lang)&&intro.reviewedBriefing)t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];
       if(intro.attentionCopy){
-        if(lang==='es')t.stepLabels=['Objetivo','Herramientas','Acción'];
-        t.stepLabels.push('Atención');
-        t.notes.push(intro.attentionCopy.es.text);
+        if(['es','ca'].includes(lang))t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];
+        t.stepLabels.push(local('Atenció','Atención','Attention')[lang]);
+        t.notes.push((intro.attentionCopy[lang]||intro.attentionCopy.es).text);
         t.footers.push('');
       }
       if(id===5) {
-        t.notes[t.notes.length-1]+=' Al iniciar se abre la preparación: memorizad el tiempo objetivo durante la cuenta atrás y empezad a contar cuando se encienda vuestro terminal.';
+        t.notes[t.notes.length-1]+=local(' En iniciar, s’obre la preparació: memoritzeu el temps objectiu durant el compte enrere i comenceu a comptar quan s’encengui el vostre terminal.',' Al iniciar se abre la preparación: memorizad el tiempo objetivo durante la cuenta atrás y empezad a contar cuando se encienda vuestro terminal.',' Starting opens preparation: memorise the target time during the countdown and start counting when your terminal lights up.')[lang];
       }
       if(id===tutorialId){
-        if(lang==='es')t.stepLabels=['Objetivo','Herramientas','Acción'];
+        if(['es','ca'].includes(lang))t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];
         // Spanish editorial draft; translations follow approval of the full content.
-        const elements=intro.elementsCopy.es;
-        t.stepLabels.unshift('La misión está en vuestras manos');
+        const elements=intro.elementsCopy[lang]||intro.elementsCopy.es;
+        t.stepLabels.unshift(local('La missió és a les vostres mans','La misión está en vuestras manos','The mission is in your hands')[lang]);
         t.notes.unshift(elements.notes);
         t.footers.unshift(elements.team);
       }
@@ -195,7 +271,7 @@
     if(id!==tutorialId)completed++;
     const following=[...order,finalId][id===tutorialId?0:order.indexOf(id)+1];
     const beforeFinal=following===finalId;
-    const success=scene('success-'+id,'success',id===tutorialId?local('JA SOU<br>UN EQUIP.','YA SOIS<br>UN EQUIPO.','YOU ARE<br>A TEAM.'):beforeFinal?local('LA CIMA<br>US ESPERA.','LA CIMA<br>OS ESPERA.','THE SUMMIT<br>IS WAITING.'):local('UN PAS<br>MÉS AMUNT.','UN PASO<br>MÁS ARRIBA.','ONE STEP<br>HIGHER.'),local('Cada aportació compta.','Cada aportación cuenta.','Every contribution counts.'));
+    const success=scene('success-'+id,'success',id===tutorialId?local('JA SOU<br>UN EQUIP.','YA SOIS<br>UN EQUIPO.','YOU ARE<br>A TEAM.'):beforeFinal?local('EL CIM<br>US ESPERA.','LA CIMA<br>OS ESPERA.','THE SUMMIT<br>IS WAITING.'):local('UN PAS<br>MÉS AMUNT.','UN PASO<br>MÁS ARRIBA.','ONE STEP<br>HIGHER.'),local('Cada aportació compta.','Cada aportación cuenta.','Every contribution counts.'));
     success.completed=completed;success.previous=previous;success.total=total;success.afterPuzzle=id;success.nextPuzzleId=following;success.act=actFor(following);success.beforeFinal=beforeFinal;
     for(const lang of ['ca','es','eng']){
       const t=success.copy[lang];t.name=local('Assoliment','Logro','Achievement')[lang]+' · '+intro.copy[lang].name;

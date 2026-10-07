@@ -43,7 +43,7 @@ class TelemetryQueries:
                 place,
                 players_num,
                 language,
-                notes,
+                notes, session_type, game_master, observations,
                 started_at,
                 ended_at
             FROM sessions
@@ -85,6 +85,7 @@ class TelemetryQueries:
                 AVG(COALESCE(round_num, 1)) as avg_round_num
             FROM puzzles
             WHERE puzzle_num = ? AND started_at >= ?
+              AND session_id IN (SELECT session_id FROM sessions WHERE session_type = 'real')
             """,
             (puzzle_num, cutoff_date.isoformat()),
         )
@@ -167,7 +168,7 @@ class TelemetryQueries:
                     started_at,
                     ended_at
                 FROM sessions
-                WHERE company = ? AND started_at >= ?
+                WHERE company = ? AND started_at >= ? AND session_type = 'real'
                 ORDER BY started_at DESC
                 LIMIT ?
                 """,
@@ -189,7 +190,7 @@ class TelemetryQueries:
                     started_at,
                     ended_at
                 FROM sessions
-                WHERE started_at >= ?
+                WHERE started_at >= ? AND session_type = 'real'
                 ORDER BY started_at DESC
                 LIMIT ?
                 """,
@@ -221,6 +222,14 @@ class TelemetryQueries:
         )
         return [dict(row) for row in cursor.fetchall()]
 
+    def get_session_agenda(self) -> List[Dict[str, Any]]:
+        """Operator agenda and history, including clearly identified test sessions."""
+        cursor = self.db.execute("""
+            SELECT * FROM sessions
+            ORDER BY expected_day DESC, expected_time DESC, session_id DESC
+        """)
+        return [dict(row) for row in cursor.fetchall()]
+
     def get_event_counts_by_type(
         self,
         puzzle_num: Optional[int] = None,
@@ -247,6 +256,7 @@ class TelemetryQueries:
                 FROM events e
                 JOIN puzzles p ON p.puzzle_id = e.puzzle_id
                 WHERE p.puzzle_num = ? AND p.started_at >= ?
+                  AND p.session_id IN (SELECT session_id FROM sessions WHERE session_type = 'real')
                 GROUP BY e.event_type
                 """,
                 (puzzle_num, cutoff_date.isoformat()),
@@ -259,7 +269,7 @@ class TelemetryQueries:
                     COUNT(*) as count
                 FROM events
                     WHERE session_id IN (
-                        SELECT session_id FROM sessions WHERE started_at >= ?
+                        SELECT session_id FROM sessions WHERE started_at >= ? AND session_type = 'real'
                     )
                 GROUP BY event_type
                 """,

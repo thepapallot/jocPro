@@ -172,7 +172,9 @@ test('practice starts with equipment and teamwork before the normal three reveal
  assert.ok(practice.elementsCopy.es.action.includes('lector del terminal'));
  assert.ok(practice.elementsCopy.es.team.includes('coordinaos'));
  assert.equal(practice.completed,0);
- assert.equal(practice.elementsCopy.ca,undefined,'translations wait for content approval');
+ assert.match(practice.elementsCopy.ca.tokenTitle,/PERSONAL/);
+ assert.match(practice.elementsCopy.ca.action,/lector del terminal/);
+ assert.equal(practice.copy.ca.stepLabels[0],'La missió és a les vostres mans');
 });
 
 test('snake briefing always includes the alarm warning before its final start step',()=>{
@@ -190,8 +192,8 @@ test('QUIZ keeps its journey and requires the answer-change warning before start
   const quiz=flow().find(s=>s.puzzleId===3&&s.kind==='puzzle');
   assert.deepEqual(quiz.steps,['journey','objective','tools','interaction','attention']);
   for(const lang of ['ca','es','eng']){
-    assert.equal(quiz.copy[lang].stepLabels.at(-1),'Atención');
-    assert.equal(quiz.copy[lang].notes.at(-1),quiz.attentionCopy.es.text);
+    assert.equal(quiz.copy[lang].stepLabels.at(-1),{ca:'Atenció',es:'Atención',eng:'Attention'}[lang]);
+    assert.equal(quiz.copy[lang].notes.at(-1),(quiz.attentionCopy[lang]||quiz.attentionCopy.es).text);
   }
   const context=vm.createContext({window:{},PyramidLogo:{markup:()=>'<svg></svg>'}});
   vm.runInContext(script('presentation-briefing.js'),context);

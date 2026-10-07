@@ -74,7 +74,7 @@ y los controles del GM. Las versiones catalanas e inglesas conservan el signific
 | 11 | Práctica / simulacro | Simulacro Inicial | Simulacre Inicial | Initial Simulation |
 | 2 | Serpientes / laberinto | Tras la Serpiente | Rere la Serp | Follow the Snake |
 | 1 | Sumas | Cálculo Extremo | Càlcul Extrem | Extreme Calculation |
-| 8 | Memory | Memoria Extrema | Memòria Fantasma | Ghost Memory |
+| 8 | Memory | Memoria Extrema | Memòria Extrema | Ghost Memory |
 | 3 | Trivial | QUIZ | QUIZ | QUIZ |
 | 5 | Cronómetro | Pulso de Tiempo | Pols del Temps | Pulse of Time |
 | 12 | Botones | Conexión Simultánea | Connexió Simultània | Simultaneous Connection |
@@ -86,7 +86,8 @@ y los controles del GM. Las versiones catalanas e inglesas conservan el signific
 
 Decisión del 7 octubre 2026, implementada en castellano: Memory pasa a llamarse
 **Memoria Extrema** en presentación, tablero, transiciones y controles del GM.
-Sus nombres en catalán e inglés quedan pendientes de la traducción del conjunto.
+Su equivalente catalán, **Memòria Extrema**, se incorpora al traducir el conjunto
+el 7 octubre 2026. El nombre inglés sigue pendiente de esa revisión.
 
 La prueba 7 conserva su denominación descriptiva: no se ha acordado un nombre
 creativo nuevo para ella. Las pruebas 7, 9 y 10 no se añaden al recorrido.
@@ -223,6 +224,16 @@ ornamentales, paneles redundantes y animaciones continuas sobre el tablero.
 7. **Logro:** actualizar la pirámide por un reto realmente conseguido; el GM prepara
    el siguiente. Navegar o previsualizar no otorga progreso.
 8. **Final y foto:** celebración y composición estable para el grupo.
+
+Decisión del 7 octubre 2026, implementada: la pantalla de logro con la pirámide
+y el progreso no anuncia la siguiente prueba. El GM conserva la información
+del siguiente paso y abre su presentación cuando corresponda.
+
+Decisión del 7 octubre 2026, implementada: eliminar la pantalla «¡YA!» de
+todas las presentaciones de puzzles, también «JA!» y «GO!» en sus idiomas.
+La cuenta atrás muestra 3 → 2 → 1 y entra directamente al juego. Pulso de
+Tiempo conserva la entrada directa a su preparación, sin cuenta atrás de
+presentación adicional.
 
 Recorrido actual de referencia: Simulacro Inicial 11 → Tras la Serpiente 2 →
 Cálculo Extremo 1 → Memoria Extrema 8 → QUIZ 3 → Pulso de Tiempo 5 →
@@ -363,8 +374,9 @@ con altavoces en la sala. Resultados y capturas del montaje anterior:
 
 ### Edición de las explicaciones de puzzles
 
-Acordado: revisar primero las presentaciones en castellano. Traducir el contenido
-al catalán después de aprobar el conjunto; no anticipar nuevas traducciones.
+Acordado: revisar primero las presentaciones en castellano. El usuario confirma
+el conjunto el 7 octubre 2026 y autoriza la versión catalana completa, manteniendo
+el diseño y las reglas aprobadas.
 Implementado para el Simulacro Inicial: una pantalla manual titulada **La misión está en
 vuestras manos** precede al esquema habitual de objetivo, herramientas e interacción.
 Muestra token personal y terminal con tamaño visual equilibrado. Explica conservar
@@ -372,8 +384,8 @@ el token, acercarlo al lector para interactuar y trabajar en equipo compartiendo
 información y coordinándose. El GM muestra el lector físico y después avanza a
 la explicación del Simulacro. Los tokens ya se han repartido al acabar la apertura.
 Esta pantalla no inicia el juego ni modifica el progreso. La cuenta atrás sigue
-reservada al final de la explicación. Textos nuevos en `elementsCopy.es` de
-`presentation-flow.js`; los idiomas pendientes utilizan ese borrador en castellano.
+reservada al final de la explicación. Textos equivalentes en `elementsCopy.es` y `elementsCopy.ca` de
+`presentation-flow.js`; el inglés pendiente utiliza el borrador castellano.
 Verificación con fixture aislado a 1920 × 1080 y 1280 × 720, sin hardware:
 `output/simulacro-titulo/`.
 
@@ -444,8 +456,8 @@ El ejemplo distingue «Símbolo en pantalla» de «Símbolo que debéis buscar»
 Durante la alarma, el tablero conserva los iconos originales y solo cambia la
 señal visual de las serpientes a rojo; la inversión debe resolverla el equipo.
 La correspondencia que valida el backend se conserva sin cambios.
-Las notas del GM acompañan cada paso. Las traducciones del contenido nuevo quedan
-pendientes: Atención usa el borrador castellano también en los otros idiomas.
+Las notas del GM acompañan cada paso. El contenido nuevo y Atención están
+traducidos al catalán; el inglés sigue usando el borrador castellano.
 Verificación aislada a 1920 × 1080 y 1280 × 720: `output/serpiente-presentacion/`.
 
 QUIZ, revisión en castellano implementada con el formato del Simulacro el
@@ -464,8 +476,8 @@ Se conserva el mapa previo del recorrido y el acento magenta de la etapa.
 Atención es el cuarto revelado del esquema, en una ventana superpuesta sin
 cierre opcional ni ejemplo de símbolos. El GM puede retroceder y repetirla;
 el inicio solo se habilita al llegar a ese paso. Las notas del GM usan el mismo
-texto. Catalán e inglés mantienen su contenido anterior hasta traducir el
-conjunto; el nuevo aviso usa el borrador castellano en esos idiomas.
+texto. El catalán incorpora el contenido aprobado y su aviso equivalente.
+El inglés conserva su contenido anterior y usa el borrador castellano para el aviso.
 Verificación con fixture aislado a 1920 × 1080 y 1280 × 720:
 `output/quiz-presentacion/`. Solo simulación, sin MQTT ni hardware.
 
@@ -477,8 +489,9 @@ rótulo inferior y acción con flechas. Las acciones de cuatro partes mantienen
 las cuatro instrucciones en una misma franja. Las notas del GM usan el mismo
 contenido. Los avisos aparecen en el cuarto revelado obligatorio antes del
 inicio; cuando hay dos, se muestran como dos párrafos de una única ventana.
-Carga Final no añade Atención. Catalán e inglés conservan sus textos anteriores;
-los avisos nuevos usan el borrador castellano hasta traducir el conjunto.
+Carga Final no añade Atención. El catalán incorpora el mismo contenido,
+composición y avisos; el inglés conserva sus textos anteriores y usa el borrador
+castellano para los avisos nuevos.
 
 **Memoria Extrema (Memory):**
 
@@ -633,11 +646,23 @@ ni logros de fases intermedias. En Carga Final, la confirmación verde de
 
 ### Criterios visuales particulares
 
+- **Simulacro Inicial:** decisión del 7 octubre 2026, implementada: una sola
+  instrucción completa, grande y centrada, en el idioma de la sesión. Conservar
+  las frases; no convertirlas en diagramas ni secuencias de iconos. Retirar la
+  pirámide interior y el rótulo «SIMULACIÓN», manteniendo la cabecera común.
+  Panel estable, sin brillos ni movimiento continuo. Progreso discreto de diez
+  pasos: actual con contorno y fondo cian; completados con check verde;
+  pendientes neutros. Las instrucciones en castellano e inglés conservan su
+  redacción; se incorpora su equivalente catalán. El cierre final común se
+  conserva. Verificación con simulación; pendiente validación en sala.
 - **Serpientes:** cabezas y números grandes y legibles. Cabeza normal en blanco
   cálido `#F3EEE4`, número grafito `#0A1016` y cabeza de alarma roja. Casillas y
   serpientes completadas en verde `#2DFF9B`; siguiente casilla en ámbar `#EDB970`.
   Error con cruz roja `#F15C68`. Alarma con resplandor radial rojo que se desvanece
   hacia los bordes, sin relleno rectangular. Conservar las imágenes de símbolos.
+  Decisión del 7 octubre 2026, implementada: retirar el popup inferior
+  «Restablecimiento completo · 10 rutas sincronizadas» al completar las diez
+  serpientes. La confirmación final del nivel y la transición se conservan.
 - **Cronómetro:** decisión implementada el 7 octubre 2026: retirar el popup
   «Primera fase superada» al finalizar la primera ronda. El resultado permanece
   en el tablero con su señal de acierto o fallo, el error común y el sonido
@@ -748,14 +773,27 @@ los cambios antes de activar la sesión. El idioma confirmado se aplica a la
 pantalla de jugadores y sus rutas; el control de presentación lo muestra como
 dato de la sesión. El panel del GM conserva su propio idioma.
 
-La infraestructura de los tres idiomas está preparada. Las traducciones completas
-de textos de puzzles y mensajes dinámicos se realizarán al cerrar los contenidos.
-Las claves aún sin traducción conservan el texto actual. No presentar la partida
-como íntegramente traducida. Contrato y guía de incorporación:
+La infraestructura de los tres idiomas está preparada. La versión catalana de
+las pantallas de jugadores, presentaciones y mensajes dinámicos está implementada
+el 7 octubre 2026 sobre el castellano confirmado. El inglés completo sigue
+pendiente; las claves aún sin traducción conservan el texto actual. Contrato y guía de incorporación:
 [IDIOMAS_SESION.md](IDIOMAS_SESION.md).
 
 Dos espacios: **Sesiones** para preparación y datos del grupo; **Control de juego**
 para conducción. Resumen discreto de sesión activa, jugadores e idioma.
+
+Implementado en Sesiones: agenda e historial con búsqueda y filtros, estados
+pendiente/preparada/en curso/finalizada, GM responsable y separación entre notas
+de preparación y observaciones finales. Selección del editor y sesión activa
+son estados distintos. Guardado y errores se explican junto al formulario.
+
+**Crear sesión de prueba** abre un borrador prellenado. Una única modalidad,
+con o sin hardware montado; no modifica las reglas del juego. **MODO PRUEBA**
+aparece en ámbar como etiqueta informativa del GM, con texto explícito, sin
+recolorear pistas ni señales de jugadores. Las pruebas se conservan en agenda
+e historial y se excluyen de estadísticas reales. Eliminar requiere confirmación;
+la sesión activa se protege. El resumen de resultados usa tiempos registrados,
+sin presentar como éxito un cierre de registro ni inventar errores o ayudas.
 
 - Destacar la acción siguiente según la fase.
 - «Iniciar» junto a un puzzle siempre pide confirmación dentro del panel; no
@@ -791,6 +829,21 @@ Referencias de implementación: `static/css/game-theme.css`, `game-surface.css`,
 `presentation-briefing.css`, `presentation-journey.css`; `static/js/presentation-flow.js`,
 `presentation-briefing.js`, `pyramid-logo.js`; `player/README.md` y `config.py`.
 
-En castellano, el objetivo del Simulacro aparece dentro del recuadro 01,
+En castellano y catalán, el objetivo del Simulacro aparece dentro del recuadro 01,
 en lugar de la ilustración «Seguid la instrucción». No se repite como subtítulo
 bajo el nombre del puzzle. Las notas del GM conservan el mismo objetivo.
+
+
+Revisión del 7 octubre 2026, implementada en castellano: los cierres finales
+utilizan el mismo mensaje «NIVEL SUPERADO», composición y escala, con la
+cabecera oculta durante la confirmación. Los avisos intermedios conservan su
+significado propio. Memoria Extrema se dirige al equipo en plural; los tiempos
+usan el acento ámbar y la unidad «s», preservando el rojo de tiempo agotado.
+El nombre de marca en el cierre castellano es «LA PIRÁMIDE».
+
+El usuario confirma la versión castellana el 7 octubre 2026. Implementada la
+versión catalana equivalente: objetivos, herramientas, acciones, Atención,
+instrucciones completas del Simulacre, mensajes de juego y cierres. Mantiene
+la composición aprobada y el audio catalán existente de la introducción con
+sus subtítulos y tiempos. Las capturas no sustituyen una validación en sala
+con hardware.

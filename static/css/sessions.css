@@ -1,0 +1,43 @@
+/* Operator session workspace; follows the existing GM controls. */
+[data-gm-panel="sesiones"] [hidden], #gm-test-mode[hidden] { display:none!important; }
+[data-gm-panel="sesiones"] .gm-session-layout { grid-template-columns:minmax(0,1.4fr) minmax(340px,1fr); align-items:start; }
+[data-gm-panel="sesiones"] .gm-session-form { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.session-form-heading { padding-bottom:14px; border-bottom:1px solid var(--gm-line,#cbd7df); }
+.session-form-heading>div { display:flex; align-items:center; flex-wrap:wrap; gap:12px; }
+.session-form-heading strong { font-size:20px; }
+.session-form-heading p { margin:8px 0 0; font-size:13px; color:#526574; }
+.session-badge { display:inline-block; padding:5px 9px; font:700 12px/1.2 Arial,sans-serif; border:1px solid #b9cbd5; border-radius:4px; background:#edf3f6; color:#25495e; }
+.session-test { background:#fff1d8; color:#77500c; border-color:#dcb478; }
+.session-form-actions { border-top:1px solid #cbd7df; padding-top:14px; }
+.session-form-actions #gm-delete-session-btn { margin-left:auto; }
+.session-list-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.session-list-heading h3 { margin:0; font-size:20px; }
+.session-list-heading button { min-height:34px; font-size:12px; }
+.session-list-tabs { display:flex; gap:8px; margin:16px 0; }
+.session-list-tabs button { flex:1; min-height:38px; }
+.session-list-tabs [aria-pressed="true"] { background:#25495e; color:#fff; border-color:#25495e; }
+.session-search, .session-filters label { display:grid; gap:5px; font-size:12px; color:#526574; }
+.session-search input, .session-filters :is(input,select) { width:100%; min-width:0; min-height:38px; padding:8px; border:1px solid #b9cbd5; border-radius:4px; background:white; color:#25495e; font:14px Arial; }
+.session-filters { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+#gm-session-list { max-height:540px; overflow:auto; padding:2px; }
+.gm-session-item { width:100%; text-align:left; }
+.gm-session-item .session-item-top { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+.gm-session-item strong { min-width:0; overflow-wrap:anywhere; }
+.gm-session-item .session-badge { font-size:11px; }
+.gm-session-item.is-current { border-left:4px solid #128169; }
+.session-error { margin:0; padding:12px; color:#8d2635; background:#fff0f2; border:1px solid #dea7af; border-radius:4px; }
+.session-results { border-top:1px solid #cbd7df; margin-top:20px; padding-top:16px; }
+.session-results h3 { font-size:21px; margin:0 0 12px; }
+.session-results .session-result-summary { display:flex; flex-wrap:wrap; gap:16px; padding:12px; background:#edf3f6; border-radius:4px; margin-bottom:12px; }
+.session-results table { width:100%; border-collapse:collapse; font-size:14px; }
+.session-results :is(th,td) { padding:9px; text-align:left; border-bottom:1px solid #dbe4e9; }
+#gm-session-delete-dialog { max-width:520px; border:1px solid #9bb4c3; border-radius:6px; padding:24px; color:#25495e; }
+#gm-session-delete-dialog::backdrop { background:#0a1016a0; }
+[data-gm-panel="sesiones"] :is(input,select,button,textarea):focus-visible { outline:3px solid #209db9; outline-offset:2px; }
+@media(max-width:1100px) { [data-gm-panel="sesiones"] .gm-session-form { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:850px) { [data-gm-panel="sesiones"] .gm-session-layout { grid-template-columns:1fr; } #gm-session-list { max-height:none; } }
+@media(max-width:540px) { [data-gm-panel="sesiones"] .gm-session-form { grid-template-columns:1fr; } .session-form-actions #gm-delete-session-btn { margin-left:0; } }
+[data-gm-panel="sesiones"] .gm-actions-compact { display:flex; flex-wrap:wrap; justify-content:flex-end; }
+[data-gm-panel="sesiones"] .gm-session-form textarea { min-height:76px; height:76px; resize:vertical; }
+#gm-test-mode { align-self:flex-start; }
+.session-list-heading button, .session-list-tabs button { border:1px solid #b9cbd5; border-radius:4px; padding:8px 12px; color:#25495e; background:white; }
