@@ -20,6 +20,6 @@ applyTo: "templates/puzzle*.html, static/js/puzzle*.js, static/css/puzzle*.css"
 - Templates should stay minimal: static asset paths should use `{{ url_for('static', filename='...') }}` and should avoid embedding gameplay logic.
 - CSS should preserve the current full-screen puzzle layout approach: top status area, bottom content area, puzzle-specific background image/video assets, and the repo's custom font usage when already present.
 - Do not introduce frontend frameworks, bundlers, or module systems for puzzle pages. Match the current plain HTML, CSS, and browser JavaScript approach.
-- When adding media references, assume files under `static/audios/`, `static/images/`, and `static/videos/` may be missing locally because those directories are ignored in Git.
+- Keep used images at their tracked paths under `static/images/`; archive unused images in the ignored `no_usadas/` subfolder. Audio keeps its usual paths under `static/audios/`, entirely ignored and distributed by USB. Check dynamic references before moving media; `static/videos/` remains ignored.
 - Prefer focused visual changes that fit the established puzzle screen rather than broad shared redesigns across all puzzles.
 - For new puzzle frontends, mirror the established file naming pattern exactly: `templates/puzzleN.html`, `static/js/puzzleN.js`, `static/css/puzzleN.css`.

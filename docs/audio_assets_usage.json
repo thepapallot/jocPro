@@ -1,0 +1,518 @@
+{
+  "review_date": "2026-10-08",
+  "scope": "Audios locales de static/audios; referencias actuales en frontend, plantillas y backend, con resolución de los mapas dinámicos de Código Sonoro. Sin cargar la aplicación ni conectar MQTT.",
+  "audio_files_total": 33,
+  "audio_files_used": 33,
+  "audio_files_newly_available_to_git": 0,
+  "audio_files_to_keep_ignored": 33,
+  "included_audio_bytes": 207547985,
+  "associated_files": [
+    {
+      "path": "static/audios/intro/intro-ca.vtt",
+      "reason": "Subtítulos exportados de la locución catalana; se conserva la excepción existente.",
+      "include_in_git": false,
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": true,
+      "already_tracked": false
+    }
+  ],
+  "missing_active_references": [
+    {
+      "path": "static/audios/effects/piramide_completada.wav",
+      "reference": "static/js/puzzle6.js",
+      "status": "Referencia activa; archivo ausente en disco."
+    },
+    {
+      "path": "static/audios/effects/remove.wav",
+      "reference": "static/js/puzzle4.js",
+      "status": "Referencia activa; archivo ausente en disco."
+    }
+  ],
+  "inactive_missing_references": [
+    {
+      "path": "static/audios/P4_F2/correcta.mp3",
+      "references": [
+        "mqtt/puzzles/puzzle4.py:211",
+        "static/js/puzzle4.js:470"
+      ],
+      "reason": "El backend envía play_final, pero el frontend tiene comentada su reproducción y utiliza nivel_completado.wav."
+    }
+  ],
+  "checks": [
+    "Mapas y muestras de las dos rondas de Código Sonoro resueltos mediante AST sin importar el backend.",
+    "Incluidas las ocho pistas WrongSongs: son distractores usados por los terminales.",
+    "Llamadas dinámicas playEffect(file) contrastadas con los efectos disponibles.",
+    "La intro catalana y su VTT mantienen sus rutas originales y se distribuyen por USB.",
+    "Solo se cambia la política de Git; no se modifican reproducción, instrucciones, estados ni volumen."
+  ],
+  "verification": "Hashes conservados y rutas originales restauradas; pruebas aisladas, sin MQTT ni hardware.",
+  "assets": [
+    {
+      "path": "static/audios/P4_F1/pista1.wav",
+      "bytes": 1050302,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F1/pista2.wav",
+      "bytes": 1050302,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F1/pista3.wav",
+      "bytes": 1050302,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F1/pista4.wav",
+      "bytes": 1050302,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F1/song.wav",
+      "bytes": 4202174,
+      "include_in_git": false,
+      "reason": "Canción de muestra de una ronda de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/pista1.wav",
+      "bytes": 524990,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/pista2.wav",
+      "bytes": 524990,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/pista3.wav",
+      "bytes": 524990,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/pista4.wav",
+      "bytes": 524990,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/pista5.wav",
+      "bytes": 524990,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/pista6.wav",
+      "bytes": 524990,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/pista7.wav",
+      "bytes": 524990,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/pista8.wav",
+      "bytes": 524990,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/P4_F2/song.wav",
+      "bytes": 3414206,
+      "include_in_git": false,
+      "reason": "Canción de muestra de una ronda de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/WrongSongs/wrong1.wav",
+      "bytes": 1858066,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/WrongSongs/wrong2.wav",
+      "bytes": 2012646,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/WrongSongs/wrong3.wav",
+      "bytes": 1400976,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/WrongSongs/wrong4.wav",
+      "bytes": 1557038,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/WrongSongs/wrong5.wav",
+      "bytes": 1317614,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/WrongSongs/wrong6.wav",
+      "bytes": 1794080,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/WrongSongs/wrong7.wav",
+      "bytes": 1058150,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/WrongSongs/wrong8.wav",
+      "bytes": 1058150,
+      "include_in_git": false,
+      "reason": "Pista correcta o distractora del mapa de terminales de Código Sonoro; URL construida por el backend.",
+      "references": [
+        "mqtt/puzzles/puzzle4.py",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/apareix_contingut.wav",
+      "bytes": 202830,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "static/js/puzzle3.js",
+        "static/js/puzzle10.js",
+        "static/js/puzzle1.js",
+        "static/js/puzzle8.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/beep_countdown.wav",
+      "bytes": 281166,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "static/js/puzzle12.js",
+        "static/js/puzzle5.js",
+        "static/js/puzzle6.js",
+        "static/js/puzzle1.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/boto.wav",
+      "bytes": 192078,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "static/js/puzzle5.js",
+        "static/js/puzzle3.js",
+        "static/js/puzzle9.js",
+        "static/js/puzzle8.js",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/canvi_laberint.wav",
+      "bytes": 598882,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "mqtt/puzzles/puzzle2.py"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/correcte.wav",
+      "bytes": 384078,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "static/js/puzzle3.js",
+        "static/js/puzzle7.js",
+        "static/js/puzzle10.js",
+        "static/js/puzzle9.js",
+        "static/js/puzzle1.js",
+        "static/js/puzzle2.js",
+        "static/js/puzzle11.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/fase_completada.wav",
+      "bytes": 474702,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "static/js/puzzle12.js",
+        "static/js/puzzle5.js",
+        "static/js/puzzle1.js",
+        "static/js/puzzle8.js",
+        "static/js/puzzle2.js",
+        "static/js/puzzle4.js",
+        "static/js/puzzle11.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/fase_nocompletada.wav",
+      "bytes": 124494,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "static/js/puzzle12.js",
+        "static/js/puzzle5.js",
+        "static/js/puzzle6.js",
+        "static/js/puzzle10.js",
+        "static/js/puzzle1.js",
+        "static/js/puzzle8.js",
+        "static/js/puzzle4.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/incorrecte.wav",
+      "bytes": 174714,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "static/js/puzzle3.js",
+        "static/js/puzzle9.js",
+        "static/js/puzzle1.js",
+        "static/js/puzzle2.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/effects/nivel_completado.wav",
+      "bytes": 192078,
+      "include_in_git": false,
+      "reason": "Efecto funcional cargado por URL explícita o mediante playEffect(file).",
+      "references": [
+        "static/js/puzzle12.js",
+        "static/js/puzzle5.js",
+        "static/js/puzzle3.js",
+        "static/js/puzzle7.js",
+        "static/js/puzzle10.js",
+        "static/js/puzzle9.js",
+        "static/js/puzzle1.js",
+        "static/js/puzzle8.js",
+        "static/js/puzzle2.js",
+        "static/js/puzzle4.js",
+        "static/js/puzzle11.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/intro/intro-ca.mp3",
+      "bytes": 1864735,
+      "include_in_git": false,
+      "reason": "Locución catalana de la apertura, cargada por el perfil de grabación.",
+      "references": [
+        "static/js/presentation-recordings.js",
+        "static/js/presentation-pilot.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": true,
+      "already_tracked": false
+    },
+    {
+      "path": "static/audios/musica_ambient/musica_piramide.mp3",
+      "bytes": 174984000,
+      "include_in_git": false,
+      "reason": "Música de fondo persistente y previsualización de la apertura.",
+      "references": [
+        "static/js/bgm_layer.js",
+        "static/js/presentation-opening.js"
+      ],
+      "distribution": "USB: conservar static/audios/ y sus subcarpetas habituales.",
+      "was_tracked_before_move": false,
+      "already_tracked": false
+    }
+  ],
+  "storage_policy": {
+    "audio": "static/audios/; carpeta íntegramente ignorada por Git.",
+    "organization": "Subcarpetas originales por puzzle, efectos, intro y fondo; sin usados/no_usados.",
+    "distribution": "Copiar audios/ por USB dentro de static/ conservando las subcarpetas.",
+    "previously_tracked_audio": "Se retira la intro y sus subtítulos del índice de Git, conservando los archivos locales."
+  }
+}
