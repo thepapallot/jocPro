@@ -154,8 +154,9 @@ class Puzzle5(BasePuzzle):
         self.waiting_deadline = None
         
         # Send MQTT message to Arduino/hardware
-        self.mqtt_client.send_message("FROM_FLASK", f"P5_Round{round_number}")
-        
+        #self.mqtt_client.send_message("FROM_FLASK", f"P5_Round{round_number}")
+        self.mqtt_client.send_message("FROM_FLASK", f"P5_Round2") ##hard coded to 2 because we are only 1 round and it is round 2
+
         # Push update to frontend
         self._push({
             "round": round_number,
