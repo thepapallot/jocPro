@@ -40,6 +40,6 @@
 - Avoid introducing blocking operations in Flask request handlers; puzzle timing/state should remain in puzzle classes or background-safe logic.
 
 ## Pitfalls
-- Repo assets under `static/audios/`, `static/images/`, and `static/videos/` are ignored in Git and may be missing locally.
+- Active images are tracked under `static/images/`; its `no_usadas/` reserve is ignored. All audio lives in its usual subfolders under `static/audios/`, entirely ignored and distributed by USB. Preserve audio subfolders on transfer. Check dynamic references before moving media; `static/videos/` remains ignored.
 - If MQTT is unavailable, puzzle interactions fail even when Flask routes render successfully.
 - Keep thread-safety in mind for shared puzzle state (`threading.Lock` is used in current puzzle implementations).

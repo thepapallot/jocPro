@@ -1,12 +1,10 @@
 venv/
 /output/
 __pycache__
-static/audios/*
-!static/audios/intro/
-static/audios/intro/*
-!static/audios/intro/intro-ca.mp3
-!static/audios/intro/intro-ca.vtt
-static/images/
+# Las imágenes usadas se versionan; su reserva queda local.
+/static/images/no_usadas/
+# Todos los audios se distribuyen por USB.
+/static/audios/
 static/videos/
 
 # Telemetry database runtime files (SQLite artifacts)

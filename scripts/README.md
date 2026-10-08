@@ -15,7 +15,7 @@ Audita imagenes y referencias de imagen en el proyecto.
 
 Que hace:
 
-- recorre `static/images`
+- recorre los recursos activos de `static/images`, excluyendo `no_usadas/`
 - busca referencias `/static/images/...` en código, templates y visores
 - detecta referencias faltantes
 - reporta conteos por bucket/subcarpeta y top de uso

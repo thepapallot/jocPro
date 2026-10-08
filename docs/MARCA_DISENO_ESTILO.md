@@ -1,6 +1,6 @@
 # Guía de marca diseño y estilo de La Piràmide
 
-Referencia editorial vigente del proyecto. Última actualización: **7 octubre
+Referencia editorial vigente del proyecto. Última actualización: **8 octubre
 2026**. Recoge las decisiones del equipo, la información publicada y la revisión
 de recursos gráficos. Leer antes de editar, como establece [AGENTS.md](../AGENTS.md).
 
@@ -142,7 +142,7 @@ Componente: [`static/js/pyramid-logo.js`](../static/js/pyramid-logo.js).
 - La pirámide se usa para identidad, progreso y celebración; no encerrar cada
   aviso o elemento de juego en otro triángulo.
 - El logo PNG antiguo se retiró de `static/`; las pantallas utilizan el SVG maestro. Las maquetas históricas conservan su copia en `output/legacy-assets/`.
-- `static/images/shared/branding/logo_adn.png` se reserva para firma del organizador
+- `static/images/no_usadas/shared/branding/logo_adn.png` se reserva para firma del organizador
   donde corresponda. No sustituye al logo del juego. La relación visual entre
   Enigmik, ADN y el producto requiere definir un cierre gráfico coherente.
 - Una variante monocroma definitiva para impresión sigue pendiente.
@@ -584,6 +584,10 @@ Minimizar narraciones entre puzzles: explica el GM. La apertura tiene locución
 catalana y subtítulos temporizados; las voces de los demás idiomas y la narración
 del cierre siguen pendientes. El audio de las mecánicas se conserva.
 
+Organización acordada e implementada el 8 octubre 2026: todos los audios se
+conservan en las subcarpetas habituales de `static/audios/`, sin separar usados
+y no usados. La carpeta completa queda fuera de Git y se comparte por USB.
+
 Recuperada la música de fondo histórica: `static/audios/musica_ambient/musica_piramide.mp3`.
 Un único reproductor en la ventana exterior de jugadores (`bgm_layer.js`) continúa
 al cambiar de HTML, durante bienvenida, explicaciones, juegos y transiciones.
@@ -711,8 +715,11 @@ del montaje que se ofrece al cliente.
 
 ### Ocho iconos de apoyo
 
-Carpeta: `static/images/shared/nuevos iconos/`. Usarlos grandes y acompañados de
-una etiqueta. En controles pequeños, preferir símbolos simples y texto.
+Reserva local: `static/images/no_usadas/shared/nuevos iconos/`. Estos ocho
+iconos siguen autorizados, pero no se cargan en las pantallas actuales. Si se
+incorpora uno, moverlo a la carpeta activa y actualizar su referencia. Usarlos
+grandes y acompañados de una etiqueta. En controles pequeños, preferir símbolos
+simples y texto.
 
 | Acción | Archivo | Criterio |
 | --- | --- | --- |
@@ -736,21 +743,25 @@ SVG o CSS sencillo. No recuperar las ilustraciones descartadas desde copias anti
 - Memory: `alpha`, `beta`, `gamma`, `delta`, `epsilon`, `lambda`, `mu`, `omega`,
   `pi`, `sigma` en `static/images/puzzle8/`. Los `.svg` contienen raster incrustado;
   no asumir escalado vectorial infinito. Conservar siluetas y códigos.
-- Botones: `static/images/puzzle12/imatges/fase*.gif` y estados siguen utilizados.
-  Su sustitución requiere preservar patrones, cantidades, colores y tiempos.
-  Objetivo visual: composición común sin el triángulo decorativo antiguo.
+- Botones: el código vigente dibuja las bolas a partir de los patrones del juego
+  y representa acierto y error con texto y CSS; conserva
+  `static/images/puzzle12/wait.png`. Los GIF y PNG antiguos sin uso quedan en
+  `static/images/no_usadas/puzzle12/`, como reserva local. Mantener patrones,
+  cantidades, colores y tiempos al revisar el tablero.
 - Sumas, Trivial, Cronómetro, Música y Energía conservan números, preguntas,
   secuencias, tiempos y señales reales. Los iconos no sustituyen esos datos.
-- `terminal_3d/` queda como referencia física y apoyo puntual, especialmente
-  `buttons_panel_front.png` y `terminal_box_buttons_numbers_front.png`. No mezclar
+- `static/images/shared/terminal_3d/buttons_panel_front.png` sigue activo.
+  Los demás renders quedan como referencia física en
+  `static/images/no_usadas/shared/terminal_3d/`, incluido
+  `terminal_box_buttons_numbers_front.png`. No mezclar
   estos renders con los objetos principales dentro de una misma explicación,
   salvo el panel frontal aprobado para las explicaciones de botones en QUIZ,
   Memoria Extrema y Conexión Simultánea; se combina con el token cuando este
   forma parte de las herramientas.
-- Verificar contenido antes de usar `terminal_3d`: hay nombres incorrectos y su
+- Verificar contenido antes de usar la reserva de `terminal_3d`: hay nombres incorrectos y su
   README enumera archivos ausentes. `symbol_plate_o.png` muestra una caja;
   `scanner_bar_perspective.png` muestra una placa triangular.
-- `shared/puzzle10/` es una reserva técnica, no material del flujo actual.
+- `static/images/no_usadas/shared/puzzle10/` es una reserva técnica, no material del flujo actual.
 - El archivo histórico `old_pics/` se retiró el 5 de octubre de 2026; no recuperar sus recursos para el juego nuevo.
 
 ## Marketing

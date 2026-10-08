@@ -1,24 +1,18 @@
 {
   "repo_root": "/home/agusti/Documentos/repositori/jocPro",
-  "images_total": 98,
+  "images_total": 31,
   "images_by_bucket": {
-    "shared": 50,
-    "puzzle12": 19,
     "puzzle2": 10,
     "puzzle8": 10,
-    "previews": 9
+    "previews": 7,
+    "shared": 3,
+    "puzzle12": 1
   },
   "images_by_subfolder": {
-    "shared/puzzle10": 24,
-    "puzzle12/imatges": 16,
-    "shared/terminal_3d": 15,
     "puzzle2/symbols": 10,
-    "previews/game-surfaces": 9,
-    "shared/nuevos iconos": 8,
+    "previews/game-surfaces": 7,
     "shared/gameplay": 2,
-    "puzzle12/good.png": 1,
     "puzzle12/wait.png": 1,
-    "puzzle12/wrong.png": 1,
     "puzzle8/alpha.svg": 1,
     "puzzle8/beta.svg": 1,
     "puzzle8/delta.svg": 1,
@@ -29,7 +23,7 @@
     "puzzle8/omega.svg": 1,
     "puzzle8/pi.svg": 1,
     "puzzle8/sigma.svg": 1,
-    "shared/branding": 1
+    "shared/terminal_3d": 1
   },
   "top_referenced_image_urls": [
     {
@@ -101,10 +95,6 @@
       "count": 1
     },
     {
-      "url": "/static/images/puzzle12/imatges/fase${streakId}_${giffIndex}.gif",
-      "count": 1
-    },
-    {
       "url": "/static/images/shared/gameplay/token_card.png",
       "count": 1
     },
@@ -136,10 +126,6 @@
     },
     {
       "url": "/static/images/puzzle2/symbols/symbol_${symbol}.png",
-      "count": 1
-    },
-    {
-      "url": "/static/images/puzzle12/imatges/fase${streakId}_${giffIndex}.gif",
       "count": 1
     },
     {
@@ -197,12 +183,6 @@
       ]
     },
     {
-      "file": "static/js/puzzle12.js",
-      "references": [
-        "/static/images/puzzle12/imatges/fase${streakId}_${giffIndex}.gif"
-      ]
-    },
-    {
       "file": "static/js/puzzle2.js",
       "references": [
         "/static/images/puzzle2/symbols/symbol_${symbol}.png"
@@ -221,34 +201,14 @@
     }
   ],
   "all_image_files": [
-    "static/images/previews/game-surfaces/maze-720.png",
     "static/images/previews/game-surfaces/maze-alarm.png",
     "static/images/previews/game-surfaces/maze-normal.png",
-    "static/images/previews/game-surfaces/memory-720.png",
     "static/images/previews/game-surfaces/memory-answer.png",
     "static/images/previews/game-surfaces/memory-blackOnly.png",
     "static/images/previews/game-surfaces/memory-input.png",
     "static/images/previews/game-surfaces/memory-numbers.png",
     "static/images/previews/game-surfaces/memory-tokens.png",
-    "static/images/puzzle12/good.png",
-    "static/images/puzzle12/imatges/fase1_1.gif",
-    "static/images/puzzle12/imatges/fase1_2.gif",
-    "static/images/puzzle12/imatges/fase1_3.gif",
-    "static/images/puzzle12/imatges/fase1_4.gif",
-    "static/images/puzzle12/imatges/fase1_5.gif",
-    "static/images/puzzle12/imatges/fase2_1.gif",
-    "static/images/puzzle12/imatges/fase2_2.gif",
-    "static/images/puzzle12/imatges/fase2_3.gif",
-    "static/images/puzzle12/imatges/fase2_4.gif",
-    "static/images/puzzle12/imatges/fase2_5.gif",
-    "static/images/puzzle12/imatges/fase3_1.gif",
-    "static/images/puzzle12/imatges/fase3_2.gif",
-    "static/images/puzzle12/imatges/fase3_3.gif",
-    "static/images/puzzle12/imatges/fase3_4.gif",
-    "static/images/puzzle12/imatges/fase3_5.gif",
-    "static/images/puzzle12/imatges/fase4_1.gif",
     "static/images/puzzle12/wait.png",
-    "static/images/puzzle12/wrong.png",
     "static/images/puzzle2/symbols/symbol_0.png",
     "static/images/puzzle2/symbols/symbol_1.png",
     "static/images/puzzle2/symbols/symbol_2.png",
@@ -269,55 +229,8 @@
     "static/images/puzzle8/omega.svg",
     "static/images/puzzle8/pi.svg",
     "static/images/puzzle8/sigma.svg",
-    "static/images/shared/branding/logo_adn.png",
     "static/images/shared/gameplay/terminal_box.png",
     "static/images/shared/gameplay/token_card.png",
-    "static/images/shared/nuevos iconos/alerta.png",
-    "static/images/shared/nuevos iconos/altavoz.png",
-    "static/images/shared/nuevos iconos/apretar boton.png",
-    "static/images/shared/nuevos iconos/base nfc con token.png",
-    "static/images/shared/nuevos iconos/equipo_consenso.png",
-    "static/images/shared/nuevos iconos/repetir.png",
-    "static/images/shared/nuevos iconos/respuesta_correcta.png",
-    "static/images/shared/nuevos iconos/respuesta_incorrecta.png",
-    "static/images/shared/puzzle10/blank_token_slot.png",
-    "static/images/shared/puzzle10/equiv_screen_pattern_green_red_blue.png",
-    "static/images/shared/puzzle10/equiv_terminal_led_green_red_blue.png",
-    "static/images/shared/puzzle10/grid_completo_actual.png",
-    "static/images/shared/puzzle10/patron_terminal_01.svg",
-    "static/images/shared/puzzle10/patron_terminal_01_empty.svg",
-    "static/images/shared/puzzle10/patron_terminal_01_lit_1.svg",
-    "static/images/shared/puzzle10/patron_terminal_01_lit_2.svg",
-    "static/images/shared/puzzle10/patron_terminal_green_red_blue.svg",
-    "static/images/shared/puzzle10/terminal_box_led_green.png",
-    "static/images/shared/puzzle10/terminal_box_led_purple.png",
-    "static/images/shared/puzzle10/terminal_box_led_red.png",
-    "static/images/shared/puzzle10/terminal_segment_01_lit.svg",
-    "static/images/shared/puzzle10/tira_led_empty.png",
-    "static/images/shared/puzzle10/tira_led_pattern_01.png",
-    "static/images/shared/puzzle10/tira_led_progress_green_red.png",
-    "static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
-    "static/images/shared/puzzle10/tira_led_segment_green.png",
-    "static/images/shared/puzzle10/tira_led_segment_purple.png",
-    "static/images/shared/puzzle10/tira_led_segment_red.png",
-    "static/images/shared/puzzle10/tira_led_stage_empty.png",
-    "static/images/shared/puzzle10/tira_led_stage_green_left.png",
-    "static/images/shared/puzzle10/tira_led_stage_green_red_blue_left.png",
-    "static/images/shared/puzzle10/tira_led_stage_green_red_right.png",
-    "static/images/shared/terminal_3d/buttons_panel_front.png",
-    "static/images/shared/terminal_3d/buttons_panel_perspective.png",
-    "static/images/shared/terminal_3d/display_plate_blank_dark.png",
-    "static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
-    "static/images/shared/terminal_3d/scanner_bar_off.png",
-    "static/images/shared/terminal_3d/scanner_bar_on.png",
-    "static/images/shared/terminal_3d/scanner_bar_perspective.png",
-    "static/images/shared/terminal_3d/symbol_plate_alpha.png",
-    "static/images/shared/terminal_3d/symbol_plate_checkerboard.png",
-    "static/images/shared/terminal_3d/symbol_plate_o.png",
-    "static/images/shared/terminal_3d/symbol_plate_o_white.png",
-    "static/images/shared/terminal_3d/terminal_box_buttons_numbers_front.png",
-    "static/images/shared/terminal_3d/terminal_box_perspective_hero_white.png",
-    "static/images/shared/terminal_3d/token_pyramid_base_angled_14.png",
-    "static/images/shared/terminal_3d/token_square_plate_angled_14.png"
+    "static/images/shared/terminal_3d/buttons_panel_front.png"
   ]
 }

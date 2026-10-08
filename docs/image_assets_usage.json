@@ -1,0 +1,868 @@
+{
+  "review_date": "2026-10-08",
+  "scope": "Imágenes locales de static/images; selección por uso en código, plantillas y visores vigentes, incluidas rutas dinámicas. Las menciones editoriales o informes históricos no prueban uso en pantallas.",
+  "images_total": 98,
+  "images_to_include": 31,
+  "images_to_keep_ignored": 67,
+  "included_bytes": 10662573,
+  "already_tracked_images": [
+    "static/branding/piramide-vector.svg",
+    "static/favicon.ico"
+  ],
+  "checks": [
+    "Diez símbolos de Serpientes contrastados con las secuencias del backend.",
+    "Diez símbolos de Memory contrastados con CSS y catálogo del backend.",
+    "SVG de Memory con raster incrustado: sin dependencias externas.",
+    "Siete opciones del visor resueltas a archivos existentes.",
+    "Panel de botones resuelto desde assets de presentation-flow y su consumidor presentation-briefing.",
+    "Botones dibuja el patrón desde target; num_giff no se transforma en una URL de GIF."
+  ],
+  "guide_discrepancy": "La guía se ha corregido: los GIF antiguos de Botones están archivados en no_usadas; el código vigente conserva wait.png y dibuja el patrón con bolas.",
+  "verification": "Revisión estática de referencias, rutas dinámicas y hashes; recursos activos idénticos y en sus rutas originales. Sin servidor, MQTT ni hardware.",
+  "assets": [
+    {
+      "path": "static/images/previews/game-surfaces/maze-720.png",
+      "bytes": 221708,
+      "include_in_git": false,
+      "reason": "Captura sin opción ni referencia vigente en el visor (variante 720).",
+      "references": []
+    },
+    {
+      "path": "static/images/previews/game-surfaces/maze-alarm.png",
+      "bytes": 398372,
+      "include_in_git": true,
+      "reason": "Ruta dinámica del selector del visor de diseño; captura usada por una opción vigente.",
+      "references": [
+        "player/game-surfaces.html"
+      ]
+    },
+    {
+      "path": "static/images/previews/game-surfaces/maze-normal.png",
+      "bytes": 385503,
+      "include_in_git": true,
+      "reason": "Ruta dinámica del selector del visor de diseño; captura usada por una opción vigente.",
+      "references": [
+        "player/game-surfaces.html"
+      ]
+    },
+    {
+      "path": "static/images/previews/game-surfaces/memory-720.png",
+      "bytes": 310214,
+      "include_in_git": false,
+      "reason": "Captura sin opción ni referencia vigente en el visor (variante 720).",
+      "references": []
+    },
+    {
+      "path": "static/images/previews/game-surfaces/memory-answer.png",
+      "bytes": 427088,
+      "include_in_git": true,
+      "reason": "Ruta dinámica del selector del visor de diseño; captura usada por una opción vigente.",
+      "references": [
+        "player/game-surfaces.html"
+      ]
+    },
+    {
+      "path": "static/images/previews/game-surfaces/memory-blackOnly.png",
+      "bytes": 846823,
+      "include_in_git": true,
+      "reason": "Ruta dinámica del selector del visor de diseño; captura usada por una opción vigente.",
+      "references": [
+        "player/game-surfaces.html"
+      ]
+    },
+    {
+      "path": "static/images/previews/game-surfaces/memory-input.png",
+      "bytes": 377605,
+      "include_in_git": true,
+      "reason": "Ruta dinámica del selector del visor de diseño; captura usada por una opción vigente.",
+      "references": [
+        "player/game-surfaces.html"
+      ]
+    },
+    {
+      "path": "static/images/previews/game-surfaces/memory-numbers.png",
+      "bytes": 375926,
+      "include_in_git": true,
+      "reason": "Ruta dinámica del selector del visor de diseño; captura usada por una opción vigente.",
+      "references": [
+        "player/game-surfaces.html"
+      ]
+    },
+    {
+      "path": "static/images/previews/game-surfaces/memory-tokens.png",
+      "bytes": 810798,
+      "include_in_git": true,
+      "reason": "Ruta dinámica del selector del visor de diseño; captura usada por una opción vigente.",
+      "references": [
+        "player/game-surfaces.html"
+      ]
+    },
+    {
+      "path": "static/images/puzzle12/good.png",
+      "bytes": 590220,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase1_1.gif",
+      "bytes": 6155466,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase1_2.gif",
+      "bytes": 6361260,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase1_3.gif",
+      "bytes": 6441904,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase1_4.gif",
+      "bytes": 6320510,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase1_5.gif",
+      "bytes": 6564188,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase2_1.gif",
+      "bytes": 4256534,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase2_2.gif",
+      "bytes": 4297852,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase2_3.gif",
+      "bytes": 4329284,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase2_4.gif",
+      "bytes": 4306011,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase2_5.gif",
+      "bytes": 4341944,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase3_1.gif",
+      "bytes": 12023228,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase3_2.gif",
+      "bytes": 12225819,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase3_3.gif",
+      "bytes": 12588387,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase3_4.gif",
+      "bytes": 12221851,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase3_5.gif",
+      "bytes": 12239424,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/imatges/fase4_1.gif",
+      "bytes": 5229521,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle12/wait.png",
+      "bytes": 741919,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "templates/puzzle12.html"
+      ]
+    },
+    {
+      "path": "static/images/puzzle12/wrong.png",
+      "bytes": 563800,
+      "include_in_git": false,
+      "reason": "Recurso antiguo: el tablero dibuja bolas desde target y el feedback utiliza texto/CSS; no carga este PNG/GIF.",
+      "references": []
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_0.png",
+      "bytes": 221,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_1.png",
+      "bytes": 234,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_2.png",
+      "bytes": 234,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_3.png",
+      "bytes": 232,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_4.png",
+      "bytes": 232,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_5.png",
+      "bytes": 226,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_6.png",
+      "bytes": 232,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_7.png",
+      "bytes": 232,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_8.png",
+      "bytes": 221,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle2/symbols/symbol_9.png",
+      "bytes": 226,
+      "include_in_git": true,
+      "reason": "Ruta dinámica symbol_${id}.png; las secuencias del backend utilizan los diez símbolos.",
+      "references": [
+        "static/js/puzzle2.js",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle2.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/alpha.svg",
+      "bytes": 11598,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/beta.svg",
+      "bytes": 15337,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/delta.svg",
+      "bytes": 15363,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/epsilon.svg",
+      "bytes": 10236,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/gamma.svg",
+      "bytes": 12969,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/lambda.svg",
+      "bytes": 14494,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/mu.svg",
+      "bytes": 11692,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/omega.svg",
+      "bytes": 13332,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/pi.svg",
+      "bytes": 11831,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/puzzle8/sigma.svg",
+      "bytes": 10787,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle8.css",
+        "static/js/presentation-briefing.js",
+        "static/js/presentation-visuals.js",
+        "static/js/test.js",
+        "mqtt/puzzles/puzzle8.py"
+      ]
+    },
+    {
+      "path": "static/images/shared/branding/logo_adn.png",
+      "bytes": 4583891,
+      "include_in_git": false,
+      "reason": "Firma reservada en la guía, sin referencia de carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/gameplay/terminal_box.png",
+      "bytes": 3984010,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/css/puzzle4.css",
+        "static/js/presentation-flow.js",
+        "static/js/test.js",
+        "templates/puzzle1.html",
+        "templates/puzzle10.html",
+        "templates/puzzle5.html"
+      ]
+    },
+    {
+      "path": "static/images/shared/gameplay/token_card.png",
+      "bytes": 623942,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/js/presentation-flow.js",
+        "static/js/test.js",
+        "templates/puzzle1.html",
+        "templates/puzzle6.html",
+        "templates/puzzle8.html",
+        "templates/puzzle9.html"
+      ]
+    },
+    {
+      "path": "static/images/shared/nuevos iconos/alerta.png",
+      "bytes": 767032,
+      "include_in_git": false,
+      "reason": "Icono autorizado en el catálogo editorial, sin referencia de carga en el código actual.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/nuevos iconos/altavoz.png",
+      "bytes": 1075057,
+      "include_in_git": false,
+      "reason": "Icono autorizado en el catálogo editorial, sin referencia de carga en el código actual.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/nuevos iconos/apretar boton.png",
+      "bytes": 1295434,
+      "include_in_git": false,
+      "reason": "Icono autorizado en el catálogo editorial, sin referencia de carga en el código actual.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/nuevos iconos/base nfc con token.png",
+      "bytes": 971993,
+      "include_in_git": false,
+      "reason": "Icono autorizado en el catálogo editorial, sin referencia de carga en el código actual.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/nuevos iconos/equipo_consenso.png",
+      "bytes": 491417,
+      "include_in_git": false,
+      "reason": "Icono autorizado en el catálogo editorial, sin referencia de carga en el código actual.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/nuevos iconos/repetir.png",
+      "bytes": 465036,
+      "include_in_git": false,
+      "reason": "Icono autorizado en el catálogo editorial, sin referencia de carga en el código actual.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/nuevos iconos/respuesta_correcta.png",
+      "bytes": 583284,
+      "include_in_git": false,
+      "reason": "Icono autorizado en el catálogo editorial, sin referencia de carga en el código actual.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/nuevos iconos/respuesta_incorrecta.png",
+      "bytes": 785940,
+      "include_in_git": false,
+      "reason": "Icono autorizado en el catálogo editorial, sin referencia de carga en el código actual.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/blank_token_slot.png",
+      "bytes": 1096,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/equiv_screen_pattern_green_red_blue.png",
+      "bytes": 115705,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/equiv_terminal_led_green_red_blue.png",
+      "bytes": 261513,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/grid_completo_actual.png",
+      "bytes": 356596,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/patron_terminal_01.svg",
+      "bytes": 2439,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/patron_terminal_01_empty.svg",
+      "bytes": 1708,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/patron_terminal_01_lit_1.svg",
+      "bytes": 2005,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/patron_terminal_01_lit_2.svg",
+      "bytes": 2153,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/patron_terminal_green_red_blue.svg",
+      "bytes": 2449,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/terminal_box_led_green.png",
+      "bytes": 2748152,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/terminal_box_led_purple.png",
+      "bytes": 2747396,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/terminal_box_led_red.png",
+      "bytes": 2748193,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/terminal_segment_01_lit.svg",
+      "bytes": 1974,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_empty.png",
+      "bytes": 567818,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_pattern_01.png",
+      "bytes": 550362,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_progress_green_red.png",
+      "bytes": 558956,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_progress_green_red_blue.png",
+      "bytes": 550319,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_segment_green.png",
+      "bytes": 563816,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_segment_purple.png",
+      "bytes": 562900,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_segment_red.png",
+      "bytes": 563285,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_stage_empty.png",
+      "bytes": 174220,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_stage_green_left.png",
+      "bytes": 203496,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_stage_green_red_blue_left.png",
+      "bytes": 201047,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/puzzle10/tira_led_stage_green_red_right.png",
+      "bytes": 202650,
+      "include_in_git": false,
+      "reason": "Reserva técnica sin referencias vigentes en el juego o los visores.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/buttons_panel_front.png",
+      "bytes": 1560658,
+      "include_in_git": true,
+      "reason": "Referencia explícita en código o plantilla vigente.",
+      "references": [
+        "static/js/presentation-flow.js"
+      ]
+    },
+    {
+      "path": "static/images/shared/terminal_3d/buttons_panel_perspective.png",
+      "bytes": 1700936,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/display_plate_blank_dark.png",
+      "bytes": 821557,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/numbers_strip_1_to_6.png",
+      "bytes": 948602,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/scanner_bar_off.png",
+      "bytes": 944626,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/scanner_bar_on.png",
+      "bytes": 1492335,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/scanner_bar_perspective.png",
+      "bytes": 740778,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/symbol_plate_alpha.png",
+      "bytes": 1461658,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/symbol_plate_checkerboard.png",
+      "bytes": 947259,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/symbol_plate_o.png",
+      "bytes": 1893822,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/symbol_plate_o_white.png",
+      "bytes": 1514236,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/terminal_box_buttons_numbers_front.png",
+      "bytes": 1222435,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/terminal_box_perspective_hero_white.png",
+      "bytes": 602885,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/token_pyramid_base_angled_14.png",
+      "bytes": 1192598,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    },
+    {
+      "path": "static/images/shared/terminal_3d/token_square_plate_angled_14.png",
+      "bytes": 1417590,
+      "include_in_git": false,
+      "reason": "Render de referencia física sin carga en las pantallas actuales.",
+      "references": []
+    }
+  ],
+  "storage_policy": {
+    "active_images": "static/images/; disponibles para Git en sus rutas reales.",
+    "unused_images": "static/images/no_usadas/; ignoradas, con la organización relativa conservada.",
+    "active_audio": "static/audios/; íntegramente ignorada y distribuida por USB.",
+    "updates": "Git actualiza las imágenes activas en sus rutas reales; los audios se copian por USB."
+  }
+}

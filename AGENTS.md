@@ -20,6 +20,14 @@ de lo implementado. No presentar una propuesta como si ya estuviera desplegada.
 
 ## Al terminar
 
+- Guardar las imágenes usadas en sus rutas reales de `static/images/`, versionadas
+  directamente; la reserva `static/images/no_usadas/` queda ignorada por Git.
+  Todos los audios permanecen en las subcarpetas habituales de `static/audios/`,
+  ignorada íntegramente y distribuida por USB. No separarlos en usados/no usados.
+  Antes de archivar un recurso, comprobar referencias y rutas dinámicas; al
+  reutilizarlo, moverlo a su carpeta activa y actualizar las referencias.
+  No mantener copias sincronizadas ni añadir excepciones individuales a
+  `.gitignore`. Revisar archivos ausentes antes de entregar.
 - Comprobar coherencia entre la explicación del GM, la presentación y el puzzle.
 - Verificar legibilidad y distribución a 1920 × 1080 y 1280 × 720 cuando cambie
   una pantalla de jugadores. Declarar si solo se ha probado con simulación.

@@ -18,7 +18,7 @@ TEXT_FILE_EXTENSIONS = {
     ".yml",
     ".yaml",
 }
-IGNORE_DIRS = {".git", "venv", "__pycache__", ".mypy_cache", ".pytest_cache"}
+IGNORE_DIRS = {".git", "venv", "__pycache__", ".mypy_cache", ".pytest_cache", "no_usadas"}
 IMAGE_REF_RE = re.compile(r"/static/images/[A-Za-z0-9_./${}-]+")
 SCAN_ROOTS = ["app.py", "config.py", "player", "scenes", "scripts", "static", "templates", "mqtt"]
 
