@@ -6,7 +6,6 @@
   let player = null, state = null, lastSeen = 0;
   const production=panel.dataset.playerUrl==='/';
   const channel=production?new BroadcastChannel('pyramid-player-control-v1'):null;
-  let opening=null;
   let hintLevel=0,guideKey='',sceneLabels='';
   const observations=[];
   const pause=document.createElement('button');pause.type='button';pause.dataset.presentationAction='pause';pause.hidden=true;
@@ -76,35 +75,13 @@
     });
     renderGuide();
   }
-  async function openNativePlayer(path) {
-    // Discover an existing projector after a Test refresh before launching another window.
-    send('sync');
-    await new Promise(resolve=>setTimeout(resolve,250));
-    if(connected()){if(state.phase==='slides'&&state.language!==sessionLanguage())send('language',sessionLanguage());send(path && path!=='/'?'navigate':'focus',path);send('sync');return true;}
-    if(opening)return opening;
-    opening=(async()=>{
-      try {
-        const response=await fetch('/test/player-window',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:path||sessionPath('/')})});
-        const data=await response.json();
-        if(!response.ok)throw new Error(data.error||'No se ha podido abrir la ventana.');
-        for(let i=0;i<50;i++){
-          send('sync');await new Promise(resolve=>setTimeout(resolve,200));
-          if(connected())return true;
-        }
-        throw new Error('La ventana no se ha conectado. Comprueba que usa el mismo perfil del navegador que Test.');
-      }catch(error){$('status').textContent=error.message;throw error;}
-      finally{opening=null;}
-    })();
-    return opening;
-  }
   function openPlayer(path) {
-    if(production)return openNativePlayer(path ? sessionPath(path) : undefined);
     if (player && !player.closed) { if(path && path!=='/')send('navigate',path);else player.focus();send('sync');return true; }
     const url=new URL(panel.dataset.playerUrl,location.href);
     if(!production || state)url.searchParams.set('lang',$('language').value||'ca');
     if(!production)url.searchParams.set('flow','game');
     if(!production&&Array.isArray(window.TEST_ACTIVE_PUZZLE_ORDER)&&window.TEST_ACTIVE_PUZZLE_ORDER.length)url.searchParams.set('order',window.TEST_ACTIVE_PUZZLE_ORDER.join(','));
-    if(production&&path&&path!=='/')url.searchParams.set('shell_target',path);
+    if(production)url.searchParams.set('shell_target',sessionPath(path||'/'));
     // Request the full browser interface, rather than a restricted popup.
     // A new name avoids recovering a popup opened by older versions of Test.
     const width=Math.max(640,Math.min(1440,screen.availWidth-80));
