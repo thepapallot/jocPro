@@ -5,10 +5,10 @@ const fs=require('node:fs');
 const path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../static/js/presentation-gm.js'),'utf8');
 const openSource=source.slice(source.indexOf('  function openPlayer('),source.indexOf('  window.PyramidGM='));
-function harness(existingUrl='about:blank',blocked=false){
+function harness(existingUrl='about:blank',blocked=false,production=false){
   const opened=[],commands=[],replacements=[],status={textContent:''};let focuses=0;
   const child={closed:false,location:{href:existingUrl,replace(url){this.href=url;replacements.push(url)}},focus(){focuses++}};
-  const context={player:null,state:null,lastSeen:0,production:false,URL,screen:{availWidth:1920,availHeight:1080},location:{href:'http://localhost/test'},panel:{dataset:{playerUrl:'/'}},render(){},send:(...args)=>commands.push(args),$:id=>id==='status'?status:{value:'ca'},window:{open(...args){opened.push(args);return blocked?null:child;}}};
+  const context={player:null,state:null,lastSeen:0,production,URL,screen:{availWidth:1920,availHeight:1080},location:{href:'http://localhost/test'},panel:{dataset:{playerUrl:'/'}},sessionPath:path=>`${path}?lang=ca`,render(){},send:(...args)=>commands.push(args),$:id=>id==='status'?status:{value:'ca'},window:{open(...args){opened.push(args);return blocked?null:child;}}};
   vm.createContext(context);vm.runInContext(openSource,context);
   return {open:context.openPlayer,opened,commands,replacements,status,focuses:()=>focuses};
 }
@@ -25,6 +25,15 @@ test('rehearsal player requests the full browser interface and route changes reu
   assert.equal(h.focuses(),0);
   assert.ok(h.commands.some(([action,value])=>action==='navigate'&&value==='/puzzle/2'));
   h.open();assert.equal(h.focuses(),1);
+});
+test('production player opens in the operator browser and preserves the session route',()=>{
+  const h=harness('about:blank',false,true);
+  assert.equal(h.open('/presentacio/2'),true);
+  assert.equal(h.opened[0][1],'pyramid-game-player-normal-window');
+  const target=new URL(h.replacements[0]).searchParams.get('shell_target');
+  assert.equal(target,'/presentacio/2?lang=ca');
+  assert.match(h.opened[0][2],/popup=no/);
+  assert.ok(h.commands.some(([action])=>action==='sync'));
 });
 test('reconnecting after Test reload keeps the existing player route',()=>{
   const h=harness('http://localhost/puzzle/8');
