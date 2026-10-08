@@ -206,7 +206,7 @@
     intro.steps=id===tutorialId?['elements','objective','tools','interaction']:id===journey.trivialId?['journey','objective','tools','interaction']:['objective','tools','interaction'];
     if(id===tutorialId)intro.elementsCopy={es:{title:'LA MISIÓN ESTÁ EN VUESTRAS MANOS',tokenTitle:'VUESTRO TOKEN ES PERSONAL',tokenLead:'Conservad el vuestro durante toda la partida.',terminalTitle:'LOS TERMINALES',terminalLead:'Botones, luces y símbolos para resolver los retos.',action:'Acercad vuestro token al lector del terminal para interactuar.',team:'Un único equipo: compartid información y coordinaos.',notes:'El token es personal: cada persona o pareja conserva el suyo durante toda la partida. Mostrad el lector de un terminal y cómo acercar el token para interactuar. Los terminales contienen botones, luces y símbolos. El nivel requiere trabajar en equipo: compartid lo que encontréis y coordinaos. Después explicad el Simulacro Inicial; esta pantalla no inicia la práctica.'}};
     if(id===2){
-      intro.attentionCopy={es:{text:'Cuando suene la alarma, las serpientes se pondrán rojas. Los símbolos de la pantalla no cambian: buscad en los terminales el mismo símbolo con los colores invertidos.',before:4,after:3}};
+      intro.attentionCopy={es:{text:'Cuando suene la alarma, las serpientes se pondrán rojas. Los símbolos de la pantalla no cambian: buscad en los terminales el mismo símbolo con los colores invertidos.',before:4,after:5}};
       intro.steps.push('attention');
       Object.assign(intro.copy.es,{objectiveTitle:'Completar la serpiente correspondiente a cada token.',objectiveLead:'Completar la serpiente correspondiente a cada token.',exampleLead:'Tokens y símbolos de los terminales.',warning:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.',coordinateLead:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.'});
     }
@@ -227,7 +227,7 @@
     const catalan = reviewedCatalan[id];
     if(catalan){
       Object.assign(intro.copy.ca,{objectiveTitle:catalan.objective,objectiveLead:catalan.objective,exampleLead:catalan.tools,warning:catalan.action,coordinateLead:catalan.action});
-      if(catalan.attention)intro.attentionCopy.ca={text:catalan.attention.join(' '),paragraphs:catalan.attention,...(id===2?{before:4,after:3}:{})};
+      if(catalan.attention)intro.attentionCopy.ca={text:catalan.attention.join(' '),paragraphs:catalan.attention,...(id===2?{before:4,after:5}:{})};
     }
     if(id===tutorialId)intro.elementsCopy.ca={title:'LA MISSIÓ ÉS A LES VOSTRES MANS',tokenTitle:'EL VOSTRE TOKEN ÉS PERSONAL',tokenLead:'Conserveu el vostre durant tota la partida.',terminalTitle:'ELS TERMINALS',terminalLead:'Botons, llums i símbols per resoldre els reptes.',action:'Acosteu el vostre token al lector del terminal per interactuar.',team:'Un únic equip: compartiu informació i coordineu-vos.',notes:'El token és personal: cada persona o parella conserva el seu durant tota la partida. Mostra el lector, els botons, els llums i els símbols del terminal. Per interactuar, cal acostar el token al lector.'};
     intro.journey=journey;
