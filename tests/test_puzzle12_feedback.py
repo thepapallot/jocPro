@@ -55,7 +55,7 @@ window.advancePreview = milliseconds => {
     previewTime = end;
 };
 window.previewCompleted = [];
-window.PyramidGameFlow = {managed: true, complete: id => {window.previewCompleted.push(id); return true;}};
+window.PyramidLevelVictory = {active: false, complete: id => {window.PyramidLevelVictory.active=true;window.previewCompleted.push(id);}};
 """
 
 CHECK = """
@@ -128,12 +128,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('timer-overlay').textContent === '00:02');
     window.puzzle12Debug.success();
     window.puzzle12Debug.solved();
-    test('final success uses common full-screen confirmation', success() && !shown(wait) &&
-        shown(document.getElementById('p12-solved-banner')));
-    window.advancePreview(3999);
-    test('final confirmation stays visible for four seconds', window.previewCompleted.length === 0);
-    window.advancePreview(1);
-    test('completion follows final confirmation', window.previewCompleted.join(',') === '12');
+    test('final confirmation delegates to the shared victory', window.previewCompleted.join(',') === '12');
+    test('final confirmation never shows the old green screen', !shown(document.getElementById('p12-solved-banner')));
+    window.puzzle12Debug.solved();
+    window.advancePreview(4000);
+    test('duplicate confirmation does not replay victory', window.previewCompleted.join(',') === '12');
     document.body.dataset.feedbackResult = JSON.stringify({width: innerWidth, height: innerHeight, checks});
 });
 """
@@ -151,7 +150,7 @@ class Puzzle12FeedbackTests(unittest.TestCase):
             with app.test_client() as client:
                 page = client.get('/puzzle/12?lang=' + language).get_data(as_text=True)
             page = re.sub(
-                r'<script src="[^"]*(?:shell_guard|presentation-game-bridge|bgm_layer)\.js"></script>',
+                r'<script src="[^"]*(?:shell_guard|presentation-game-bridge|bgm_layer|level-victory)\.js"></script>',
                 '', page)
             page = page.replace('<head>', '<head><script>' + SETUP + '</script>')
             return page.replace('</body>', '<script>' + CHECK + '</script></body>')

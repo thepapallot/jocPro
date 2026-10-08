@@ -1,0 +1,48 @@
+/* One continuous film. All visual content stays above the subtitle band. */
+.p-stage[data-kind=closing][data-language=es]::before,
+.p-stage[data-kind=closing][data-language=es]::after{display:none}
+.f-cinema{position:relative;isolation:isolate;width:1920px;height:1080px;overflow:hidden;background:#0a1016;color:#f3eee4;--final-glow:.22;--final-pulse:0;--pulse-scale:1}
+.f-atmosphere{position:absolute;inset:0;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 70% 44%,#39d6e514,transparent 57%),radial-gradient(ellipse at 22% 70%,#dc68a712,transparent 55%)}
+.f-aura{position:absolute;left:180px;top:-120px;width:1560px;height:1060px;background:radial-gradient(ellipse,#edb97038,transparent 65%);opacity:var(--final-glow)}
+.f-rays{position:absolute;left:0;right:0;top:-250px;height:1250px;opacity:var(--final-glow);background:conic-gradient(from 148deg at 50% 38%,transparent 0deg,#39d6e51c 8deg,transparent 15deg,transparent 43deg,#edb9701f 49deg,transparent 55deg,transparent 82deg,#39d6e51a 88deg,transparent 95deg,transparent 360deg);mask-image:radial-gradient(ellipse,#000,transparent 72%)}
+.f-horizon{position:absolute;left:160px;right:160px;top:831px;height:1px;background:linear-gradient(90deg,transparent,#39d6e535,#edb97065,#dc68a735,transparent);box-shadow:0 0 30px 4px #39d6e512}
+.f-mote{position:absolute;left:var(--x);top:var(--y);width:var(--size);height:var(--size);border-radius:50%;background:#71e7db;opacity:.23;box-shadow:0 0 9px #71e7db44}
+.f-mote:nth-of-type(3n){background:#edb970}
+.f-visual{position:absolute;inset:0 0 220px;overflow:hidden}
+.f-effects{position:absolute;inset:0;width:1920px;height:860px;pointer-events:none}
+.f-monument{position:absolute;left:0;top:0;width:920px;height:700px;transform-origin:center;will-change:transform;display:grid;place-items:center}
+.f-pyramid{display:block;width:100%;height:auto;max-height:100%;overflow:visible;filter:drop-shadow(0 0 var(--completion-glow,0px) #71e7db75)}
+.f-cinema .f-pyramid .brick.is-complete .progress-fill{fill:var(--final-colour,#71e7db);opacity:var(--final-light,.64);transition:none}
+.f-floor{position:absolute;left:5%;right:5%;bottom:-8px;height:80px;border-radius:50%;background:radial-gradient(ellipse,#39d6e522,transparent 66%);filter:blur(14px);transform:scaleY(.5)}
+.f-copy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;pointer-events:none;opacity:0}
+.f-title{font:900 134px/.98 var(--p-display);letter-spacing:-.018em;text-transform:uppercase;white-space:pre-line;margin:0;text-wrap:balance}
+.f-label{font:900 30px/1.1 var(--p-display);letter-spacing:.19em;color:#edb970;margin:0 0 25px}
+.f-label:empty{display:none}
+.f-rule{width:110px;height:4px;margin-top:36px;background:linear-gradient(90deg,#39d6e5,#dc68a7)}
+.f-copy[data-layout=left]{left:140px;right:auto;width:775px;padding-bottom:12px;align-items:flex-start}
+.f-copy[data-layout=center]{left:95px;right:95px;align-items:center;text-align:center}
+.f-copy[data-layout=center] .f-title{font-size:166px;line-height:.96;text-shadow:0 6px 45px #0a1016}
+.f-copy[data-layout=center] .f-rule{display:none}
+.f-copy[data-layout=bottom]{top:630px;bottom:auto;left:100px;right:100px;text-align:center;align-items:center}
+.f-copy[data-layout=bottom] .f-title{font-size:92px;white-space:normal}
+.f-copy[data-layout=bottom] .f-rule{display:none}
+.f-copy[data-layout=top]{top:90px;bottom:auto;left:120px;right:120px;align-items:center;text-align:center}
+.f-copy[data-layout=top] .f-title{font-size:108px}
+.f-copy[data-layout=top] .f-rule{display:none}
+.f-copy[data-layout=final]{top:220px;bottom:auto;left:140px;right:auto;width:960px;align-items:flex-start;text-align:left}
+.f-copy[data-layout=final] .f-title{font-size:132px;line-height:.98}
+.f-copy[data-layout=final] .f-label{font-size:32px;margin-bottom:34px;color:#a8bbc5}
+.f-copy[data-layout=final] .f-rule{width:180px;margin-top:36px}
+.f-adn{position:absolute;left:1220px;top:610px;width:460px;height:166px;object-fit:contain;opacity:0;pointer-events:none}
+.f-cinema[data-shot=yours] .f-adn{opacity:1}
+.f-charge-flash{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 46%,#f3eee49c,#edb97044 35%,transparent 75%);opacity:var(--charge-flash,0);pointer-events:none}
+.f-cinema[data-shot=found] .f-title{color:#edb970;font-size:186px}
+.f-cinema[data-shot=together] .f-title{font-size:188px;color:#71e7db}
+.f-cinema[data-shot=together] .f-copy{top:190px}
+.f-cinema[data-shot=everyone] .f-title{font-size:112px}
+.f-cinema[data-shot=mission] .f-title{color:#f3eee4}
+.f-pulse{position:absolute;left:630px;top:100px;width:660px;height:660px;border:1px solid #edb97055;border-radius:50%;opacity:var(--final-pulse);transform:scale(var(--pulse-scale));box-shadow:0 0 70px #edb97013;pointer-events:none}
+.f-subtitle-zone{position:absolute;top:880px;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;padding:20px 215px 34px}
+.f-subtitle{width:100%;margin:0;font:40px/1.35 Arial,sans-serif;white-space:pre-line;text-align:center;text-wrap:balance;color:#f3eee4}
+.f-photo .f-mote,.f-photo .f-pulse{display:none}
+@media(prefers-reduced-motion:reduce){.f-cinema *{animation:none!important;transition:none!important}.f-mote,.f-pulse,.f-charge-flash{display:none}.f-monument{will-change:auto}}

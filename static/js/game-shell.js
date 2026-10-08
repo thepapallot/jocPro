@@ -31,6 +31,13 @@
     if(data?.type!=='pyramid-presentation-command')return;
     if(data.action==='focus'){window.focus();return;}
     if(data.action==='navigate'&&typeof data.value==='string'){navigate(data.value);return;}
+    if(lastState?.screen==='victory'&&data.action==='scene'){
+      const target=sceneState?.scenes?.[data.value]?.route;if(target)navigate(target);return;
+    }
+    if(lastState?.screen==='victory'&&data.action==='previous'){
+      const target=sceneState?.scenes?.[sceneState.sceneIndex]?.route;
+      if(target)navigate(target);return;
+    }
     if(data.action==='language'&&lastState?.phase==='slides')language=window.PyramidLanguage?.normalize(data.value)||data.value;
     if(data.action==='sync')sendState();
     frame.contentWindow?.postMessage(data,location.origin);
@@ -43,6 +50,10 @@
       if(e.data.scenes)sceneState=e.data;
       const guide=sceneState&&sceneState.puzzleId===e.data.puzzleId?sceneState.guidance:null;
       lastState=e.data.phase==='game'&&sceneState?{...e.data,scenes:sceneState.scenes,sceneIndex:sceneState.sceneIndex,guidance:guide,act:guide?sceneState.act:null}:e.data;
+      if(e.data.screen==='victory'&&sceneState){
+        const index=sceneState.scenes.findIndex(c=>c.id==='success-'+e.data.puzzleId);
+        lastState={...e.data,scenes:sceneState.scenes,sceneIndex:index<0?sceneState.sceneIndex:index};
+      }
       sendState();return;
     }
     if(e.source!==window.opener||e.data?.type!=='pyramid-presentation-command')return;

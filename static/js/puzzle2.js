@@ -339,6 +339,7 @@
     }
 
     function handleUpdate(data) {
+        if (window.PyramidLevelVictory?.active) return;
         if (data.puzzle_id !== 2) return;
 
         if (data.sequences) {
@@ -387,23 +388,7 @@
         if (data.puzzle_solved && !redirected) {
             redirected = true;
             stopAlarmAudio();
-            playSound('/static/audios/effects/nivel_completado.wav');
-            const banner = document.getElementById('p2-solved-banner');
-            if (banner) {
-                const language = window.PyramidLanguage?.current() || 'es';
-                banner.querySelector('.level-success-title').textContent = language === 'ca'
-                    ? 'NIVELL SUPERAT' : language === 'eng' ? 'LEVEL COMPLETED' : 'NIVEL SUPERADO';
-                banner.classList.remove('hidden');
-            }
-            document.body.classList.add('p2-solved-flash');
-
-            setTimeout(() => {
-                if (window.PyramidGameFlow?.complete(2)) return;
-                const nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                    ? NEXT_PUZZLE_ID
-                    : 1;
-                window.location.href = '/videoPuzzles/' + nextId;
-            }, 4000);
+            window.PyramidLevelVictory.complete(2);
         }
     }
 

@@ -1,0 +1,45 @@
+/* Shared victory surface and isolated rehearsal controls. */
+body.pyramid-game.level-success-visible{contain:paint}
+.pyramid-game>.v-stage,.pyramid-game #game-stage>.v-stage{z-index:1100}
+.v-audio-retry{position:absolute;z-index:5;top:25px;right:30px;padding:14px 22px;background:#14232c;color:#f3eee4;border:1px solid #71e7db;border-radius:4px;font:700 24px Arial;cursor:pointer}
+.victory-preview [hidden]{display:none!important}
+.victory-preview #preview-board{position:absolute;inset:0}
+.victory-preview #objective-panel{animation:none}
+.v-stage{position:absolute;inset:0;overflow:hidden;isolation:isolate;background:#0a1016;--v-light:0;--v-title:0;--v-progress:0}
+.v-atmosphere{position:absolute;inset:-15%;background:radial-gradient(ellipse at 50% 63%,#32655b90,transparent 45%),radial-gradient(ellipse at 75% 60%,#39d6e516,transparent 45%);opacity:var(--v-light)}
+.v-floor{position:absolute;left:450px;top:746px;width:1020px;height:80px;border-radius:50%;background:radial-gradient(ellipse,#71e7db55,transparent 68%);filter:blur(20px);opacity:var(--v-light)}
+.v-hero{position:absolute;left:410px;top:12px;width:1100px;height:804px;transform-origin:50% 82%}
+.v-hero svg{width:100%;height:100%;overflow:visible}
+.v-stage .pyramid-vector .progress-fill{transition:none}
+.v-stage .pyramid-vector .brick.is-complete .progress-fill{opacity:.76}
+.v-stage .pyramid-vector .brick.v-earned .progress-fill{fill:#71e7db;opacity:1}
+.v-particles{position:absolute;inset:0;width:1920px;height:1080px;z-index:2;pointer-events:none}
+.v-wave{position:absolute;left:960px;top:600px;width:800px;height:800px;border:3px solid #71e7db;border-radius:50%;box-shadow:0 0 80px #71e7db38,inset 0 0 60px #71e7db18;opacity:0;transform:translate(-50%,-50%) scale(.15);pointer-events:none}
+.v-impact{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 70%,#71e7db77,transparent 75%);opacity:0;pointer-events:none}
+.v-title{position:absolute;left:80px;right:80px;top:812px;margin:0;text-align:center;font:900 124px/1.13 PiramideDisplay,'Arial Narrow',Arial,sans-serif;letter-spacing:.015em;color:#f3eee4;opacity:var(--v-title);text-shadow:0 6px 26px #0005}
+.v-progress{position:absolute;top:978px;left:0;right:0;text-align:center;opacity:var(--v-progress)}
+.v-progress-marks{display:flex;gap:12px;justify-content:center;margin-bottom:15px}
+.v-progress-marks i{display:block;width:52px;height:5px;background:#3b505a}
+.v-progress-marks i.earned{background:#71e7db}
+.v-progress p{margin:0;color:#a8bbc5;font:700 26px/1.2 Arial,sans-serif;letter-spacing:.09em}
+.v-progress p strong{color:#f3eee4}
+.v-title,.v-progress{z-index:3}
+.v-controls{position:fixed;z-index:100;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100vw - 40px));padding:38px;background:#14232cf5;border:1px solid #5f7b83;box-shadow:0 0 0 100vmax #0a1016d9,0 25px 80px #0008;color:#f3eee4;border-radius:5px}
+.v-preview-label{color:#71e7db;font:700 12px/1.4 Arial;letter-spacing:.16em}
+.v-controls h1{font:900 46px/1.1 PiramideDisplay,Arial,sans-serif;margin:12px 0 16px}
+.v-controls p{font:17px/1.5 Arial,sans-serif;color:#c3d1d5;margin:12px 0 22px}
+.v-options{display:flex;gap:18px;flex-wrap:wrap;align-items:center;font:14px/1.5 Arial}
+.v-options label{display:flex;gap:8px;align-items:center}
+.v-options input{accent-color:#71e7db;width:17px;height:17px}
+.v-options select{font:inherit;padding:8px;background:#0a1016;color:#f3eee4;border:1px solid #5f7b83;border-radius:4px}
+.v-audio-check{display:grid;gap:9px;margin-top:20px;font:14px/1.4 Arial,sans-serif}
+.v-audio-check audio{display:block;width:100%;height:40px}
+.v-audio-check a{color:#71e7db;font-size:13px;width:fit-content}
+.v-actions{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
+.v-actions button,.v-repeat{font:700 16px/1.3 Arial,sans-serif;border:1px solid #71e7db;background:#71e7db;color:#0a1016;padding:14px 22px;border-radius:4px;cursor:pointer}
+.v-actions .v-secondary,.v-repeat{background:#14232c;color:#f3eee4;border-color:#5f7b83}
+.v-controls .v-hint{font-size:13px;margin:22px 0 0;color:#a8bbc5}
+.v-controls #preview-error{color:#edb970;margin-bottom:0}
+.v-repeat{position:fixed;right:20px;bottom:18px;z-index:100;font-size:13px;padding:10px 14px}
+.victory-preview button:focus-visible,.victory-preview select:focus-visible,.victory-preview input:focus-visible{outline:3px solid #f3eee4;outline-offset:4px}
+.v-stage.v-reduced .v-wave,.v-stage.v-reduced .v-particles,.v-stage.v-reduced .v-impact{display:none}

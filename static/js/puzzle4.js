@@ -9,7 +9,6 @@
     const REMOVE_SOUND_URL = "/static/audios/effects/remove.wav";
     const FASE_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const FASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
-    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
     // Match Puzzle4's required orders; these are only used for visual feedback.
     const REQUIRED_ORDERS = {
         'streak1-container': ['5', '1', '8', '3'],
@@ -371,6 +370,7 @@
     }
 
     function handleUpdate(d) {
+        if (window.PyramidLevelVictory?.active) return;
         console.log('[P4] handleUpdate called with:', d);
         if (!d || d.puzzle_id !== 4) return;
         if (interRoundPauseActive && !d.show_completion && !d.puzzle_solved) {
@@ -466,29 +466,12 @@
             samplePlaybackToken += 1;
             currentSampleUrl = null;
             clearFeedbackTimer();
+            trackAudio.pause();
+            sfxAudio.pause();
+            clearTimeout(interRoundPauseTimer);
+            clearTimeout(delayedPopupTimer);
             setStatus(tr('songCompleted', "Canción completada"), 'solved');
-            //playSound((d.play_final && d.play_final.url) || PUZZLE_COMPLETE_SOUND_URL);
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
-            // Show solved banner and flash
-            const banner = document.getElementById('p4-solved-banner');
-            if (banner) banner.classList.remove('hidden');
-            document.body.classList.add('p4-solved-flash');
-            setTimeout(function () {
-                if (window.PyramidGameFlow?.complete(4)) return;
-                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                    ? NEXT_PUZZLE_ID : 1;
-                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                    .then(function (response) {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            window.location.href = '/videoPuzzles/' + nextId;
-                        }
-                    })
-                    .catch(function () {
-                        window.location.href = '/videoPuzzles/' + nextId;
-                    });
-            }, 4000);
+            window.PyramidLevelVictory.complete(4);
             return;
         }
 

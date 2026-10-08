@@ -14,7 +14,6 @@
     const timeFill = document.getElementById('p8-time-fill');
     let symbolsOrder = [];
     let solved = false;
-    let completionSoundPlayed = false;
     let countdownFrame = null;
 
     const instructions = {
@@ -142,7 +141,6 @@
     const PHASE_OK_SOUND_URL = '/static/audios/effects/fase_completada.wav';
     const PHASE_KO_SOUND_URL = '/static/audios/effects/fase_nocompletada.wav';
     const LLETRES_SOUND_URL = '/static/audios/effects/apareix_contingut.wav';
-    const PUZZLE_COMPLETE_SOUND_URL = '/static/audios/effects/nivel_completado.wav';
 
     function showCompletion() {
         stopCountdown();
@@ -150,13 +148,8 @@
         document.getElementById('p8-solved-banner')?.classList.remove('hidden');
     }
 
-    function playCompletionSound() {
-        if (completionSoundPlayed) return;
-        completionSoundPlayed = true;
-        playSound(PUZZLE_COMPLETE_SOUND_URL);
-    }
-
     function handleUpdate(data) {
+        if (window.PyramidLevelVictory?.active) return;
         if (!data || data.puzzle_id !== 8) return;
         const previousPhase = grid.dataset.phase;
         renderTokenNumbers(data.token_numbers);
@@ -164,18 +157,9 @@
 
         if (data.puzzle_solved && !solved) {
             solved = true;
-            playCompletionSound();
-            showCompletion();
-            setTimeout(() => {
-                if (window.PyramidGameFlow?.complete(8)) return;
-                const nextId = window.NEXT_PUZZLE_ID ?? 1;
-                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                    .then(response => {
-                        window.location.href = response.redirected
-                            ? response.url : '/videoPuzzles/' + nextId;
-                    })
-                    .catch(() => { window.location.href = '/videoPuzzles/' + nextId; });
-            }, 4000);
+            stopCountdown();
+            setPhase('completed');
+            window.PyramidLevelVictory.complete(8);
             return;
         }
 
@@ -185,7 +169,6 @@
         }
 
         if (data.phase === 'numbers') {
-            completionSoundPlayed = false;
             document.getElementById('p8-solved-banner')?.classList.add('hidden');
             resetAnswers();
             setPhase('numbers');
@@ -245,11 +228,10 @@
             });
             if (data.input_result.success) {
                 if (Number(data.round_total) > 0 && Number(data.round) >= Number(data.round_total)) {
-                    // Keep the immediate success sound, but start the four-second
-                    // final screen only once puzzle_solved confirms completion.
+                    // The shared victory starts only once puzzle_solved confirms completion.
                     stopCountdown();
                     setPhase('completed');
-                    playCompletionSound();
+                    playSound(PHASE_OK_SOUND_URL);
                 } else {
                     showCompletion();
                     playSound(PHASE_OK_SOUND_URL);

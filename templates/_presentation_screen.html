@@ -3,6 +3,8 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/presentation-briefing.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/trivial-theme.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/presentation-opening.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/presentation-closing.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/victory-celebration.css') }}">
 <main id="p-viewport" class="p-viewport" aria-label="Pantalla compartida dels jugadors">
   <div id="p-stage" class="p-stage"></div>
 </main>
@@ -10,9 +12,12 @@
 <script>window.PYRAMID_PAGE = {{ presentation_page|tojson }};</script>
 <script src="{{ url_for('static', filename='js/game-language.js') }}"></script>
 <script src="{{ url_for('static', filename='js/pyramid-logo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/victory-celebration.js') }}"></script>
 <script src="{{ url_for('static', filename='js/puzzle-names.js') }}"></script>
 <script src="{{ url_for('static', filename='js/presentation-recordings.js') }}"></script>
 <script src="{{ url_for('static', filename='js/presentation-story.js') }}"></script>
+<script src="{{ url_for('static', filename='js/presentation-closing.js') }}"></script>
+<script src="{{ url_for('static', filename='js/presentation-finale-effects.js') }}"></script>
 <script src="{{ url_for('static', filename='js/presentation-flow.js') }}"></script>
 <script src="{{ url_for('static', filename='js/presentation-opening.js') }}"></script>
 <script src="{{ url_for('static', filename='js/presentation-visuals.js') }}"></script>

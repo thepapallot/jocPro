@@ -20,12 +20,10 @@
 
     const BOX_OK_SOUND_URL = '/static/audios/effects/correcte.wav';
     const TIMER_EXPIRED_SOUND_URL = '/static/audios/effects/fase_nocompletada.wav';
-    const PUZZLE_COMPLETE_SOUND_URL = '/static/audios/effects/nivel_completado.wav';
     const ROUND_RESET_SOUND_URL = '/static/audios/effects/apareix_contingut.wav';
     const SOUND_URLS = [
         BOX_OK_SOUND_URL,
         TIMER_EXPIRED_SOUND_URL,
-        PUZZLE_COMPLETE_SOUND_URL,
         ROUND_RESET_SOUND_URL
     ];
 
@@ -228,6 +226,7 @@
     }
 
     function handleUpdate(d) {
+        if (window.PyramidLevelVictory?.active) return;
         if (!d || d.puzzle_id !== 10) return;
 
         let solvedThisUpdateCount = 0;
@@ -269,28 +268,7 @@
         if (d.puzzle_solved && !solved) {
             solved = true;
             stopFrontendTimer();
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
-            // Show solved banner and flash
-            const banner = document.getElementById('p10-solved-banner');
-            if (banner) banner.classList.remove('hidden');
-            document.body.classList.add('p10-solved-flash');
-            // Redirect to next puzzle video after a short delay
-            setTimeout(() => {
-                if (window.PyramidGameFlow?.complete(10)) return;
-                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                    ? NEXT_PUZZLE_ID : 1;
-                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                    .then(function (response) {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            window.location.href = '/videoPuzzles/' + nextId;
-                        }
-                    })
-                    .catch(function () {
-                        window.location.href = '/videoPuzzles/' + nextId;
-                    });
-            }, 4000);
+            window.PyramidLevelVictory.complete(10);
         }
     }
 

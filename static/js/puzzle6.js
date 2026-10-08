@@ -28,7 +28,6 @@
         audio.play().catch(err => console.warn("Audio play failed:", err));
     }
     const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
-    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/piramide_completada.wav";
     const BTN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
 
     function clearTimers() {
@@ -260,6 +259,7 @@
     }
 
     function handleUpdate(d) {
+        if (window.PyramidLevelVictory?.active) return;
         if (d.puzzle_id !== 6) return;
 
         console.log('[P6] handleUpdate received:', d);
@@ -285,14 +285,7 @@
 
         if (d.puzzle_solved && !solved) {
             applySolvedState();
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
-            const banner = document.getElementById('p6-solved-banner');
-            if (banner) banner.classList.remove('hidden');
-            document.body.classList.add('p6-solved-flash');
-            setTimeout(function () {
-                if (window.PyramidGameFlow?.complete(6)) return;
-                window.location.href = '/final';
-            }, 4000);
+            window.PyramidLevelVictory.complete(6);
         }
     }
 

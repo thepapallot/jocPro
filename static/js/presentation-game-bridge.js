@@ -2,7 +2,7 @@
 (() => {
   const game=window.PYRAMID_GAME;
   function inShell(){try{return window.parent!==window&&window.parent.location.origin===location.origin&&!!window.parent.document.getElementById('game-shell-frame');}catch{return false;}}
-  function report(){if(!game||!inShell())return;window.parent.postMessage({type:'pyramid-presentation-state',realPage:true,language:game.language,phase:'game',mode:'live',name:game.name,puzzleId:game.puzzleId,step:0,labels:[],kind:'game',canNext:false,note:'Prueba en curso. Usa las acciones del puzzle en Test. La transición aparece cuando el juego confirma que se ha completado.'},location.origin);}
+  function report(){if(!game||!inShell()||window.PyramidLevelVictory?.active)return;window.parent.postMessage({type:'pyramid-presentation-state',realPage:true,language:game.language,phase:'game',mode:'live',name:game.name,puzzleId:game.puzzleId,step:0,labels:[],kind:'game',canNext:false,note:'Prueba en curso. Usa las acciones del puzzle en Test. La celebración aparece cuando el juego confirma que se ha completado.'},location.origin);}
   window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===window.parent&&e.data?.type==='pyramid-presentation-command'&&e.data.action==='sync')report();});
   report();
   window.PyramidGameFlow={managed:inShell(),complete(puzzleId){

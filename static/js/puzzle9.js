@@ -251,7 +251,7 @@
     function setupClueMotion() {
         stopClueMotion();
 
-        if (!boardEl || !centerStageEl || !clueEls.length) return;
+        if (solved || !boardEl || !centerStageEl || !clueEls.length) return;
 
         if (window.innerWidth <= 1250) {
             clueEls.forEach(el => {
@@ -275,7 +275,6 @@
     }
 
     const BTN_SOUND_URL = '/static/audios/effects/boto.wav';
-    const PUZZLE_COMPLETE_SOUND_URL = '/static/audios/effects/nivel_completado.wav';
     const PUZZLE_CORRECTE_SOUND_URL = '/static/audios/effects/correcte.wav';
     const PUZZLE_INCORRECTE_SOUND_URL = '/static/audios/effects/incorrecte.wav';
 
@@ -375,6 +374,7 @@
     }
 
     function handleUpdate(d) {
+        if (window.PyramidLevelVictory?.active) return;
         if (!d || d.puzzle_id !== 9) return;
 
         const boxes = d.boxes || d.box_tokens;
@@ -392,11 +392,8 @@
 
         if (d.puzzle_solved && !solved) {
             solved = true;
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
-            document.getElementById('p9-solved-banner')?.classList.remove('hidden');
-            setTimeout(() => {
-                window.location.href = '/puzzleSuperat/9';
-            }, 4000);
+            stopClueMotion();
+            window.PyramidLevelVictory.complete(9);
         }
     }
 

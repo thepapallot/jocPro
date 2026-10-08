@@ -15,7 +15,6 @@
         audio.play().catch(err => console.warn("Audio play failed:", err));
     }
     const BOX_OK_SOUND_URL = "/static/audios/effects/correcte.wav";
-    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
 
     function updateStatus() {
         if (!statusBadge) return;
@@ -42,6 +41,7 @@
     }
 
     function handleUpdate(d) {
+        if (window.PyramidLevelVictory?.active) return;
         if (!d || d.puzzle_id !== 7) return;
 
         if (Array.isArray(d.solved_boxes)) {
@@ -56,10 +56,7 @@
 
         if (d.puzzle_solved && !solved) {
             solved = true;
-            // Play puzzle completion sound
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
-            document.getElementById('p7-solved-banner')?.classList.remove('hidden');
-            setTimeout(() => (window.location.href = '/puzzleSuperat/7'), 4000);
+            window.PyramidLevelVictory.complete(7);
         }
     }
 

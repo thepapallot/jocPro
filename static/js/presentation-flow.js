@@ -276,13 +276,21 @@
     for(const lang of ['ca','es','eng']){
       const t=success.copy[lang];t.name=local('Assoliment','Logro','Achievement')[lang]+' · '+intro.copy[lang].name;
       t.nextName=byId.get(following).copy[lang].name;t.footers=[success.act.role[lang]];
-      t.notes=[id===tutorialId?local('Primera victòria. Celebreu l’aprenentatge; la piràmide s’omple amb els reptes següents.','Primera victoria. Celebrad el aprendizaje; la pirámide se llena con los siguientes retos.','First win. Celebrate learning; the following challenges fill the pyramid.')[lang]:success.act.role[lang]];
+      t.notes=[id===tutorialId?local('Primera victòria. Celebreu l’aprenentatge; la piràmide s’omple amb els reptes següents.','Primera victoria. Celebrad el aprendizaje; la pirámide se llena con los siguientes retos.','First win. Celebrate learning; the following challenges fill the pyramid.')[lang]:local('Celebreu-ho amb el grup. El progrés es manté fins que obriu la presentació següent.','Celebradlo con el grupo. El progreso se mantiene hasta que abráis la siguiente presentación.','Celebrate with the team. Progress remains on screen until you open the next briefing.')[lang]];
     }
     flow.push(success);
   }
   const closing=scene('closing','closing',local('LA PIRÀMIDE<br>ÉS VOSTRA.','LA PIRÁMIDE<br>ES VUESTRA.','THE PYRAMID<br>IS YOURS.'),local('Ho heu aconseguit junts.','Lo habéis conseguido juntos.','You achieved it together.'),['cover','thanks']);
   closing.completed=total;closing.previous=total-1;closing.total=total;closing.act=acts[2];closing.autoAdvanceMs=[11000,0];
   for(const lang of ['ca','es','eng'])closing.copy[lang].notes=[local('Celebreu-ho amb el grup. El tancament passa sol a la pantalla de foto.','Celebradlo con el grupo. El cierre pasa solo a la pantalla de foto.','Celebrate with the group. The finale continues automatically to the photo screen.')[lang],local('Pantalla de foto. Pregunteu: què heu aconseguit perquè heu treballat junts?','Pantalla de foto. Preguntad: ¿qué habéis conseguido porque habéis trabajado juntos?','Photo screen. Ask: what did working together make possible?')[lang]];
+  if(window.PyramidClosing){
+    closing.copy.es.name='Cierre · La Pirámide';
+    closing.copy.es.stepLabels=['Este momento es vuestro','Foto de equipo'];
+    closing.copy.es.notes=[
+      'Cierre automático en castellano · 78 s provisionales: 10 s de carga y 68 s de mensaje, con música y subtítulos. Locución pendiente de ElevenLabs. Deja que el grupo disfrute del final; puedes pausar, repetir o avanzar a la foto. Guion: '+PyramidClosing.narration,
+      'Composición estable para la foto. Recoge el aplauso: «¡Misión cumplida, equipo! Acercaos, que esta foto es vuestra». Repetir vuelve a iniciar el cierre sin sumar progreso.'
+    ];
+  }
   flow.push(closing);
   for(const lang of ['ca','es','eng']) {
     const t=flow[1].copy[lang];
