@@ -185,7 +185,15 @@ test('snake briefing always includes the alarm warning before its final start st
   assert.match(snake.copy.es.notes.at(-1),/colores invertidos/);
   assert.doesNotMatch(snake.copy.es.notes.join(' '),/memoriz/i);
   assert.equal(snake.attentionCopy.es.before,4);
-  assert.equal(snake.attentionCopy.es.after,3);
+  assert.equal(snake.attentionCopy.es.after,5);
+  assert.equal(snake.attentionCopy.ca.before,4);
+  assert.equal(snake.attentionCopy.ca.after,5);
+  const context=vm.createContext({window:{},PyramidLogo:{markup:()=>'<svg></svg>'}});
+  vm.runInContext(script('presentation-briefing.js'),context);
+  const markup=context.window.PyramidBriefing.markup(snake,snake.copy.ca,'ca');
+  assert.match(markup,/symbol_4\.png/);
+  assert.match(markup,/symbol_5\.png/);
+  assert.doesNotMatch(markup,/symbol_3\.png/);
 });
 
 test('QUIZ keeps its journey and requires the answer-change warning before starting',()=>{
