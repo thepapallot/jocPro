@@ -609,3 +609,25 @@ habituales bajo `static/audios/`, ignorada íntegramente y compartida por USB.
 
 Validación: hashes conservados, rutas originales restauradas y pruebas aisladas
 de intro, música de fondo y feedback. Sin servidor de producción, MQTT ni hardware.
+
+
+### 2026-10-08 — El modo alarma de Tras la Serpiente no altera los símbolos visibles
+
+Autorización: petición explícita del usuario para mantener los dibujos de las
+serpientes y cambiar únicamente el símbolo MQTT esperado durante la alarma.
+
+- `mqtt/puzzles/puzzle2.py`: los snapshots y el campo `sequences` de SSE devuelven
+  siempre la secuencia original visible; `handle_message()` conserva el remapeo
+  `alarmChanges` al validar el símbolo recibido por MQTT.
+- `tests/test_puzzle2.py`: cubre que el símbolo visible no cambie, que se acepte
+  el símbolo remapeado durante la alarma y que el símbolo original se rechace si
+  su correspondencia MQTT difiere.
+
+Impacto: corrige el contrato de estado enviado al frontend sin cambiar temas MQTT,
+formato de mensajes ni la mecánica de validación de la alarma.
+
+Validación: seis tests de `test_puzzle2` y `test_puzzle2_motion` pasados, incluidos
+los checks de navegador para que los símbolos no cambien durante la alarma. Sin
+broker MQTT ni terminales físicos.
+
+Revisión backend: pendiente de validar con terminales físicos.

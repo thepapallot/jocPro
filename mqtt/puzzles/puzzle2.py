@@ -34,17 +34,11 @@ class Puzzle2(BasePuzzle):
         self.block_until = 0
         self.error_counter = 0
         
-    def _sequence_for_player(self, player, alarm_mode=None):
-        """Return the current sequence for one player, optionally transformed by alarm mode."""
+    def get_player_sequence(self, player):
+        """Return the fixed sequence shown on screen, independent of alarm mode."""
         if player not in self.sequences:
             return []
-        active_alarm = self.alarm_mode if alarm_mode is None else bool(alarm_mode)
-        mapping = self.alarmChanges if active_alarm else {}
-        return [mapping.get(symbol, symbol) for symbol in self.sequences[player]]
-
-    def get_player_sequence(self, player, alarm_mode=None):
-        """Public helper used by the frontend state contract."""
-        return self._sequence_for_player(player, alarm_mode=alarm_mode)
+        return self.sequences[player].copy()
 
     def _snapshot(self):
         """Return player progress snapshot"""
@@ -241,7 +235,7 @@ class Puzzle2(BasePuzzle):
             if current_index >= 5:
                 return
                 
-            # Get expected symbol (with alarm mapping if active)
+            # The displayed sequence stays fixed; alarm mode changes only the MQTT symbol expected.
             expected_raw = self.sequences[player][current_index]
             expected = self.alarmChanges.get(expected_raw, expected_raw) if self.alarm_mode else expected_raw
             
