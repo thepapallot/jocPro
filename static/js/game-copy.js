@@ -1,6 +1,10 @@
 /* Player UI catalog. Puzzle data, symbols and MQTT states stay independent of language. */
 window.PyramidLanguage.register('game', {
   "ca": {
+    "quizUnanswered": "Sense resposta",
+    "quizYesSelected": "Seleccionat: sí, botó verd",
+    "quizNoSelected": "Seleccionat: no, botó vermell",
+    "quizChangeHint": "Podeu canviar amb l’altre botó fins que tots els terminals hagin respost.",
     "progress": "Progrés",
     "round": "Ronda",
     "objective": "Objectiu",
@@ -99,6 +103,10 @@ window.PyramidLanguage.register('game', {
     "sharedScreen": "Pantalla compartida dels jugadors"
   },
   "es": {
+    "quizUnanswered": "Sin respuesta",
+    "quizYesSelected": "Seleccionado: sí, botón verde",
+    "quizNoSelected": "Seleccionado: no, botón rojo",
+    "quizChangeHint": "Podéis cambiar con el otro botón hasta que todos los terminales hayan respondido.",
     "progress": "Progreso",
     "round": "Ronda",
     "objective": "Objetivo",
@@ -197,6 +205,10 @@ window.PyramidLanguage.register('game', {
     "sharedScreen": "Pantalla compartida de los jugadores"
   },
   "eng": {
+    "quizUnanswered": "No answer yet",
+    "quizYesSelected": "Selected: yes, green button",
+    "quizNoSelected": "Selected: no, red button",
+    "quizChangeHint": "You can change with the other button until all terminals have answered.",
     "progress": "Progreso",
     "round": "Ronda",
     "objective": "Objetivo",

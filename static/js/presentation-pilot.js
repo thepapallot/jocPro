@@ -22,11 +22,22 @@
   const normalizeLanguage = value => window.PyramidLanguage?.normalize(value,'ca') || (value === 'en' ? 'eng' : Object.hasOwn(config.copy, value) ? value : 'ca');
   let language = normalizeLanguage(page?.language||params.get('lang'));
   let mode = page ? 'live' : params.get('mode') === 'live' && location.protocol !== 'file:' ? 'live' : 'preview';
-  let step = page?.initialStep||0, revealed = false, phase = 'slides', countdownStart = 0, countdownTimer = null, lastCount = null;
+  // Spanish earned victories continue into the film; /final-loop remains the photo.
+  let step = page?.sceneId==='closing'&&params.get('celebrated')==='1'&&language!=='es'?1:(page?.initialStep||0), revealed = false, phase = 'slides', countdownStart = 0, countdownTimer = null, lastCount = null;
   let subtitleTimer=null,openingTimer=null,autoPaused=false,autoDeadline=0,autoRemaining=null,leaving=false;
   let narration=null,recording=null,narrationBlocked=false,narrationIssue='',playRequest=0;
   const endingMs=2600;let ending=false;
   const text = () => config.copy[language];
+  const cinematicClosing=()=>window.PyramidClosing?.active(config,language);
+  function soundtrack(reset=false){
+    if(cinematicClosing()){
+      window.PyramidOpening?.stop();
+      PyramidClosing.sound(config,step,autoPaused,reset);
+    }else{
+      window.PyramidClosing?.stop();
+      window.PyramidOpening?.sound(config,step,autoPaused,reset,language);
+    }
+  }
   const timing=()=>recording?.beats[config.steps[step]];
   function pauseNarration(){playRequest++;narration?.pause();stage.dataset.narrationWaiting='false';}
   function prepareNarration(preserve){
@@ -83,6 +94,12 @@
     if(subtitleTimer!==null)clearInterval(subtitleTimer);subtitleTimer=null;
   }
   function updateOpeningSubtitle(){
+    if(cinematicClosing()){
+      const duration=config.autoAdvanceMs?.[step]||0;
+      const remaining=autoPaused?(autoRemaining??duration):Math.max(0,autoDeadline-performance.now());
+      PyramidClosing.update(Math.max(0,duration-remaining),config.steps[step]==='thanks');
+      return;
+    }
     if(ending){
       const remaining=autoPaused?(autoRemaining??endingMs):Math.max(0,autoDeadline-performance.now());
       window.PyramidOpening?.setSubtitle('');
@@ -118,7 +135,7 @@
     const duration=autoRemaining??config.autoAdvanceMs?.[step];
     if(phase==='slides'&&!autoPaused&&duration>0){
       autoDeadline=performance.now()+duration;
-      if(config.kind==='opening')subtitleTimer=setInterval(updateOpeningSubtitle,80);
+      if(config.kind==='opening'||cinematicClosing())subtitleTimer=setInterval(updateOpeningSubtitle,cinematicClosing()?1000/60:80);
       openingTimer=setTimeout(()=>{openingTimer=null;autoRemaining=null;if(config.kind==='opening'&&config.steps[step]==='call')finishCall();else next();},duration);
     }
     updateOpeningSubtitle();
@@ -128,7 +145,7 @@
     if(autoPaused){autoPaused=false;narrationBlocked=false;narrationIssue='';stage.querySelector('.o-audio-retry')?.remove();scheduleOpening();}else{autoRemaining=Math.max(1,autoDeadline-performance.now());autoPaused=true;pauseNarration();stopOpening();}
     stage.dataset.autoPaused=String(autoPaused);
     updateOpeningSubtitle();
-    window.PyramidOpening?.sound(config,step,autoPaused,false,language);
+    soundtrack();
     updateOpeningSubtitle();
     updateControls();
   }
@@ -164,11 +181,12 @@
       labels: text().stepLabels, kind: config.kind || 'puzzle',
       sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
       canNext: flow ? (phase==='game' ? mode==='preview' : phase==='slides' && (step<config.steps.length-1 || (config.kind!=='puzzle' && (page ? !!page.nextUrl : sceneIndex<flow.length-1)))) : phase==='slides' && step<config.steps.length-1,
-      note: phase === 'game' ? (mode === 'live' ? 'Partida real abierta. Al completar la prueba se muestra la transición; el GM avanza a la siguiente presentación.' : 'Ensayo del recorrido: esta vista no reproduce la lógica del juego. Pulsa Siguiente para simular la prueba superada.') : config.kind==='welcome' ? 'Pantalla de espera. Cuando todo el grupo esté en su sitio, pulsa Comenzar presentación inicial.' : narrationIssue||(ending?'Cierre musical. La Pirámide permanece 2,6 segundos antes del reparto de tokens.':text().notes[step])
+      note: phase === 'game' ? (mode === 'live' ? 'Partida real abierta. Al completar la prueba se muestra la transición; el GM avanza a la siguiente presentación.' : 'Ensayo del recorrido: esta vista no reproduce la lógica del juego. Pulsa Siguiente para simular la prueba superada.') : config.kind==='welcome' ? 'Pantalla de espera. Cuando todo el grupo esté en su sitio, pulsa Comenzar presentación inicial.' : narrationIssue||(cinematicClosing()&&PyramidClosing.issue)||(ending?'Cierre musical. La Pirámide permanece 2,6 segundos antes del reparto de tokens.':text().notes[step])
     }, location.origin);
   }
   function render(preserveNarration=false) {
     restoreProgress();
+    if(config.kind==='closing')config.autoAdvanceMs=[cinematicClosing()?PyramidClosing.durationMs:11000,0];
     document.title=text().name;
     document.getElementById('p-viewport')?.setAttribute('aria-label', {ca:'Pantalla compartida dels jugadors',es:'Pantalla compartida de los jugadores',eng:'Shared player screen'}[language]);
     stage.hidden = false;
@@ -176,7 +194,7 @@
     stage.dataset.kind = config.kind || 'puzzle';
     stage.dataset.autoPaused=String(autoPaused);
     prepareNarration(preserveNarration);
-    window.PyramidOpening?.sound(config,step,autoPaused,!preserveNarration,language);
+    soundtrack(!preserveNarration);
     stage.dataset.step = config.steps[step];
     stage.dataset.language = language;
     viewport.querySelector('.p-game-frame')?.remove();
@@ -200,11 +218,15 @@
     section.innerHTML=`${immersive?'':header((config.act?config.act.name[language]+' · ':'')+text().name)}${body()}${immersive?'':footer(text().footers[step])}`;
     const old=stage.querySelector('.p-screen:not(.j-leaving)');
     stage.querySelectorAll('.j-leaving').forEach(node=>node.remove());
-    if(old){const subtitle=old.querySelector('.o-subtitle');if(subtitle)subtitle.textContent='';old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
+    if(old){const subtitle=old.querySelector('.o-subtitle,.f-subtitle');if(subtitle)subtitle.textContent='';old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
     stage.append(section);
+    if(config.kind==='success'&&section.querySelector('.v-stage')){
+      // Opening a progress page never awards a challenge or replays an earned win.
+      PyramidVictory.create(section.querySelector('.v-stage'),{previous:config.completed,completed:config.completed,total:config.total,language,practice:config.afterPuzzle===11,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches}).render(8.4);
+    }
     if(config.incremental&&section.querySelector('.j-blueprint'))PyramidBriefing.reveal(section.querySelector('.j-blueprint'),revealStep);
     if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
-      section.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:750,easing:'cubic-bezier(.2,.7,.2,1)'});
+      section.animate(cinematicClosing()?[{opacity:0},{opacity:1}]:[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:750,easing:'cubic-bezier(.2,.7,.2,1)'});
       if(old)old.animate([{opacity:1},{opacity:0}],{duration:450,fill:'forwards'}).finished.then(()=>old.remove());
     }else old?.remove();
     updateControls();
@@ -233,7 +255,7 @@
     if(!path||leaving)return;
     const url=new URL(path,location.origin);url.searchParams.set('lang',language);
     if(url.origin!==location.origin)return;
-    leaving=true;pauseNarration();stopOpening();stopCountdown();window.PyramidOpening?.stop();
+    leaving=true;pauseNarration();stopOpening();stopCountdown();window.PyramidOpening?.stop();window.PyramidClosing?.stop();
     const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:300;
     stage.animate([{opacity:1},{opacity:0}],{duration,fill:'forwards'});
     setTimeout(()=>location.assign(url.href),duration);
@@ -335,19 +357,19 @@
     if (action === 'next') next();
     if (action === 'reveal') reveal();
     if (action === 'start') start();
-    if (action === 'restart') { if(page){revealed=false;choose(0);}else if(flow){loadScene(0);}else {revealed=false; choose(0);} }
-    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); if(config.kind==='opening')choose(step);else render(); }
+    if (action === 'restart') { if(page||config.kind==='closing'){revealed=false;choose(0);}else if(flow){loadScene(0);}else {revealed=false; choose(0);} }
+    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); if(['opening','closing'].includes(config.kind))choose(step);else render(); }
     if (action === 'mode' && !page && phase === 'slides') { mode=value==='live' && location.protocol !== 'file:' ? 'live' : 'preview'; render(); }
   });
   // Fullscreen needs a gesture in the player window. A click only expands it;
   // slide navigation and game start remain on the GM panel.
-  viewport.addEventListener('click', () => { if(narrationBlocked&&autoPaused)toggleAutoplay(); window.PyramidOpening?.sound(config,step,autoPaused,false,language); if(page&&window.parent!==window)window.parent.postMessage({type:'pyramid-fullscreen'},location.origin);else if (!document.fullscreenElement) fullscreen(); });
+  viewport.addEventListener('click', () => { if(narrationBlocked&&autoPaused)toggleAutoplay(); soundtrack(); if(page&&window.parent!==window)window.parent.postMessage({type:'pyramid-fullscreen'},location.origin);else if (!document.fullscreenElement) fullscreen(); });
   document.addEventListener('keydown', e => {
     if (e.key.toLowerCase() === 'f') { e.preventDefault(); if(page&&window.parent!==window)window.parent.postMessage({type:'pyramid-fullscreen'},location.origin);else fullscreen(); }
   });
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&phase==='countdown')choose(config.steps.length-1);size();});
   addEventListener('resize',size);
-  addEventListener('pagehide',()=>{pauseNarration();stopCountdown();stopOpening();window.PyramidOpening?.stop();});
+  addEventListener('pagehide',()=>{pauseNarration();stopCountdown();stopOpening();window.PyramidOpening?.stop();window.PyramidClosing?.stop();});
   render();
   document.fonts.ready.then(size);
 })();

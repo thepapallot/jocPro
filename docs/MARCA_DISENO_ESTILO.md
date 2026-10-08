@@ -143,8 +143,11 @@ Componente: [`static/js/pyramid-logo.js`](../static/js/pyramid-logo.js).
   aviso o elemento de juego en otro triángulo.
 - El logo PNG antiguo se retiró de `static/`; las pantallas utilizan el SVG maestro. Las maquetas históricas conservan su copia en `output/legacy-assets/`.
 - `static/images/no_usadas/shared/branding/logo_adn.png` se reserva para firma del organizador
-  donde corresponda. No sustituye al logo del juego. La relación visual entre
-  Enigmik, ADN y el producto requiere definir un cierre gráfico coherente.
+  donde corresponda. No sustituye al logo del juego. Para el cierre se ha
+  incorporado el maestro actual `static/images/shared/branding/adn-games.svg`:
+  versión horizontal a color de ADN Games, facilitada desde la carpeta de
+  identidad de marca. Convive con La Pirámide en la foto final,
+  sin recolorear ni deformar ninguno de los dos logos.
 - Una variante monocroma definitiva para impresión sigue pendiente.
 
 ### Paleta
@@ -180,9 +183,37 @@ terminal y sus botones no se recolorean. La variante está acotada al puzzle 3
 en su presentación y tablero; el mapa general mantiene sus otras etapas.
 
 Jerarquía del QUIZ: destacar la pregunta con mayor peso tipográfico, una barra
-lateral magenta y un fondo magenta tenue. Las respuestas tienen menor tamaño
-que la pregunta; mantener legibles sus números, el texto blanco cálido y los
-colores funcionales de las respuestas.
+lateral magenta y un fondo magenta tenue. Decisión actualizada el 8 octubre
+2026, implementada: la pregunta y cada respuesta ajustan su tamaño de forma
+independiente según la longitud y los saltos de línea. Corrección tras la
+revisión del usuario: limitar la ampliación para dejar aire en los paneles,
+con pregunta de hasta 56 px y respuestas de hasta 48 px en el canvas 1080p.
+Los textos largos siguen reduciéndose cuando lo necesitan.
+Una respuesta corta puede tener mayor tamaño que una pregunta larga. Conservar
+el texto completo, los números y los indicadores de elección. El ajuste se
+mide dentro del tablero y el conjunto se escala a la ventana; no elegir tamaños
+por resolución ni reducir todas las respuestas por la opción más larga.
+Comprobado con las 435 preguntas activas y textos adicionales largos, en
+ventanas 16:9, 4:3 y 4K con distinta densidad de píxeles: `output/quiz-texto/`.
+Solo simulación; la lectura desde la sala sigue pendiente.
+
+Decisión del 8 octubre 2026, implementada en el tablero: cada respuesta muestra
+un tick y una X junto al texto. El botón verde resalta el tick verde; el rojo
+resalta la X roja. El símbolo alternativo permanece neutro para hacer visible
+que se puede cambiar la elección. La fila, el número y el texto conservan su
+apariencia neutra durante la selección. Un recordatorio indica que se puede
+cambiar con el otro botón hasta que todos los terminales hayan respondido,
+en coherencia con Atención y las notas del GM. Los símbolos representan la
+elección enviada; la comprobación final conserva su señal de acierto o fallo.
+Decisión ampliada el 8 octubre 2026, implementada: símbolos mayores y elección
+con fondo verde o rojo sólido, símbolo grafito y resplandor localizado; la
+alternativa queda atenuada. Cada entrada o cambio produce un golpe de escala,
+una onda alrededor del símbolo y un resplandor breve en el contorno de su fila.
+El efecto termina y la selección permanece visible. Con movimiento reducido
+se muestra directamente el estado estable. Recuperar el estado o mostrar el
+resultado no repite el efecto de entrada.
+Verificación aislada a 1920 × 1080 y 1280 × 720, en los tres idiomas:
+`output/quiz-seleccion/`. Solo simulación, sin MQTT ni hardware.
 
 ### Tipografía
 
@@ -371,6 +402,63 @@ final natural, recorrido sin QUIZ y recuperación de sonido bloqueado. Revisión
 de 17 escenas a dos resoluciones en `output/intro-ca-audio/`. Pendiente ensayo
 con altavoces en la sala. Resultados y capturas del montaje anterior:
 `output/apertura-narrativa/`; `output/apertura/` documenta la versión sustituida.
+
+### Desenlace: Este momento es vuestro
+
+**Acordado el 8 octubre 2026:** el cierre reconoce la experiencia compartida y
+la aportación del equipo. No repasa la apertura ni enumera las pruebas. Se
+aprueba el guion que empieza «¡Lo habéis conseguido! Respirad un momento» y
+termina «La misión está cumplida. Este momento es vuestro». Se elimina la
+frase «Ahora mirad a quienes tenéis al lado»; no debe recuperarse.
+
+**Revisión acordada el 8 octubre 2026:** el primer montaje se considera poco
+variado. El desenlace debe empezar mostrando cómo se completan los últimos
+bloques, con un clímax de luz y sonido, antes del texto. La última pantalla
+incorpora el logo ADN Games. El usuario facilita posteriormente los maestros
+actuales en `ADN Games/01 - Identitat de marca/01 - Logotip actual/`.
+**Actualizado:** se utiliza `Fitxers mestres/logoadndef-color.svg`, horizontal
+con hélice, ADN en degradado y GAMES magenta, sin modificar su diseño.
+Archivo activo: `static/images/shared/branding/adn-games.svg`.
+El PNG anterior se retira a la reserva; el SVG conserva su aspecto y proporciones.
+
+**Implementado en castellano:** Carga Final abre una única secuencia de cierre.
+Los primeros diez segundos muestran el progreso anterior, encienden los bloques
+recién conseguidos y culminan en una descarga de luz, partículas e impacto sonoro.
+En el recorrido completo, se ve el paso de siete a ocho retos y la Pirámide al
+100 %. Si faltan retos, se conserva el progreso real. No se reproduce antes la
+celebración común ni se vuelven a sumar logros al repetir el cierre.
+
+**Refuerzo acordado e implementado el 8 octubre 2026:** al encenderse el último
+bloque, una onda recorre la Pirámide desde la base hasta la cúspide. Toda la
+superficie queda más luminosa, con el contorno reforzado y luz en la cima; ese
+estado se conserva durante el mensaje y la foto. La transformación distingue
+el final de las celebraciones intermedias y solo aparece con todos los retos
+completados. Movimiento reducido muestra directamente el estado estable.
+
+Después entra el guion aprobado. La puesta en escena alterna la Pirámide,
+fragmentos luminosos que se reúnen, una expansión en «¡Lo tenemos!» y cintas de
+luz que primero recorren caminos distintos y después avanzan juntas. La foto
+final queda estable con «ESTE MOMENTO ES VUESTRO», La Pirámide y ADN Games.
+La iluminación es un efecto de pantalla; esta implementación no controla DMX.
+
+El guion completo conserva subtítulos de hasta dos líneas en la banda
+y=880–1080 del canvas 1920 × 1080. La música de fondo continúa sin reiniciarse;
+el efecto de carga la acompaña y el mensaje empieza después de su culminación.
+El GM puede pausar, reanudar, repetir o pasar a la foto. Movimiento reducido
+conserva composiciones y subtítulos, sin destellos ni desplazamientos.
+
+**Pendiente:** locución de ElevenLabs, sincronización con su duración real y
+traducciones del nuevo desenlace. El montaje castellano utiliza 78 segundos
+provisionales (10 de carga y 68 de mensaje), sin solicitar una voz inexistente.
+Catalán e inglés conservan su cierre anterior. Texto de grabación:
+`docs/audio/cierre-final-es.txt`. Efecto final:
+`static/audios/effects/final-charge.wav`, distribuido por USB con los audios.
+Previsualización aislada: `static/previews/cierre-final.html`.
+
+**Verificación:** cierre y foto revisados a 1920 × 1080 y 1280 × 720 mediante
+simulación aislada, sin MQTT ni hardware. Comprobados el progreso real, los
+subtítulos, el logo y la reproducción, pausa y repetición del efecto sonoro.
+Evidencias: `output/cierre-final/`. Pendiente escuchar el montaje en la sala.
 
 ### Edición de las explicaciones de puzzles
 
@@ -636,17 +724,34 @@ los antiguos mapas fijos. Los colores de alarma mantienen su función.
 
 ### Cierre final común de los niveles
 
-Acordado e implementado en las plantillas y el estilo común el **6 octubre
-2026**: los doce puzzles, incluido el simulacro y las pruebas fuera del recorrido,
-comparten una pantalla de cierre **final** verde sólido funcional `#2DFF9B`,
-con titular grafito `#0A1016` centrado en PiramideDisplay Black. Mensaje localizado:
-**«NIVEL SUPERADO»** en castellano, **«NIVELL SUPERAT»** en catalán y
-**«LEVEL COMPLETED»** en inglés. Sin halos, neón, bordes ni pirámides decorativas.
-Entrada suave y variante estática con movimiento reducido.
+**Aprobado e integrado el 8 octubre 2026:** los puzzles comparten el cierre
+ensayado en Cálculo Extremo. Una única celebración sustituye la pantalla verde
+final seguida del logro. La pirámide es protagonista: se encienden los bloques
+recién ganados, culminan en un pulso y aparece «HO HEU ACONSEGUIT!» (castellano:
+«¡LO HABÉIS CONSEGUIDO!»; inglés: «YOU DID IT TOGETHER!»). Después permanece
+el progreso estable. No encadenar dos anuncios del mismo logro.
 
-Este cierre confirma la resolución completa del nivel; no sustituye los avisos
-ni logros de fases intermedias. En Carga Final, la confirmación verde de
-«NIVEL SUPERADO» precede a la celebración final del juego.
+La música del juego continúa desde el mismo punto, gana presencia en el clímax
+y vuelve suavemente a su nivel habitual. Un barrido ascendente y un impacto sin
+afinación acompañan los 8,4 segundos de celebración, sin otra canción, acordes
+ni ritmo superpuesto. Código Sonoro recupera el fondo al terminar la prueba.
+El efecto común es `static/audios/effects/victory-celebration.wav`.
+
+Solo la resolución confirmada suma progreso; repetir la celebración no vuelve
+a sumar. El simulacro se celebra sin añadir bloques puntuables y las pruebas
+fuera del recorrido conservan el progreso existente. El GM abre la siguiente
+presentación al acabar la celebración, cuando el equipo esté preparado. En
+castellano, Carga Final utiliza directamente su carga cinematográfica y el
+desenlace «Este momento es vuestro», seguido de la foto. En catalán e inglés pasa directamente a la composición de foto,
+sin otra pantalla de victoria, hasta traducir el desenlace nuevo.
+Los avisos de fases intermedias mantienen su función y sus sonidos propios.
+
+Incluye los tres idiomas y movimiento reducido. Integrado en el código;
+comprobación con eventos simulados, pendiente validación con hardware y sonido
+en sala. No incluye DMX. La previsualización aislada sigue disponible en
+`static/previews/victoria-calcul.html`. Las pequeñas variaciones sonoras por reto
+siguen pendientes. Carga Final en castellano ya tiene su propio efecto de
+culminación, conservando la música de fondo y el progreso real.
 
 ### Criterios visuales particulares
 
@@ -671,7 +776,7 @@ ni logros de fases intermedias. En Carga Final, la confirmación verde de
   «Primera fase superada» al finalizar la primera ronda. El resultado permanece
   en el tablero con su señal de acierto o fallo, el error común y el sonido
   correspondiente. El inicio de otra ronda sigue las instrucciones del juego;
-  la resolución completa conserva el cierre final común «NIVEL SUPERADO».
+  la resolución completa utiliza la celebración final común.
   Verificación aislada a 1920 × 1080 y 1280 × 720 en
   `output/cronometro-sin-popup/`, sin MQTT ni hardware.
   Decisión implementada el 7 octubre 2026: el GM abre directamente la preparación
@@ -683,12 +788,12 @@ ni logros de fases intermedias. En Carga Final, la confirmación verde de
   individual con el cambio de pantalla. La preparación y la intro explican
   expresamente el encendido del terminal; no se añade un paso manual del GM.
   Los reintentos conservan su preparación correspondiente.
-- **Memory:** confirmación verde común con «NIVEL SUPERADO», localizada al idioma
-  de sesión, sin popup adicional ni destello.
+- **Memory:** celebración final común, localizada al idioma de sesión. Las
+  confirmaciones de fases intermedias se conservan.
 - **Botons:** logro de fase con resplandor radial verde y «NIVEL SUPERADO»;
   tiempo agotado con resplandor radial rojo y «SE ACABÓ EL TIEMPO». Sin pirámide
   grande ni popup adicional en esos avisos. Traducir los mensajes al idioma
-  de sesión. El éxito final utiliza la pantalla verde común, no el aviso radial.
+  de sesión. El éxito final utiliza la celebración común.
 - **Música:** confirmación entre fases en panel apaisado `#14232C` sobre fondo
   oscurecido grafito, blanco cálido y menta `#71E7DB`. PiramideDisplay, bordes
   discretos y radio pequeño, sin halos de neón. Mensaje «Primera fase superada»,
@@ -823,7 +928,8 @@ sin presentar como éxito un cierre de registro ni inventar errores o ayudas.
 Implementado: base visual, SVG editable, presentaciones progresivas y control en
 dos pestañas; cabecera compacta común en todos los puzzles. Piloto: ajustes del
 tablero de Memory y Laberinto. Pendiente: validación de sala, revisión individual de
-reglas/textos, audio y subtítulos finales, variantes finales de firma y logo.
+reglas/textos, locución del cierre y subtítulos finales en catalán e inglés,
+variantes finales de firma y logo.
 
 Antes de entregar un cambio visual:
 
@@ -845,11 +951,9 @@ en lugar de la ilustración «Seguid la instrucción». No se repite como subtí
 bajo el nombre del puzzle. Las notas del GM conservan el mismo objetivo.
 
 
-Revisión del 7 octubre 2026, implementada en castellano: los cierres finales
-utilizan el mismo mensaje «NIVEL SUPERADO», composición y escala, con la
-cabecera oculta durante la confirmación. Los avisos intermedios conservan su
-significado propio. Memoria Extrema se dirige al equipo en plural; los tiempos
-usan el acento ámbar y la unidad «s», preservando el rojo de tiempo agotado.
+Los cierres finales ocultan la cabecera durante la celebración común. Los avisos
+intermedios conservan su significado propio. Memoria Extrema se dirige al equipo
+en plural; los tiempos usan el acento ámbar y la unidad «s», preservando el rojo de tiempo agotado.
 El nombre de marca en el cierre castellano es «LA PIRÁMIDE».
 
 El usuario confirma la versión castellana el 7 octubre 2026. Implementada la

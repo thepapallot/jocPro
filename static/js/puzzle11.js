@@ -1,7 +1,6 @@
 (function () {
     var CORRECT_SOUND_URL         = '/static/audios/effects/correcte.wav';
     var PHASE_COMPLETE_SOUND_URL  = '/static/audios/effects/fase_completada.wav';
-    var COMPLETE_SOUND_URL        = '/static/audios/effects/nivel_completado.wav';
 
     function playSound(url) {
         var a = new Audio(url);
@@ -120,9 +119,6 @@
         if (solved) {
             timeline.classList.add('hidden');
             currentCard.classList.add('hidden');
-            solvedBanner.querySelector('.level-success-title').textContent = language() === 'ca'
-                ? 'NIVELL SUPERAT' : language() === 'eng' ? 'LEVEL COMPLETED' : 'NIVEL SUPERADO';
-            solvedBanner.classList.remove('hidden');
         } else {
             timeline.classList.remove('hidden');
             var instructions = language() === 'ca' ? STEPS_CA : language() === 'eng' ? STEPS_EN : STEPS;
@@ -137,6 +133,7 @@
     }
 
     function handleUpdate(d) {
+        if (window.PyramidLevelVictory?.active) return;
         if (!d || d.puzzle_id !== 11) return;
 
         var substepSuccessCount = d.substep_success_count || 0;
@@ -158,25 +155,7 @@
 
         if (d.puzzle_solved && !redirectedOnSolve) {
             redirectedOnSolve = true;
-            playSound(COMPLETE_SOUND_URL);
-            document.body.classList.add('p11-solved-flash');
-            setTimeout(function () {
-                if (window.PyramidGameFlow?.complete(11)) return;
-                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                    ? NEXT_PUZZLE_ID : 1;
-                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                    .then(function (response) {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            // fallback: force navigation
-                            window.location.href = '/videoPuzzles/' + nextId;
-                        }
-                    })
-                    .catch(function () {
-                        window.location.href = '/videoPuzzles/' + nextId;
-                    });
-            }, 4000);
+            window.PyramidLevelVictory.complete(11);
         }
     }
 

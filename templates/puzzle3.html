@@ -18,7 +18,7 @@
 <div id="puzzle3-shell">
     <section id="quiz-stage" class="quiz-panel">
         <div id="question-area">
-            <div id="question-text"></div>
+            <div id="question-text"><span class="quiz-fit-content"></span></div>
             <div class="answer-reminder" role="note" aria-label="Hay 4 respuestas correctas y 6 incorrectas. Marca las correctas con verde y las incorrectas con rojo." data-i18n-aria-label="game.quizReminder">
                 <div class="answer-reminder-badge answer-reminder-badge--correct">
                     <span class="answer-reminder-count">4</span>
@@ -38,6 +38,7 @@
         </div>
 
         <div id="answer-area"></div>
+        <p id="answer-change-hint" data-i18n="game.quizChangeHint">Podéis cambiar con el otro botón hasta que todos los terminales hayan respondido.</p>
     </section>
 </div>
 {% endblock %}

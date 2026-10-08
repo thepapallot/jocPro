@@ -1,5 +1,5 @@
-/* Trivial identity: brand magenta on graphite. Answer and result colours retain
-   their gameplay meaning; the neutral option selectors exclude every state. */
+/* Trivial identity: brand magenta on graphite. Answer symbols retain their
+   button colours; only final correctness changes the whole row. */
 :is(.p-stage[data-puzzle="3"],body.pyramid-game[data-puzzle="3"]){
   --trivial-accent:#dc68a7;
   --trivial-line:#dc68a766;
@@ -22,13 +22,13 @@
 .p-stage[data-puzzle="3"] .b-arrow{color:var(--trivial-accent)}
 .p-stage[data-puzzle="3"] .b-terminal b{color:var(--trivial-accent);border-color:var(--trivial-accent)}
 
-/* Live game: no overrides for green/red, correct/wrong or answered states. */
+/* Live game: choices keep the row neutral; final correct/wrong states retain feedback. */
 body.pyramid-game.game-surface[data-puzzle="3"]{--surface-accent:var(--trivial-accent)}
 body.pyramid-game[data-puzzle="3"] .game-corner-identity h1{color:var(--trivial-accent)}
 body.pyramid-game[data-puzzle="3"] #quiz-stage{background:var(--trivial-panel);border-color:var(--trivial-line);border-top:3px solid var(--trivial-accent);box-shadow:none}
 body.pyramid-game[data-puzzle="3"] #quiz-stage::before{display:none}
 body.pyramid-game[data-puzzle="3"] #question-area{background:linear-gradient(110deg,#dc68a724,transparent 75%),var(--trivial-bg);border-color:var(--trivial-line);border-left:5px solid var(--trivial-accent)}
 body.pyramid-game[data-puzzle="3"] #question-text{color:var(--trivial-text);font-weight:900;line-height:1.2;text-shadow:none}
-body.pyramid-game[data-puzzle="3"] .answer-row:not(.green):not(.red):not(.correct):not(.wrong){background:var(--trivial-bg);border-color:var(--trivial-line);box-shadow:none}
-body.pyramid-game[data-puzzle="3"] .answer-row:not(.green):not(.red):not(.correct):not(.wrong) .answer-index{background:var(--trivial-panel);color:var(--trivial-accent);border-color:var(--trivial-line);box-shadow:none;text-shadow:none}
-body.pyramid-game[data-puzzle="3"] .answer-row:not(.green):not(.red):not(.correct):not(.wrong) .answer-text{color:var(--trivial-text);text-shadow:none}
+body.pyramid-game[data-puzzle="3"] .answer-row:not(.correct):not(.wrong){background:var(--trivial-bg);border-color:var(--trivial-line);box-shadow:none}
+body.pyramid-game[data-puzzle="3"] .answer-row:not(.correct):not(.wrong) .answer-index{background:var(--trivial-panel);color:var(--trivial-accent);border-color:var(--trivial-line);box-shadow:none;text-shadow:none}
+body.pyramid-game[data-puzzle="3"] .answer-row:not(.correct):not(.wrong) .answer-text{color:var(--trivial-text);text-shadow:none}

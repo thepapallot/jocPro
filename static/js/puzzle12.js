@@ -354,6 +354,7 @@
     }
 
     function handleUpdate(d) {
+        if (window.PyramidLevelVictory?.active) return;
         if (!d || d.puzzle_id !== 12) return;
         if (interRoundPauseActive && d.startRound) {
             queuedStartRoundUpdate = d;
@@ -422,29 +423,14 @@
         }
 
         if (d.puzzle_solved) {
-            playEffect('nivel_completado.wav');
+            clearInterval(timerInterval);
+            clearInterval(countdownInterval);
+            stopBallMotion();
             clearTimeout(interRoundPauseTimer);
             interRoundPauseTimer = null;
             interRoundPauseActive = false;
             queuedStartRoundUpdate = null;
-            showSuccessFeedback();
-            document.getElementById('p12-solved-banner')?.classList.remove('hidden');
-            setTimeout(function () {
-                if (window.PyramidGameFlow?.complete(12)) return;
-                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                    ? NEXT_PUZZLE_ID : 1;
-                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                    .then(function (response) {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            window.location.href = '/videoPuzzles/' + nextId;
-                        }
-                    })
-                    .catch(function () {
-                        window.location.href = '/videoPuzzles/' + nextId;
-                    });
-            }, 4000);
+            window.PyramidLevelVictory.complete(12);
             return;
         }
     }

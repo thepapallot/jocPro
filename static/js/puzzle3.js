@@ -6,6 +6,42 @@
     const feedbackEl = document.getElementById('feedback');
     const playerSummaryEl = document.getElementById('player-summary');
 
+
+    // Measure in the game's logical canvas: CSS transforms scale the complete
+    // board afterwards, so resolution and device pixel ratio cannot alter wrapping.
+    function fitText(box) {
+        const content = box.querySelector('.quiz-fit-content');
+        if (!content || !content.textContent) return;
+        const style = getComputedStyle(box);
+        const height = box.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - 2;
+        if (height <= 0 || box.clientWidth <= 0) return;
+        const lineRatio = parseFloat(style.lineHeight) / parseFloat(style.fontSize);
+        let low = 1;
+        const maximum = parseFloat(style.getPropertyValue('--quiz-text-max'));
+        let high = Math.min(height / lineRatio, maximum);
+        while (high - low > .25) {
+            const size = (low + high) / 2;
+            content.style.fontSize = `${size}px`;
+            if (content.scrollHeight <= height && content.scrollWidth <= content.clientWidth) low = size;
+            else high = size;
+        }
+        content.style.fontSize = `${low}px`;
+    }
+
+    function fitQuizText() {
+        fitText(questionTextEl);
+        answerAreaEl.querySelectorAll('.answer-text').forEach(fitText);
+    }
+
+    let fitFrame = null;
+    function scheduleTextFit() {
+        if (fitFrame !== null) return;
+        fitFrame = requestAnimationFrame(() => {
+            fitFrame = null;
+            fitQuizText();
+        });
+    }
+
     // Consistent sound helper (same as puzzles 1 and 2)
     function playSound(url) {
         const audio = new Audio(url);
@@ -14,9 +50,7 @@
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
     const CORRECT_SOUND_URL = "/static/audios/effects/correcte.wav";
     const INCORRECT_SOUND_URL = "/static/audios/effects/incorrecte.wav";
-    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav"; // NEW
     const APAREIX_SOUND_URL = "/static/audios/effects/apareix_contingut.wav"; // NEW
-    const SOLVED_GREEN_DELAY_MS = 2500;
 
     // Sound block window to avoid overlap after correct/incorrect
     let soundBlockUntil = 0;
@@ -99,7 +133,7 @@
         Object.entries(map).forEach(([p, v]) => {
             const index = parseInt(p, 10);
             updatePlayerAnswered(index);
-            colorAnswerRowByValue(index, v);
+            markAnswerRowByValue(index, v);
         });
     }
 
@@ -115,7 +149,8 @@
             explicitQuestion || 1,
             normalizedTarget
         );
-        questionTextEl.textContent = qObj.q;
+        questionTextEl.querySelector('.quiz-fit-content').textContent = qObj.q;
+        document.getElementById("answer-change-hint").hidden = false;
         answerAreaEl.innerHTML = ""; // clear answer area
         (qObj.answers || []).forEach((ans, idx) => {
             const row = document.createElement('div');
@@ -126,15 +161,26 @@
             indexSpan.textContent = idx; // display 0-9
             const textSpan = document.createElement('div');
             textSpan.className = 'answer-text';
-            textSpan.textContent = ans;
+            const content = document.createElement('span');
+            content.className = 'quiz-fit-content';
+            content.textContent = ans;
+            textSpan.appendChild(content);
             row.appendChild(indexSpan);
             row.appendChild(textSpan);
+            const choice = document.createElement('div');
+            choice.className = 'answer-choice';
+            choice.setAttribute('role', 'img');
+            choice.dataset.i18nAriaLabel = 'game.quizUnanswered';
+            choice.innerHTML = '<span class="answer-mark answer-mark--yes" aria-hidden="true">✓</span><span class="answer-mark answer-mark--no" aria-hidden="true">✕</span>';
+            row.appendChild(choice);
             answerAreaEl.appendChild(row); // append to answer-area
         });
         streakEl.textContent = `${activeQuestionNumber}/${normalizedTarget}`;
         if (feedbackEl) { feedbackEl.textContent = ''; feedbackEl.className = ''; }
         resetPlayerChips(answeredPlayers); // Reset all chip styling first
         applyAnsweredMap(answeredMap);
+        window.PyramidLanguage.apply(answerAreaEl);
+        fitQuizText();
     }
 
     function setStreak(streak, target, questionNumber = null) {
@@ -163,33 +209,7 @@
     function showSolved() {
         if (solvedSequenceStarted) return;
         solvedSequenceStarted = true;
-
-        // Play puzzle completion sound
-        playSound(PUZZLE_COMPLETE_SOUND_URL);
-
-        // Delay green solved transition so it does not appear immediately.
-        setTimeout(function () {
-            const banner = document.getElementById('p3-solved-banner');
-            if (banner) banner.classList.remove('hidden');
-            document.body.classList.add('p3-solved-flash');
-
-            setTimeout(function () {
-                if (window.PyramidGameFlow?.complete(3)) return;
-                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                    ? NEXT_PUZZLE_ID : 1;
-                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                    .then(function (response) {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            window.location.href = '/videoPuzzles/' + nextId;
-                        }
-                    })
-                    .catch(function () {
-                        window.location.href = '/videoPuzzles/' + nextId;
-                    });
-            }, 4000);
-        }, SOLVED_GREEN_DELAY_MS);
+        window.PyramidLevelVictory.complete(3);
     }
 
     function normalizeAnswerValue(value) {
@@ -204,16 +224,36 @@
         return null;
     }
 
-    function colorAnswerRowByValue(slot, value) {
+    function markAnswerRowByValue(slot, value, animate = false) {
         const row = answerAreaEl.querySelector(`.answer-row[data-answer-index="${slot}"]`);
         if (!row) return;
 
+        // Cancel the previous impact before fast edits or final result feedback.
+        [row, ...row.querySelectorAll('.answer-mark')].forEach(el => {
+            el.getAnimations().forEach(animation => animation.cancel());
+        });
         row.classList.remove('green', 'red', 'correct', 'wrong');
         const normalized = normalizeAnswerValue(value);
+        const choice = row.querySelector('.answer-choice');
+        choice.dataset.i18nAriaLabel = normalized === 5 ? 'game.quizYesSelected' : normalized === 1 ? 'game.quizNoSelected' : 'game.quizUnanswered';
+        window.PyramidLanguage.apply(choice);
         if (normalized === 5) {
             row.classList.add('green');
         } else if (normalized === 1) {
             row.classList.add('red');
+        }
+        if (animate && normalized !== null && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const mark = choice.querySelector(normalized === 5 ? '.answer-mark--yes' : '.answer-mark--no');
+            const colour = getComputedStyle(row).getPropertyValue('--answer-colour').trim();
+            mark.animate([
+                { transform: 'scale(.55)', boxShadow: `0 0 0 0 ${colour}` },
+                { transform: 'scale(1.22)', boxShadow: `0 0 0 10px ${colour}, 0 0 48px ${colour}`, offset: .3 },
+                { transform: 'scale(1.06)', boxShadow: `0 0 0 24px transparent, 0 0 22px ${colour}` }
+            ], { duration: 700, easing: 'cubic-bezier(.16,1,.3,1)' });
+            row.animate([
+                { boxShadow: `inset 0 0 0 3px ${colour}, 0 0 24px ${colour}` },
+                { boxShadow: 'inset 0 0 0 0 transparent, 0 0 0 transparent' }
+            ], { duration: 850, easing: 'ease-out' });
         }
     }
 
@@ -226,22 +266,20 @@
             : (Array.isArray(result.correct_answer) ? result.correct_answer : []);
         const expectedAnswer = normalizeAnswerValue(result.correct_answer);
 
-        // Color answer rows
+        document.getElementById('answer-change-hint').hidden = true;
+
+        // Preserve the submitted choice separately from the final correctness.
         const rows = answerAreaEl.querySelectorAll('.answer-row');
         rows.forEach(r => {
             const idx = parseInt(r.dataset.answerIndex, 10);
             const expected = expectedValues.length > idx ? normalizeAnswerValue(expectedValues[idx]) : expectedAnswer;
             const submitted = normalizeAnswerValue(playerAnswers[idx]);
 
-            r.classList.remove('green', 'red', 'correct', 'wrong');
+            markAnswerRowByValue(idx, playerAnswers[idx]);
             if (submitted !== null && expected !== null && submitted === expected) {
                 r.classList.add('correct');
             } else if (submitted !== null && expected !== null && submitted !== expected) {
                 r.classList.add('wrong');
-            } else if (submitted === 5) {
-                r.classList.add('green');
-            } else if (submitted === 1) {
-                r.classList.add('red');
             }
         });
 
@@ -270,6 +308,7 @@
     }
 
     function handleUpdate(data) {
+        if (window.PyramidLevelVictory?.active) return;
         if (data.puzzle_id !== 3) return;
         if (typeof data.total_players === 'number' && data.total_players > 0 && data.total_players !== totalPlayers) {
             initPlayers(data.total_players);
@@ -287,7 +326,7 @@
         }
         if (data.player_answer) {
             updatePlayerAnswered(data.player_answer.player);
-            colorAnswerRowByValue(data.player_answer.player, data.player_answer.answer);
+            markAnswerRowByValue(data.player_answer.player, data.player_answer.answer, true);
         }
         if (data.question_result) {
             showResult(data.question_result, data.streak || 0, data.target || 6);
@@ -408,6 +447,12 @@
         initPlayers();
         setStreak(0, 6);
         installDebugHelpers();
+        const textLayoutObserver = new ResizeObserver(scheduleTextFit);
+        textLayoutObserver.observe(questionTextEl);
+        textLayoutObserver.observe(answerAreaEl);
+        document.fonts.ready.then(scheduleTextFit);
+        document.fonts.addEventListener('loadingdone', scheduleTextFit);
+        window.addEventListener('resize', scheduleTextFit, { passive: true });
         initSSE();
     });
 })();

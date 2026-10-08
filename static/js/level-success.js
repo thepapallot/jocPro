@@ -15,7 +15,7 @@
       banner.setAttribute('aria-live', 'polite');
     }
     const sync = () => document.body.classList.toggle('level-success-visible',
-      banners.some(banner => !banner.classList.contains('hidden')));
+      !!window.PyramidLevelVictory?.active || banners.some(banner => !banner.classList.contains('hidden')));
     const observer = new MutationObserver(sync);
     banners.forEach(banner => observer.observe(banner, {attributes: true, attributeFilter: ['class']}));
     sync();

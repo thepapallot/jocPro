@@ -37,7 +37,6 @@
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
     const ROUND_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const ROUND_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
-    const PUZZLE_COMPLETE_SOUND_URL = "/static/audios/effects/nivel_completado.wav";
     const BEEP_COUNTDOWN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
     let objectivePulseTimeout = null;
     function setDisplayMode(mode = 'play') {
@@ -290,6 +289,7 @@
     }
 
     function handleUpdate(d,func) {
+        if (window.PyramidLevelVictory?.active) return;
         console.log('Pre handleUpdate called from:', func);
         if (!d || d.puzzle_id !== 5) return;
 
@@ -414,33 +414,8 @@
         // Puzzle solved
         if (d.puzzle_solved && !solved) {
             solved = true;
-            // Play final puzzle completion sound
-            playSound(PUZZLE_COMPLETE_SOUND_URL);
-            if (countdownInterval) {
-                clearCountdown();
-            }
-            // Show solved banner and flash
-            const banner = document.getElementById('p5-solved-banner');
-            if (banner) banner.classList.remove('hidden');
-            document.body.classList.add('p5-solved-flash');
-            setTimeout(function () {
-    const tr = (key, fallback) => window.PyramidLanguage?.t?.('game.' + key, fallback) ?? fallback;
-                if (window.PyramidGameFlow?.complete(5)) return;
-                var nextId = (typeof NEXT_PUZZLE_ID !== 'undefined' && NEXT_PUZZLE_ID !== null)
-                    ? NEXT_PUZZLE_ID : 1;
-                fetch('/videoPuzzles/' + nextId, { method: 'POST' })
-                    .then(function (response) {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            window.location.href = '/videoPuzzles/' + nextId;
-                        }
-                    })
-                    .catch(function () {
-    const tr = (key, fallback) => window.PyramidLanguage?.t?.('game.' + key, fallback) ?? fallback;
-                        window.location.href = '/videoPuzzles/' + nextId;
-                    });
-            }, 4000);
+            if (countdownInterval) clearCountdown();
+            window.PyramidLevelVictory.complete(5);
         }
     }
 

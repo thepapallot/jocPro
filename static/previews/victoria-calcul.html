@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Càlcul Extrem · prova de celebració</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/puzzle1.css">
+  <link rel="stylesheet" href="../css/game-theme.css">
+  <link rel="stylesheet" href="../css/game-surface.css">
+  <link rel="stylesheet" href="../css/victory-celebration.css">
+</head>
+<body class="pyramid-game game-surface victory-preview" data-puzzle="1">
+  <main id="game-stage">
+    <div id="preview-board">
+      <header class="game-corner-hud">
+        <div class="game-corner-identity"><h1 id="puzzle-name">Càlcul Extrem</h1></div>
+        <div class="game-corner-progress" id="preview-progress"></div>
+      </header>
+      <div id="bottom-area">
+        <div id="p1-arena">
+          <div id="puzzle-container" class="round-1" aria-label="Objectius"></div>
+          <section id="objective-panel">
+            <div id="round-indicator"><span id="p1-progress">15/16 COMPLETATS</span></div>
+            <div class="p1-timer-caption" id="time-label">TEMPS RESTANT</div>
+            <div id="timer">00:08</div>
+            <div id="objective-formula">
+              <div class="formula-item" id="formula-left"><img src="../images/shared/gameplay/token_card.png" alt="Token"><span class="formula-value">13</span></div>
+              <span>+</span>
+              <div class="formula-item" id="formula-right"><img src="../images/shared/gameplay/terminal_box.png" alt="Terminal"><span class="formula-value">8</span></div>
+              <span class="formula-equals">=</span><span id="formula-result-value" class="formula-result-value">21</span>
+            </div>
+            <div id="objective-message"></div><div id="solved-container"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <section id="victory" class="v-stage" hidden aria-label="Celebració de l’equip">
+      <div class="v-atmosphere"></div>
+      <div class="v-floor"></div>
+      <canvas class="v-particles" width="1920" height="1080" aria-hidden="true"></canvas>
+      <div class="v-hero"></div>
+      <div class="v-wave" aria-hidden="true"></div>
+      <div class="v-impact" aria-hidden="true"></div>
+      <h2 class="v-title" aria-live="polite"></h2>
+      <div class="v-progress"><div class="v-progress-marks" aria-hidden="true"></div><p></p></div>
+    </section>
+  </main>
+  <aside class="v-controls" id="preview-controls" aria-label="Controls de la prova">
+    <span class="v-preview-label">PROVA · CÀLCUL EXTREM</span>
+    <h1>Una victòria d’equip.</h1>
+    <p>Deixa sonar la música del joc i prem «Viure la victòria». La celebració creix sobre aquesta mateixa música.</p>
+    <div class="v-options">
+      <label>Idioma <select id="preview-language"><option value="ca">Català</option><option value="es">Castellano</option><option value="en">English</option></select></label>
+      <label><input id="preview-sound" type="checkbox" checked> Amb so</label>
+      <label><input id="preview-reduced" type="checkbox"> Moviment reduït</label>
+    </div>
+    <div class="v-audio-check">
+      <label for="preview-music">Música del joc · pots provar diferents moments</label>
+      <audio id="preview-music" controls loop preload="auto" src="../audios/musica_ambient/musica_piramide.mp3"></audio>
+      <audio id="preview-score" preload="auto" src="../audios/effects/victory-celebration.wav" hidden></audio>
+    </div>
+    <div class="v-actions"><button id="preview-play">Viure la victòria</button><button id="preview-fullscreen" class="v-secondary">Pantalla completa</button></div>
+    <p class="v-hint">Progrés simulat: d’1 a 2 reptes de 8. Esc per tornar als controls.</p>
+    <p id="preview-error" role="alert" hidden></p>
+  </aside>
+  <button id="preview-repeat" class="v-repeat" hidden>Tornar a provar ↻</button>
+  <script src="../js/pyramid-logo.js"></script>
+  <script src="../js/victory-celebration.js"></script>
+  <script src="../js/victory-preview.js"></script>
+</body>
+</html>

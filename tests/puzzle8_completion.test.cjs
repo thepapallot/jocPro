@@ -24,8 +24,10 @@ function memory() {
     let stream;
     const timers = [];
     const sounds = [];
+    const victories = [];
+    const victory = {active:false,complete(id){victories.push(id);this.active=true;}};
     const context = vm.createContext({
-        window: {}, console,
+        window: {PyramidLevelVictory:victory}, console,
         document: {
             getElementById: getElement,
             addEventListener: (name, handler) => { listeners[name] = handler; }
@@ -43,7 +45,7 @@ function memory() {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../static/js/puzzle8.js'), 'utf8'), context);
     listeners.DOMContentLoaded();
     return {
-        elements, timers, sounds,
+        elements, timers, sounds, victories,
         update: data => stream.onmessage({data: JSON.stringify({puzzle_id: 8, ...data})})
     };
 }
@@ -67,27 +69,28 @@ test('an incorrect answer does not display completion', () => {
     assert.equal(game.elements.get('p8-instruction-title').textContent, 'COMPLETAD LAS DOS FORMAS');
 });
 
-test('final completion shows the green screen and schedules navigation only once', () => {
+test('final completion starts the shared celebration only once and leaves navigation to the GM', () => {
     const game = memory();
     game.update({puzzle_solved: true});
     game.update({puzzle_solved: true});
     assert.equal(game.elements.get('p8-instruction-title').textContent, 'NIVEL SUPERADO');
-    assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), false);
-    assert.equal(game.timers.length, 1);
-    assert.equal(game.timers[0].delay, 4000);
+    assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), true);
+    assert.deepEqual(game.victories,[8]);
+    assert.equal(game.timers.length, 0);
 });
 
-test('the final success sound plays at answer validation, not five seconds later or twice', () => {
+test('answer validation keeps phase feedback; only puzzle_solved starts the final celebration', () => {
     const game = memory();
     game.update({round: 1, round_total: 1, phase: 'input', input_result: {success: true, box_results: {}}});
-    assert.deepEqual(game.sounds, ['/static/audios/effects/nivel_completado.wav']);
+    assert.deepEqual(game.sounds, ['/static/audios/effects/fase_completada.wav']);
+    assert.deepEqual(game.victories,[]);
     assert.equal(game.timers.length, 0);
     assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), true);
     game.update({puzzle_solved: true});
     assert.equal(game.sounds.length, 1);
-    assert.equal(game.timers.length, 1);
-    assert.equal(game.timers[0].delay, 4000);
-    assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), false);
+    assert.equal(game.timers.length, 0);
+    assert.deepEqual(game.victories,[8]);
+    assert.equal(game.elements.get('p8-solved-banner').classList.contains('hidden'), true);
 });
 
 test('an intermediate success retains the phase sound', () => {

@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="../static/css/presentation.css">
 <link rel="stylesheet" href="../static/css/presentation-briefing.css">
 <link rel="stylesheet" href="../static/css/presentation-opening.css">
+<link rel="stylesheet" href="../static/css/presentation-closing.css">
+<link rel="stylesheet" href="../static/css/victory-celebration.css">
 </head>
 <body class="presentation-pilot">
   <link rel="stylesheet" href="../static/css/presentation-journey.css">
@@ -14,11 +16,20 @@
     <div id="p-stage" class="p-stage"></div>
   </main>
   <div id="p-announcement" class="p-sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script>
+    // Static rehearsal only: no final route, session closure or game actions.
+    if(new URLSearchParams(location.search).get('scene')==='closing')window.PYRAMID_PAGE={
+      sceneId:'closing',language:'es',order:[2,1,8,3,5,12,4],tutorialId:11,finalId:6,routes:{},initialStep:0
+    };
+  </script>
   <script src="../static/js/pyramid-logo.js"></script>
+  <script src="../static/js/victory-celebration.js"></script>
   <script src="../static/js/game-language.js"></script>
   <script src="../static/js/puzzle-names.js"></script>
   <script src="../static/js/presentation-recordings.js"></script>
   <script src="../static/js/presentation-story.js"></script>
+  <script src="../static/js/presentation-closing.js"></script>
+  <script src="../static/js/presentation-finale-effects.js"></script>
 <script src="../static/js/presentation-flow.js"></script>
   <script src="../static/js/presentation-opening.js"></script>
   <script src="../static/js/presentation-visuals.js"></script>
