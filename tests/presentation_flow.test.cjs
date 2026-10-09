@@ -185,7 +185,7 @@ test('snake briefing always includes the alarm warning before its final start st
   assert.match(snake.copy.es.notes.at(-1),/colores invertidos/);
   assert.doesNotMatch(snake.copy.es.notes.join(' '),/memoriz/i);
   assert.equal(snake.attentionCopy.es.before,4);
-  assert.equal(snake.attentionCopy.es.after,3);
+  assert.equal(snake.attentionCopy.es.after,5);
 });
 
 test('QUIZ keeps its journey and requires the answer-change warning before starting',()=>{

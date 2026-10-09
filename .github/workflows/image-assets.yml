@@ -1,0 +1,14 @@
+name: Recursos de imagen
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detectar recursos ausentes o retirados que han reaparecido
+        run: python3 scripts/audit_image_assets.py --check --output /tmp/piramide-images-check.json

@@ -206,7 +206,7 @@
     intro.steps=id===tutorialId?['elements','objective','tools','interaction']:id===journey.trivialId?['journey','objective','tools','interaction']:['objective','tools','interaction'];
     if(id===tutorialId)intro.elementsCopy={es:{title:'LA MISIÓN ESTÁ EN VUESTRAS MANOS',tokenTitle:'VUESTRO TOKEN ES PERSONAL',tokenLead:'Conservad el vuestro durante toda la partida.',terminalTitle:'LOS TERMINALES',terminalLead:'Botones, luces y símbolos para resolver los retos.',action:'Acercad vuestro token al lector del terminal para interactuar.',team:'Un único equipo: compartid información y coordinaos.',notes:'El token es personal: cada persona o pareja conserva el suyo durante toda la partida. Mostrad el lector de un terminal y cómo acercar el token para interactuar. Los terminales contienen botones, luces y símbolos. El nivel requiere trabajar en equipo: compartid lo que encontréis y coordinaos. Después explicad el Simulacro Inicial; esta pantalla no inicia la práctica.'}};
     if(id===2){
-      intro.attentionCopy={es:{text:'Cuando suene la alarma, las serpientes se pondrán rojas. Los símbolos de la pantalla no cambian: buscad en los terminales el mismo símbolo con los colores invertidos.',before:4,after:3}};
+      intro.attentionCopy={es:{text:'Cuando suene la alarma, las serpientes se pondrán rojas. Los símbolos de la pantalla no cambian: buscad en los terminales el mismo símbolo con los colores invertidos.',before:4,after:5}};
       intro.steps.push('attention');
       Object.assign(intro.copy.es,{objectiveTitle:'Completar la serpiente correspondiente a cada token.',objectiveLead:'Completar la serpiente correspondiente a cada token.',exampleLead:'Tokens y símbolos de los terminales.',warning:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.',coordinateLead:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.'});
     }
@@ -227,7 +227,7 @@
     const catalan = reviewedCatalan[id];
     if(catalan){
       Object.assign(intro.copy.ca,{objectiveTitle:catalan.objective,objectiveLead:catalan.objective,exampleLead:catalan.tools,warning:catalan.action,coordinateLead:catalan.action});
-      if(catalan.attention)intro.attentionCopy.ca={text:catalan.attention.join(' '),paragraphs:catalan.attention,...(id===2?{before:4,after:3}:{})};
+      if(catalan.attention)intro.attentionCopy.ca={text:catalan.attention.join(' '),paragraphs:catalan.attention,...(id===2?{before:4,after:5}:{})};
     }
     if(id===tutorialId)intro.elementsCopy.ca={title:'LA MISSIÓ ÉS A LES VOSTRES MANS',tokenTitle:'EL VOSTRE TOKEN ÉS PERSONAL',tokenLead:'Conserveu el vostre durant tota la partida.',terminalTitle:'ELS TERMINALS',terminalLead:'Botons, llums i símbols per resoldre els reptes.',action:'Acosteu el vostre token al lector del terminal per interactuar.',team:'Un únic equip: compartiu informació i coordineu-vos.',notes:'El token és personal: cada persona o parella conserva el seu durant tota la partida. Mostra el lector, els botons, els llums i els símbols del terminal. Per interactuar, cal acostar el token al lector.'};
     intro.journey=journey;
@@ -241,6 +241,11 @@
       t.notes=[t.objectiveLead,t.exampleLead,rule];
       t.footers=[local('Observeu el repte.','Observad el reto.','Look at the challenge.')[lang],local('Aquestes són les vostres eines.','Estas son vuestras herramientas.','These are your tools.')[lang],intro.act.role[lang]];
       t.guidance={role:intro.act.role[lang],hints:[t.objectiveLead,t.exampleLead,rule],rhythm:local('Doneu temps per pensar. Si el grup no sap què fer, oferiu una ajuda; si està provant un pla, deixeu-lo jugar.','Dad tiempo para pensar. Si el grupo no sabe qué hacer, ofreced una ayuda; si está probando un plan, dejadlo jugar.','Allow thinking time. Offer a hint if the group does not know what to do; let them play if they are testing a plan.')[lang]};
+      if(id===4){
+        const registrationNote=local('Per registrar cada fragment, primer premeu el botó verd i després passeu el token pel terminal del fragment escollit. Cal tornar a prémer el botó verd abans de registrar el fragment següent. Passar el token sense activar el registre només reprodueix el fragment.','Para registrar cada fragmento, pulsad primero el botón verde y después pasad el token por el terminal del fragmento elegido. Hay que volver a pulsar el botón verde antes de registrar el siguiente fragmento. Pasar el token sin activar el registro solo reproduce el fragmento.','To register each fragment, first press the green button, then scan the token at the terminal for the chosen fragment. Press the green button again before registering the next fragment. Scanning the token without enabling recording only plays the fragment.')[lang];
+        t.notes[2]+=' '+registrationNote;
+        t.guidance.hints[2]+=' '+registrationNote;
+      }
       if(['es','ca'].includes(lang)&&intro.reviewedBriefing)t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];
       if(intro.attentionCopy){
         if(['es','ca'].includes(lang))t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];

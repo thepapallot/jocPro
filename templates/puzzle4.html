@@ -17,17 +17,41 @@
 <div id="puzzle4-shell">
     <aside id="brief-panel" class="music-panel">
         <div class="button-legend">
-            <div class="legend-row">
+            <div class="legend-row legend-listen">
+                <h2 class="legend-copy" data-i18n="game.musicListenFragment">Escuchar un fragmento</h2>
+                <div class="legend-diagram" aria-hidden="true">
+                    <img class="legend-token" src="{{ url_for('static', filename='images/shared/gameplay/token_card.png') }}" alt="">
+                    <span class="legend-arrow">→</span>
+                    <img class="legend-terminal" src="{{ url_for('static', filename='images/shared/gameplay/terminal_box.png') }}" alt="">
+                </div>
+            </div>
+            <div class="legend-row legend-record">
+                <h2 class="legend-copy" data-i18n="game.musicRecordFragment">Registrar un fragmento</h2>
+                <div class="legend-steps">
+                    <div class="legend-register-diagram" aria-hidden="true">
+                        <span class="legend-pill button-green"></span>
+                        <svg class="legend-arrow" viewBox="0 0 40 24"><path d="M3 12H36M27 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                        <img class="legend-token" src="{{ url_for('static', filename='images/shared/gameplay/token_card.png') }}" alt="">
+                        <svg class="legend-arrow" viewBox="0 0 40 24"><path d="M3 12H36M27 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                        <img class="legend-terminal" src="{{ url_for('static', filename='images/shared/gameplay/terminal_box.png') }}" alt="">
+                    </div>
+                    <div class="legend-register-captions">
+                        <p class="legend-caption" data-i18n="game.musicPressGreen">1. Pulsad verde</p>
+                        <p class="legend-caption" data-i18n="game.musicThenScan">2. Pasad el token</p>
+                    </div>
+                </div>
+            </div>
+            <div class="legend-row legend-button-action">
                 <span class="legend-pill button-blue" aria-hidden="true"></span>
-                <span class="legend-copy" data-i18n="game.fullSample">Muestra completa</span>
+                <div>
+                    <h2 class="legend-copy" data-i18n="game.musicListenSong">Escuchar la canción completa</h2>
+                </div>
             </div>
-            <div class="legend-row">
-                <span class="legend-pill button-green" aria-hidden="true"></span>
-                <span class="legend-copy" data-i18n="game.register">Registrar</span>
-            </div>
-            <div class="legend-row">
+            <div class="legend-row legend-button-action">
                 <span class="legend-pill button-red" aria-hidden="true"></span>
-                <span class="legend-copy" data-i18n="game.deleteLast">Borrar último registro</span>
+                <div>
+                    <h2 class="legend-copy" data-i18n="game.musicDeleteLast">Borrar el último registro</h2>
+                </div>
             </div>
         </div>
     </aside>
@@ -39,9 +63,6 @@
 
         <div id="progress-section">
             <div id="streak1-container" class="streak-container">
-                <div class="sequence-header">
-                    <span class="sequence-title"></span>
-                </div>
                 <div class="progress-boxes progress-boxes-4">
                     <div class="progress-box note-slot"></div>
                     <div class="progress-box note-slot"></div>
@@ -51,9 +72,6 @@
             </div>
 
             <div id="streak2-container" class="streak-container">
-                <div class="sequence-header">
-                    <span class="sequence-title"></span>
-                </div>
                 <div class="progress-boxes progress-boxes-8">
                     <div class="progress-box note-slot"></div>
                     <div class="progress-box note-slot"></div>

@@ -631,3 +631,32 @@ los checks de navegador para que los símbolos no cambien durante la alarma. Sin
 broker MQTT ni terminales físicos.
 
 Revisión backend: pendiente de validar con terminales físicos.
+
+### 2026-10-09 — QUIZ: cerrar respuestas mientras se muestra el resultado
+
+Autorización: el usuario confirma «ok de pep. hazlo» para corregir el punto 2
+de la auditoría inicial.
+
+- `mqtt/puzzles/puzzle3.py`: una respuesta conjunta completa conserva sus diez
+  elecciones durante el resultado, también si falla. `handle_message()` ignora
+  nuevas entradas mientras estén completas. La transición existente las vacía
+  bajo el mismo lock antes de publicar la siguiente pregunta.
+- Se mantienen los siete segundos de resultado, el contrato MQTT 1/5, la
+  puntuación y la posibilidad de cambiar una elección antes de que contesten
+  todos los terminales. Un fallo sigue pasando a otra pregunta del mismo nivel
+  sin sumar progreso.
+- `tests/test_puzzle3.py`: tres pruebas nuevas comprueban bloqueo tras fallo y
+  acierto, ausencia de cambios de estado/eventos/avances duplicados durante el
+  resultado, reapertura al publicar la siguiente pregunta y cambios de elección
+  antes de la última respuesta.
+
+Validación: la regresión de fallo reprodujo el acierto indebido antes del arreglo;
+las ocho pruebas del QUIZ pasan después. Espera y creación de hilos simuladas,
+ejecutando la transición real; sin servidor de producción, broker ni hardware.
+No cambia la composición, colores, símbolos ni textos de las pantallas.
+
+Impacto/revisión para Pep: comprobar con botones físicos que las pulsaciones
+durante el resultado no alteran la puntuación y que la nueva pregunta acepta
+respuestas. El servidor deberá cargar este código para aplicar la corrección.
+La cancelación de tareas al detener y la recuperación de estados siguen siendo
+los puntos 3 y 5 pendientes de la auditoría; no se dan por resueltos aquí.

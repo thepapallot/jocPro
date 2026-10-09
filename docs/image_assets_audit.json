@@ -1,11 +1,11 @@
 {
   "repo_root": "/home/agusti/Documentos/repositori/jocPro",
-  "images_total": 31,
+  "images_total": 32,
   "images_by_bucket": {
     "puzzle2": 10,
     "puzzle8": 10,
     "previews": 7,
-    "shared": 3,
+    "shared": 4,
     "puzzle12": 1
   },
   "images_by_subfolder": {
@@ -23,6 +23,7 @@
     "puzzle8/omega.svg": 1,
     "puzzle8/pi.svg": 1,
     "puzzle8/sigma.svg": 1,
+    "shared/branding": 1,
     "shared/terminal_3d": 1
   },
   "top_referenced_image_urls": [
@@ -101,6 +102,10 @@
     {
       "url": "/static/images/puzzle2/symbols/symbol_${index}.png",
       "count": 1
+    },
+    {
+      "url": "/static/images/shared/branding/adn-games.svg",
+      "count": 1
     }
   ],
   "dynamic_or_prefix_references": [
@@ -134,6 +139,7 @@
     }
   ],
   "missing_image_references": [],
+  "reintroduced_retired_files": [],
   "references_by_file": [
     {
       "file": "player/game-surfaces.html",
@@ -173,6 +179,12 @@
       "references": [
         "/static/images/puzzle2/symbols/symbol_${id}.png",
         "/static/images/puzzle8/${name}.svg"
+      ]
+    },
+    {
+      "file": "static/js/presentation-closing.js",
+      "references": [
+        "/static/images/shared/branding/adn-games.svg"
       ]
     },
     {
@@ -229,6 +241,7 @@
     "static/images/puzzle8/omega.svg",
     "static/images/puzzle8/pi.svg",
     "static/images/puzzle8/sigma.svg",
+    "static/images/shared/branding/adn-games.svg",
     "static/images/shared/gameplay/terminal_box.png",
     "static/images/shared/gameplay/token_card.png",
     "static/images/shared/terminal_3d/buttons_panel_front.png"
