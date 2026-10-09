@@ -483,10 +483,24 @@ final queda estable con «ESTE MOMENTO ES VUESTRO», La Pirámide y ADN Games.
 La iluminación es un efecto de pantalla; esta implementación no controla DMX.
 
 El guion completo conserva subtítulos de hasta dos líneas en la banda
-y=880–1080 del canvas 1920 × 1080. La música de fondo continúa sin reiniciarse;
-el efecto de carga la acompaña y el mensaje empieza después de su culminación.
+y=880–1080 del canvas 1920 × 1080. El efecto de carga acompaña el inicio del
+cierre y el mensaje empieza después de su culminación.
 El GM puede pausar, reanudar, repetir o pasar a la foto. Movimiento reducido
 conserva composiciones y subtítulos, sin destellos ni desplazamientos.
+
+**Decisión del 9 octubre 2026, implementada en el cierre catalán y castellano:**
+sustituir la música habitual por una instrumental orquestal épica de victoria,
+para distinguir el desenlace del resto de la partida. Se selecciona
+**A Legend Will Rise**, de CodeManu, publicada con licencia CC0 en
+[OpenGameArt](https://opengameart.org/content/a-legend-will-rise-orchestral).
+Archivo local: `static/audios/musica_ambient/final-victoria.mp3`; créditos y origen
+en `docs/audio/final-victoria-creditos.txt`. Se distribuye por USB con los audios.
+La pista comienza con el cierre, baja bajo la voz catalana y gana presencia
+en la foto. Pausar conserva su posición; repetir el montaje vuelve al inicio.
+El fondo habitual permanece detenido durante el desenlace, incluidos los clics
+y cambios a pantalla completa, y se recupera al salir. Verificado en Chrome
+con simulación aislada, voz catalana y foto a 1920 × 1080 y 1280 × 720:
+`output/final-victoria/`. Sin MQTT ni hardware; pendiente escucha en sala.
 
 **Acordado e implementado el 9 octubre 2026 en catalán:** el audio aportado
 `final_CAT.mp3` se conserva intacto como `static/audios/intro/final-ca.mp3`.
@@ -648,10 +662,22 @@ castellano para los avisos nuevos.
   originales, sustituyen el recorte del terminal. Uso conjunto aprobado para
   esta presentación. Verificación aislada a ambas resoluciones:
   `output/memoria-botones/`, sin MQTT ni hardware.
+- Decisión del 9 octubre 2026, implementada: Herramientas / Eines incorpora
+  además una **alfa roja** como ejemplo, junto al token y al panel de botones,
+  siguiendo la presentación de un símbolo independiente de Tras la Serpiente.
+  Usa la forma original `static/images/puzzle8/alpha.svg` y su representación
+  roja ya existente en la presentación. Se muestra en los tres idiomas y las
+  notas del GM aclaran que es un ejemplo de forma y color, no una pista de partida.
+  Verificado en los tres idiomas a 1920 × 1080 y 1280 × 720 mediante
+  simulación aislada, sin MQTT ni hardware: `output/memoria-letra/`.
 - Acción: «Buscad vuestro token → memorizad las formas y sus colores → buscad las
   formas → introducid los colores».
-- Atención: «Las formas se pueden introducir en cualquier orden» y «Un solo error
-  reinicia la ronda».
+- Atención: «Las formas se pueden introducir en cualquier orden» y «Para superar
+  el reto, todos debéis acertar las formas y sus colores».
+  Decisión del 9 octubre 2026, implementada: expresar la condición de éxito en
+  positivo, con responsabilidad compartida. Catalán: «Per superar el repte, tots
+  heu d’encertar les formes i els colors». Presentación y notas del GM comparten
+  el texto; las reglas del puzzle se conservan.
 
 **Cálculo Extremo (Sumas):**
 
@@ -758,7 +784,9 @@ el volumen con los altavoces de la sala.
 Recuperada la música de fondo histórica: `static/audios/musica_ambient/musica_piramide.mp3`.
 Un único reproductor en la ventana exterior de jugadores (`bgm_layer.js`) continúa
 al cambiar de HTML, durante bienvenida, explicaciones, juegos y transiciones.
-Volumen habitual 0,22; 0,06 durante la voz catalana, 0,14 en el ensayo sin voz y
+El desenlace catalán y castellano utiliza su propia música de victoria y
+suspende esta pista durante el cierre y la foto.
+Volumen habitual 0,12; 0,06 durante la voz catalana de apertura, 0,14 en el ensayo sin voz y
 0,10 durante el reparto. Pausar la intro pausa también la pista; su cierre mantiene
 el fundido de 2,6 segundos y después recupera el fondo bajo. No se superpone un
 segundo reproductor de música de la intro. Código Sonoro (4) silencia el fondo,
@@ -766,6 +794,14 @@ incluida su explicación, y el siguiente momento lo recupera sin reiniciar la pi
 Comprobación con rutas reales en fixture aislado y MQTT simulado: continuidad,
 volúmenes, pausa y ausencia de duplicación en `output/musica-fondo/`. Pendiente
 validar niveles con altavoces en sala.
+
+Reequilibrado el 9 octubre 2026 tras la escucha del usuario: los pitidos y los
+efectos de la pirámide deben destacar sobre la música. Implementado en frontend:
+fondo habitual más bajo, pitidos reforzados y efectos de celebración y carga
+final al volumen completo del archivo. Se conserva la urgencia progresiva de
+Carga Final y se modera la subida musical de ambas celebraciones. Las señales,
+los tiempos y los archivos de audio originales se conservan. Pendiente validar
+la nueva mezcla con los altavoces de la sala.
 
 El sistema antiguo de escenas JSON, su generador, los vídeos de Cero y las
 locuciones antiguas se retiraron del proyecto el 5 de octubre de 2026.

@@ -5,14 +5,9 @@
   const victory=$('victory'),board=$('preview-board');
   const score=$('preview-score');
   const ambience=$('preview-music');
-  const BASE_VOLUME=.22,EFFECT_VOLUME=.65;
+  const BASE_VOLUME=PyramidVictory.musicLevel(0),EFFECT_VOLUME=1;
   score.preload='auto';score.volume=EFFECT_VOLUME;ambience.preload='auto';ambience.loop=true;ambience.volume=BASE_VOLUME;
-  const smooth=value=>{const x=Math.max(0,Math.min(1,value));return x*x*(3-2*x);};
-  // Lift the existing song in place; no cut, restart, new melody or second beat.
-  function musicLevel(t){
-    const build=.06*smooth(t/3.8),arrival=.14*smooth((t-3.65)/.3);
-    return BASE_VOLUME+(build+arrival)*(1-smooth((t-4.8)/2.7));
-  }
+  const musicLevel=PyramidVictory.musicLevel;
   const reducedPreference=matchMedia('(prefers-reduced-motion: reduce)');
   $('preview-reduced').checked=reducedPreference.matches;
   let frame=0,timeout=0,run=0,playing=false,view=null,celebrationStart=0;

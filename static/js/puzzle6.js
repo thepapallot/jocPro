@@ -101,23 +101,23 @@
 
     function playCountdownBeep(remainingSeconds) {
         let playbackRate = 1;
-        let volume = 0.28;
+        let volume = 0.55;
 
         if (remainingSeconds <= 30) {
             playbackRate = 1.04;
-            volume = 0.32;
+            volume = 0.62;
         }
         if (remainingSeconds <= 18) {
             playbackRate = 1.1;
-            volume = 0.36;
+            volume = 0.7;
         }
         if (remainingSeconds <= 10) {
             playbackRate = 1.16;
-            volume = 0.42;
+            volume = 0.8;
         }
         if (remainingSeconds <= 5) {
             playbackRate = 1.24;
-            volume = 0.5;
+            volume = 0.9;
         }
 
         window.PyramidCountdownAudio?.tick('p6-round', remainingSeconds, { playbackRate, volume });

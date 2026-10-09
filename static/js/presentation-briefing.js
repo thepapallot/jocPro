@@ -34,7 +34,7 @@
         rule:text('Número de l’opció = número del terminal. Verd: sí. Vermell: no.','Número de la opción = número del terminal. Verde: sí. Rojo: no.','Option number = terminal number. Green: yes. Red: no.')};
       case 8:return {
         screen:`<div class="b-memory-card"><span>TOKEN <b>13</b></span><div>${greek('alpha','red')}${greek('beta','blue')}</div></div>${label(text('Recordeu les dues formes i els colors','Recordad las dos formas y los colores','Remember both shapes and their colours'))}`,
-        tools:row(device(c,'token')+terminalButtons(c,lang)),
+        tools:row(device(c,'token')+terminalButtons(c,lang)+`<span class="b-memory-example">${greek('alpha','red')}</span>`),
         interaction:route(action('α β',text('Mireu i memoritzeu','Mirad y memorizad','Look and remember'))+arrow+action('? ?',text('Les formes desapareixen','Las formas desaparecen','The shapes disappear'))+arrow+action('◎ ◎',text('Token als dos terminals','Token en los dos terminales','Scan at both terminals'))),
         rule:text('Busqueu cada forma i el seu color. Els dos terminals, en qualsevol ordre.','Buscad cada forma y su color. Los dos terminales, en cualquier orden.','Match each shape and its colour. Visit both terminals, in either order.')};
       case 1:return {
@@ -71,7 +71,7 @@
     if(reviewedBriefing){
       g.screen=`<p class="b-practice-objective">${t.objectiveTitle}</p>`;
       if([3,12].includes(c.puzzleId))g.tools=terminalButtons(c,lang);
-      else if(c.puzzleId===8)g.tools=`<div class="b-art-row">${device(c,'token')}${terminalButtons(c,lang)}</div>`;
+      else if(c.puzzleId===8)g.tools=`<div class="b-art-row">${device(c,'token')}${terminalButtons(c,lang)}<span class="b-memory-example">${greek('alpha','red')}</span></div>`;
       else if(c.puzzleId===1)g.tools=`<div class="b-art-row">${device(c,'token','13')}${device(c,'terminal','5')}</div>`;
       else if(c.puzzleId===6)g.tools=`<div class="b-art-row"><div class="b-colour-token">${device(c,'token')}${dot('blue')}</div><div class="b-terminal-light blue">${device(c,'terminal')}<i></i></div></div>`;
       else g.tools=`<div class="b-art-row">${device(c,'token')}${device(c,'terminal')}${c.puzzleId===2?sym(4):''}</div>`;

@@ -123,7 +123,7 @@
   const total=order.length+1; // The final challenge earns the summit; practice earns confidence.
   // Approved Spanish briefings and their complete Catalan equivalents.
   const reviewedCopy={
-    8:{objective:'Recordar las formas y sus colores.',tools:'Tokens y botones de colores.',action:'Buscad vuestro token → memorizad las formas y sus colores → buscad las formas → introducid los colores.',attention:['Las formas se pueden introducir en cualquier orden.','Un solo error reinicia la ronda.']},
+    8:{objective:'Recordar las formas y sus colores.',tools:'Tokens y botones de colores.',action:'Buscad vuestro token → memorizad las formas y sus colores → buscad las formas → introducid los colores.',attention:['Las formas se pueden introducir en cualquier orden.','Para superar el reto, todos debéis acertar las formas y sus colores.']},
     1:{objective:'Resolver las sumas antes de que la cuenta atrás llegue a 0.',tools:'Tokens y números de los terminales.',action:'Identificad el número de vuestro token → buscad el número que completa la suma → acercad el token al terminal.',attention:['Si resolvéis una suma incorrectamente, la ronda se reiniciará.','Si resolvéis una suma que ya ha sido completada, la ronda se reiniciará.']},
     5:{objective:'Contar el tiempo exacto que aparece en pantalla.',tools:'Token y terminal.',action:'Memorizad el tiempo → esperad a que se encienda vuestro terminal → contad el tiempo → acercad el token al terminal.',attention:['Los segundos de más o de menos se sumarán al error común. Si se supera el margen de error permitido, la ronda se reiniciará.']},
     12:{objective:'Pulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.',tools:'Botones de los terminales.',action:'Contad las bolas → coordinad al equipo → pulsad el número exacto de botones → mantenedlos pulsados durante 3 segundos.',attention:['Si la cuenta atrás llega a 0, los botones indicados en pantalla cambiarán.']},
@@ -158,7 +158,7 @@
     "action": "Busqueu el vostre token → memoritzeu les formes i els seus colors → busqueu les formes → introduïu els colors.",
     "attention": [
       "Les formes es poden introduir en qualsevol ordre.",
-      "Un sol error reinicia la ronda."
+      "Per superar el repte, tots heu d’encertar les formes i els colors."
     ]
   },
   "1": {
@@ -243,6 +243,11 @@
       t.notes=[t.objectiveLead,t.exampleLead,rule];
       t.footers=[local('Observeu el repte.','Observad el reto.','Look at the challenge.')[lang],local('Aquestes són les vostres eines.','Estas son vuestras herramientas.','These are your tools.')[lang],intro.act.role[lang]];
       t.guidance={role:intro.act.role[lang],hints:[t.objectiveLead,t.exampleLead,rule],rhythm:local('Doneu temps per pensar. Si el grup no sap què fer, oferiu una ajuda; si està provant un pla, deixeu-lo jugar.','Dad tiempo para pensar. Si el grupo no sabe qué hacer, ofreced una ayuda; si está probando un plan, dejadlo jugar.','Allow thinking time. Offer a hint if the group does not know what to do; let them play if they are testing a plan.')[lang]};
+      if(id===8){
+        const exampleNote=local(' La lletra alfa vermella és un exemple de les formes i els colors que cal recordar.',' La letra alfa roja es un ejemplo de las formas y los colores que hay que recordar.',' The red alpha is an example of the shapes and colours to remember.')[lang];
+        t.notes[1]+=exampleNote;
+        t.guidance.hints[1]+=exampleNote;
+      }
       if(id===4){
         const registrationNote=local('Per registrar cada fragment, primer premeu el botó verd i després passeu el token pel terminal del fragment escollit. Cal tornar a prémer el botó verd abans de registrar el fragment següent. Passar el token sense activar el registre només reprodueix el fragment.','Para registrar cada fragmento, pulsad primero el botón verde y después pasad el token por el terminal del fragmento elegido. Hay que volver a pulsar el botón verde antes de registrar el siguiente fragmento. Pasar el token sin activar el registro solo reproduce el fragmento.','To register each fragment, first press the green button, then scan the token at the terminal for the chosen fragment. Press the green button again before registering the next fragment. Scanning the token without enabling recording only plays the fragment.')[lang];
         t.notes[2]+=' '+registrationNote;
@@ -299,13 +304,13 @@
     closing.copy.ca.name='Tancament · La Piràmide';
     closing.copy.ca.stepLabels=['Aquest moment és vostre','Foto d’equip'];
     closing.copy.ca.notes=[
-      'Tancament automàtic: 10 s de càrrega i 50,4 s de locució catalana. La veu governa els subtítols i el pas a la foto. Deixa gaudir el grup; pots pausar, repetir o avançar a la foto. Guió: '+PyramidClosing.recording('ca').cues.map(c=>c.text.replaceAll('\n',' ')).join(' '),
+      'Tancament automàtic: 10 s de càrrega i 50,4 s de locució catalana. La veu governa els subtítols i el pas a la foto. Música orquestral de victòria, més baixa sota la veu i amb més presència a la foto. Deixa gaudir el grup; pots pausar, repetir o avançar a la foto. Guió: '+PyramidClosing.recording('ca').cues.map(c=>c.text.replaceAll('\n',' ')).join(' '),
       'Composició estable per a la foto. Recull l’aplaudiment: «Missió complerta, equip! Acosteu-vos, que aquesta foto és vostra». Repetir torna a iniciar el tancament sense sumar progrés.'
     ];
     closing.copy.es.name='Cierre · La Pirámide';
     closing.copy.es.stepLabels=['Este momento es vuestro','Foto de equipo'];
     closing.copy.es.notes=[
-      'Cierre automático en castellano · 78 s provisionales: 10 s de carga y 68 s de mensaje, con música y subtítulos. Locución pendiente de ElevenLabs. Deja que el grupo disfrute del final; puedes pausar, repetir o avanzar a la foto. Guion: '+PyramidClosing.narration,
+      'Cierre automático en castellano · 78 s provisionales: 10 s de carga y 68 s de mensaje, con música orquestal de victoria y subtítulos. La música continúa en la foto. Locución pendiente de ElevenLabs. Deja que el grupo disfrute del final; puedes pausar, repetir o avanzar a la foto. Guion: '+PyramidClosing.narration,
       'Composición estable para la foto. Recoge el aplauso: «¡Misión cumplida, equipo! Acercaos, que esta foto es vuestra». Repetir vuelve a iniciar el cierre sin sumar progreso.'
     ];
   }

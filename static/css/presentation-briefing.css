@@ -120,6 +120,9 @@
 .b-practice-layout .b-buttons-panel{width:350px;height:350px;object-fit:contain;flex:none}
 .b-practice-layout .b-terminal-light>i{left:43%;top:25%;width:88px;height:10px;box-shadow:none}
 .b-practice-layout[data-puzzle="2"] .b-tools-art>.b-art-row>.b-symbol{width:142px;height:142px;padding:16px;background:#101a24;border:1px solid #55707b;box-shadow:0 12px 35px #0005;flex:none}
+.j-blueprint[data-puzzle="8"] .b-tools-art>.b-art-row{gap:32px}
+.b-memory-example{display:grid;place-items:center;width:142px;height:142px;padding:16px;background:#101a24;border:1px solid #55707b;flex:none}
+.b-memory-example .b-greek{width:110px;height:110px}
 
 .b-attention-example>.b-arrow{font:64px/1 Arial,sans-serif;color:#edb970}
 

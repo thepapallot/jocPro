@@ -2,7 +2,7 @@
     const MODE_VOLUMES = {
         mute: 0,
         low: 0.1,
-        medium: 0.22,
+        medium: 0.12,
     };
 
     function getRequestedMode() {
@@ -86,6 +86,10 @@
     }
 
     let volumeFrame=null;
+    // The finale owns a different score. Shell loads and unlock gestures must
+    // not restart the normal soundtrack while that score is in use.
+    let suspended=false;
+    const play=audio=>suspended?Promise.resolve():audio.play();
     function applyVolume(audio, mode, fadeMs) {
         const target = MODE_VOLUMES[mode];
         if (target === undefined) return;
@@ -119,7 +123,7 @@
 
     function installUnlockHandlers(audio) {
         const unlock = () => {
-            audio.play().catch(() => {});
+            play(audio).catch(() => {});
         };
 
         ["click", "touchstart", "keydown"].forEach((eventName) => {
@@ -148,7 +152,7 @@
             applyLevel(audio, desiredVolume, 420);
         }, { once: true });
 
-        audio.play().catch(() => {
+        play(audio).catch(() => {
             installUnlockHandlers(audio);
         });
 
@@ -163,7 +167,7 @@
             const frame=document.getElementById('game-shell-frame');
             if(event.origin!==location.origin||(frame&&event.source!==frame.contentWindow))return;
             const data = event && event.data;
-            if(data?.type==='piramide_bgm_unlock'){audio.play().catch(()=>{});return;}
+            if(data?.type==='piramide_bgm_unlock'){play(audio).catch(()=>{});return;}
             if (!data || data.type !== "piramide_bgm_mode") {
                 return;
             }
@@ -174,8 +178,10 @@
         });
 
         window.BGM = {
-            play(){return audio.play();},
+            play(){return play(audio);},
             pause(){audio.pause();},
+            suspend(){suspended=true;audio.pause();},
+            resume(){suspended=false;return play(audio);},
             setVolume(level,fadeMs=0){if(Number.isFinite(level)){desiredVolume=clamp(level,0,1);applyLevel(audio,desiredVolume,Math.max(0,fadeMs));}},
             setMode(nextMode, fadeMs) {
                 const safeMode = MODE_VOLUMES.hasOwnProperty(nextMode) ? nextMode : "medium";

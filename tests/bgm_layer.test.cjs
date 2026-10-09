@@ -17,7 +17,15 @@ test('a later scene volume cancels a pending fade instead of fighting it',()=>{
 });
 test('only the same-origin player frame can request soundtrack changes',()=>{
  const h=harness(),message={type:'piramide_bgm_mode',mode:'mute'};
- h.events.message({origin:'http://elsewhere',source:h.frameWindow,data:message});h.flush();assert.equal(h.audio.volume,.22);
- h.events.message({origin:'http://localhost',source:{},data:message});h.flush();assert.equal(h.audio.volume,.22);
+ h.events.message({origin:'http://elsewhere',source:h.frameWindow,data:message});h.flush();assert.equal(h.audio.volume,.12);
+ h.events.message({origin:'http://localhost',source:{},data:message});h.flush();assert.equal(h.audio.volume,.12);
  h.events.message({origin:'http://localhost',source:h.frameWindow,data:message});h.flush();assert.equal(h.audio.volume,0);
+});
+test('the finale suspends the game track despite shell loads and audio unlocks',async()=>{
+ const h=harness();h.audio.currentTime=42;h.w.BGM.suspend();
+ h.w.BGM.setMode('medium',500);await h.w.BGM.play();
+ h.events.message({origin:'http://localhost',source:h.frameWindow,data:{type:'piramide_bgm_unlock'}});
+ h.audio.listeners.loadedmetadata();h.flush();
+ assert.equal(h.audio.paused,true);assert.equal(h.audio.currentTime,42);
+ await h.w.BGM.resume();assert.equal(h.audio.paused,false);assert.equal(h.audio.currentTime,42);
 });

@@ -1,4 +1,4 @@
-/* Original 10-second finale effects. The persistent track supplies the music.
+/* Original 10-second finale effects. The finale score supplies the music.
    Generate locally: node docs/audio/render-final-charge.cjs. WAV travels by USB. */
 const fs=require('node:fs'),path=require('node:path');
 const rate=48000,seconds=10,n=rate*seconds,L=new Float64Array(n),R=new Float64Array(n);
