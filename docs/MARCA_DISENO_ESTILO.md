@@ -1,6 +1,6 @@
 # Guía de marca diseño y estilo de La Piràmide
 
-Referencia editorial vigente del proyecto. Última actualización: **8 octubre
+Referencia editorial vigente del proyecto. Última actualización: **9 octubre
 2026**. Recoge las decisiones del equipo, la información publicada y la revisión
 de recursos gráficos. Leer antes de editar, como establece [AGENTS.md](../AGENTS.md).
 
@@ -539,7 +539,7 @@ Tras la Serpiente, revisión en castellano implementada con el formato del Simul
 Atención es el cuarto paso obligatorio, en una ventana superpuesta sin cierre
 opcional. El GM puede retroceder y volver a mostrarlo; el inicio solo se habilita
 al llegar a ese paso. Ejemplo con los recursos reales `symbol_4.png` y
-`symbol_3.png`, versiones de colores invertidos, sin recolorear las imágenes.
+`symbol_5.png`, versiones de colores invertidos, sin recolorear las imágenes.
 El ejemplo distingue «Símbolo en pantalla» de «Símbolo que debéis buscar».
 Durante la alarma, el tablero conserva los iconos originales y solo cambia la
 señal visual de las serpientes a rojo; la inversión debe resolverla el equipo.
@@ -635,6 +635,13 @@ castellano para los avisos nuevos.
 - Herramientas: tokens y terminales.
 - Acción: «Escuchad la canción → identificad el fragmento → marcadlo → buscad el siguiente».
 - Atención: «Esta prueba tiene dos rondas».
+
+Aclaración acordada e implementada el 9 octubre 2026 en las notas y ayudas del
+GM, en los tres idiomas: «marcadlo» significa pulsar el botón verde y después
+pasar el token por el terminal del fragmento elegido. Repetir el botón verde
+antes de registrar cada fragmento. Sin activar el registro, pasar el token solo
+reproduce el fragmento. La explicación breve de jugadores conserva sus cuatro
+pasos; el GM demuestra la diferencia entre escuchar y registrar.
 
 **Carga Final (Energía):**
 
@@ -788,6 +795,15 @@ culminación, conservando la música de fondo y el progreso real.
   individual con el cambio de pantalla. La preparación y la intro explican
   expresamente el encendido del terminal; no se añade un paso manual del GM.
   Los reintentos conservan su preparación correspondiente.
+  Mejora de legibilidad acordada e implementada el 9 octubre 2026: columna del
+  objetivo más estrecha y reloj pequeño y estático. Los diez terminales conservan
+  dos filas; el tiempo individual ocupa el centro de cada tarjeta, con unidad
+  «s» y el error absoluto debajo. Un guion distingue las respuestas pendientes
+  del tiempo registrado. Se retiran los aros y marcos interiores decorativos;
+  resultados y error común quedan estables, conservando sus colores de estado.
+  El objetivo y el margen común siguen destacados. Movimiento reducido también
+  desactiva los efectos breves de este tablero. Comprobado con estados simulados
+  a ambas resoluciones; lectura desde la sala pendiente.
 - **Memory:** celebración final común, localizada al idioma de sesión. Las
   confirmaciones de fases intermedias se conservan.
 - **Botons:** logro de fase con resplandor radial verde y «NIVEL SUPERADO»;
@@ -798,6 +814,48 @@ culminación, conservando la música de fondo y el progreso real.
   oscurecido grafito, blanco cálido y menta `#71E7DB`. PiramideDisplay, bordes
   discretos y radio pequeño, sin halos de neón. Mensaje «Primera fase superada»,
   localizado al idioma de sesión.
+  Mejora de legibilidad acordada e implementada el 9 octubre 2026: la secuencia
+  aprovecha la altura del tablero, con cuatro fragmentos en una fila y ocho en
+  dos filas, leídas de izquierda a derecha. Números grandes, del mismo tamaño
+  en ambas rondas, junto al icono de terminal. Las ondas son pequeñas e iguales
+  en todas las casillas, como apoyo visual; no representan pistas sonoras.
+  Casillas pendientes y registradas conservan sus señales, al igual que el
+  siguiente registro, aciertos y errores. Los números permanecen estables al
+  validar. Movimiento reducido detiene ondas y pulsos, manteniendo la señal
+  verde del siguiente registro. Comprobado con simulación a 1920 × 1080 y
+  1280 × 720; lectura y sonido en sala pendientes.
+  Aclaración en pantalla revisada e implementada el 9 octubre 2026: leyenda
+  gráfica lateral permanente con cuatro acciones. Escuchar un fragmento muestra
+  token → terminal. Registrar diferencia «1. Pulsad verde» de «2. Pasad el token»,
+  con botón, token y terminal. Simplificación aprobada e implementada: títulos
+  e iconos bastan para escuchar, reproducir y borrar; se retiran sus frases
+  inferiores y el recordatorio de repetir los dos pasos. Solo registrar conserva
+  las dos instrucciones numeradas. El botón azul permite
+  escuchar la canción completa y el rojo borra el último registro. Usar las
+  ilustraciones vigentes del token y el terminal sin modificarlas, y preservar
+  los colores funcionales de los botones.
+  La franja superior reserva una sola instrucción para el momento actual.
+  Decisión ampliada e implementada: indicar la posición del fragmento, desde
+  «Buscad el primer fragmento» hasta el octavo según la ronda. Al activar el
+  verde, «Pasad el token para registrar el segundo fragmento», con la posición
+  correspondiente. Avanza al registrar, retrocede al borrar y vuelve al primero
+  en una nueva ronda o un reintento. Expresa el orden que se está reconstruyendo,
+  sin revelar el terminal correcto. Al completar la secuencia se espera el
+  resultado, sin pedir un fragmento adicional. Durante la canción completa se
+  mantiene «Escuchad el orden de los fragmentos». Se retira la fórmula
+  abreviada «Token para escuchar · Verde → token para registrar», rechazada
+  por falta de claridad. Los resultados conservan su mensaje propio.
+  Leyenda e instrucciones equivalentes en castellano, catalán e inglés, sin
+  añadir pasos del GM. Verificación mediante simulación a ambas resoluciones;
+  lectura y comprensión en sala pendientes.
+
+- **Carga Final:** decisión del 9 octubre 2026, implementada: conservar la
+  distribución y el movimiento actuales. Reforzar el color de cada casilla con
+  un borde de 5 px en su color funcional y un fondo teñido más uniforme, sin
+  el brillo blanco superior. Mantener los números blancos, el icono del token
+  y la correspondencia vigente entre números y colores. Verificado mediante
+  simulación en castellano, catalán e inglés a 1920 × 1080 y 1280 × 720,
+  incluidos los estados de poco tiempo y recarga; lectura en sala pendiente.
 
 Aplicar a estos avisos la pauta común de movimiento suave, sin destellos rápidos
 y con variante estática cuando se solicite movimiento reducido.

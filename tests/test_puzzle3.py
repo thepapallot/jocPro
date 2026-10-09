@@ -86,6 +86,63 @@ class Puzzle3ShuffledAnswersTest(unittest.TestCase):
         self.assertEqual(self.puzzle.streak, 0)
         self.puzzle._schedule_next_question.assert_called_once_with(delay=7, advance=False)
 
+    def assert_result_window_blocks_answers(self, success):
+        next_question = {**copy.deepcopy(self.question), 'id': 1001, 'q': 'Next question'}
+        self.puzzle.chosen_questions.append(next_question)
+        # Exercise the real delayed transition without starting a thread or waiting.
+        self.puzzle._schedule_next_question = Puzzle3._schedule_next_question.__get__(self.puzzle)
+        with patch('mqtt.puzzles.puzzle3.threading.Thread') as thread:
+            for slot in range(10):
+                answer = 5 if slot < 4 else 1
+                if not success and slot == 0:
+                    answer = 1
+                self.puzzle.handle_message(['P3', str(slot), str(answer)])
+
+            result = self.client.push_update.call_args.args[0]['question_result']
+            self.assertEqual(result['success'], success)
+            state = copy.deepcopy(self.puzzle.get_state())
+            updates = self.client.push_update.call_count
+            # Late corrections and repeated complete submissions must do nothing.
+            for _ in range(2):
+                for slot in range(10):
+                    self.puzzle.handle_message(['P3', str(slot), '5' if slot < 4 else '1'])
+            self.assertEqual(self.puzzle.get_state(), state)
+            self.assertEqual(self.puzzle.streak, int(success))
+            self.assertEqual(self.client.push_update.call_count, updates)
+            self.client.send_message.assert_not_called()
+            thread.assert_called_once()
+            thread.return_value.start.assert_called_once()
+            transition = thread.call_args.kwargs['target']
+
+        with patch('mqtt.puzzles.puzzle3.time.sleep') as sleep:
+            with patch.object(self.puzzle, '_pick_question_for_stage', return_value=next_question):
+                transition()
+            sleep.assert_called_once_with(7)
+        self.assertEqual(self.puzzle.current_question_idx, int(success))
+        self.assertEqual(self.puzzle.get_state()['question']['id'], 1001)
+        self.assertEqual(self.puzzle.get_state()['answered_players'], [])
+        self.puzzle.handle_message(['P3', '0', '5'])
+        self.assertEqual(self.client.push_update.call_args.args[0]['player_answer'],
+                         {'player': 0, 'answer': 5})
+
+    def test_wrong_result_blocks_answers_until_next_question(self):
+        self.assert_result_window_blocks_answers(success=False)
+
+    def test_correct_result_blocks_answers_until_next_question(self):
+        self.assert_result_window_blocks_answers(success=True)
+
+    def test_selection_can_change_until_the_last_terminal_answers(self):
+        self.puzzle.handle_message(['P3', '0', '1'])
+        for slot in range(1, 9):
+            self.puzzle.handle_message(['P3', str(slot), '5' if slot < 4 else '1'])
+        self.puzzle.handle_message(['P3', '0', '5'])
+        self.assertEqual(self.puzzle.answered_players[0], 5)
+        self.assertFalse(any('question_result' in call.args[0]
+                             for call in self.client.push_update.call_args_list))
+        self.puzzle.handle_message(['P3', '9', '1'])
+        self.assertEqual(self.puzzle.streak, 1)
+        self.assertTrue(self.client.push_update.call_args.args[0]['question_result']['success'])
+
 
 if __name__ == '__main__':
     unittest.main()

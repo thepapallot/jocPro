@@ -47,6 +47,8 @@
     let samplePlaybackToken = 0;
     let feedbackTimer = null;
     let lastKnownStoring = false;
+    let displayedStreak = 0;
+    let registeredFragments = 0;
     let actionFeedbackTimer = null;
     let actionFeedbackActive = false;
     let lastNormalStatusText = '';
@@ -112,6 +114,33 @@
             clearTimeout(actionFeedbackTimer);
             actionFeedbackTimer = null;
         }
+    }
+
+    function clearActionFeedback() {
+        clearActionFeedbackTimer();
+        actionFeedbackActive = false;
+        pendingStatusText = null;
+        pendingStatusTone = null;
+        setStatusPanelTone(null);
+    }
+
+    function interactionHint(recording = lastKnownStoring) {
+        const container = displayedStreak === 0 ? 'streak1-container' : 'streak2-container';
+        const capacity = document.querySelectorAll(`#${container} .progress-box`).length;
+        if (registeredFragments >= capacity) {
+            return tr('musicCheckingSequence', 'Comprobando la secuencia.');
+        }
+        const position = registeredFragments + 1;
+        const ordinals = ['primer', 'segundo', 'tercer', 'cuarto', 'quinto', 'sexto', 'séptimo', 'octavo'];
+        const ordinal = tr('musicOrdinal' + position, ordinals[position - 1]);
+        return recording
+            ? tr('storingSequence', `Pasad el token para registrar el ${ordinal} fragmento.`, {ordinal})
+            : tr('waitingSample', `Buscad el ${ordinal} fragmento.`, {ordinal});
+    }
+
+    function showInteractionHint() {
+        if (solved || showingCompletion || flashingActive) return;
+        setStatus(interactionHint(), lastKnownStoring ? 'storing' : 'idle');
     }
 
     function showActionFeedback(panelTone, text, textTone) {
@@ -359,7 +388,7 @@
             if (token !== samplePlaybackToken || solved) return;
             currentSampleUrl = null;
             if (!showingCompletion) {
-                setStatus(tr('waitingRecord', "Esperando registro"), 'idle');
+                showInteractionHint();
             }
         });
     }
@@ -378,8 +407,20 @@
             return;
         }
 
-        const wasStoring = lastKnownStoring;
-        let deferIdleUntilTrackEnd = false;
+        // Position follows the received sequence, never the terminal codes or the solution.
+        const effectiveStreak = d.streak_bis !== undefined ? d.streak_bis : d.streak;
+        if (effectiveStreak >= 0 && effectiveStreak !== displayedStreak) {
+            displayedStreak = effectiveStreak;
+            registeredFragments = 0;
+        }
+        if (Array.isArray(d.played_sequence)) registeredFragments = d.played_sequence.length;
+
+        // New state takes precedence over a transient button message.
+        if (typeof d.storing === 'boolean' || d.play_mostra || d.playing_sample ||
+            d.sample_countdown_seconds > 0 || d.validation_feedback !== undefined ||
+            d.show_completion || d.puzzle_solved) {
+            clearActionFeedback();
+        }
         if (typeof d.storing === 'boolean') {
             lastKnownStoring = d.storing;
         }
@@ -392,9 +433,9 @@
         if (d.reset_attempt) {
             showActionFeedback('action-white', tr('restarting', "Reiniciando"), 'action-white');
         } else if (d.play_mostra) {
-            showActionFeedback('action-blue', tr('playingSong', "Reproduciendo canción completa"), 'action-blue');
+            showActionFeedback('action-blue', tr('playingSong', "Escuchad el orden de los fragmentos."), 'action-blue');
         } else if (d.storing === true) {
-            showActionFeedback('action-green', tr('storingSequence', "Registrando secuencia"), 'action-green');
+            showActionFeedback('action-green', interactionHint(true), 'action-green');
         } else if (d.removed_last) {
             showActionFeedback('action-red', tr('lastRecordDeleted', "Último registro eliminado"), 'action-red');
             playSound(REMOVE_SOUND_URL);
@@ -428,7 +469,8 @@
         }
 
         if (d.play_mostra) {
-            playTrack(d.url);
+            setStatus(tr('playingSong', 'Escuchad el orden de los fragmentos.'), 'playing-sample');
+            playTrack(d.url, showInteractionHint);
         }
 
         if (d.streak !== undefined && !showingCompletion) {
@@ -443,13 +485,7 @@
         }
 
         if (d.play) {
-            deferIdleUntilTrackEnd = !!(wasStoring && d.storing === false && d.play && d.play.url);
-            maybePlayTrack(d.play, () => {
-                if (solved || showingCompletion) return;
-                if (deferIdleUntilTrackEnd) {
-                    setStatus(tr('waitingSample', "Esperando muestras"), 'idle');
-                }
-            });
+            maybePlayTrack(d.play);
         }
 
         if (d.validation_feedback !== undefined) {
@@ -479,16 +515,19 @@
 
         if (!showingCompletion && !solved) {
             if (d.playing_sample) {
-                setStatus(tr('playingSample', "Reproduciendo muestra"), 'playing-sample');
+                setStatus(tr('playingSample', "Escuchad el orden de los fragmentos."), 'playing-sample');
             } else if (d.sample_countdown_seconds > 0) {
                 setStatus(tr('sampleCountdown', 'Reproduciendo muestra en {count} segundos', {count: d.sample_countdown_seconds}), 'countdown');
             } else if (d.listening) {
                 setStatus(tr('listeningSample', "Escuchando muestra"), 'listening');
             } else if (d.storing === true) {
                 playSound(BTN_SOUND_URL);
-                setStatus(tr('storingSequence', "Registrando secuencia"), 'storing');
-            } else if (d.storing === false && !deferIdleUntilTrackEnd) {
-                setStatus(tr('waitingSample', "Esperando muestras"), 'idle');
+                setStatus(interactionHint(true), 'storing');
+            } else if (d.sequence_correct !== undefined || d.validation_feedback !== undefined) {
+                // The final fragment is being checked; keep its result or listening state.
+                if (d.play) setStatus(tr('listeningSample', 'Escuchando muestra'), 'listening');
+            } else if (d.storing === false && !d.play_mostra) {
+                setStatus(interactionHint(false), 'idle');
             }
         }
     }

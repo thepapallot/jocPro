@@ -89,6 +89,27 @@ def is_concrete_asset_ref(url: str) -> bool:
     return any(url.lower().endswith(ext) for ext in IMAGE_EXTENSIONS)
 
 
+def collect_reintroduced_assets(repo_root: Path):
+    """Report retired paths even when they have not been added to Git yet."""
+    manifest = json.loads(
+        (repo_root / "docs" / "retired_image_assets.json").read_text(encoding="utf-8")
+    )
+    found = {
+        rel for rel in manifest["retired_files"]
+        if (repo_root / rel).exists()
+    }
+    for rel in manifest["retired_directories"]:
+        directory = repo_root / rel
+        if directory.is_file():
+            found.add(rel)
+        elif directory.is_dir():
+            found.update(
+                path.relative_to(repo_root).as_posix()
+                for path in directory.rglob("*") if path.is_file()
+            )
+    return sorted(found)
+
+
 def audit(repo_root: Path):
     image_files = collect_image_files(repo_root)
     text_files = collect_text_files(repo_root)
@@ -138,6 +159,7 @@ def audit(repo_root: Path):
         "missing_image_references": [
             {"url": url, "count": count} for url, count in missing_refs.most_common()
         ],
+        "reintroduced_retired_files": collect_reintroduced_assets(repo_root),
         "references_by_file": [
             {"file": file, "references": refs}
             for file, refs in sorted(refs_by_file.items())
@@ -148,6 +170,11 @@ def audit(repo_root: Path):
 
 def main():
     parser = argparse.ArgumentParser(description="Audit image files and usages in project.")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Exit with an error for missing image references or reintroduced retired files",
+    )
     parser.add_argument(
         "--output",
         default="docs/image_assets_audit.json",
@@ -164,6 +191,11 @@ def main():
     print(f"OK: {output_path}")
     print(f"images_total={report['images_total']}")
     print(f"missing_refs={len(report['missing_image_references'])}")
+    print(f"reintroduced_retired_files={len(report['reintroduced_retired_files'])}")
+    for rel in report["reintroduced_retired_files"]:
+        print(f"RECURSO RETIRADO: {rel} (revisar y conservar en static/images/no_usadas/)")
+    if args.check and (report["missing_image_references"] or report["reintroduced_retired_files"]):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

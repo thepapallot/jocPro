@@ -241,6 +241,11 @@
       t.notes=[t.objectiveLead,t.exampleLead,rule];
       t.footers=[local('Observeu el repte.','Observad el reto.','Look at the challenge.')[lang],local('Aquestes són les vostres eines.','Estas son vuestras herramientas.','These are your tools.')[lang],intro.act.role[lang]];
       t.guidance={role:intro.act.role[lang],hints:[t.objectiveLead,t.exampleLead,rule],rhythm:local('Doneu temps per pensar. Si el grup no sap què fer, oferiu una ajuda; si està provant un pla, deixeu-lo jugar.','Dad tiempo para pensar. Si el grupo no sabe qué hacer, ofreced una ayuda; si está probando un plan, dejadlo jugar.','Allow thinking time. Offer a hint if the group does not know what to do; let them play if they are testing a plan.')[lang]};
+      if(id===4){
+        const registrationNote=local('Per registrar cada fragment, primer premeu el botó verd i després passeu el token pel terminal del fragment escollit. Cal tornar a prémer el botó verd abans de registrar el fragment següent. Passar el token sense activar el registre només reprodueix el fragment.','Para registrar cada fragmento, pulsad primero el botón verde y después pasad el token por el terminal del fragmento elegido. Hay que volver a pulsar el botón verde antes de registrar el siguiente fragmento. Pasar el token sin activar el registro solo reproduce el fragmento.','To register each fragment, first press the green button, then scan the token at the terminal for the chosen fragment. Press the green button again before registering the next fragment. Scanning the token without enabling recording only plays the fragment.')[lang];
+        t.notes[2]+=' '+registrationNote;
+        t.guidance.hints[2]+=' '+registrationNote;
+      }
       if(['es','ca'].includes(lang)&&intro.reviewedBriefing)t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];
       if(intro.attentionCopy){
         if(['es','ca'].includes(lang))t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];

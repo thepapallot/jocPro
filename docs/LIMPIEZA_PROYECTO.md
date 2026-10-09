@@ -1,5 +1,42 @@
 # Limpieza del proyecto
 
+## 9 octubre 2026 · Recursos históricos reincorporados
+
+El cambio `38392ae` pasó de ignorar toda `static/images/` a ignorar únicamente
+`static/images/no_usadas/`. El commit `e2b164a`, integrado por el PR #148,
+añadió después 151 archivos históricos que seguían fuera de esa reserva.
+Los diez símbolos nuevos de Serpientes pertenecen a otro cambio (`136e5ec`)
+y se conservan en sus rutas activas.
+
+Limpieza aplicada a esos 151 archivos (211.214.636 bytes):
+
+- 85 trasladados a `static/images/no_usadas/`, conservando su ruta relativa.
+- 66 copias idénticas retiradas del árbol activo, conservando la copia ya
+  existente en la reserva. Se liberan 161.597.349 bytes de duplicados locales.
+- Sin conflictos de nombre ni sobrescritura de variantes diferentes.
+- Los 32 recursos activos conservan sus rutas y sus bytes, incluidos los
+  símbolos de Serpientes y Memory, `wait.png`, las capturas del visor, los
+  objetos de juego, el panel de botones y el logo actual ADN Games.
+
+Se revisaron referencias por ruta y nombre en código y herramientas vigentes,
+las rutas construidas de símbolos y del visor y el patrón dibujado de Botones
+(no carga los GIF históricos). Los 151 archivos quedan conservados en la
+reserva local con hashes SHA-256 verificados; todos sus destinos están cubiertos
+por la regla existente de `.gitignore`. No se modificaron audios ni backend.
+
+La lista `docs/retired_image_assets.json` permite detectar su reaparición.
+`scripts/audit_image_assets.py --check` señala esos archivos, cualquier archivo
+dentro de `old_pics/` y las referencias literales a imágenes ausentes. La reserva
+local no es necesaria para ejecutar el control. El workflow de GitHub Actions
+queda preparado para ejecutarlo en los siguientes pushes y pull requests.
+La reutilización deliberada de un recurso autorizado requiere actualizar sus
+referencias y retirar su ruta de la lista, como explica `scripts/README.md`.
+
+Validación local: el control detectó los 151 recursos antes de moverlos y pasó
+después, con 32 imágenes activas, cero referencias literales ausentes y cero
+recursos retirados reincorporados. Esta limpieza no cambia ninguna pantalla.
+Los archivos siguen disponibles en el historial de Git; no se reescribió el historial.
+
 ## 5 octubre 2026 · Primera fase
 
 Retirado el sistema antiguo de presentaciones, tras revisar las referencias en

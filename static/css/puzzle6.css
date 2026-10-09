@@ -285,10 +285,12 @@ body::after {
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--token-color) 78%, rgba(255, 255, 255, 0.12));
-    background:
-        radial-gradient(circle at 35% 24%, rgba(255, 255, 255, 0.3), transparent 42%),
-        radial-gradient(circle at 50% 54%, color-mix(in srgb, var(--token-color) 56%, rgba(8, 18, 30, 0.9)) 0%, rgba(7, 16, 28, 0.94) 72%);
+    border: 5px solid var(--token-color);
+    background: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--token-color) 48%, #0a1016),
+        color-mix(in srgb, var(--token-color) 32%, #0a1016)
+    );
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.2),
         inset 0 0 42px color-mix(in srgb, var(--token-color) 42%, transparent),

@@ -350,8 +350,9 @@ class Puzzle3(BasePuzzle):
             q = self.chosen_questions[self.current_question_idx]
             correct_values = q.get("correct", [])
 
-            # Before all ten entries are filled, allow edits for the same slot.
-            if len(self.answered_players) >= self.total_players and player in self.answered_players:
+            # A completed submission stays closed throughout the result window.
+            # The next-question transition clears it before publishing the question.
+            if len(self.answered_players) >= self.total_players:
                 return
 
             # Record/update the answer for this answer slot.
@@ -394,10 +395,6 @@ class Puzzle3(BasePuzzle):
                         self.total_required
                     )
                     self.correct_question_ids.add((q.get("_source"), q.get("id")))
-                else:
-                    # No penalization and no repeats: a miss does not count toward the
-                    # visible progress, but the round still moves on to the next question.
-                    self.answered_players = {}
 
                 self._push({
                     "question_result": {
