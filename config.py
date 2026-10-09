@@ -3,9 +3,9 @@ PUZZLE_TUTORIAL = 11
 
 # Configurable blocks: each may contain more or fewer puzzles.
 # Keep IDs unique and tutorial/final outside these blocks.
-PUZZLE_PRE_TRIVIAL = [2, 1, 8]
+PUZZLE_PRE_TRIVIAL = [8, 5, 1]
 PUZZLE_TRIVIAL = 3
-PUZZLE_POST_TRIVIAL = [5, 12, 4]
+PUZZLE_POST_TRIVIAL = [2, 12, 4]
 
 # Complete counted order consumed by the backend, MQTT and presentations.
 # Edit the blocks above; this list is derived from them on startup.

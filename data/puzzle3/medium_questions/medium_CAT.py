@@ -1,4 +1,126 @@
 QUESTIONS = [
+    '''{
+    "id": 1,
+    "q": "Quins d'aquests elements s'utilitzen habitualment per a la higiene bucodental diària?",
+    "answers": ["Mirall de mà", "Brossa de dents", "Fil dental", "Pasta de dents", "Bisturí", "Torn dental", "Llima d'ungles", "Aspirador de saliva", "Tisores", "Fresa de diamant"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 2,
+    "q": "Quines d'aquestes són malalties o problemes habituals de la boca?",
+    "answers": ["Càries", "Gingivitis", "Periodontitis", "Sagnat de gíngies", "Gastritis", "Otitis", "Asma", "Artritis", "Dermatitis", "Migranya"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 3,
+    "q": "Quins d'aquests consells són recomanats pels dentistes per mantenir una boca sana?",
+    "answers": ["Rentar-se les dents 2-3 cops al dia", "Canviar el raspall cada 3 mesos", "Mantenir una dieta baixa en sucres", "Fer revisions periòdiques", "Menjar molts caramels durs", "No rentar-se mai la llengua", "Utilitzar escuradents de fusta forts", "Fumar per desinfectar", "Usar sabó de mans com a dentífric", "Rentar-se només un cop a la setmana"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 4,
+    "q": "Quins d'aquests tipus de dents formen part de la dentició humana adulta?",
+    "answers": ["Incisius", "Canins", "Premolars", "Molars", "Urgents", "Posteriors plans", "Dents de serra", "Tornavisos", "Incisors dobles", "Talagants"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 5,
+    "q": "Quins tractaments realitzen habitualment els dentistes?",
+    "answers": ["Empastament (obturació)", "Neteja dental (tartrectomia)", "Extracció dental", "Ortodòncia", "Apendicectomia", "Ressonància magnètica lumbar", "Transplantament de fetge", "Cirurgia de cataractes", "Sutura de tendó d'Aquil·les", "Ajust de marcapassos"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 6,
+    "q": "Quins aliments o begudes poden afavorir l'aparició de càries o taques a les dents?",
+    "answers": ["Begudes sucrades i refrescos", "Caramels i llaminadures", "Cafè i te en excés", "Suc de taronja industrial", "Aigua mineral", "Formatge curat", "Nocs i fruits secs", "Peix blau", "Broquil", "Ous bullits"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 7,
+    "q": "Quines parts formen part de l'anatomia d'una dent?",
+    "answers": ["Corona", "Arrel", "Esmalt", "Sagna o polpa", "Aorta", "Càpsula articular", "Pàncrees", "Fèmur", "Còrnia", "Bronqui"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 8,
+    "q": "Quins professionals o especialistes treballen en la salut de la boca?",
+    "answers": ["Odontòleg", "Ortodontista", "Higienista dental", "Cirurgià maxil·lofacial", "Dermatòleg", "Podòleg", "Oftalmòleg", "Cardiòleg", "Neumòleg", "Nefrolege"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 9,
+    "q": "Quins símptomes indiquen que cal anar d'urgència al dentista?",
+    "answers": ["Dolor intens i persistent de dents", "Inflamació greu de la gíngia o la cara", "Sagnat abundant sense motiu", "Traumatisme amb trencament de dent", "Cansament muscular a les cames", "Visió borrosa al matí", "Congestió nasal neu", "Dolor d'estómac fort", "Erupció a la pell del braç", "Pèrdua de cabell"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 10,
+    "q": "Quines capes o teixits componen l'estructura d'una dent?",
+    "answers": ["Esmalt", "Dentina", "Ciment dental", "Polpa dental", "Cartílag hialí", "Teixit adipós", "Periosti ossi", "Epidermis", "Miofibril·la", "Mina de grafit"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 11,
+    "q": "Quins instruments s'utilitzen habitualment a la consulta de l'odontòleg?",
+    "answers": ["Mirall explorador", "Sonda periodontal", "Ejector de saliva", "Turbina/fresa dental", "Estetoscopi", "Otoscopi", "Martell de reflexos", "Laringoscopi", "Tensiómetre", "Goniòmetre"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 12,
+    "q": "Quins tipus d'aparells s'utilitzen en ortodòncia?",
+    "answers": ["Bràquets metàl·lics", "Alineadors transparents", "Retenidors", "Disjuntor palatí", "Lents de contacte", "Fèrula de guix", "Marcador holter", "Cànula nasal", "Banda elàstica muscular", "Pròtesi vascular"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 13,
+    "q": "Quines de les següents dents són conegudes popularment com a 'dents del judici'?",
+    "answers": ["Tercers molars superiors dits", "Tercers molars inferiors dits", "Tercers molars superiors esquerres", "Tercers molars inferiors esquerres", "Segons premolars", "Incisius centrals", "Canins superiors", "Primers molars", "Incisius laterals", "Premolars inferiors"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 14,
+    "q": "Quins materials s'utilitzen habitualment per a restauracions o pròtesis dentals?",
+    "answers": ["Compòsit (resina composta)", "Ceràmica / Porcellana", "Zirconi", "Amàlgama de plata", "Fusta de balsa", "Plàstic domèstic", "Plom pur", "Ciment d'obra", "Silicona de cuina", "Vidre comú"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 15,
+    "q": "Quines tècniques de diagnòstic per la imatge s'utilitzen en odontologia?",
+    "answers": ["Radiografia periapical", "Ortopantomografia (panoràmica)", "TAC dental (CBCT)", "Radiografia interproximal (Bite-wing)", "Ecografia abdominal", "Mamografia", "Gammagrafia òssia", "Electroencefalograma", "Fluoroscòpia toràcica", "Endoscòpia gàstrica"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 16,
+    "q": "Quines fases o passos formen part d'un tractament d'endodòncia?",
+    "answers": ["Obertura de la cambra pulpar", "Neteja i desinfecció dels canals", "Obturació dels canals radiculars", "Segellat final de la dent", "Extracció completa de la dent", "Inserció d'un cargol a l'òs", "Col·locació de bràquets", "Fer una impressió de silicona", "Neteja superficial de sarro", "Blanquejament LED"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 17,
+    "q": "Quins bacteris estan directament relacionats amb la càries dental o la malaltia periodontal?",
+    "answers": ["Streptococcus mutans", "Lactobacillus", "Porphyromonas gingivalis", "Actinomyces", "Escherichia coli", "Salmonella enterica", "Helicobacter pylori", "Vibrio cholerae", "Legionella pneumophila", "Mycobacterium tuberculosis"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 18,
+    "q": "Quins nervis cranials tenen una relació directa amb la sensibilitat i mobilitat orofacial?",
+    "answers": ["Nerví trigemin (V par)", "Nerví facial (VII par)", "Nerví glossofaringi (IX par)", "Nerví hipoglòs (XII par)", "Nerví òptic (II par)", "Nerví olfactori (I par)", "Nerví vestibulococlear (VIII par)", "Nerví troclear (IV par)", "Nerví abducens (VI par)", "Nerví accessori (XI par)"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 19,
+    "q": "Quines de les següents estructures formen part del periodonci de protecció i inserció?",
+    "answers": ["Gíngia (goma)", "Lligament periodontal", "Ciment radicular", "Os alveolar", "Esmalt dental", "Dentina coronària", "Polpa cameral", "Esmalt primari", "Conducte dentari", "Papilla gustativa"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  },
+  {
+    "id": 20,
+    "q": "Quines substàncies químiques s'utilitzen habitualment com a agents blanquejadors o desinfectants en tractaments dentals?",
+    "answers": ["Peròxid de carbamida", "Peròxid d'hidrogen", "Hipoclorit de sodi", "Clorhexidina", "Àcid clorhídric concentrat", "Acetona purificada", "Amoníac industrial", "Alcohol metílic", "Àcid sulfúric", "Hidròxid de sodi concentrat"],
+    "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]
+  }'''
+
+
     {'id': 1, 'q': "Quins països fan servir l'euro com a moneda oficial?", 'answers': ['Espanya', 'França', 'Itàlia', 'Portugal', 'Suïssa', 'Regne Unit', 'Polònia', 'Suècia', 'Noruega', 'Dinamarca'], 'correct': ['Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N', 'N']},
     {'id': 2, 'q': 'Quines ciutats són capitals europees?', 'answers': ['Lisboa', 'Viena', 'Praga', 'Dublín', 'Barcelona', 'Milà', 'Hamburg', 'Lió', 'Marsella', 'Zuric'], 'correct': ['Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N', 'N']},
     {'id': 3, 'q': 'Quins països tenen costa al mar Mediterrani?', 'answers': ['Espanya', 'Itàlia', 'Grècia', 'Egipte', 'Portugal', 'Alemanya', 'Suècia', 'Bolívia', 'Índia', 'Mèxic'], 'correct': ['Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N', 'N']},
@@ -46,5 +168,9 @@ QUESTIONS = [
     {'id': 45, 'q': 'Quines lletres són acords en el xifrat americà?', 'answers': ['A', 'C', 'E', 'G', 'W', 'S', 'L', 'M', 'O', 'R'], 'correct': ['Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N', 'N']},
     {'id': 46, 'q': 'Quines plataformes són xarxes socials?', 'answers': ['Instagram', 'TikTok', 'LinkedIn', 'X', 'Excel', 'Dropbox', 'Zoom', 'Gmail', 'Notion', 'Slack'], 'correct': ['Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N', 'N']},
     {'id': 47, 'q': "Quins països tenen l'àrab com a llengua oficial?", 'answers': ['Egipte', 'Aràbia Saudita', 'Marroc', 'Jordània', 'Espanya', 'Itàlia', 'Brasil', 'Kenya', 'Índia', 'Grècia'], 'correct': ['Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N', 'N']},
-    {'id': 48, 'q': 'Quins pals té la baralla francesa?', 'answers': ['Cors', 'Diamants', 'Trèvols', 'Piques', 'Estrelles', 'Llunes', 'Corones', 'Espases', 'Copes', 'Bastos'], 'correct': ['Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N', 'N']}
+    {'id': 48, 'q': 'Quins pals té la baralla francesa?', 'answers': ['Cors', 'Diamants', 'Trèvols', 'Piques', 'Estrelles', 'Llunes', 'Corones', 'Espases', 'Copes', 'Bastos'], 'correct': ['Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N', 'N']},
+    {"id": 49, "q": "Quines pel·lícules són produccions animades de Disney o Pixar?", "answers": ["Toy Story", "El Rei Lleó", "Buscant en Nemo", "Frozen", "Shrek", "Ice Age", "Gru", "Kung Fu Panda", "Madagascar", "Com ensinistrar el teu drac"], "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]},
+    {"id": 50, "q": "Quins actors o actrius han guanyat un Premi Oscar d'interpretació?", "answers": ["Meryl Streep", "Leonardo DiCaprio", "Tom Hanks", "Brad Pitt", "Keanu Reeves", "Tom Cruise", "Jim Carrey", "Harrison Ford", "Johnny Depp", "Will Smith"], "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]},
+    {"id": 51, "q": "Quins colors formen el model d'impressió CMYK?", "answers": ["Cian", "Magenta", "Groc", "Negre", "Vermell", "Verd", "Blau", "Blanc", "Taronja", "Violeta"], "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]},
+    {"id": 52, "q": "Quins segles formen part de l'Edat Moderna?", "answers": ["Segle XVI", "Segle XVII", "Segle XVIII", "Segle XV", "Segle II", "Segle V", "Segle III aC", "Segle XXI", "Segle IX", "Segle XI"], "correct": ["Y", "Y", "Y", "Y", "N", "N", "N", "N", "N", "N"]}
 ]
