@@ -61,28 +61,28 @@ async function screenshot(name){const shot=await cmd('Page.captureScreenshot',{f
   assert.equal(await inner('w.document.querySelectorAll(".v-stage").length'),1);
   assert.deepEqual(await evaluate('PyramidRun.snapshot().completedIds.filter(id=>[2,1,8,3,5,12,4,6].includes(id))'),earned);
   await delay(200);
-  assert.equal(await inner('w.auditAudios.find(a=>a.src.endsWith("victory-celebration.wav")).paused'),false,'effect plays '+puzzle);
-  assert.equal(await inner('w.auditAudios.find(a=>a.src.endsWith("victory-celebration.wav")).muted'),false);
-  await inner('w.auditAudios.find(a=>a.src.endsWith("victory-celebration.wav")).currentTime=4.6');await delay(60);
+  assert.equal(await inner('w.parent.PyramidVictoryEffect.paused'),false,'effect plays '+puzzle);
+  assert.equal(await inner('w.parent.PyramidVictoryEffect.muted'),false);
+  await inner('w.parent.PyramidVictoryEffect.currentTime=4.6');await delay(60);
   for(const [width,height]of [[1920,1080],[1280,720]]){
    await cmd('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await until(`Math.abs(document.getElementById('game-shell-frame').contentWindow.document.querySelector('.v-stage').getBoundingClientRect().width-${width})<1`);
    await inner('w.document.fonts.ready');
    const layout=await inner(`(()=>{const s=w.document.querySelector('.v-stage'),h=s.querySelector('h2'),r=h.getBoundingClientRect();return {text:h.textContent,progress:s.querySelector('.v-progress p').textContent,earned:s.querySelectorAll('.v-hero .v-earned').length,visible:w.getComputedStyle(s).visibility!=='hidden',titleOverflow:h.scrollWidth>h.clientWidth+1||r.left<0||r.right>w.innerWidth+1||r.bottom>w.innerHeight+1,scrollWidth:w.document.documentElement.scrollWidth,innerWidth:w.innerWidth,stageBounds:s.getBoundingClientRect().toJSON(),pageOverflow:w.document.documentElement.scrollWidth>w.innerWidth+1,green:[...w.document.querySelectorAll('[id$="-solved-banner"]')].some(b=>!b.classList.contains('hidden')&&w.getComputedStyle(b).display!=='none'),missingImages:[...w.document.images].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)};})()`);
    assert.equal(layout.visible,true);assert.equal(layout.titleOverflow,false,'title '+puzzle+' '+JSON.stringify(layout));assert.equal(layout.pageOverflow,false,'page '+puzzle+' width '+width+' '+JSON.stringify(layout));assert.equal(layout.green,false);assert.deepEqual(layout.missingImages,[]);
-   assert.equal(layout.text,'¡LO HABÉIS CONSEGUIDO!');assert.ok(puzzle===11?layout.progress.includes('SIMULACRO'):layout.progress.includes(expected+' / 8'),JSON.stringify(layout));
+   assert.equal(layout.text,await inner(`w.PyramidVictory.titleFor(${puzzle},'es')`));assert.ok(puzzle===11?layout.progress.includes('SIMULACRO'):layout.progress.includes(expected+' / 8'),JSON.stringify(layout));
    if([11,7,9,10].includes(puzzle))assert.equal(layout.earned,0);
    reports.push({puzzle,width,...layout});await screenshot('puzzle-'+puzzle+'-'+width);
   }
   // Language changes redraw the same earned result, without replaying or awarding.
   if(puzzle===1){for(const language of ['ca','eng']){
    await evaluate(`document.getElementById('game-shell-frame').contentWindow.postMessage({type:'pyramid-presentation-command',action:'language',value:${JSON.stringify(language)}},location.origin)`);await delay(50);
-   assert.equal(await inner('w.document.querySelector(".v-title").textContent'),language==='ca'?'HO HEU ACONSEGUIT!':'YOU DID IT TOGETHER!');await screenshot('language-'+language);
+   assert.equal(await inner('w.document.querySelector(".v-title").textContent'),language==='ca'?'TOT QUADRA!':'IT ALL ADDS UP!');await screenshot('language-'+language);
   }}
-  await inner('w.auditAudios.find(a=>a.src.endsWith("victory-celebration.wav")).currentTime=8.35');await delay(250);
+  await inner('w.parent.PyramidVictoryEffect.currentTime=8.35');await delay(250);
   {
    assert.equal(await inner('w.document.querySelector(".v-stage").dataset.phase'),'hold');
    assert.equal(await evaluate('auditStates.at(-1).canNext'),![7,9,10].includes(puzzle));
-   if(puzzle===1){const before=await evaluate('PyramidRun.snapshot()');await gm('restart');await delay(100);assert.deepEqual(await evaluate('PyramidRun.snapshot()'),before);await inner('w.auditAudios.find(a=>a.src.endsWith("victory-celebration.wav")).currentTime=8.35');await delay(250);}
+   if(puzzle===1){const before=await evaluate('PyramidRun.snapshot()');await gm('restart');await delay(100);assert.deepEqual(await evaluate('PyramidRun.snapshot()'),before);await inner('w.parent.PyramidVictoryEffect.currentTime=8.35');await delay(250);}
    if(![7,9,10].includes(puzzle)){await gm('next');await until('document.getElementById("game-shell-frame").contentWindow.location.pathname.startsWith("/presentacio/")');}
   }
   console.log('Verified puzzle '+puzzle);

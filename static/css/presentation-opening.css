@@ -64,6 +64,8 @@
 .o-hold-art{position:absolute;left:480px;top:10px;width:960px;height:640px}.o-hold-art svg{position:absolute;left:235px;top:5px;width:490px;height:360px;filter:brightness(.55)}.o-hold-art img{position:absolute;left:265px;top:230px;width:430px;height:410px;object-fit:contain}.o-hold .o-title{font-size:84px}.o-hold *{animation:none!important}
 .p-stage[data-auto-paused=true] .o-cinema *,
 .p-stage[data-narration-waiting=true] .o-cinema *{animation-play-state:paused!important}
+.o-cinema[data-recorded-visuals=true] .o-skill,
+.o-cinema[data-recorded-visuals=true] .o-tool-focus{animation:none}
 @keyframes o-emerge{from{opacity:.07;filter:brightness(.15);transform:scale(.9)}to{opacity:1;filter:brightness(.7);transform:scale(1)}}
 @keyframes o-title-in{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:none}}
 @keyframes o-drift{to{transform:translate(-30px,-35px)}}

@@ -22,17 +22,18 @@
   const normalizeLanguage = value => window.PyramidLanguage?.normalize(value,'ca') || (value === 'en' ? 'eng' : Object.hasOwn(config.copy, value) ? value : 'ca');
   let language = normalizeLanguage(page?.language||params.get('lang'));
   let mode = page ? 'live' : params.get('mode') === 'live' && location.protocol !== 'file:' ? 'live' : 'preview';
-  // Spanish earned victories continue into the film; /final-loop remains the photo.
-  let step = page?.sceneId==='closing'&&params.get('celebrated')==='1'&&language!=='es'?1:(page?.initialStep||0), revealed = false, phase = 'slides', countdownStart = 0, countdownTimer = null, lastCount = null;
+  // Cinematic earned victories continue into the film; /final-loop remains the photo.
+  let step = page?.sceneId==='closing'&&params.get('celebrated')==='1'&&!window.PyramidClosing?.active(config,language)?1:(page?.initialStep||0), revealed = false, phase = 'slides', countdownStart = 0, countdownTimer = null, lastCount = null;
   let subtitleTimer=null,openingTimer=null,autoPaused=false,autoDeadline=0,autoRemaining=null,leaving=false;
   let narration=null,recording=null,narrationBlocked=false,narrationIssue='',playRequest=0;
   const endingMs=2600;let ending=false;
+  let closingChargeDone=false;
   const text = () => config.copy[language];
   const cinematicClosing=()=>window.PyramidClosing?.active(config,language);
   function soundtrack(reset=false){
     if(cinematicClosing()){
       window.PyramidOpening?.stop();
-      PyramidClosing.sound(config,step,autoPaused,reset);
+      PyramidClosing.sound(config,step,autoPaused,reset,language);
     }else{
       window.PyramidClosing?.stop();
       window.PyramidOpening?.sound(config,step,autoPaused,reset,language);
@@ -41,7 +42,7 @@
   const timing=()=>recording?.beats[config.steps[step]];
   function pauseNarration(){playRequest++;narration?.pause();stage.dataset.narrationWaiting='false';}
   function prepareNarration(preserve){
-    const profile=config.kind==='opening'?window.PyramidOpeningStory.recording(language):null;
+    const profile=config.kind==='opening'?window.PyramidOpeningStory.recording(language):cinematicClosing()?PyramidClosing.recording(language):null;
     narrationBlocked=false;narrationIssue='';stage.querySelector('.o-audio-retry')?.remove();
     if(profile!==recording){
       pauseNarration();recording=profile;
@@ -55,26 +56,35 @@
       }else narration=null;
     }
     if(!recording){stage.dataset.narrationWaiting='false';return;}
-    if(config.steps[step]==='hold'){pauseNarration();return;}
-    if(!preserve)narration.currentTime=timing().startMs/1000;
+    if(['hold','thanks'].includes(config.steps[step])){pauseNarration();return;}
+    if(!preserve){
+      pauseNarration();
+      closingChargeDone=false;
+      narration.currentTime=cinematicClosing()?0:timing().startMs/1000;
+    }
     stage.dataset.narrationWaiting=String(!autoPaused&&narration.paused);
   }
   function audioFailure(blocked){
-    if(leaving||!recording||config.steps[step]==='hold')return;
+    if(leaving||!recording||['hold','thanks'].includes(config.steps[step]))return;
+    if(cinematicClosing()&&!closingChargeDone&&!autoPaused)autoRemaining=Math.max(1,autoDeadline-performance.now());
     autoPaused=true;narrationBlocked=true;pauseNarration();stopOpening();
-    stage.dataset.autoPaused='true';window.PyramidOpening?.sound(config,step,true,false,language);
+    stage.dataset.autoPaused='true';soundtrack();
     narrationIssue=blocked?'El navegador requiere un clic en la pantalla de jugadores para activar la locución.':'No se ha podido reproducir la locución. Comprueba el audio y pulsa Reintentar.';
     let button=stage.querySelector('.o-audio-retry');
     if(!button){button=document.createElement('button');button.className='o-audio-retry';stage.append(button);}
     button.textContent=blocked?'Activar so':'Reintentar àudio';updateControls();
   }
   function playNarration(){
-    if(!recording||autoPaused||config.steps[step]==='hold')return;
+    if(!recording||autoPaused||['hold','thanks'].includes(config.steps[step]))return;
     const request=++playRequest;
     narration.play().catch(error=>{if(request===playRequest)audioFailure(error.name==='NotAllowedError');});
   }
   function tickNarration(){
-    if(!recording||autoPaused||leaving||config.steps[step]==='hold')return;
+    if(!recording||autoPaused||leaving||['hold','thanks'].includes(config.steps[step]))return;
+    if(cinematicClosing()){
+      if(narration.ended){choose(step+1);return;}
+      updateOpeningSubtitle();return;
+    }
     const current=timing(),clock=narration.currentTime*1000;
     if(config.steps[step]==='call'&&narration.ended){finishCall();return;}
     if(config.steps[step]!=='call'&&(clock>=current.endMs-10||narration.ended)){
@@ -95,6 +105,11 @@
   }
   function updateOpeningSubtitle(){
     if(cinematicClosing()){
+      if(recording&&config.steps[step]!=='thanks'){
+        const remaining=autoPaused?(autoRemaining??PyramidClosing.chargeMs):Math.max(0,autoDeadline-performance.now());
+        const elapsed=closingChargeDone?PyramidClosing.chargeMs+narration.currentTime*1000:PyramidClosing.chargeMs-remaining;
+        PyramidClosing.update(Math.max(0,elapsed));return;
+      }
       const duration=config.autoAdvanceMs?.[step]||0;
       const remaining=autoPaused?(autoRemaining??duration):Math.max(0,autoDeadline-performance.now());
       PyramidClosing.update(Math.max(0,duration-remaining),config.steps[step]==='thanks');
@@ -119,6 +134,18 @@
   }
   function scheduleOpening(){
     stopOpening();
+    if(cinematicClosing()&&recording){
+      if(config.steps[step]!=='thanks'&&!autoPaused){
+        if(closingChargeDone){subtitleTimer=setInterval(tickNarration,1000/60);playNarration();}
+        else{
+          const duration=autoRemaining??PyramidClosing.chargeMs;
+          autoDeadline=performance.now()+duration;
+          subtitleTimer=setInterval(updateOpeningSubtitle,1000/60);
+          openingTimer=setTimeout(()=>{closingChargeDone=true;autoRemaining=null;scheduleOpening();},duration);
+        }
+      }
+      updateOpeningSubtitle();return;
+    }
     if(ending){
       const duration=autoRemaining??endingMs;
       if(!autoPaused){
@@ -186,7 +213,7 @@
   }
   function render(preserveNarration=false) {
     restoreProgress();
-    if(config.kind==='closing')config.autoAdvanceMs=[cinematicClosing()?PyramidClosing.durationMs:11000,0];
+    if(config.kind==='closing')config.autoAdvanceMs=[cinematicClosing()?PyramidClosing.durationFor(language):11000,0];
     document.title=text().name;
     document.getElementById('p-viewport')?.setAttribute('aria-label', {ca:'Pantalla compartida dels jugadors',es:'Pantalla compartida de los jugadores',eng:'Shared player screen'}[language]);
     stage.hidden = false;
@@ -203,7 +230,7 @@
     stage.dataset.scene=config.id;
     stage.dataset.puzzle=config.puzzleId||'';
     stage.style.setProperty('--act-colour',config.accent||config.act?.colour||'#39d6e5');
-    const immersive=flow&&['welcome','opening','success','closing'].includes(config.kind);
+    const immersive=flow&&(['welcome','opening','success','closing'].includes(config.kind)||config.steps[step]==='title');
     // Keep the same diagram nodes in place while revealing the next layer.
     const current=stage.querySelector('.p-screen:not(.j-leaving)');
     const revealStep=['objective','tools','interaction','attention'].indexOf(config.steps[step]);
@@ -242,6 +269,7 @@
     if (countdownTimer !== null) clearInterval(countdownTimer);
     countdownTimer = null;
     lastCount = null;
+    window.PyramidCountdownAudio?.reset('presentation');
   }
   function choose(index,preserveNarration=false) {
     if (flow && phase==='game' && mode==='live') return;
@@ -321,6 +349,7 @@
     stage.dataset.step = 'countdown';
     stage.innerHTML = `<section class="p-screen">${header(text().name)}<div class="p-countdown"><div class="p-kicker">${text().countdownLabel}</div><div class="p-count-number">${count}</div><div class="p-pulse" aria-hidden="true">${[3,2,1].map(n=>`<i class="${n>=count?'active':''}"></i>`).join('')}</div></div>${footer(text().readyLead)}</section>`;
     $('p-announcement').textContent = String(count);
+    window.PyramidCountdownAudio?.tick('presentation', count);
   }
   function start() {
     if (phase !== 'slides' || step !== config.steps.length-1 || (flow && config.kind!=='puzzle')) return;
@@ -357,8 +386,8 @@
     if (action === 'next') next();
     if (action === 'reveal') reveal();
     if (action === 'start') start();
-    if (action === 'restart') { if(page||config.kind==='closing'){revealed=false;choose(0);}else if(flow){loadScene(0);}else {revealed=false; choose(0);} }
-    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); if(['opening','closing'].includes(config.kind))choose(step);else render(); }
+    if (action === 'restart') { if(page||['puzzle','closing'].includes(config.kind)){revealed=false;choose(0);}else if(flow){loadScene(0);}else {revealed=false; choose(0);} }
+    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); if(['opening','closing'].includes(config.kind)||config.steps[step]==='title')choose(step);else render(); }
     if (action === 'mode' && !page && phase === 'slides') { mode=value==='live' && location.protocol !== 'file:' ? 'live' : 'preview'; render(); }
   });
   // Fullscreen needs a gesture in the player window. A click only expands it;

@@ -253,12 +253,12 @@
       "endMs": 115487,
       "cues": [
         {
-          "startMs": 112640,
-          "endMs": 113240,
+          "startMs": 112300,
+          "endMs": 113080,
           "text": "Equip…"
         },
         {
-          "startMs": 113280,
+          "startMs": 113520,
           "endMs": 115487,
           "text": "és hora de despertar la Piràmide."
         }
@@ -271,6 +271,9 @@
     }
   }
 };
+  // Visual cues relative to each beat, aligned to the words in the supplied recording.
+  recording.beats.skills.visuals={skills:[0,3060,3760,4680]};
+  recording.beats.tools.visuals={tools:{buttons:[1260,2000],lights:[2300,2740],symbols:[2820,3790]}};
   recording.src=new URL("../audios/intro/intro-ca.mp3",document.currentScript.src).href;
   window.PyramidOpeningRecordings={ca:recording};
 })();

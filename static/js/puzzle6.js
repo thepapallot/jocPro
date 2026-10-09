@@ -28,7 +28,6 @@
         audio.play().catch(err => console.warn("Audio play failed:", err));
     }
     const PHASE_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
-    const BTN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
 
     function clearTimers() {
         clearInterval(countdownTimer);
@@ -121,7 +120,7 @@
             volume = 0.5;
         }
 
-        playSound(BTN_SOUND_URL, { playbackRate, volume });
+        window.PyramidCountdownAudio?.tick('p6-round', remainingSeconds, { playbackRate, volume });
     }
 
     function format(sec) {
@@ -131,6 +130,8 @@
 
     function startLocalCountdown(remainingSeconds) {
         clearTimers();
+        window.PyramidCountdownAudio?.reset('p6-reset');
+        if (!active) window.PyramidCountdownAudio?.reset('p6-round');
         active = true;
         solved = false;
         lastRenderedSecond = null;
@@ -154,10 +155,7 @@
         const secondChanged = remaining !== lastRenderedSecond;
         if (secondChanged) {
             triggerTickPulse(remaining);
-            // Only play on real second transitions, not on timer jitter.
-            if (lastRenderedSecond != null && remaining > 0) {
-                playCountdownBeep(remaining);
-            }
+            playCountdownBeep(remaining);
             lastRenderedSecond = remaining;
         }
         
@@ -171,6 +169,7 @@
     }
 
     function handleReset(waitSeconds, msg) {
+        window.PyramidCountdownAudio?.reset('p6-round');
         active = false;
         lastRenderedSecond = null;
         clearTimers();
@@ -193,6 +192,7 @@
         function tick() {
             const left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
             countdownEl.textContent = format(left);
+            window.PyramidCountdownAudio?.tick('p6-reset', left);
             if (left <= 0) {
                 clearInterval(resetTimer);
                 resetTimer = null;
@@ -209,6 +209,8 @@
     }
 
     function applySolvedState() {
+        window.PyramidCountdownAudio?.reset('p6-round');
+        window.PyramidCountdownAudio?.reset('p6-reset');
         solved = true;
         active = false;
         lastRenderedSecond = null;
@@ -271,10 +273,7 @@
 
         if (d.countdown_tick && active && !solved) {
             endTime = Date.now() + Math.max(0, d.countdown_tick.remaining) * 1000;
-            countdownEl.textContent = format(d.countdown_tick.remaining);
-            setUrgency(d.countdown_tick.remaining);
-            // Optional: also play on server ticks (every 10s). Comment out to keep per-second only.
-            // playSound(BTN_SOUND_URL);
+            updateCountdown();
         }
 
         if (d.countdown_reset) {

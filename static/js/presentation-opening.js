@@ -44,6 +44,13 @@
     const labels=L(lang,['ENGINY','MEMÒRIA','OBSERVACIÓ','PRECISIÓ'],['INGENIO','MEMORIA','OBSERVACIÓN','PRECISIÓN'],['INGENUITY','MEMORY','OBSERVATION','PRECISION']);
     return `<div class="o-skill-stage">${labels.map((label,i)=>`<div class="o-skill" style="--i:${i}"><div class="o-skill-art" aria-hidden="true">${i===0?'<span class="o-numbers">13 <b>+</b> 5</span>':i===1?'<div class="o-memory-pairs"><i></i><i></i><i></i><i></i></div>':i===2?'<div class="o-observation"><i></i><i></i><i class="different"></i><i></i><i></i></div>':'<div class="o-precision"><i></i><i></i><i></i></div>'}</div>${title(label)}</div>`).join('')}</div>`;
   }
+  function recordedVisualsAt(beat,language,elapsed,reduced=false){
+    const cues=window.PyramidOpeningStory.recording(language)?.beats[beat?.id]?.visuals;
+    if(!cues)return null;
+    const smooth=(t,duration)=>{t=Math.max(0,Math.min(1,t/duration));return t*t*(3-2*t);};
+    if(cues.skills)return {skills:cues.skills.map((start,i)=>reduced?1:(i===0?1:smooth(elapsed-start,180))*(i===3?1:1-smooth(elapsed-cues.skills[i+1],180)))};
+    return {tools:Object.fromEntries(Object.entries(cues.tools).map(([name,[start,end]])=>[name,reduced?0:smooth(elapsed-start,120)*(1-smooth(elapsed-end+120,120))]))};
+  }
   function tools(c){return `<div class="o-tools-stage"><img class="o-tool-token" src="${c.assets.token}" alt="Token"><div class="o-tool-terminal"><img src="${c.assets.terminal}" alt="Terminal"><i class="o-tool-focus buttons"></i><i class="o-tool-focus lights"></i><i class="o-tool-focus symbols"></i></div></div>`;}
   function route(c,screen,lang){
     const j=c.journey,atQuiz=screen==='quiz',back=screen==='return',all=['finale','return'].includes(screen);
@@ -80,6 +87,7 @@
     sound,
     lightingAt,
     brickLightsAt,
+    recordedVisualsAt,
     fade(progress){const level=scoreLevel*Math.pow(Math.max(0,1-progress),1.5);const persistent=persistentScore();if(persistent)persistent.setVolume(level);else if(score)score.volume=level;},
     stop(){score?.pause();},
     // Uses the same elapsed time as the opening; a paused screen keeps its current cue.
@@ -88,6 +96,11 @@
       this.setSubtitle(window.PyramidOpeningStory.subtitleAt(beat,language,elapsedMs));
       const light=lightingAt(beat,language,elapsedMs,matchMedia('(prefers-reduced-motion: reduce)').matches);
       const cinema=document.querySelector('.p-screen:not(.j-leaving) .o-cinema');
+      const visual=recordedVisualsAt(beat,language,elapsedMs,matchMedia('(prefers-reduced-motion: reduce)').matches);
+      if(visual&&cinema){
+        if(visual.skills)cinema.querySelectorAll('.o-skill').forEach((node,i)=>node.style.opacity=String(visual.skills[i]));
+        if(visual.tools)for(const [name,opacity] of Object.entries(visual.tools))cinema.querySelector('.o-tool-focus.'+name).style.opacity=String(opacity);
+      }
       if(light&&cinema){
         for(const [key,value] of Object.entries(light))cinema.style.setProperty('--light-'+key,String(value));
         const bricks=[...cinema.querySelectorAll('.o-light-story .brick')].sort((a,b)=>Number(b.dataset.row)-Number(a.dataset.row)||Number(a.dataset.column)-Number(b.dataset.column));
@@ -110,7 +123,7 @@
       else if(screen==='tokens'){art=`<div class="o-token-hero"><img src="${c.assets.token}" alt="Token"></div>`;heading=L(lang,'EL VOSTRE TOKEN','VUESTRO TOKEN','YOUR TOKEN');}
       else if(screen==='hold'){art=`<div class="o-hold-art">${pyramid()}<img src="${c.assets.token}" alt="Token"></div>`;heading=window.PyramidPuzzleNames.name(c.journey.tutorialId,lang);}
       const beat=c.story.find(b=>b.id===screen);
-      return `<div class="o-cinema o-${screen}" data-beat="${screen}" style="--beat-duration:${(window.PyramidOpeningStory.duration(beat,lang)/1000)||1}s;${lang==='ca'&&screen==='skills'?'--skill-duration:6s':''}">${dust()}<div class="o-visual" aria-label="${esc(beat.label[lang])}">${art}${title(heading)}</div><div class="o-subtitle-zone" aria-label="${L(lang,'Subtítols','Subtítulos','Subtitles')}"><p class="o-subtitle" aria-live="off"></p></div></div>`;
+      return `<div class="o-cinema o-${screen}" data-beat="${screen}" data-recorded-visuals="${!!window.PyramidOpeningStory.recording(lang)?.beats[screen]?.visuals}" style="--beat-duration:${(window.PyramidOpeningStory.duration(beat,lang)/1000)||1}s">${dust()}<div class="o-visual" aria-label="${esc(beat.label[lang])}">${art}${title(heading)}</div><div class="o-subtitle-zone" aria-label="${L(lang,'Subtítols','Subtítulos','Subtitles')}"><p class="o-subtitle" aria-live="off"></p></div></div>`;
     }
   };
 })();

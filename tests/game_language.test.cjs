@@ -38,7 +38,7 @@ function sessionHarness(saveToDb){
   };
   const requests=[],context={window:{localStorage:{setItem(){}}},activeSession:null,activeSessionKey:'active',selectedSessionId:null,_loadedDbSessionId:null,
     collectSessionForm:()=>({id:'draft',gameLanguage:'ca',company:'Equipo'}),readSessions:()=>[],writeSessions(){},saveSessionToDb:saveToDb,
-    syncConfirmedSession:async()=>{},renderActiveSession(){},resetGameState(){},addSimpleEvent(){},setStatus(){},
+    syncConfirmedSession:async()=>{},renderActiveSession(){},resetGameState(){},addSimpleEvent(){},setStatus(){},goToSessionControl(){},
     fetch:async(url,options)=>{requests.push([url,JSON.parse(options.body)]);return {ok:true,json:async()=>({session:{session_id:12,language:'ca'}})}},
     Date,console,JSON};
   context.window.PyramidLanguage={normalize:value=>value||'es'};

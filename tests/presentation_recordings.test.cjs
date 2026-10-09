@@ -38,3 +38,18 @@ test('WebVTT export uses exactly the same cues as the live subtitles',()=>{
   assert.ok(vtt.startsWith('WEBVTT\n'));
   for(const beat of Object.values(r.beats))for(const cue of beat.cues)assert.ok(vtt.includes(`${stamp(cue.startMs)} --> ${stamp(cue.endMs)}\n${cue.text}`));
 });
+test('Catalan finale preserves the approved script and has ordered cues within its recording',()=>{
+  const context=vm.createContext({window:{}});
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../static/js/presentation-closing.js'),'utf8'),context);
+  const closing=context.window.PyramidClosing,r=closing.recording('ca');
+  const approved=fs.readFileSync(path.join(__dirname,'../docs/audio/cierre-final-ca.txt'),'utf8').trim().replace(/\s+/g,' ');
+  assert.equal(r.cues.map(c=>c.text.replaceAll('\n',' ')).join(' '),approved);
+  let end=0;
+  for(const c of r.cues){assert.ok(c.startMs>=end&&c.endMs>c.startMs&&c.endMs<=r.durationMs);end=c.endMs;assert.ok(c.text.split('\n').length<=2);}
+  assert.equal(closing.durationFor('ca'),closing.chargeMs+r.durationMs);
+  assert.equal(closing.recording('es'),null);assert.equal(closing.durationFor('es'),78000);
+  assert.equal(closing.active({kind:'closing'},'ca'),true);assert.equal(closing.active({kind:'closing'},'eng'),false);
+  const vtt=fs.readFileSync(path.join(__dirname,'../static/audios/intro/final-ca.vtt'),'utf8');
+  const stamp=ms=>new Date(ms).toISOString().slice(11,23);
+  for(const c of r.cues)assert.ok(vtt.includes(`${stamp(c.startMs)} --> ${stamp(c.endMs)}\n${c.text}`));
+});

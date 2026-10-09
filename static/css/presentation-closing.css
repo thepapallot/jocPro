@@ -1,6 +1,8 @@
 /* One continuous film. All visual content stays above the subtitle band. */
 .p-stage[data-kind=closing][data-language=es]::before,
-.p-stage[data-kind=closing][data-language=es]::after{display:none}
+.p-stage[data-kind=closing][data-language=es]::after,
+.p-stage[data-kind=closing][data-language=ca]::before,
+.p-stage[data-kind=closing][data-language=ca]::after{display:none}
 .f-cinema{position:relative;isolation:isolate;width:1920px;height:1080px;overflow:hidden;background:#0a1016;color:#f3eee4;--final-glow:.22;--final-pulse:0;--pulse-scale:1}
 .f-atmosphere{position:absolute;inset:0;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 70% 44%,#39d6e514,transparent 57%),radial-gradient(ellipse at 22% 70%,#dc68a712,transparent 55%)}
 .f-aura{position:absolute;left:180px;top:-120px;width:1560px;height:1060px;background:radial-gradient(ellipse,#edb97038,transparent 65%);opacity:var(--final-glow)}

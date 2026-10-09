@@ -13,7 +13,8 @@
 <main>
   <small>LA PIRÁMIDE · CIERRE FINAL</small>
   <h1>Este momento<br>es vuestro.</h1>
-  <p>Un cierre de 78 segundos: primero la carga completa con luces y sonido, después el mensaje con subtítulos en castellano. La locución de ElevenLabs se incorporará cuando esté lista.</p>
+  <p>Primero la carga con luces y sonido, después el mensaje con subtítulos. Catalán: 60,4 segundos con locución. Castellano: 78 segundos provisionales, con locución pendiente.</p>
+  <p><label>Idioma <select id="language"><option value="es">Castellano</option><option value="ca">Català</option></select></label></p>
   <p>La secuencia termina en una composición estable para la foto. Pulsa <strong>Esc</strong> para mostrar los controles.</p>
   <button id="play">Ver el cierre</button><button id="photo" class="secondary">Ver la foto final</button>
   <p>Previsualización aislada. No inicia partidas ni modifica sesiones.</p>
@@ -25,7 +26,7 @@ let state=null,wantPhoto=false,opening=false;
 const send=(action,value)=>frame.contentWindow.postMessage({type:'pyramid-presentation-command',action,value},location.origin);
 async function start(photo){
   wantPhoto=photo;opening=true;screen.classList.add('playing');bar.hidden=true;
-  frame.src='../../player/presentation.html?scene=closing&lang=es';
+  frame.src='../../player/presentation.html?scene=closing&lang='+document.getElementById('language').value;
   try{await screen.requestFullscreen();}catch{}
 }
 addEventListener('message',e=>{

@@ -15,6 +15,22 @@ test('seeking backwards restores lighting immediately and reduced motion is stab
  lighting(b,'ca',8000);assert.equal(JSON.stringify(lighting(b,'ca',1000)),before);
  assert.equal(JSON.stringify(lighting(b,'ca',0,true)),JSON.stringify(lighting(b,'ca',8000,true)));
 });
+test('recorded skill names and terminal highlights coincide with the spoken words',()=>{
+ const visual=context.window.PyramidOpening.recordedVisualsAt;
+ for(const [absolute,index] of [[43200,0],[44000,1],[44750,2],[45700,3]]){
+  const shown=visual(beat('skills'),'ca',absolute-40600).skills;
+  assert.equal(shown[index],1);assert.equal(shown.filter(v=>v===1).length,1);
+ }
+ for(const [absolute,name] of [[71800,'buttons'],[72800,'lights'],[73500,'symbols']]){
+  const shown=visual(beat('tools'),'ca',absolute-70300).tools;
+  assert.equal(shown[name],1);assert.equal(Object.values(shown).filter(v=>v>0).length,1);
+ }
+ assert.equal(visual(beat('skills'),'es',3000),null);
+ assert.ok(visual(beat('skills'),'ca',0,true).skills.every(v=>v===1));
+ assert.ok(Object.values(visual(beat('tools'),'ca',1500,true).tools).every(v=>v===0));
+ const before=JSON.stringify(visual(beat('skills'),'ca',2500));visual(beat('skills'),'ca',9000);
+ assert.equal(JSON.stringify(visual(beat('skills'),'ca',2500)),before);
+});
 
 test('five slow stages accumulate bottom-to-top without resetting or filling early',()=>{
  const levels=context.window.PyramidOpening.brickLightsAt;

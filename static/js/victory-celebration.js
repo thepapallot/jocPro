@@ -6,11 +6,20 @@
     es:{title:'¡LO HABÉIS CONSEGUIDO!',progress:'RETOS SUPERADOS'},
     en:{title:'YOU DID IT TOGETHER!',progress:'CHALLENGES COMPLETED'}
   };
+  const TITLES = {
+    ca:{11:'EQUIP A PUNT!',2:'CAMÍ TROBAT!',1:'TOT QUADRA!',8:'MEMÒRIA D’EQUIP!',3:'SABEU MÉS JUNTS!',5:'HEU CLAVAT EL TEMPS!',12:'COORDINACIÓ PERFECTA!',4:'CODI DESXIFRAT!',6:'HO HEU ACONSEGUIT!',7:'PECES ENCAIXADES!',9:'TOT AL SEU LLOC!',10:'PATRÓ COMPLET!'},
+    es:{11:'¡EQUIPO A PUNTO!',2:'¡CAMINO ENCONTRADO!',1:'¡TODO CUADRA!',8:'¡MEMORIA DE EQUIPO!',3:'¡SABÉIS MÁS JUNTOS!',5:'¡TIEMPO CLAVADO!',12:'¡COORDINACIÓN PERFECTA!',4:'¡CÓDIGO DESCIFRADO!',6:'¡LO HABÉIS CONSEGUIDO!',7:'¡PIEZAS ENCAJADAS!',9:'¡TODO EN SU SITIO!',10:'¡PATRÓN COMPLETO!'},
+    en:{11:'TEAM READY!',2:'PATH FOUND!',1:'IT ALL ADDS UP!',8:'GREAT TEAM MEMORY!',3:'YOU KNOW MORE TOGETHER!',5:'RIGHT ON TIME!',12:'IN PERFECT SYNC!',4:'CODE CRACKED!',6:'YOU DID IT TOGETHER!',7:'THE PIECES FIT!',9:'EVERYTHING IN PLACE!',10:'PATTERN COMPLETE!'}
+  };
+  function titleFor(puzzleId,language='ca'){
+    const key=language==='eng'?'en':language;
+    return (TITLES[key]||TITLES.ca)[puzzleId]||(COPY[key]||COPY.ca).title;
+  }
   const clamp = n => Math.max(0,Math.min(1,n));
   const smooth = n => {n=clamp(n);return n*n*(3-2*n);};
   function markup(){return '<section class="v-stage" aria-label="Celebration"><div class="v-atmosphere"></div><div class="v-floor"></div><canvas class="v-particles" width="1920" height="1080" aria-hidden="true"></canvas><div class="v-hero"></div><div class="v-wave" aria-hidden="true"></div><div class="v-impact" aria-hidden="true"></div><h2 class="v-title" aria-live="polite"></h2><div class="v-progress"><div class="v-progress-marks" aria-hidden="true"></div><p></p></div></section>';}
   function musicLevel(t){return .22+(.06*smooth(t/3.8)+.14*smooth((t-3.65)/.3))*(1-smooth((t-4.8)/2.7));}
-  function create(stage,{previous=0,completed=0,total=8,language='ca',reduced=false,practice=false}={}) {
+  function create(stage,{previous=0,completed=0,total=8,puzzleId,language='ca',reduced=false,practice=false}={}) {
     const copy=COPY[language==='eng'?'en':language]||COPY.ca;
     total=Math.max(1,Number(total)||1);completed=Math.max(0,Math.min(total,Number(completed)||0));previous=Math.max(0,Math.min(completed,Number(previous)||0));
     const before=100*previous/total,after=100*completed/total;
@@ -74,7 +83,7 @@
       stage.dataset.phase=t>=8?'hold':t>=CUES.climax?'victory':'build';
       const settled=t>=CUES.climax;
       const showTitle=t>=CUES.climax&&t<7.7;
-      const text=showTitle?copy.title:'';
+      const text=showTitle?titleFor(practice?11:puzzleId,language):'';
       if(text!==lastTitle){title.textContent=text;lastTitle=text;}
       title.setAttribute('aria-hidden',String(!showTitle));
       stage.style.setProperty('--v-title',reduced?(showTitle?1:0):smooth((t-CUES.climax)/.3)*(1-smooth((t-7.05)/.65)));
@@ -96,5 +105,5 @@
     render(0);
     return {render,cues:CUES,oldCount,newCount,awarded:awarded.length};
   }
-  window.PyramidVictory={create,markup,musicLevel,CUES};
+  window.PyramidVictory={create,markup,musicLevel,CUES,titleFor};
 })();

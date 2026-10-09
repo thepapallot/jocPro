@@ -111,6 +111,7 @@
     }
 
     function renderStatus(kind, value = null) {
+        if (kind !== 'countdown') window.PyramidCountdownAudio?.reset('p1-next');
         if (!solvedContainer) return;
 
         const badge = document.createElement('div');
@@ -373,6 +374,8 @@
             console.log('Received data from state_queue:', data);
 
             if (data.puzzle_solved) {
+                window.PyramidCountdownAudio?.reset('p1-round');
+                window.PyramidCountdownAudio?.reset('p1-next');
                 if (data.operations) renderOperations(data.operations);
                 updateProgress();
                 clearInterval(timerInterval);
@@ -391,6 +394,7 @@
             }
 
             if (data.streak_completed) {
+                window.PyramidCountdownAudio?.reset('p1-round');
                 renderStatus('success');
 
                 playEffect('fase_completada.wav');
@@ -408,7 +412,7 @@
                 const seconds = data.countdown_next_round.seconds;
                 renderStatus('countdown', seconds);
 
-                playEffect('beep_countdown.wav');
+                window.PyramidCountdownAudio?.tick('p1-next', seconds);
             }
 
             if (data.round_size !== undefined) {
@@ -650,6 +654,8 @@
 
     function startTimer() {
         clearInterval(timerInterval);
+        window.PyramidCountdownAudio?.reset('p1-next');
+        window.PyramidCountdownAudio?.reset('p1-round');
         timer = 45;
         timerElement.classList.remove('expired', 'warning');
         setDangerScreenActive(false);
@@ -699,6 +705,7 @@
         const seconds = timer % 60;
         timerElement.textContent =
             `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        window.PyramidCountdownAudio?.tick('p1-round', timer);
     }
 
     function initSSE() {

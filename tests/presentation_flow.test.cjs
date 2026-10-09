@@ -14,9 +14,9 @@ function flow(order){
 test('the journey has a manual lobby, compact briefings and a final earned summit',()=>{
   const scenes=flow(),games=scenes.filter(s=>s.kind==='puzzle');
   assert.deepEqual(games.map(g=>g.puzzleId),[11,2,1,8,3,5,12,4,6]);
-  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),36);
-  assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>!['journey','elements','attention'].includes(s)).join(',')==='objective,tools,interaction'));
-  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),64);
+  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),45);
+  assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>!['title','journey','elements','attention'].includes(s)).join(',')==='objective,tools,interaction'));
+  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),73);
   assert.ok(games.every(g=>!g.steps.includes('example')));
   assert.ok(games.every(g=>!g.previewPath), 'rehearsal uses current diagrams, never the retired pilot');
   assert.equal(scenes[0].autoAdvanceMs,null);
@@ -90,9 +90,9 @@ test('journey blocks follow the configured order, including empty and unequal bl
     const scenes=flow(order),quiz=scenes.find(s=>s.puzzleId===3);
     assert.deepEqual(quiz.journey.pre,pre);
     assert.deepEqual(quiz.journey.post,post);
-    assert.deepEqual(quiz.steps,['journey','objective','tools','interaction','attention']);
+    assert.deepEqual(quiz.steps,['title','journey','objective','tools','interaction','attention']);
     assert.deepEqual(scenes[1].journey,quiz.journey);
-    assert.equal(quiz.autoAdvanceMs,undefined);
+    assert.equal(quiz.autoAdvanceMs.slice(1).every(ms=>ms===0),true);
   }
   const noQuiz=flow('2,8');
   assert.equal(noQuiz[1].journey.trivialId,null);
@@ -166,20 +166,20 @@ test('opening subtitles preserve the narration and cover each beat without gaps'
 
 test('practice starts with equipment and teamwork before the normal three reveals',()=>{
  const practice=flow().find(s=>s.puzzleId===11);
- assert.deepEqual(practice.steps,['elements','objective','tools','interaction']);
- assert.equal(practice.autoAdvanceMs,undefined,'the GM advances equipment manually');
+ assert.deepEqual(practice.steps,['title','elements','objective','tools','interaction']);
+ assert.equal(practice.autoAdvanceMs[1],0,'the GM advances equipment manually');
  assert.ok(practice.elementsCopy.es.notes.includes('El token es personal'));
  assert.ok(practice.elementsCopy.es.action.includes('lector del terminal'));
  assert.ok(practice.elementsCopy.es.team.includes('coordinaos'));
  assert.equal(practice.completed,0);
  assert.match(practice.elementsCopy.ca.tokenTitle,/PERSONAL/);
  assert.match(practice.elementsCopy.ca.action,/lector del terminal/);
- assert.equal(practice.copy.ca.stepLabels[0],'La missió és a les vostres mans');
+ assert.equal(practice.copy.ca.stepLabels[1],'La missió és a les vostres mans');
 });
 
 test('snake briefing always includes the alarm warning before its final start step',()=>{
   const snake=flow().find(s=>s.puzzleId===2&&s.kind==='puzzle');
-  assert.deepEqual(snake.steps,['objective','tools','interaction','attention']);
+  assert.deepEqual(snake.steps,['title','objective','tools','interaction','attention']);
   assert.equal(snake.copy.es.stepLabels.at(-1),'Atención');
   assert.match(snake.copy.es.notes.at(-1),/pantalla no cambian/);
   assert.match(snake.copy.es.notes.at(-1),/colores invertidos/);
@@ -198,7 +198,7 @@ test('snake briefing always includes the alarm warning before its final start st
 
 test('QUIZ keeps its journey and requires the answer-change warning before starting',()=>{
   const quiz=flow().find(s=>s.puzzleId===3&&s.kind==='puzzle');
-  assert.deepEqual(quiz.steps,['journey','objective','tools','interaction','attention']);
+  assert.deepEqual(quiz.steps,['title','journey','objective','tools','interaction','attention']);
   for(const lang of ['ca','es','eng']){
     assert.equal(quiz.copy[lang].stepLabels.at(-1),{ca:'Atenció',es:'Atención',eng:'Attention'}[lang]);
     assert.equal(quiz.copy[lang].notes.at(-1),(quiz.attentionCopy[lang]||quiz.attentionCopy.es).text);
@@ -218,8 +218,8 @@ test('reviewed Spanish briefings require their warnings; the final has only thre
   vm.runInContext(script('presentation-briefing.js'),context);
   for(const id of [8,1,5,12,4,6]){
     const scene=scenes.find(s=>s.puzzleId===id&&s.kind==='puzzle');
-    assert.deepEqual(scene.steps,id===6?['objective','tools','interaction']:['objective','tools','interaction','attention']);
-    assert.equal(scene.copy.es.stepLabels[2],'Acción');
+    assert.deepEqual(scene.steps,id===6?['title','objective','tools','interaction']:['title','objective','tools','interaction','attention']);
+    assert.equal(scene.copy.es.stepLabels[3],'Acción');
     const markup=context.window.PyramidBriefing.markup(scene,scene.copy.es,'es');
     assert.ok(markup.includes('b-practice-layout'));
     assert.equal((markup.match(/class="b-action"/g)||[]).length,id===1?3:4);
@@ -234,4 +234,12 @@ test('reviewed Spanish briefings require their warnings; the final has only thre
       for(const text of scene.attentionCopy.es.paragraphs)assert.ok(markup.includes(`<p>${text}</p>`));
     }
   }
+});
+
+test('each title advances only into its manual briefing, including custom routes',()=>{
+ for(const scene of [...flow(),...flow('8,1')].filter(s=>s.kind==='puzzle')){
+  assert.equal(scene.steps[0],'title');assert.equal(scene.autoAdvanceMs[0],4200);
+  assert.ok(scene.autoAdvanceMs.slice(1).every(ms=>ms===0));
+  assert.equal(scene.autoAdvanceMs.length,scene.steps.length);
+ }
 });
