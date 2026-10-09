@@ -203,7 +203,7 @@
     const host=page&&window.parent!==window?window.parent:window.opener;
     if (host && !host.closed) host.postMessage({
       type: 'pyramid-presentation-state', realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
-      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el simulacre →',es:'Tokens repartidos · explicar el simulacro →',eng:'Tokens handed out · explain the simulation →'}[language]:config.incremental?({elements:language==='ca'?'La missió és a les vostres mans →':'La misión está en vuestras manos →',objective:language==='ca'?'Mostrar objectiu →':'Mostrar objetivo →',tools:language==='ca'?'Mostrar eines →':'Mostrar herramientas →',interaction:language==='ca'?'Mostrar interacció →':'Mostrar interacción →',attention:language==='ca'?'Mostrar atenció →':'Mostrar atención →'}[config.steps[step+1]]||null):null,
+      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el funcionament →',es:'Tokens repartidos · explicar el funcionamiento →',eng:'Tokens handed out · explain the equipment →'}[language]:config.incremental?({'equipment-title':{ca:'Com funciona el joc →',es:'Cómo funciona el juego →',eng:'How the game works →'}[language],title:text().name+' →',elements:language==='ca'?'La missió és a les vostres mans →':'La misión está en vuestras manos →',objective:language==='ca'?'Mostrar objectiu →':'Mostrar objetivo →',tools:language==='ca'?'Mostrar eines →':'Mostrar herramientas →',interaction:language==='ca'?'Mostrar interacció →':'Mostrar interacción →',attention:language==='ca'?'Mostrar atenció →':'Mostrar atención →'}[config.steps[step+1]]||null):null,
       name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
       labels: text().stepLabels, kind: config.kind || 'puzzle',
       sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
@@ -230,7 +230,7 @@
     stage.dataset.scene=config.id;
     stage.dataset.puzzle=config.puzzleId||'';
     stage.style.setProperty('--act-colour',config.accent||config.act?.colour||'#39d6e5');
-    const immersive=flow&&(['welcome','opening','success','closing'].includes(config.kind)||config.steps[step]==='title');
+    const immersive=flow&&(['welcome','opening','success','closing'].includes(config.kind)||['title','equipment-title'].includes(config.steps[step]));
     // Keep the same diagram nodes in place while revealing the next layer.
     const current=stage.querySelector('.p-screen:not(.j-leaving)');
     const revealStep=['objective','tools','interaction','attention'].indexOf(config.steps[step]);
@@ -242,7 +242,7 @@
     }
     const section=document.createElement('section');section.className='p-screen'+(immersive?' j-immersive':'');
     section.dataset.scene=config.id;section.dataset.language=language;
-    section.innerHTML=`${immersive?'':header((config.act?config.act.name[language]+' · ':'')+text().name)}${body()}${immersive?'':footer(text().footers[step])}`;
+    section.innerHTML=`${immersive?'':header(config.steps[step]==='elements'?{ca:'Funcionament del joc',es:'Funcionamiento del juego',eng:'How the game works'}[language]:(config.act?config.act.name[language]+' · ':'')+text().name)}${body()}${immersive?'':footer(text().footers[step])}`;
     const old=stage.querySelector('.p-screen:not(.j-leaving)');
     stage.querySelectorAll('.j-leaving').forEach(node=>node.remove());
     if(old){const subtitle=old.querySelector('.o-subtitle,.f-subtitle');if(subtitle)subtitle.textContent='';old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
@@ -387,7 +387,7 @@
     if (action === 'reveal') reveal();
     if (action === 'start') start();
     if (action === 'restart') { if(page||['puzzle','closing'].includes(config.kind)){revealed=false;choose(0);}else if(flow){loadScene(0);}else {revealed=false; choose(0);} }
-    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); if(['opening','closing'].includes(config.kind)||config.steps[step]==='title')choose(step);else render(); }
+    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); if(['opening','closing'].includes(config.kind)||['title','equipment-title'].includes(config.steps[step]))choose(step);else render(); }
     if (action === 'mode' && !page && phase === 'slides') { mode=value==='live' && location.protocol !== 'file:' ? 'live' : 'preview'; render(); }
   });
   // Fullscreen needs a gesture in the player window. A click only expands it;

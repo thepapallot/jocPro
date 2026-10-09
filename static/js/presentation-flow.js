@@ -230,11 +230,17 @@
       if(catalan.attention)intro.attentionCopy.ca={text:catalan.attention.join(' '),paragraphs:catalan.attention,...(id===2?{before:4,after:5}:{})};
     }
     if(id===tutorialId)intro.elementsCopy.ca={title:'LA MISSIÓ ÉS A LES VOSTRES MANS',tokenTitle:'EL VOSTRE TOKEN ÉS PERSONAL',tokenLead:'Conserveu el vostre durant tota la partida.',terminalTitle:'ELS TERMINALS',terminalLead:'Botons, llums i símbols per resoldre els reptes.',action:'Acosteu el vostre token al lector del terminal per interactuar.',team:'Un únic equip: compartiu informació i coordineu-vos.',notes:'El token és personal: cada persona o parella conserva el seu durant tota la partida. Mostra el lector, els botons, els llums i els símbols del terminal. Per interactuar, cal acostar el token al lector.'};
+    if(id===tutorialId){
+      Object.assign(intro.elementsCopy.es,{screenTitle:'LA PANTALLA COMPARTIDA',screenLead:'Aquí veréis los juegos, las pistas y las instrucciones.',screenItems:['JUEGOS','PISTAS','INSTRUCCIONES'],parts:['LECTOR DEL TOKEN','BOTONES','LUCES','SÍMBOLOS'],notes:'Explicad primero la pantalla compartida: muestra los juegos, las pistas y las instrucciones. Cada persona o pareja conserva su token durante toda la partida. Mostrad en un terminal real el lector del token, los botones, las luces y los símbolos; explicad que su uso cambia según el reto. Acercad un token al lector para mostrar cómo se interactúa. Todo el grupo es un único equipo: compartid información y coordinaos. Después avanzad al título del Simulacro Inicial y explicad la práctica.'});
+      Object.assign(intro.elementsCopy.ca,{screenTitle:'LA PANTALLA COMPARTIDA',screenLead:'Aquí veureu els jocs, les pistes i les instruccions.',screenItems:['JOCS','PISTES','INSTRUCCIONS'],parts:['LECTOR DEL TOKEN','BOTONS','LLUMS','SÍMBOLS'],notes:'Explica primer la pantalla compartida: mostra els jocs, les pistes i les instruccions. Cada persona o parella conserva el seu token durant tota la partida. Mostra en un terminal real el lector del token, els botons, els llums i els símbols; explica que el seu ús canvia segons el repte. Acosta un token al lector per mostrar com s’interactua. Tot el grup és un únic equip: compartiu informació i coordineu-vos. Després avança al títol del Simulacre Inicial i explica la pràctica.'});
+      intro.elementsCopy.eng={title:'THE MISSION IS IN YOUR HANDS',screenTitle:'THE SHARED SCREEN',screenLead:'Here you will see the games, clues and instructions.',screenItems:['GAMES','CLUES','INSTRUCTIONS'],tokenTitle:'YOUR TOKEN IS PERSONAL',tokenLead:'Keep yours throughout the game.',terminalTitle:'THE TERMINALS',terminalLead:'Buttons, lights and symbols to solve the challenges.',parts:['TOKEN READER','BUTTONS','LIGHTS','SYMBOLS'],action:'Scan your token at the terminal reader to interact.',team:'One team: share information and coordinate your actions.',notes:'Explain the shared screen first: it shows the games, clues and instructions. Each person or pair keeps their token throughout the game. Point out the token reader, buttons, lights and symbols on a real terminal; their use changes with each challenge. Show how to scan a token at the reader. Everyone is on one team: share information and coordinate your actions. Then advance to the Initial Simulation title and explain the practice.'};
+    }
     intro.journey=journey;
     if(id===3)intro.accent='#dc68a7';
     intro.incremental=true;
-    intro.steps.unshift('title');
-    intro.autoAdvanceMs=intro.steps.map(screen=>screen==='title'?4200:0);
+    intro.steps.splice(id===tutorialId?1:0,0,'title');
+    if(id===tutorialId)intro.steps.unshift('equipment-title');
+    intro.autoAdvanceMs=intro.steps.map(screen=>['title','equipment-title'].includes(screen)?4200:0);
     for(const lang of ['ca','es','eng']) {
       const t=intro.copy[lang];
 
@@ -265,7 +271,7 @@
       }
       if(id===tutorialId){
         if(['es','ca'].includes(lang))t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];
-        // Spanish editorial draft; translations follow approval of the full content.
+        // Explain the shared equipment before introducing the practice.
         const elements=intro.elementsCopy[lang]||intro.elementsCopy.es;
         t.stepLabels.unshift(local('La missió és a les vostres mans','La misión está en vuestras manos','The mission is in your hands')[lang]);
         t.notes.unshift(elements.notes);
@@ -278,9 +284,14 @@
       }
     }
     for(const lang of ['ca','es','eng']){
-      intro.copy[lang].stepLabels.unshift(local('Presentació de la prova','Presentación de la prueba','Challenge introduction')[lang]);
-      intro.copy[lang].notes.unshift(local('Entrada automàtica del nom de la prova, de 4,2 segons. Després apareix l’explicació; els passos següents i l’inici del joc continuen al teu control.','Entrada automática del nombre de la prueba, de 4,2 segundos. Después aparece la explicación; los pasos siguientes y el inicio del juego siguen bajo tu control.','Automatic 4.2-second challenge title. The briefing follows; you still control its remaining steps and the game start.')[lang]);
-      intro.copy[lang].footers.unshift('');
+      intro.copy[lang].stepLabels.splice(id===tutorialId?1:0,0,local('Presentació de la prova','Presentación de la prueba','Challenge introduction')[lang]);
+      intro.copy[lang].notes.splice(id===tutorialId?1:0,0,local('Entrada automàtica del nom de la prova, de 4,2 segons. Després apareix l’explicació; els passos següents i l’inici del joc continuen al teu control.','Entrada automática del nombre de la prueba, de 4,2 segundos. Después aparece la explicación; los pasos siguientes y el inicio del juego siguen bajo tu control.','Automatic 4.2-second challenge title. The briefing follows; you still control its remaining steps and the game start.')[lang]);
+      intro.copy[lang].footers.splice(id===tutorialId?1:0,0,'');
+      if(id===tutorialId){
+        intro.copy[lang].stepLabels.unshift(local('Com funciona el joc','Cómo funciona el juego','How the game works')[lang]);
+        intro.copy[lang].notes.unshift(local('Entrada de 4,2 segons per presentar el funcionament del joc. Després apareix el diagrama de pantalla, token i terminal i es manté fins que avancis.','Entrada de 4,2 segundos para presentar el funcionamiento del juego. Después aparece el diagrama de pantalla, token y terminal y permanece hasta que avances.','A 4.2-second introduction to how the game works. The screen, token and terminal diagram follows and waits for your command.')[lang]);
+        intro.copy[lang].footers.unshift('');
+      }
     }
     flow.push(intro);
     if(id===finalId)break;

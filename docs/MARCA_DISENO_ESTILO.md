@@ -275,18 +275,21 @@ ornamentales, paneles redundantes y animaciones continuas sobre el tablero.
    el siguiente. Navegar o previsualizar no otorga progreso.
 8. **Final y foto:** celebración y composición estable para el grupo.
 
-Decisión del 9 octubre 2026, implementada: cada presentación de prueba empieza
-con una pantalla de título de **4,2 segundos**, con el nombre editorial grande,
+Decisión del 9 octubre 2026, implementada: cada presentación de prueba incluye
+una pantalla de título de **4,2 segundos**, con el nombre editorial grande,
 bandas diagonales de luz y una entrada suave de escala y enfoque. Conserva el
 acento de la etapa; el QUIZ utiliza su entrada propia de letras sobre paneles
 magenta, descrita en su identidad. La música ambiental continúa.
 Al terminar, pasa automáticamente a la primera explicación; objetivo, herramientas,
-acción y atención siguen avanzando a petición del GM. El Simulacro conserva
-antes su explicación de tokens y terminales, y el QUIZ su mapa del recorrido.
+acción y atención siguen avanzando a petición del GM. El Simulacro muestra primero la entrada «Cómo funciona el juego» y la explicación
+manual del funcionamiento del juego,
+después su título y a continuación objetivo, herramientas y acción. El QUIZ
+conserva su mapa del recorrido después del título.
 El juego nunca comienza por el paso del tiempo de esta entrada.
 
 El GM puede pausar, reanudar, saltar o repetir la entrada. Repetir la presentación
-vuelve al nombre de esa prueba. Con movimiento reducido se mantiene el título
+vuelve a su primer paso: entrada al funcionamiento general en el Simulacro y título en
+las demás pruebas. Con movimiento reducido se mantiene el título
 estable durante el mismo intervalo. Verificado con las nueve pruebas y los tres
 idiomas a 1920 × 1080 y 1280 × 720 mediante simulación aislada, sin MQTT ni
 hardware: `output/entrades-proves/`.
@@ -374,12 +377,23 @@ vuelve a señalar el inicio. Aparecen el token y el pulso final de la Pirámide.
 - El mapa deriva de `PUZZLE_ORDER`; admite bloques vacíos/desiguales. Si no hay
   QUIZ en la configuración se omite su momento de la apertura y del mapa.
 - Al final, **la apertura se detiene en el reparto de tokens**. El GM avanza con
-  «Tokens repartidos · explicar el simulacro». La práctica y su cuenta atrás
+  «Tokens repartidos · explicar el funcionamiento». La práctica y su cuenta atrás
   mantienen el control manual.
 - Pausa, anterior/siguiente y repetición siguen disponibles. El idioma se elige
   en Sesiones. La pausa
   congela las animaciones y música; movimiento reducido presenta composiciones
-  estables. En habilidades muestra las cuatro juntas. La espera final es estable.
+  estables. En habilidades muestra las cuatro juntas.
+
+Decisión del 9 octubre 2026, implementada: la espera de reparto al terminar
+la apertura muestra **solo el token centrado con un indicador circular de carga**
+cian, suave y continuo. Se retiran el título del Simulacro Inicial y la pirámide
+adicional en los tres idiomas. No hay texto, subtítulos ni partículas en esta
+pantalla. El indicador expresa una espera indeterminada, no progreso real:
+el GM sigue avanzando manualmente cuando todos tienen su token. Con movimiento
+reducido se mantiene la composición estática.
+Verificado en simulación aislada a 1920 × 1080 y 1280 × 720, en los tres
+idiomas, incluido movimiento reducido y avance manual del GM. Capturas en
+`output/repartiment-tokens/`.
 
 Corrección de sincronización implementada el 9 octubre 2026: en catalán,
 las habilidades y los resaltados de botones, luces y símbolos siguen las palabras
@@ -428,7 +442,7 @@ Guion de producción: [APERTURA_NARRATIVA.md](APERTURA_NARRATIVA.md).
 La versión catalana está revisada para locución y recogida íntegramente en ese
 documento. «Català» en Sesiones selecciona títulos, recorrido, subtítulos y notas
 de la apertura; la indicación de reparto pasa a «Tokens repartits · explicar el
-simulacre». Se conserva «token» como nombre del objeto usado durante el juego.
+funcionament». Se conserva «token» como nombre del objeto usado durante el juego.
 
 Verificado en Chrome con fixtures aislados: 17 estados × tres idiomas × dos
 resoluciones (1920 × 1080 y 1280 × 720), todos los cues de subtítulos, bloques
@@ -537,17 +551,37 @@ Sin MQTT ni hardware; pendiente escucharla con los altavoces de la sala.
 Acordado: revisar primero las presentaciones en castellano. El usuario confirma
 el conjunto el 7 octubre 2026 y autoriza la versión catalana completa, manteniendo
 el diseño y las reglas aprobadas.
-Implementado para el Simulacro Inicial: una pantalla manual titulada **La misión está en
-vuestras manos** precede al esquema habitual de objetivo, herramientas e interacción.
-Muestra token personal y terminal con tamaño visual equilibrado. Explica conservar
-el token, acercarlo al lector para interactuar y trabajar en equipo compartiendo
-información y coordinándose. El GM muestra el lector físico y después avanza a
-la explicación del Simulacro. Los tokens ya se han repartido al acabar la apertura.
-Esta pantalla no inicia el juego ni modifica el progreso. La cuenta atrás sigue
-reservada al final de la explicación. Textos equivalentes en `elementsCopy.es` y `elementsCopy.ca` de
-`presentation-flow.js`; el inglés pendiente utiliza el borrador castellano.
-Verificación con fixture aislado a 1920 × 1080 y 1280 × 720, sin hardware:
-`output/simulacro-titulo/`.
+Decisión del 9 octubre 2026, implementada: **La misión está en vuestras manos**
+se muestra al terminar el reparto de tokens y **antes del título Simulacro Inicial**.
+Es una explicación manual del funcionamiento general del juego. Tres bloques
+muestran la pantalla compartida (juegos, pistas e instrucciones), el token
+personal que se conserva durante la partida y el terminal completo con sus
+cuatro elementos identificados: lector del token, botones, luces y símbolos.
+El recordatorio inferior explica acercar el token al lector para interactuar.
+La cabecera dice «Funcionamiento del juego», sin anunciar aún el Simulacro.
+
+Decisión del 9 octubre 2026, implementada: esta explicación tiene una entrada
+propia de 4,2 segundos, **«COM FUNCIONA EL JOC»** en catalán, **«CÓMO FUNCIONA
+EL JUEGO»** en castellano y **«HOW THE GAME WORKS»** en inglés. El rótulo breve
+«Antes de empezar» sitúa el momento. Usa la misma composición de títulos del
+juego y pasa automáticamente al diagrama, que espera la orden del GM.
+Permite pausa, repetición y avance manual; movimiento reducido conserva el
+rótulo estable. A continuación siguen el título y la explicación del Simulacro.
+Verificación en simulación a 1920 × 1080 y 1280 × 720, en los tres idiomas,
+con pausa, avance, retorno y movimiento reducido: `output/intro-funcionament/`.
+
+
+El GM explica los tres bloques, señala los componentes de un terminal físico
+y recuerda que su uso cambia según el reto. Las notas destacan compartir
+información y coordinarse como un único equipo. Al avanzar aparece el título
+Simulacro Inicial; después vienen su objetivo, herramientas y acción, y la
+práctica se inicia cuando el GM lo ordena. La explicación general permanece
+hasta que el GM avanza y no otorga progreso. Textos equivalentes en catalán,
+castellano e inglés, incluidas las notas del GM. Verificado en simulación aislada
+a 1920 × 1080 y 1280 × 720: orden, espera manual, avance al título y retorno
+del GM, sin imágenes ausentes ni desbordes. Capturas en
+`output/funcionament-joc/`; pendiente lectura desde la sala.
+
 
 Decisión actualizada e implementada: retirar de todas las pantallas de
 presentación las frases inferiores de apoyo («Repartid quién observa…»,
