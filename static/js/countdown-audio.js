@@ -26,7 +26,7 @@
             // Reuse the preloaded clip; its reverb must not overlap the next tick.
             audio.pause();
             audio.currentTime = 0;
-            audio.volume = options.volume ?? 0.5;
+            audio.volume = options.volume ?? 0.9;
             audio.playbackRate = options.playbackRate ?? 1;
             owner = key;
             audio.play().catch(() => {

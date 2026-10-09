@@ -67,28 +67,36 @@
   const active=(c,language)=>c.kind==='closing'&&['es','ca'].includes(language);
   const subtitleAt=ms=>cues.find(c=>ms>=c.startMs&&ms<c.endMs)?.text||'';
   const musicLevel=clock=>{
-    if(clock<chargeMs)return .16+.22*smooth(clock/5800)*(1-smooth((clock-7000)/3000));
-    if(language==='ca')return .12;
+    if(clock<chargeMs)return .1+.08*smooth(clock/5800)*(1-smooth((clock-7000)/3000));
+    if(language==='ca')return .08;
     const ms=clock-chargeMs;
     return ms<24000?.16:ms<27500?.16+.13*Math.sin(Math.PI*(ms-24000)/3500):ms<43000?.16:ms<61000?.16+.1*smooth((ms-43000)/18000):ms<64400?.26+.08*smooth((ms-61000)/3400):.34-.24*smooth((ms-64400)/3600);
   };
   const narration=esCues.map(c=>c.text.replaceAll('\n',' ')).join(' ');
-  let score=null,effect=null,paused=false,lastMs=0,effectStarted=false,effectFailed=false,audioIssue='';
+  let score=null,effect=null,background=null,paused=false,lastMs=0,effectStarted=false,effectFailed=false,audioIssue='',musicIssue='';
   function persistent(){try{return window.top.BGM||null;}catch{return null;}}
   function music(){
     const host=persistent();
-    if(host){score?.pause();return host;}
-    if(!score){score=new Audio('/static/audios/musica_ambient/musica_piramide.mp3');score.preload='auto';score.loop=true;}
+    if(host&&background!==host){background=host;host.suspend();}
+    if(!score){
+      score=new Audio('/static/audios/musica_ambient/final-victoria.mp3');score.preload='auto';score.loop=true;
+      score.addEventListener('error',()=>{musicIssue='No se puede cargar la música de victoria. Revisa final-victoria.mp3 en la carpeta de audios y repite el cierre.';});
+    }
     return {play:()=>score.play(),pause:()=>score.pause(),setVolume:level=>{score.volume=level;}};
   }
   function sound(c,step,isPaused,reset=false,lang='es'){
     setLanguage(lang);
     paused=isPaused;const photo=c.steps[step]==='thanks';
-    if(!effect){effect=new Audio('/static/audios/effects/final-charge.wav');effect.preload='auto';effect.volume=.72;}
+    if(!effect){effect=new Audio('/static/audios/effects/final-charge.wav');effect.preload='auto';effect.volume=1;}
     if(reset){effect.pause();effect.currentTime=0;lastMs=0;effectStarted=false;effectFailed=false;audioIssue='';}
     if(paused||photo)effect.pause();
-    const track=music();track.setVolume(photo?.1:musicLevel(lastMs));
-    if(paused)track.pause();else track.play().catch(()=>{});
+    const track=music();
+    // The photo continues the score; only replaying the film restarts it.
+    if(reset&&!photo){score.currentTime=0;musicIssue='';if(score.error)score.load();}
+    track.setVolume(photo?.22:musicLevel(lastMs));
+    if(paused)track.pause();else track.play().then(()=>{musicIssue='';}).catch(error=>{
+      if(error.name!=='AbortError')musicIssue='La música de victoria no ha podido sonar. Activa el sonido en la ventana de jugadores o repite el cierre.';
+    });
     if(!paused&&!photo)syncEffect(lastMs);
   }
   function syncEffect(ms){
@@ -199,7 +207,7 @@
     root.style.setProperty('--pulse-scale',String(1+smooth((ms-(shot.id==='charge'?5800:missionStart))/3000)*2.4));
     nodes.effects.render({shot:isPhoto?'photo':shot.id,ms,localMs,reduced,targets:nodes.targets,hits:nodes.hits});
     nodes.motes.forEach((mote,i)=>{mote.style.transform=`translateY(${reduced||isPhoto?0:-((ms/650+i*17)%180)}px)`;});
-    if(!paused){music().setVolume(isPhoto?.1:musicLevel(ms));syncEffect(isPhoto?durationMs:ms);}
+    if(!paused){music().setVolume(isPhoto?.22:musicLevel(ms));syncEffect(isPhoto?durationMs:ms);}
   }
-  window.PyramidClosing={active,chargeMs,durationFor,recording:lang=>lang==='ca'?caRecording:null,get durationMs(){return durationMs;},get cues(){return cues;},get shots(){return shots;},narration,subtitleAt,musicLevel,markup,update,sound,get issue(){return audioIssue;},stop(){score?.pause();effect?.pause();root=null;nodes=null;}};
+  window.PyramidClosing={active,chargeMs,durationFor,recording:lang=>lang==='ca'?caRecording:null,get durationMs(){return durationMs;},get cues(){return cues;},get shots(){return shots;},narration,subtitleAt,musicLevel,markup,update,sound,get issue(){return [musicIssue,audioIssue].filter(Boolean).join(' ');},stop(){score?.pause();effect?.pause();background?.resume().catch(()=>{});background=null;root=null;nodes=null;}};
 })();

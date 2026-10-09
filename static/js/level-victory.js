@@ -6,7 +6,7 @@
   // Keep one preloaded media element in the player across puzzle navigations.
   const owner=host()||window;
   const effect=owner.PyramidVictoryEffect||(owner.PyramidVictoryEffect=new (owner.Audio||Audio)(new URL('../audios/effects/victory-celebration.wav',document.currentScript.src).href));
-  effect.preload='auto';effect.volume=.65;
+  effect.preload='auto';effect.volume=1;
   let active=false,ready=false,leaving=false,frame=0,serial=0,stage,view,progress,elapsed=0,issue='',blocked=false;
   const bgm=()=>host()?.BGM||window.BGM;
   const lang=()=>window.PyramidLanguage?.normalize(game.language)||game.language||'es';
@@ -27,7 +27,7 @@
     const path=destination();if(!ready||!path||leaving)return;
     leaving=true;stop();const url=new URL(path,location.origin);url.searchParams.set('lang',lang());location.assign(url.href);
   }
-  function stop(){serial++;cancelAnimationFrame(frame);effect.pause();bgm()?.setVolume(.22,300);}
+  function stop(){serial++;cancelAnimationFrame(frame);effect.pause();bgm()?.setVolume(PyramidVictory.musicLevel(0),300);}
   function showAudioIssue(message){
     issue=message;report();
   }
@@ -36,7 +36,7 @@
     view=PyramidVictory.create(stage,{...progress,puzzleId:game.puzzleId,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});
     stage.classList.add('v-awaiting-audio');
     report();if(effect.error)effect.load();effect.currentTime=0;
-    const music=bgm();music?.setVolume(.22,350);
+    const music=bgm();music?.setVolume(PyramidVictory.musicLevel(0),350);
     music?.play().catch(()=>{if(token===serial)showAudioIssue('Música de fondo bloqueada. Revisa el audio de la ventana de jugadores y usa Repetir desde este control.');});
     // No wall-clock fallback: loading/buffering must never consume the animation.
     // A real failure stays at the start and is reported only to the GM.
@@ -56,7 +56,7 @@
       elapsed=effect.currentTime;
       view.render(elapsed);music?.setVolume(PyramidVictory.musicLevel(elapsed));
       if(!effect.ended){frame=requestAnimationFrame(tick);return;}
-      elapsed=8.4;view.render(elapsed);music?.setVolume(.22);ready=true;report();
+      elapsed=8.4;view.render(elapsed);music?.setVolume(PyramidVictory.musicLevel(elapsed));ready=true;report();
       if(final())advance();
     };tick();
   }

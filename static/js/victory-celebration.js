@@ -18,7 +18,8 @@
   const clamp = n => Math.max(0,Math.min(1,n));
   const smooth = n => {n=clamp(n);return n*n*(3-2*n);};
   function markup(){return '<section class="v-stage" aria-label="Celebration"><div class="v-atmosphere"></div><div class="v-floor"></div><canvas class="v-particles" width="1920" height="1080" aria-hidden="true"></canvas><div class="v-hero"></div><div class="v-wave" aria-hidden="true"></div><div class="v-impact" aria-hidden="true"></div><h2 class="v-title" aria-live="polite"></h2><div class="v-progress"><div class="v-progress-marks" aria-hidden="true"></div><p></p></div></section>';}
-  function musicLevel(t){return .22+(.06*smooth(t/3.8)+.14*smooth((t-3.65)/.3))*(1-smooth((t-4.8)/2.7));}
+  // Keep the musical lift below the brick impacts and the final sweep.
+  function musicLevel(t){return .12+(.03*smooth(t/3.8)+.05*smooth((t-3.65)/.3))*(1-smooth((t-4.8)/2.7));}
   function create(stage,{previous=0,completed=0,total=8,puzzleId,language='ca',reduced=false,practice=false}={}) {
     const copy=COPY[language==='eng'?'en':language]||COPY.ca;
     total=Math.max(1,Number(total)||1);completed=Math.max(0,Math.min(total,Number(completed)||0));previous=Math.max(0,Math.min(completed,Number(previous)||0));

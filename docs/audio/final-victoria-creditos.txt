@@ -1,0 +1,20 @@
+Música de cierre de La Piràmide
+
+Título: A Legend Will Rise (Orchestral)
+Autor: CodeManu
+Fuente: https://opengameart.org/content/a-legend-will-rise-orchestral
+Descarga: https://opengameart.org/sites/default/files/A%20Legend%20Will%20Rise.mp3
+Licencia indicada por el autor: CC0 1.0
+Licencia: https://creativecommons.org/publicdomain/zero/1.0/
+Fecha de consulta y descarga: 9 octubre 2026
+
+Archivo: static/audios/musica_ambient/final-victoria.mp3
+SHA-256: 6c38472a541777c3ac2826e8623f1424a1d2ccc3757e16cafb270b004e64a65b
+Duración: 69,642 segundos. Reproducción en bucle para sostener el cierre y la foto.
+MP3 original sin modificar, renombrado para el juego. La reproducción ajusta
+el volumen bajo la voz, conserva la pista durante la foto y permite repetirla.
+La carpeta static/audios/ se distribuye íntegra por USB; no se versiona en Git.
+
+Selección para el cierre catalán y castellano: instrumental orquestal épica,
+distinta de la música ambiental de las pruebas. Pendiente validación de escucha
+con los altavoces de sala.
