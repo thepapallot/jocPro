@@ -14,9 +14,9 @@ function flow(order){
 test('the journey has a manual lobby, compact briefings and a final earned summit',()=>{
   const scenes=flow(),games=scenes.filter(s=>s.kind==='puzzle');
   assert.deepEqual(games.map(g=>g.puzzleId),[11,2,1,8,3,5,12,4,6]);
-  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),45);
-  assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>!['title','journey','elements','attention'].includes(s)).join(',')==='objective,tools,interaction'));
-  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),73);
+  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),46);
+  assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>!['title','equipment-title','journey','elements','attention'].includes(s)).join(',')==='objective,tools,interaction'));
+  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),74);
   assert.ok(games.every(g=>!g.steps.includes('example')));
   assert.ok(games.every(g=>!g.previewPath), 'rehearsal uses current diagrams, never the retired pilot');
   assert.equal(scenes[0].autoAdvanceMs,null);
@@ -166,11 +166,14 @@ test('opening subtitles preserve the narration and cover each beat without gaps'
 
 test('practice starts with equipment and teamwork before the normal three reveals',()=>{
  const practice=flow().find(s=>s.puzzleId===11);
- assert.deepEqual(practice.steps,['title','elements','objective','tools','interaction']);
+ assert.deepEqual(practice.steps,['equipment-title','elements','title','objective','tools','interaction']);
  assert.equal(practice.autoAdvanceMs[1],0,'the GM advances equipment manually');
- assert.ok(practice.elementsCopy.es.notes.includes('El token es personal'));
+ assert.ok(practice.elementsCopy.es.tokenTitle.includes('PERSONAL'));
  assert.ok(practice.elementsCopy.es.action.includes('lector del terminal'));
  assert.ok(practice.elementsCopy.es.team.includes('coordinaos'));
+ assert.equal(practice.autoAdvanceMs[2],4200,'the practice title follows the manual equipment briefing');
+ assert.equal(practice.copy.ca.notes[1],practice.elementsCopy.ca.notes);
+ assert.equal(practice.copy.eng.notes[1],practice.elementsCopy.eng.notes);
  assert.equal(practice.completed,0);
  assert.match(practice.elementsCopy.ca.tokenTitle,/PERSONAL/);
  assert.match(practice.elementsCopy.ca.action,/lector del terminal/);
@@ -238,8 +241,9 @@ test('reviewed Spanish briefings require their warnings; the final has only thre
 
 test('each title advances only into its manual briefing, including custom routes',()=>{
  for(const scene of [...flow(),...flow('8,1')].filter(s=>s.kind==='puzzle')){
-  assert.equal(scene.steps[0],'title');assert.equal(scene.autoAdvanceMs[0],4200);
-  assert.ok(scene.autoAdvanceMs.slice(1).every(ms=>ms===0));
+  const titleIndex=scene.puzzleId===11?2:0;
+  assert.equal(scene.steps[titleIndex],'title');assert.equal(scene.autoAdvanceMs[titleIndex],4200);
+  assert.ok(scene.autoAdvanceMs.every((ms,index)=>['title','equipment-title'].includes(scene.steps[index])?ms===4200:ms===0));
   assert.equal(scene.autoAdvanceMs.length,scene.steps.length);
  }
 });

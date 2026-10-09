@@ -110,6 +110,7 @@
     },
     setSubtitle(text){const node=document.querySelector('.p-screen:not(.j-leaving) .o-subtitle');if(node&&node.textContent!==(text||''))node.textContent=text||'';},
     markup(c,screen,lang){
+      if(screen==='hold')return `<div class="o-cinema o-hold" data-beat="hold"><div class="o-visual" aria-label="${L(lang,'Repartiment de tokens','Reparto de tokens','Token handout')}"><div class="o-hold-art"><span class="o-hold-loader" aria-hidden="true"></span><img src="${c.assets.token}" alt="Token"></div></div></div>`;
       let art='',heading='';
       const brand=L(lang,'LA PIRÀMIDE','LA PIRÁMIDE','THE PYRAMID');
       if(['reveal','mission'].includes(screen)){
@@ -121,7 +122,6 @@
       else if(screen==='tools')art=tools(c);
       else if(['journey','quiz','finale','return'].includes(screen))art=route(c,screen,lang);
       else if(screen==='tokens'){art=`<div class="o-token-hero"><img src="${c.assets.token}" alt="Token"></div>`;heading=L(lang,'EL VOSTRE TOKEN','VUESTRO TOKEN','YOUR TOKEN');}
-      else if(screen==='hold'){art=`<div class="o-hold-art">${pyramid()}<img src="${c.assets.token}" alt="Token"></div>`;heading=window.PyramidPuzzleNames.name(c.journey.tutorialId,lang);}
       const beat=c.story.find(b=>b.id===screen);
       return `<div class="o-cinema o-${screen}" data-beat="${screen}" data-recorded-visuals="${!!window.PyramidOpeningStory.recording(lang)?.beats[screen]?.visuals}" style="--beat-duration:${(window.PyramidOpeningStory.duration(beat,lang)/1000)||1}s">${dust()}<div class="o-visual" aria-label="${esc(beat.label[lang])}">${art}${title(heading)}</div><div class="o-subtitle-zone" aria-label="${L(lang,'Subtítols','Subtítulos','Subtitles')}"><p class="o-subtitle" aria-live="off"></p></div></div>`;
     }

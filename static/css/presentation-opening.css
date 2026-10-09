@@ -61,7 +61,12 @@
 .o-map.returning li:not(.practice){opacity:.3}.o-map.returning .practice{outline:2px solid #71e7db;outline-offset:12px}
 .o-you-are-here{position:absolute;top:-68px;left:0;right:0;font:900 29px/1.1 var(--p-display);color:#71e7db}
 .o-token-hero{position:absolute;top:30px;left:605px;width:710px;height:650px}.o-token-hero img{width:100%;height:100%;object-fit:contain;animation:o-token-turn 6s ease-out both}
-.o-hold-art{position:absolute;left:480px;top:10px;width:960px;height:640px}.o-hold-art svg{position:absolute;left:235px;top:5px;width:490px;height:360px;filter:brightness(.55)}.o-hold-art img{position:absolute;left:265px;top:230px;width:430px;height:410px;object-fit:contain}.o-hold .o-title{font-size:84px}.o-hold *{animation:none!important}
+.o-hold{background:#0a1016}
+.o-hold .o-visual{inset:0}
+.o-hold-art{position:absolute;left:600px;top:180px;width:720px;height:720px}
+.o-hold-art img{position:absolute;inset:40px;width:640px;height:640px;object-fit:contain}
+.o-hold-loader{position:absolute;inset:0;border:3px solid #39d6e51f;border-top-color:#39d6e5;border-right-color:#39d6e566;border-radius:50%;animation:o-hold-loading 4s linear infinite}
+@keyframes o-hold-loading{to{transform:rotate(360deg)}}
 .p-stage[data-auto-paused=true] .o-cinema *,
 .p-stage[data-narration-waiting=true] .o-cinema *{animation-play-state:paused!important}
 .o-cinema[data-recorded-visuals=true] .o-skill,

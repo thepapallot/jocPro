@@ -42,7 +42,7 @@
   window.PyramidVisuals={
     body(c,screen,t,lang,revealed){
       if(!c.kind)return null;
-      if(c.kind==='puzzle'&&screen==='title')return PyramidBriefing.title(c,t,lang);
+      if(c.kind==='puzzle'&&['title','equipment-title'].includes(screen))return PyramidBriefing.title(c,t,lang,screen==='equipment-title');
       if(c.kind==='opening')return window.PyramidOpening.markup(c,screen,lang);
       if(window.PyramidClosing?.active(c,lang))return PyramidClosing.markup(c,screen,lang);
       if(screen==='elements'&&c.elementsCopy)return PyramidBriefing.elements(c,lang);
