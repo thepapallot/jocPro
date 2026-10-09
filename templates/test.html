@@ -16,20 +16,20 @@
                 <div class="test-hero">
                     <h1 class="test-title">Panel Game Master</h1>
                     <span id="gm-test-mode" class="session-badge session-test" hidden>MODO PRUEBA</span>
-                    <div id="gm-active-session-line" class="gm-active-session-line">Sin sesión confirmada</div>
+                    <div id="gm-active-session-line" class="gm-active-session-line">Prepara una partida para pasar al control</div>
                 </div>
 
                 <div class="gm-header-status" aria-label="Estado de partida">
                     <div class="gm-status-pill">
                         <span>Sesión</span>
-                        <strong id="gm-header-session-status">No confirmada</strong>
+                        <strong id="gm-header-session-status">Sin preparar</strong>
                     </div>
                     <div class="gm-status-pill">
                         <span>Tiempo</span>
                         <strong id="gm-game-time">--</strong>
                     </div>
                     <button type="button" id="gm-update-session-btn">Actualizar</button>
-                    <button type="button" id="gm-start-btn" class="gm-start-btn" disabled>Abrir partida</button>
+                    <button type="button" id="gm-start-btn" class="gm-start-btn" disabled>Ir al control →</button>
                 </div>
             </div>
 
@@ -65,20 +65,26 @@
                             <label><span class="field-label">Nombre de la sesión</span><input id="gm-session-name" name="sessionName" type="text" required maxlength="160"></label>
                             <label><span class="field-label">Empresa / cliente</span><input id="gm-session-company" name="company" type="text" required maxlength="160"></label>
                             <label><span class="field-label">Fecha</span><input id="gm-session-date" name="date" type="date" required></label>
-                            <label><span class="field-label">Hora prevista</span><input id="gm-session-time" name="time" type="time"></label>
-                            <label><span class="field-label">Lugar</span><input id="gm-session-place" name="place" type="text"></label>
                             <label><span class="field-label">Número de jugadores</span><input id="gm-session-players" name="players" type="number" min="10" max="20" step="1" required></label>
                             <label><span class="field-label">Idioma del juego</span><select id="gm-session-language" name="gameLanguage" aria-describedby="gm-language-help"><option value="es">Castellano</option><option value="ca">Català</option><option value="eng">English</option></select></label>
-                            <label><span class="field-label">Game Master responsable</span><input id="gm-session-master" name="gameMaster" type="text" maxlength="160"></label>
                             <p id="gm-language-help" class="full-width gm-action-note">El idioma se aplica a toda la pantalla de jugadores. Castellano y catalán revisados; inglés pendiente de la traducción completa.</p>
-                            <label class="full-width"><span class="field-label">Notas de preparación</span><textarea id="gm-session-notes" name="additionalNotes"></textarea></label>
-                            <label class="full-width"><span class="field-label">Observaciones después de la partida</span><textarea id="gm-session-observations" name="observations" placeholder="Qué funcionó, dificultades del grupo e incidencias que conviene recordar."></textarea></label>
+                            <details id="gm-session-options" class="full-width session-options">
+                                <summary>Más datos y notas <span>Opcional</span></summary>
+                                <div class="session-options-fields">
+                                    <label><span class="field-label">Hora prevista</span><input id="gm-session-time" name="time" type="time"></label>
+                                    <label><span class="field-label">Lugar</span><input id="gm-session-place" name="place" type="text"></label>
+                                    <label><span class="field-label">Game Master responsable</span><input id="gm-session-master" name="gameMaster" type="text" maxlength="160"></label>
+                                    <label class="full-width"><span class="field-label">Notas de preparación</span><textarea id="gm-session-notes" name="additionalNotes"></textarea></label>
+                                    <label class="full-width"><span class="field-label">Observaciones después de la partida</span><textarea id="gm-session-observations" name="observations" placeholder="Qué funcionó, dificultades del grupo e incidencias que conviene recordar."></textarea></label>
+                                </div>
+                            </details>
                             <p id="gm-session-form-error" class="full-width session-error" role="alert" hidden></p>
                             <div class="action-row full-width session-form-actions">
-                                <button type="button" id="gm-save-session-btn" >Guardar cambios</button>
+                                <button type="submit" id="gm-confirm-session-btn" class="primary-action">Guardar e ir al control →</button>
+                                <button type="button" id="gm-save-session-btn">Guardar para más tarde</button>
                                 <button type="button" id="gm-delete-session-btn">Eliminar sesión</button>
-                                <button type="button" id="gm-confirm-session-btn" class="primary-action">Usar esta sesión</button>
                             </div>
+                            <p class="full-width gm-action-note session-next-step">Al continuar se guarda y activa esta sesión. En el control podrás abrir la pantalla de jugadores.</p>
                         </form>
 
                         <aside class="gm-saved-sessions">
@@ -207,7 +213,7 @@
             <section class="test-tab-panel gm-main-panel" role="tabpanel" data-gm-panel="juego" hidden>
                 <div class="director-head">
                     <div><span class="section-tag">Toda la partida desde aquí</span><h2>Control de juego</h2></div>
-                    <div class="action-row director-window-tools"><button type="button" id="director-open">Abrir ventana de jugadores ↗</button><button type="button" id="director-refresh">Actualizar estado</button></div>
+                    <div class="action-row director-window-tools"><button type="button" id="director-open" class="primary-action">Abrir ventana de jugadores ↗</button><button type="button" id="director-refresh">Actualizar estado</button></div>
                 </div>
                 <div class="director-layout">
                     <nav class="director-route" aria-label="Recorrido completo"><h3>Recorrido</h3><p>Presentar explica el reto. Iniciar abre el juego directamente.</p><div id="director-route-list"></div></nav>

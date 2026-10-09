@@ -10,6 +10,12 @@
 .session-test { background:#fff1d8; color:#77500c; border-color:#dcb478; }
 .session-form-actions { border-top:1px solid #cbd7df; padding-top:14px; }
 .session-form-actions #gm-delete-session-btn { margin-left:auto; }
+.session-options { border:1px solid #cbd7df; border-radius:4px; padding:12px; }
+.session-options summary { cursor:pointer; color:#25495e; font-weight:700; }
+.session-options summary span { margin-left:8px; font-size:12px; font-weight:400; color:#526574; }
+.session-options-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; padding-top:16px; }
+.session-next-step { margin:0; }
+#gm-start-btn[hidden] { display:none; }
 .session-list-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; }
 .session-list-heading h3 { margin:0; font-size:20px; }
 .session-list-heading button { min-height:34px; font-size:12px; }
@@ -36,7 +42,7 @@
 [data-gm-panel="sesiones"] :is(input,select,button,textarea):focus-visible { outline:3px solid #209db9; outline-offset:2px; }
 @media(max-width:1100px) { [data-gm-panel="sesiones"] .gm-session-form { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:850px) { [data-gm-panel="sesiones"] .gm-session-layout { grid-template-columns:1fr; } #gm-session-list { max-height:none; } }
-@media(max-width:540px) { [data-gm-panel="sesiones"] .gm-session-form { grid-template-columns:1fr; } .session-form-actions #gm-delete-session-btn { margin-left:0; } }
+@media(max-width:540px) { [data-gm-panel="sesiones"] .gm-session-form, .session-options-fields { grid-template-columns:1fr; } .session-form-actions #gm-delete-session-btn { margin-left:0; } }
 [data-gm-panel="sesiones"] .gm-actions-compact { display:flex; flex-wrap:wrap; justify-content:flex-end; }
 [data-gm-panel="sesiones"] .gm-session-form textarea { min-height:76px; height:76px; resize:vertical; }
 #gm-test-mode { align-self:flex-start; }

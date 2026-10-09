@@ -51,6 +51,7 @@
         language: {{ (request.args.get('lang') or game_language)|tojson }},
         nextUrl: {{ (url_for('play_video_puzzles', puzzle_id=next_puzzle_id) if next_puzzle_id|default(None) else url_for('final'))|tojson }}
     };</script>
+    <script src="{{ url_for('static', filename='js/countdown-audio.js') }}"></script>
     <script src="{{ url_for('static', filename='js/game-language.js') }}"></script>
     <script src="{{ url_for('static', filename='js/game-copy.js') }}"></script>
     <script src="{{ url_for('static', filename='js/pyramid-logo.js') }}"></script>

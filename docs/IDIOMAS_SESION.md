@@ -88,6 +88,12 @@ La primera intro dispone de locución catalana (`static/audios/intro/intro-ca.mp
 subtítulos y escenas sincronizados con el audio. Al elegir Català se utiliza
 automáticamente. Las locuciones castellana e inglesa aún están pendientes.
 
+El cierre también tiene locución catalana (`static/audios/intro/final-ca.mp3`)
+y subtítulos con el guion aprobado en `docs/audio/cierre-final-ca.txt`.
+Tras diez segundos de carga, la voz guía el montaje hasta su final natural y
+la foto «AQUEST MOMENT ÉS VOSTRE». Pausa y repetición incluyen la locución.
+El castellano mantiene su montaje provisional y el inglés su cierre anterior.
+
 ## Agenda y pruebas del Game Master
 
 En Sesiones, **Crear sesión real** abre un borrador con la fecha actual.

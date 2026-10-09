@@ -19,7 +19,7 @@
   <script>
     // Static rehearsal only: no final route, session closure or game actions.
     if(new URLSearchParams(location.search).get('scene')==='closing')window.PYRAMID_PAGE={
-      sceneId:'closing',language:'es',order:[2,1,8,3,5,12,4],tutorialId:11,finalId:6,routes:{},initialStep:0
+      sceneId:'closing',language:new URLSearchParams(location.search).get('lang')||'es',order:[2,1,8,3,5,12,4],tutorialId:11,finalId:6,routes:{},initialStep:0
     };
   </script>
   <script src="../static/js/pyramid-logo.js"></script>

@@ -211,6 +211,12 @@
             return;
         }
         statusEl.textContent = text || '';
+        if (tone === 'countdown') {
+            const seconds = Number(String(text).match(/\d+/)?.[0]);
+            window.PyramidCountdownAudio?.tick('p4-sample', seconds);
+        } else {
+            window.PyramidCountdownAudio?.reset('p4-sample');
+        }
         statusEl.className = '';
         if (tone) {
             statusEl.classList.add(tone);

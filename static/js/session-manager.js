@@ -19,10 +19,16 @@
     typeRange();
     $('gm-session-editor-title').textContent=selected?.name||'Nueva sesión';
     $('gm-session-type').disabled=Boolean(selected?.started_at);
-    $('gm-confirm-session-btn').disabled=Boolean(selected?.ended_at||(selected?.started_at&&selected?.session_id===activeId));
+    $('gm-confirm-session-btn').disabled=Boolean(selected?.ended_at);
+    actionLabels();
     $('gm-delete-session-btn').disabled=!selected?.session_id||selected.session_id===activeId;
     $('gm-session-save-state').textContent=message||'Guardada en el servidor.';
     $('gm-session-form-error').hidden=true;
+  }
+  function actionLabels(){
+    const current=Boolean(selected?.session_id&&selected.session_id===activeId);
+    $('gm-confirm-session-btn').textContent=current?(dirty?'Guardar y volver al control →':'Volver al control →'):'Guardar e ir al control →';
+    $('gm-save-session-btn').textContent=current||selected?.ended_at?'Guardar cambios':'Guardar para más tarde';
   }
   function render(){
     const query=$('gm-session-search').value.trim().toLocaleLowerCase();
@@ -59,8 +65,8 @@
       $('gm-refresh-sessions').addEventListener('click',()=>callbacks.refresh());
       for(const id of ['gm-session-search','gm-session-filter-type','gm-session-filter-date'])$(id).addEventListener('input',render);
       document.querySelectorAll('[data-session-view]').forEach(button=>button.addEventListener('click',()=>{view=button.dataset.sessionView;document.querySelectorAll('[data-session-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));render();}));
-      $('gm-session-form').addEventListener('submit',e=>e.preventDefault());
-      $('gm-session-form').addEventListener('input',()=>{dirty=true;typeRange();$('gm-session-save-state').textContent='Cambios sin guardar.';});
+      $('gm-session-form').addEventListener('submit',e=>{e.preventDefault();if(!selected?.ended_at)callbacks.prepare();});
+      $('gm-session-form').addEventListener('input',()=>{dirty=true;typeRange();actionLabels();$('gm-session-save-state').textContent='Cambios sin guardar.';});
       this.fresh('real');
     },
     agenda(payload){
@@ -79,9 +85,10 @@
       view='pending';$('gm-session-search').value='';$('gm-session-filter-date').value='';
       document.querySelectorAll('[data-session-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.sessionView===view)));
       const form=$('gm-session-form');form.elements.sessionType.value=kind;form.elements.date.value=localDay();
+      form.elements.players.value='10';$('gm-session-options').open=false;
       if(kind==='test'){form.elements.sessionName.value=`Prueba · ${localDay()}`;form.elements.company.value='Pruebas';form.elements.players.value='10';$('gm-session-filter-type').value='test';}
       else $('gm-session-filter-type').value='real';
-      editorState('Borrador sin guardar. Guarda los datos o usa esta sesión para preparar la partida.');render();
+      editorState(kind==='test'?'Prueba prellenada. Revisa jugadores e idioma y continúa al control.':'Completa nombre y empresa, revisa los datos y continúa al control.');render();
     },
     validate(){
       typeRange();
@@ -99,7 +106,7 @@
       activeId=session?.dbSessionId??null;$('gm-test-mode').hidden=session?.sessionType!=='test';
       document.body.classList.toggle('session-mode-test',session?.sessionType==='test');
       const row=records.find(s=>s.session_id===activeId);if(row&&session?.startedAt)row.started_at=session.startedAt;
-      render();
+      typeRange();actionLabels();render();
     },
     confirmDelete(name){
       const dialog=$('gm-session-delete-dialog');$('gm-session-delete-copy').textContent=`¿Quieres eliminar «${name||'esta sesión'}»?`;

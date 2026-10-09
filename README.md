@@ -49,7 +49,7 @@ Las imágenes usadas se versionan directamente en sus rutas reales de
 en su sitio con `git pull`. La reserva `static/images/no_usadas/` queda ignorada.
 
 Todos los audios se distribuyen por USB y `static/audios/` está ignorada
-íntegramente en Git. Los 33 audios y los subtítulos de la intro conservan sus
+íntegramente en Git. Los audios y los subtítulos de apertura y cierre conservan sus
 subcarpetas habituales; no se separan en usados y no usados.
 
 Para preparar otro ordenador, copiar la carpeta `audios/` desde el USB dentro de
@@ -58,6 +58,10 @@ Para preparar otro ordenador, copiar la carpeta `audios/` desde el USB dentro de
 que comprueban los subtítulos de la intro. `git pull` actualiza el código y las
 imágenes versionadas; los cambios de audio requieren una nueva copia por USB.
 No se necesitan sincronizadores ni Git LFS para este reparto de audios.
+
+El cierre catalán utiliza `static/audios/intro/final-ca.mp3` y sus subtítulos
+`final-ca.vtt`. Incluir ambos en la copia por USB. La locución entra después
+de la carga final y termina antes de la foto; no sustituye a `intro-ca.mp3`.
 
 Añadir recursos en su carpeta activa o en la reserva según su uso. Antes de
 archivarlos, revisar referencias y rutas dinámicas; al reutilizarlos, moverlos a

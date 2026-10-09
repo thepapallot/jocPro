@@ -52,7 +52,7 @@
       $('last-target').classList.add('correct');$('last-target').innerHTML='<span class="tick">✓</span>';
       $('p1-progress').textContent=`16/16 ${text[$('preview-language').value].done}`;
       victory.hidden=false;board.hidden=true;
-      view=PyramidVictory.create(victory,{previous:1,completed:2,total:8,language:$('preview-language').value,reduced:$('preview-reduced').checked});
+      view=PyramidVictory.create(victory,{previous:1,completed:2,total:8,puzzleId:1,language:$('preview-language').value,reduced:$('preview-reduced').checked});
       celebrationStart=performance.now();
       if(withSound){try{await score.play();}catch{showControls();$('preview-error').textContent='El so s’ha bloquejat. Prem «Viure la victòria» per reintentar.';$('preview-error').hidden=false;return;}}
       if(current!==run)return;

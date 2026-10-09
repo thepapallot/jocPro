@@ -37,7 +37,6 @@
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
     const ROUND_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const ROUND_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
-    const BEEP_COUNTDOWN_SOUND_URL = "/static/audios/effects/beep_countdown.wav"; // NEW
     let objectivePulseTimeout = null;
     function setDisplayMode(mode = 'play') {
         const isCountdown = mode === 'countdown';
@@ -83,7 +82,8 @@
         }, 560);
     }
 
-    function clearCountdown() {
+    function clearCountdown(preserveSound = false) {
+        if (!preserveSound) window.PyramidCountdownAudio?.reset('p5-preparation');
         if (countdownInterval) {
             clearInterval(countdownInterval);
             countdownInterval = null;
@@ -108,20 +108,16 @@
         playersSection.style.display = 'none';
         errorSection.style.display = 'none';
         setDisplayMode('countdown');
-        clearCountdown();
+        clearCountdown(true);
         setObjectiveValue(roundObjectives || '—', 'segundos');
         const deadlineMs = Number(deadline) * 1000;
         const duration = Math.max(0, Number(waitingSeconds) || 0);
         activeCountdownDeadlineMs = Number.isFinite(deadlineMs) && deadlineMs > 0
             ? deadlineMs : Date.now() + duration * 1000;
-        let lastRemaining = null;
         const tick = () => {
             const remaining = computeRemainingSeconds();
             preparationCountdownEl.textContent = remaining > 0 ? `${remaining} s` : '…';
-            if (lastRemaining !== null && remaining > 0 && remaining !== lastRemaining) {
-                playSound(BEEP_COUNTDOWN_SOUND_URL);
-            }
-            lastRemaining = remaining;
+            window.PyramidCountdownAudio?.tick('p5-preparation', remaining);
             // Finishing preparation does not tell players to count: each terminal gives its own signal.
             if (remaining === 0) clearCountdown();
         };

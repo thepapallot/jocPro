@@ -82,9 +82,9 @@ async function screenshot(name){const shot=await cmd('Page.captureScreenshot',{f
   assert.deepEqual(await evaluate('PyramidRun.snapshot()'),before);
   for(const lang of ['ca','eng']){
     await gm('language',lang);await until(`states.at(-1)?.language==='${lang}'`);
-    assert.equal(await inner(`!!w.document.querySelector('.f-cinema')`),false);
+    assert.equal(await inner(`!!w.document.querySelector('.p-screen:not(.j-leaving) .f-cinema')`),lang==='ca');
     await gm('step',1);await until('states.at(-1)?.step===1');
-    assert.equal(await inner(`!!w.document.querySelector('.j-achievement.photo')`),true);
+    assert.equal(await inner(`!!w.document.querySelector('.p-screen:not(.j-leaving) ${lang==='ca'?'.f-photo':'.j-achievement.photo'}')`),true);
   }
   await gm('language','es');await until('states.at(-1)?.language==="es"');await gm('restart');await until('states.at(-1)?.step===0');
   await cmd('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'no-preference'}]});
@@ -98,7 +98,9 @@ async function screenshot(name){const shot=await cmd('Page.captureScreenshot',{f
   assert.deepEqual(await evaluate('PyramidRun.snapshot()'),before);
   assert.equal(await inner('w.auditRequests.length'),0,'the finale makes no game writes');
   assert.equal(await evaluate('auditAudios.filter(a=>a.src.includes("musica_piramide")).length'),1);
-  assert.equal(await inner('w.auditAudios.length'),1,'only the final effect, no duplicate soundtrack or missing narration');
+  assert.equal(await inner('w.auditAudios.filter(a=>a.src.includes("final-charge.wav")).length'),1,'one final effect reused across languages');
+  assert.equal(await inner('w.auditAudios.filter(a=>a.src.includes("musica_piramide")).length'),0,'no local duplicate of the persistent soundtrack');
+  assert.equal(await inner('w.auditAudios.filter(a=>a.src.includes("final-ca.mp3")).every(a=>a.paused)'),true,'changing language stops the Catalan voice');
   // /final-loop still opens the photo directly.
   await evaluate(`document.getElementById('game-shell-frame').src='/final-loop?lang=es'`);
   await until('document.getElementById("game-shell-frame").contentWindow.location.pathname==="/final-loop"&&document.getElementById("game-shell-frame").contentWindow.document.querySelector(".f-photo")');

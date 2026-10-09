@@ -15,6 +15,7 @@
     let symbolsOrder = [];
     let solved = false;
     let countdownFrame = null;
+    let countdownPhase = null;
 
     const instructions = {
         idle: ['', '', ''],
@@ -25,6 +26,8 @@
     };
 
     function stopCountdown() {
+        window.PyramidCountdownAudio?.reset('p8-phase');
+        countdownPhase = null;
         if (countdownFrame !== null) cancelAnimationFrame(countdownFrame);
         countdownFrame = null;
         countdown.hidden = true;
@@ -44,6 +47,8 @@
             return;
         }
 
+        if (countdownPhase !== data.phase) window.PyramidCountdownAudio?.reset('p8-phase');
+        countdownPhase = data.phase;
         if (countdownFrame !== null) cancelAnimationFrame(countdownFrame);
         // Use the server's remaining time, including on a reload/reconnection.
         // A monotonic browser clock keeps the animation independent of wall-clock changes.
@@ -54,6 +59,7 @@
             const leftMs = Math.max(0, deadline - performance.now());
             const seconds = String(Math.ceil(leftMs / 1000));
             if (countdownValue.textContent !== seconds) countdownValue.textContent = seconds;
+            window.PyramidCountdownAudio?.tick('p8-phase', seconds);
             timeFill.style.transform = `scaleX(${leftMs / durationMs})`;
             countdownFrame = leftMs > 0 ? requestAnimationFrame(tick) : null;
         }

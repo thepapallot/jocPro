@@ -233,6 +233,8 @@
     intro.journey=journey;
     if(id===3)intro.accent='#dc68a7';
     intro.incremental=true;
+    intro.steps.unshift('title');
+    intro.autoAdvanceMs=intro.steps.map(screen=>screen==='title'?4200:0);
     for(const lang of ['ca','es','eng']) {
       const t=intro.copy[lang];
 
@@ -270,6 +272,11 @@
         t.footers.unshift(local('Compartiu el que sabeu. Decidiu junts.','Compartid lo que sabéis. Decidid juntos.','Share what you know. Decide together.')[lang]);
       }
     }
+    for(const lang of ['ca','es','eng']){
+      intro.copy[lang].stepLabels.unshift(local('Presentació de la prova','Presentación de la prueba','Challenge introduction')[lang]);
+      intro.copy[lang].notes.unshift(local('Entrada automàtica del nom de la prova, de 4,2 segons. Després apareix l’explicació; els passos següents i l’inici del joc continuen al teu control.','Entrada automática del nombre de la prueba, de 4,2 segundos. Después aparece la explicación; los pasos siguientes y el inicio del juego siguen bajo tu control.','Automatic 4.2-second challenge title. The briefing follows; you still control its remaining steps and the game start.')[lang]);
+      intro.copy[lang].footers.unshift('');
+    }
     flow.push(intro);
     if(id===finalId)break;
     const previous=completed;
@@ -289,6 +296,12 @@
   closing.completed=total;closing.previous=total-1;closing.total=total;closing.act=acts[2];closing.autoAdvanceMs=[11000,0];
   for(const lang of ['ca','es','eng'])closing.copy[lang].notes=[local('Celebreu-ho amb el grup. El tancament passa sol a la pantalla de foto.','Celebradlo con el grupo. El cierre pasa solo a la pantalla de foto.','Celebrate with the group. The finale continues automatically to the photo screen.')[lang],local('Pantalla de foto. Pregunteu: què heu aconseguit perquè heu treballat junts?','Pantalla de foto. Preguntad: ¿qué habéis conseguido porque habéis trabajado juntos?','Photo screen. Ask: what did working together make possible?')[lang]];
   if(window.PyramidClosing){
+    closing.copy.ca.name='Tancament · La Piràmide';
+    closing.copy.ca.stepLabels=['Aquest moment és vostre','Foto d’equip'];
+    closing.copy.ca.notes=[
+      'Tancament automàtic: 10 s de càrrega i 50,4 s de locució catalana. La veu governa els subtítols i el pas a la foto. Deixa gaudir el grup; pots pausar, repetir o avançar a la foto. Guió: '+PyramidClosing.recording('ca').cues.map(c=>c.text.replaceAll('\n',' ')).join(' '),
+      'Composició estable per a la foto. Recull l’aplaudiment: «Missió complerta, equip! Acosteu-vos, que aquesta foto és vostra». Repetir torna a iniciar el tancament sense sumar progrés.'
+    ];
     closing.copy.es.name='Cierre · La Pirámide';
     closing.copy.es.stepLabels=['Este momento es vuestro','Foto de equipo'];
     closing.copy.es.notes=[

@@ -122,3 +122,41 @@
 .b-practice-layout[data-puzzle="2"] .b-tools-art>.b-art-row>.b-symbol{width:142px;height:142px;padding:16px;background:#101a24;border:1px solid #55707b;box-shadow:0 12px 35px #0005;flex:none}
 
 .b-attention-example>.b-arrow{font:64px/1 Arial,sans-serif;color:#edb970}
+
+/* A short automatic title before the GM-led explanation. */
+.p-stage[data-step=title]::before,.p-stage[data-step=title]::after{opacity:0}
+.b-title-card{position:absolute;inset:0;overflow:hidden;background:#0a1016;isolation:isolate}
+.b-title-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 58%,color-mix(in srgb,var(--act-colour) 23%,transparent),transparent 64%);animation:b-title-glow 1800ms ease-out both}
+.b-title-bands{position:absolute;inset:0;overflow:hidden;opacity:.3}
+.b-title-bands i{position:absolute;top:-40%;height:180%;width:150px;background:linear-gradient(180deg,transparent,var(--act-colour),transparent);transform:rotate(28deg);animation:b-title-band 1600ms cubic-bezier(.16,1,.3,1) both}
+.b-title-bands i:nth-child(1){left:7%;--band-from:-700px;width:18px}
+.b-title-bands i:nth-child(2){left:16%;--band-from:-900px;opacity:.25}
+.b-title-bands i:nth-child(3){right:8%;--band-from:800px;width:34px;animation-delay:120ms}
+.b-title-brand{position:absolute;top:105px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:20px;color:#a8bbc5;font:900 30px/1 var(--p-display);text-transform:uppercase;letter-spacing:.12em;animation:b-title-in 800ms 150ms both}
+.b-title-brand svg{width:85px;height:65px}
+.b-title-copy{position:absolute;inset:275px 130px 200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.b-title-copy p{margin:0 0 30px;color:var(--act-colour);font:700 25px/1.3 Arial,sans-serif;letter-spacing:.25em;animation:b-title-in 650ms 250ms both}
+.b-title-copy h1{margin:0;width:100%;font:900 190px/1.08 var(--p-display);letter-spacing:-.025em;text-transform:uppercase;text-wrap:balance;color:#f3eee4;text-shadow:0 10px 45px #0006;animation:b-title-name 1100ms 180ms cubic-bezier(.16,1,.3,1) both}
+.b-title-line{height:6px;width:180px;background:var(--act-colour);box-shadow:0 0 32px color-mix(in srgb,var(--act-colour) 55%,transparent);margin-top:44px;flex:none;animation:b-title-line 900ms 600ms cubic-bezier(.16,1,.3,1) both}
+@keyframes b-title-name{from{opacity:0;transform:translateY(65px) scale(1.12);filter:blur(12px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes b-title-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes b-title-line{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
+@keyframes b-title-band{from{opacity:0;transform:translateX(var(--band-from)) rotate(28deg)}to{opacity:1;transform:translateX(0) rotate(28deg)}}
+@keyframes b-title-glow{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.p-stage[data-auto-paused=true] .b-title-card *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.b-title-card *{animation:none!important}}
+
+/* QUIZ announces the central change of pace with four rising letter panels. */
+.b-title-quiz{--act-colour:#dc68a7;background:radial-gradient(ellipse at 50% 58%,#3a2033 0%,#160f1b 44%,#0a1016 78%)}
+.b-title-quiz .b-title-glow{background:radial-gradient(ellipse at 50% 59%,#dc68a745,transparent 62%)}
+.b-title-quiz .b-title-copy{inset:260px 120px 160px}
+.b-title-quiz .b-title-copy>p{margin-bottom:42px;letter-spacing:.32em}
+.b-title-quiz .b-title-copy h1{display:flex;justify-content:center;gap:18px;font-size:330px;line-height:1;letter-spacing:0;text-shadow:none;animation:none}
+.b-title-quiz h1>span{display:flex;align-items:center;justify-content:center;width:250px;height:340px;padding-bottom:36px;background:#dc68a7;color:#0a1016;border-bottom:8px solid #9c4676;box-shadow:0 20px 60px #0004;animation:b-quiz-letter 950ms calc(160ms + var(--letter)*140ms) cubic-bezier(.16,1,.3,1) both}
+.b-quiz-tagline{margin-top:58px;color:#f3eee4;font:400 34px/1.4 Arial,sans-serif;animation:b-title-in 750ms 1000ms both}
+.b-quiz-beams{position:absolute;inset:0;pointer-events:none}
+.b-quiz-beams i{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#dc68a788,transparent);animation:b-quiz-beam 1400ms 300ms cubic-bezier(.16,1,.3,1) both}
+.b-quiz-beams i:first-child{top:275px;--beam-from:-90%}
+.b-quiz-beams i:last-child{bottom:205px;--beam-from:90%}
+@keyframes b-quiz-letter{from{opacity:0;transform:translateY(110px) rotateX(55deg) scale(.88)}to{opacity:1;transform:none}}
+@keyframes b-quiz-beam{from{opacity:0;transform:translateX(var(--beam-from))}to{opacity:1;transform:none}}

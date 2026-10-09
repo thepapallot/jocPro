@@ -10,6 +10,7 @@
 </main>
 <div id="p-announcement" class="p-sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 <script>window.PYRAMID_PAGE = {{ presentation_page|tojson }};</script>
+<script src="{{ url_for('static', filename='js/countdown-audio.js') }}"></script>
 <script src="{{ url_for('static', filename='js/game-language.js') }}"></script>
 <script src="{{ url_for('static', filename='js/pyramid-logo.js') }}"></script>
 <script src="{{ url_for('static', filename='js/victory-celebration.js') }}"></script>

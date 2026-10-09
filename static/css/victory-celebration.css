@@ -1,7 +1,6 @@
 /* Shared victory surface and isolated rehearsal controls. */
 body.pyramid-game.level-success-visible{contain:paint}
 .pyramid-game>.v-stage,.pyramid-game #game-stage>.v-stage{z-index:1100}
-.v-audio-retry{position:absolute;z-index:5;top:25px;right:30px;padding:14px 22px;background:#14232c;color:#f3eee4;border:1px solid #71e7db;border-radius:4px;font:700 24px Arial;cursor:pointer}
 .victory-preview [hidden]{display:none!important}
 .victory-preview #preview-board{position:absolute;inset:0}
 .victory-preview #objective-panel{animation:none}
@@ -24,6 +23,7 @@ body.pyramid-game.level-success-visible{contain:paint}
 .v-progress p{margin:0;color:#a8bbc5;font:700 26px/1.2 Arial,sans-serif;letter-spacing:.09em}
 .v-progress p strong{color:#f3eee4}
 .v-title,.v-progress{z-index:3}
+.v-awaiting-audio .v-hero,.v-awaiting-audio .v-progress{opacity:1!important}
 .v-controls{position:fixed;z-index:100;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100vw - 40px));padding:38px;background:#14232cf5;border:1px solid #5f7b83;box-shadow:0 0 0 100vmax #0a1016d9,0 25px 80px #0008;color:#f3eee4;border-radius:5px}
 .v-preview-label{color:#71e7db;font:700 12px/1.4 Arial;letter-spacing:.16em}
 .v-controls h1{font:900 46px/1.1 PiramideDisplay,Arial,sans-serif;margin:12px 0 16px}

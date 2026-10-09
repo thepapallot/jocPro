@@ -209,12 +209,26 @@ Cambiar de idioma detiene la voz catalana. Si el navegador bloquea el sonido,
 la intro queda pausada y muestra «Activar so»; el GM también recibe el aviso.
 En un recorrido sin QUIZ se omiten su escena y su fragmento de audio.
 
+Revisión del 9 octubre 2026: las cuatro habilidades y los resaltados de las
+herramientas usan cues visuales propios de la grabación catalana, en lugar de
+repartir su tiempo uniformemente. Cada nombre coincide con su gráfico; las
+pausas y los saltos restauran el mismo estado. La llamada final ajusta sus dos
+cues de subtítulos, conservando el texto. El MP3 permanece intacto.
+
+Comprobado el recorrido completo con el MP3 real: 115,5 segundos de voz y
+2,6 segundos de cierre antes de la espera del GM. Revisión de las 17 escenas,
+33 cues y recursos a 1920 × 1080 y 1280 × 720, incluido movimiento reducido.
+Evidencias: `output/intro-revisio-sincronitzacio/`. Solo simulación, sin MQTT
+ni hardware; pendiente escucha y lectura desde la sala.
+
 La banda inferior y=880–1080 contiene los subtítulos a 40 px, máximo dos líneas,
 sin superponer titulares o gráficos. El fondo y su iluminación se extienden por
 toda la pantalla; la zona de subtítulos es transparente, sin franja inferior. El catalán conserva íntegro el guion aprobado,
 con cues ajustados por frase a la locución. `intro-ca.vtt` contiene los mismos cues
 que la pantalla. Los subtítulos de castellano e inglés siguen siendo provisionales;
-sus locuciones y la narración del cierre quedan pendientes de producción.
+sus locuciones quedan pendientes de producción. El cierre catalán ya tiene
+locución propia: `static/audios/intro/final-ca.mp3`, con el guion aprobado en
+`docs/audio/cierre-final-ca.txt`; no sustituye al audio de esta apertura.
 
 Al terminar la voz de forma natural, la Pirámide permanece 2,6 segundos en
 pantalla y la música se desvanece progresivamente. No se recorta ni modifica la

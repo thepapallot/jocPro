@@ -101,5 +101,12 @@
     root.querySelectorAll('[data-layer]').forEach(layer=>layer.setAttribute('aria-hidden',String(Number(layer.dataset.layer)>index)));
     root.querySelectorAll('[data-track]').forEach(item=>item.classList.toggle('is-active',Number(item.dataset.track)<=index));
   }
-  window.PyramidBriefing={markup,reveal,elements};
+  function title(c,t,lang){
+    const quiz=c.puzzleId===3;
+    const label=quiz?L(lang,'CANVI DE RITME','CAMBIO DE RITMO','A CHANGE OF PACE'):c.puzzleId===11?L(lang,'PRIMER, FEM EQUIP','PRIMERO, HACEMOS EQUIPO','FIRST, BECOME A TEAM'):c.isFinal?L(lang,'L’ÚLTIM REPTE','EL ÚLTIMO RETO','THE FINAL CHALLENGE'):L(lang,'EL VOSTRE REPTE','VUESTRO RETO','YOUR CHALLENGE');
+    const name=quiz?`<h1 aria-label="${t.name}">${[...t.name].map((letter,i)=>`<span aria-hidden="true" style="--letter:${i}">${letter}</span>`).join('')}</h1><div class="b-quiz-tagline">${L(lang,'Compartiu el que sabeu. Decidiu junts.','Compartid lo que sabéis. Decidid juntos.','Share what you know. Decide together.')}</div>`:`<h1>${t.name}</h1><div class="b-title-line" aria-hidden="true"></div>`;
+    const backdrop=quiz?'<div class="b-quiz-beams" aria-hidden="true"><i></i><i></i></div>':'<div class="b-title-bands" aria-hidden="true"><i></i><i></i><i></i></div>';
+    return `<div class="b-title-card${quiz?' b-title-quiz':''}"><div class="b-title-glow" aria-hidden="true"></div>${backdrop}<div class="b-title-brand">${PyramidLogo.markup({progress:100*(c.completed||0)/(c.total||1),bloom:.2})}<span>${L(lang,'La Piràmide','La Pirámide','The Pyramid')}</span></div><div class="b-title-copy"><p>${label}</p>${name}</div></div>`;
+  }
+  window.PyramidBriefing={markup,reveal,elements,title};
 })();

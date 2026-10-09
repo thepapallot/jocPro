@@ -182,6 +182,16 @@ respuestas sí/no, acierto/fallo, estados contestados y logros. Las imágenes de
 terminal y sus botones no se recolorean. La variante está acotada al puzzle 3
 en su presentación y tablero; el mapa general mantiene sus otras etapas.
 
+Decisión del 9 octubre 2026, implementada: la entrada del QUIZ se diferencia
+de las otras pruebas con cuatro paneles magenta y las letras **Q · U · I · Z**
+que entran sucesivamente. «Canvi de ritme» / «Cambio de ritmo» / «A change of pace»
+anuncia la etapa central; debajo, «Compartiu el que sabeu. Decidiu junts.» y sus
+equivalentes castellano e inglés refuerzan el carácter cooperativo. Composición
+horizontal con haces de luz, sin las bandas diagonales de las otras entradas.
+Conserva los 4,2 segundos, el paso automático al mapa, los controles del GM y
+la alternativa estable con movimiento reducido. Verificación en simulación a
+1920 × 1080 y 1280 × 720, en los tres idiomas: `output/entrada-quiz/`.
+
 Jerarquía del QUIZ: destacar la pregunta con mayor peso tipográfico, una barra
 lateral magenta y un fondo magenta tenue. Decisión actualizada el 8 octubre
 2026, implementada: la pregunta y cada respuesta ajustan su tamaño de forma
@@ -214,6 +224,14 @@ se muestra directamente el estado estable. Recuperar el estado o mostrar el
 resultado no repite el efecto de entrada.
 Verificación aislada a 1920 × 1080 y 1280 × 720, en los tres idiomas:
 `output/quiz-seleccion/`. Solo simulación, sin MQTT ni hardware.
+
+Decisión del 9 octubre 2026, implementada: los números de terminal junto a cada
+respuesta del QUIZ aumentan de 26 a **66 px**, en negrita, dentro de un bloque
+de **84 × 84 px** en el canvas 1080p, igual que los indicadores de tick y X.
+Conservan su correspondencia 0–9 y el magenta neutro durante la selección;
+el resultado mantiene sus colores funcionales. El texto de cada respuesta sigue
+ajustándose al espacio disponible. Verificado en simulación a 1920 × 1080 y
+1280 × 720, con respuestas seleccionadas y resultados: `output/quiz-seleccion/`.
 
 ### Tipografía
 
@@ -249,12 +267,29 @@ ornamentales, paneles redundantes y animaciones continuas sobre el tablero.
 2. **Apertura:** secuencia automática seguida, transiciones suaves, sensación de
    vídeo. El GM no explica durante esta secuencia.
 3. **Práctica:** familiarización, sin sumar un reto a la pirámide.
-4. **Presentación del puzzle:** composición persistente con tres revelados del GM.
+4. **Presentación del puzzle:** entrada automática del nombre y composición
+   persistente con tres revelados del GM.
 5. **Cuenta atrás e inicio:** orden explícita cuando se ha entendido el reto.
 6. **Juego:** máxima superficie útil y estado funcional visible.
 7. **Logro:** actualizar la pirámide por un reto realmente conseguido; el GM prepara
    el siguiente. Navegar o previsualizar no otorga progreso.
 8. **Final y foto:** celebración y composición estable para el grupo.
+
+Decisión del 9 octubre 2026, implementada: cada presentación de prueba empieza
+con una pantalla de título de **4,2 segundos**, con el nombre editorial grande,
+bandas diagonales de luz y una entrada suave de escala y enfoque. Conserva el
+acento de la etapa; el QUIZ utiliza su entrada propia de letras sobre paneles
+magenta, descrita en su identidad. La música ambiental continúa.
+Al terminar, pasa automáticamente a la primera explicación; objetivo, herramientas,
+acción y atención siguen avanzando a petición del GM. El Simulacro conserva
+antes su explicación de tokens y terminales, y el QUIZ su mapa del recorrido.
+El juego nunca comienza por el paso del tiempo de esta entrada.
+
+El GM puede pausar, reanudar, saltar o repetir la entrada. Repetir la presentación
+vuelve al nombre de esa prueba. Con movimiento reducido se mantiene el título
+estable durante el mismo intervalo. Verificado con las nueve pruebas y los tres
+idiomas a 1920 × 1080 y 1280 × 720 mediante simulación aislada, sin MQTT ni
+hardware: `output/entrades-proves/`.
 
 Decisión del 7 octubre 2026, implementada: la pantalla de logro con la pirámide
 y el progreso no anuncia la siguiente prueba. El GM conserva la información
@@ -346,6 +381,12 @@ vuelve a señalar el inicio. Aparecen el token y el pulso final de la Pirámide.
   congela las animaciones y música; movimiento reducido presenta composiciones
   estables. En habilidades muestra las cuatro juntas. La espera final es estable.
 
+Corrección de sincronización implementada el 9 octubre 2026: en catalán,
+las habilidades y los resaltados de botones, luces y símbolos siguen las palabras
+de la locución. Se conservan los mismos gráficos, colores y distribución; pausa
+y navegación mantienen esa correspondencia. Ajustados también los tiempos de
+los dos subtítulos de la llamada final, sin cambiar el texto ni el MP3.
+
 **Implementado en catalán:** locución aportada por el equipo, conservada sin cambios
 como `static/audios/intro/intro-ca.mp3`. Dura 115,5 segundos y gobierna los cues,
 las animaciones y el avance de escenas. Pausa, navegación y repetición actúan
@@ -355,7 +396,7 @@ permanece 2,6 segundos mientras la música se desvanece; el MP3 no se modifica n
 se corta la última frase. Pausar también congela este cierre. Si el navegador bloquea el audio, la intro
 se pausa y ofrece «Activar so», con aviso al GM. Sin QUIZ se salta también su voz.
 
-**Pendiente:** voces de castellano e inglés y narración del cierre. Esos idiomas
+**Pendiente:** voces de apertura en castellano e inglés. Esos idiomas
 mantienen los 169 segundos provisionales para ensayar. El guion completo sigue
 disponible en las notas del GM, momento por momento.
 
@@ -421,7 +462,7 @@ con hélice, ADN en degradado y GAMES magenta, sin modificar su diseño.
 Archivo activo: `static/images/shared/branding/adn-games.svg`.
 El PNG anterior se retira a la reserva; el SVG conserva su aspecto y proporciones.
 
-**Implementado en castellano:** Carga Final abre una única secuencia de cierre.
+**Implementado en castellano y catalán:** Carga Final abre una única secuencia de cierre.
 Los primeros diez segundos muestran el progreso anterior, encienden los bloques
 recién conseguidos y culminan en una descarga de luz, partículas e impacto sonoro.
 En el recorrido completo, se ve el paso de siete a ocho retos y la Pirámide al
@@ -447,10 +488,22 @@ el efecto de carga la acompaña y el mensaje empieza después de su culminación
 El GM puede pausar, reanudar, repetir o pasar a la foto. Movimiento reducido
 conserva composiciones y subtítulos, sin destellos ni desplazamientos.
 
-**Pendiente:** locución de ElevenLabs, sincronización con su duración real y
-traducciones del nuevo desenlace. El montaje castellano utiliza 78 segundos
+**Acordado e implementado el 9 octubre 2026 en catalán:** el audio aportado
+`final_CAT.mp3` se conserva intacto como `static/audios/intro/final-ca.mp3`.
+Tras los diez segundos de carga se reproducen 50,4 segundos de voz con el guion
+aprobado: «Ho heu aconseguit!» hasta «Aquest moment és vostre». Los titulares y
+subtítulos siguen esa versión y la foto conserva «AQUEST MOMENT ÉS VOSTRE»,
+La Piràmide y ADN Games. La voz gobierna el avance durante la narración; la foto
+entra al terminar el MP3, sin cortar la última frase. Pausar detiene voz, imagen
+y música; repetir reinicia el montaje sin sumar progreso. La música se mantiene
+baja bajo la voz. Si se bloquea el audio, el montaje espera y ofrece «Activar so».
+Guion: `docs/audio/cierre-final-ca.txt`. Subtítulos exportados: `static/audios/intro/final-ca.vtt`.
+El MP3 y el VTT se distribuyen por USB con la carpeta de audios.
+
+**Pendiente:** locuciones castellana e inglesa y traducción del nuevo desenlace
+al inglés. El montaje castellano utiliza 78 segundos
 provisionales (10 de carga y 68 de mensaje), sin solicitar una voz inexistente.
-Catalán e inglés conservan su cierre anterior. Texto de grabación:
+El inglés conserva su cierre anterior. Texto de grabación castellano:
 `docs/audio/cierre-final-es.txt`. Efecto final:
 `static/audios/effects/final-charge.wav`, distribuido por USB con los audios.
 Previsualización aislada: `static/previews/cierre-final.html`.
@@ -459,6 +512,11 @@ Previsualización aislada: `static/previews/cierre-final.html`.
 simulación aislada, sin MQTT ni hardware. Comprobados el progreso real, los
 subtítulos, el logo y la reproducción, pausa y repetición del efecto sonoro.
 Evidencias: `output/cierre-final/`. Pendiente escuchar el montaje en la sala.
+
+Versión catalana verificada a ambas resoluciones con simulación aislada:
+subtítulos, pausa de carga y voz, repetición, recuperación de audio bloqueado,
+final natural de la locución y foto estable. Evidencias: `output/cierre-catala/`.
+Sin MQTT ni hardware; pendiente escucharla con los altavoces de la sala.
 
 ### Edición de las explicaciones de puzzles
 
@@ -675,13 +733,27 @@ Los números ilustrativos muestran relaciones; no revelan soluciones de la parti
 
 ### Sonido y movimiento
 
-Minimizar narraciones entre puzzles: explica el GM. La apertura tiene locución
-catalana y subtítulos temporizados; las voces de los demás idiomas y la narración
-del cierre siguen pendientes. El audio de las mecánicas se conserva.
+Minimizar narraciones entre puzzles: explica el GM. La apertura y el cierre tienen
+locución catalana y subtítulos temporizados; las voces de los demás idiomas
+siguen pendientes. El audio de las mecánicas se conserva.
 
 Organización acordada e implementada el 8 octubre 2026: todos los audios se
 conservan en las subcarpetas habituales de `static/audios/`, sin separar usados
 y no usados. La carpeta completa queda fuera de Git y se comparte por USB.
+
+Decisión del 9 octubre 2026, implementada: todas las cuentas atrás acompañan
+cada cifra de segundos con un pitido, incluido el primer número. Abarca las
+presentaciones, preparaciones, cambios de ronda y temporizadores de los puzzles,
+también la recarga de Carga Final y las pruebas fuera del recorrido que tienen
+reloj. Se reutiliza `static/audios/effects/beep_countdown.wav`, sin duplicar el
+pitido al recibir otra actualización de la misma cifra. Al llegar a cero se
+conservan las señales propias de finalización, sin añadir otro pitido. Pulso de
+Tiempo mantiene el sonido solo durante la preparación: cada jugador empieza
+a contar cuando se enciende su terminal.
+Verificado en Chrome con eventos simulados a 1920 × 1080 y 1280 × 720:
+sincronización con la cifra visible, actualizaciones repetidas y cancelación.
+Evidencias en `output/cuentas-atras/`. Sin MQTT ni hardware; pendiente escuchar
+el volumen con los altavoces de la sala.
 
 Recuperada la música de fondo histórica: `static/audios/musica_ambient/musica_piramide.mp3`.
 Un único reproductor en la ventana exterior de jugadores (`bgm_layer.js`) continúa
@@ -734,9 +806,27 @@ los antiguos mapas fijos. Los colores de alarma mantienen su función.
 **Aprobado e integrado el 8 octubre 2026:** los puzzles comparten el cierre
 ensayado en Cálculo Extremo. Una única celebración sustituye la pantalla verde
 final seguida del logro. La pirámide es protagonista: se encienden los bloques
-recién ganados, culminan en un pulso y aparece «HO HEU ACONSEGUIT!» (castellano:
-«¡LO HABÉIS CONSEGUIDO!»; inglés: «YOU DID IT TOGETHER!»). Después permanece
-el progreso estable. No encadenar dos anuncios del mismo logro.
+recién ganados y culminan en un pulso. Después permanece el progreso estable.
+No encadenar dos anuncios del mismo logro.
+
+**Decisión del 9 octubre 2026, implementada:** cada prueba muestra una frase
+propia al culminar, en el idioma de la sesión. Se reserva «Ho heu aconseguit!»
+para el logro final. Los mensajes celebran la aportación del equipo y la
+mecánica superada; no anuncian la siguiente prueba ni cambian sus reglas.
+
+| Prueba | Catalán | Castellano | Inglés |
+| --- | --- | --- | --- |
+| Simulacro | Equip a punt! | ¡Equipo a punto! | Team ready! |
+| Serpiente | Camí trobat! | ¡Camino encontrado! | Path found! |
+| Cálculo | Tot quadra! | ¡Todo cuadra! | It all adds up! |
+| Memoria | Memòria d’equip! | ¡Memoria de equipo! | Great team memory! |
+| QUIZ | Sabeu més junts! | ¡Sabéis más juntos! | You know more together! |
+| Pulso de Tiempo | Heu clavat el temps! | ¡Tiempo clavado! | Right on time! |
+| Conexión Simultánea | Coordinació perfecta! | ¡Coordinación perfecta! | In perfect sync! |
+| Código Sonoro | Codi desxifrat! | ¡Código descifrado! | Code cracked! |
+| Segmentos avanzados | Peces encaixades! | ¡Piezas encajadas! | The pieces fit! |
+| Arquitectos del Orden | Tot al seu lloc! | ¡Todo en su sitio! | Everything in place! |
+| Patrón Maestro | Patró complet! | ¡Patrón completo! | Pattern complete! |
 
 La música del juego continúa desde el mismo punto, gana presencia en el clímax
 y vuelve suavemente a su nivel habitual. Un barrido ascendente y un impacto sin
@@ -744,13 +834,25 @@ afinación acompañan los 8,4 segundos de celebración, sin otra canción, acord
 ni ritmo superpuesto. Código Sonoro recupera el fondo al terminar la prueba.
 El efecto común es `static/audios/effects/victory-celebration.wav`.
 
+Decisión del 9 octubre 2026, implementada: no mostrar botones de reintento ni
+avisos técnicos de audio ante los jugadores. La animación sigue el sonido real:
+espera su inicio y se detiene con él si necesita cargar, sin completar el logro
+en silencio. El efecto se precarga y se conserva entre pruebas. Si el navegador
+bloquea la reproducción o falta el archivo, se informa al GM; no se presenta
+como una celebración reproducida correctamente. La activación de la ventana de
+jugadores recupera un bloqueo del navegador, y el GM puede repetir la secuencia
+sin sumar progreso otra vez. Comprobado en Chrome con carga lenta, interrupción,
+repetición y los tres idiomas a 1920 × 1080 y 1280 × 720, con eventos simulados:
+`output/victoria-so/`. La salida de sonido en sala requiere validación física.
+
 Solo la resolución confirmada suma progreso; repetir la celebración no vuelve
 a sumar. El simulacro se celebra sin añadir bloques puntuables y las pruebas
 fuera del recorrido conservan el progreso existente. El GM abre la siguiente
 presentación al acabar la celebración, cuando el equipo esté preparado. En
-castellano, Carga Final utiliza directamente su carga cinematográfica y el
-desenlace «Este momento es vuestro», seguido de la foto. En catalán e inglés pasa directamente a la composición de foto,
-sin otra pantalla de victoria, hasta traducir el desenlace nuevo.
+castellano y catalán, Carga Final utiliza directamente su carga cinematográfica y el
+desenlace «Este momento es vuestro» / «Aquest moment és vostre», seguido de la foto.
+En inglés pasa directamente a la composición de foto, sin otra pantalla de victoria,
+hasta traducir el desenlace nuevo.
 Los avisos de fases intermedias mantienen su función y sus sonidos propios.
 
 Incluye los tres idiomas y movimiento reducido. Integrado en el código;
@@ -942,8 +1044,9 @@ formato. Mantener legibles descriptor, capacidad y llamada a solicitar propuesta
 ### Idioma de la sesión
 
 Acordado e implementado: en `/test` → **Sesiones** se elige catalán, castellano o
-inglés junto con empresa, fecha, hora, lugar, jugadores y notas. Confirmar guarda
-los cambios antes de activar la sesión. El idioma confirmado se aplica a la
+inglés junto con empresa, fecha, hora, lugar, jugadores y notas. **Guardar e ir
+al control** guarda los cambios, activa la sesión y abre **Control de juego**
+en una sola acción. El idioma de la sesión activa se aplica a la
 pantalla de jugadores y sus rutas; el control de presentación lo muestra como
 dato de la sesión. El panel del GM conserva su propio idioma.
 
@@ -960,6 +1063,15 @@ Implementado en Sesiones: agenda e historial con búsqueda y filtros, estados
 pendiente/preparada/en curso/finalizada, GM responsable y separación entre notas
 de preparación y observaciones finales. Selección del editor y sesión activa
 son estados distintos. Guardado y errores se explican junto al formulario.
+
+Simplificación implementada el 9 octubre 2026: **Guardar para más tarde** permite
+guardar una sesión pendiente sin activarla ni salir del formulario. Hora, lugar,
+responsable y notas quedan en **Más datos y notas · Opcional**. La fecha de hoy
+y 10 jugadores aparecen prellenados. Volver al control de la sesión activa no
+vuelve a activarla ni reinicia su progreso. Si falla el guardado o la activación,
+se permanece en Sesiones y se muestra el error. Abrir la ventana de jugadores
+sigue siendo una acción explícita desde el control; preparar una sesión no
+inicia ningún puzzle.
 
 **Crear sesión de prueba** abre un borrador prellenado. Una única modalidad,
 con o sin hardware montado; no modifica las reglas del juego. **MODO PRUEBA**
@@ -986,7 +1098,7 @@ sin presentar como éxito un cierre de registro ni inventar errores o ayudas.
 Implementado: base visual, SVG editable, presentaciones progresivas y control en
 dos pestañas; cabecera compacta común en todos los puzzles. Piloto: ajustes del
 tablero de Memory y Laberinto. Pendiente: validación de sala, revisión individual de
-reglas/textos, locución del cierre y subtítulos finales en catalán e inglés,
+reglas/textos, locuciones de cierre castellana e inglesa y subtítulos finales en inglés,
 variantes finales de firma y logo.
 
 Antes de entregar un cambio visual:

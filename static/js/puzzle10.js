@@ -101,6 +101,7 @@
     function updateTimer(secondsLeft) {
         if (!timerBadge || typeof secondsLeft !== 'number') return;
         timerBadge.textContent = formatSeconds(secondsLeft);
+        window.PyramidCountdownAudio?.tick('p10-round', secondsLeft);
         timerBadge.classList.remove('warning', 'expired');
 
         if (secondsLeft <= 0) {
@@ -125,6 +126,7 @@
     }
 
     function resetRoundTimer({ silent = false } = {}) {
+        window.PyramidCountdownAudio?.reset('p10-round');
         secondsLeft = roundSeconds;
         timeoutPauseInProgress = false;
         updateTimer(secondsLeft);
@@ -178,6 +180,7 @@
     }
 
     function stopFrontendTimer() {
+        window.PyramidCountdownAudio?.reset('p10-round');
         if (timerId !== null) {
             window.clearInterval(timerId);
             timerId = null;

@@ -1,8 +1,7 @@
-/* Spanish finale. One editable clock for the film, subtitles and music.
-   Voice is pending: these are rehearsal cues, not ElevenLabs recording timings. */
+/* Shared finale. Catalan follows the supplied recording; Spanish keeps rehearsal cues. */
 (() => {
-  const chargeMs=10000,narrativeDurationMs=68000,durationMs=chargeMs+narrativeDurationMs;
-  const cues=[
+  const chargeMs=10000,narrativeDurationMs=68000;
+  const esCues=[
     [600,3300,'¡Lo habéis conseguido!'],
     [4000,6100,'Respirad un momento.'],
     [6400,9400,'Mirad hasta dónde habéis llegado.'],
@@ -22,7 +21,7 @@
     [64500,67500,'Este momento es vuestro.']
   ].map(([startMs,endMs,text])=>({startMs:startMs+chargeMs,endMs:endMs+chargeMs,text}));
   // Positions refer to the centre of the unchanged master emblem.
-  const shots=[
+  const esShots=[
     {id:'breathe',start:0,end:10000,title:'',label:'',layout:'center',x:960,y:408,scale:1.02,light:1.08},
     {id:'moments',start:10000,end:24000,title:'ALGO VUESTRO.',label:'',layout:'bottom',x:960,y:435,scale:.84,light:0},
     {id:'found',start:24000,end:27500,title:'¡LO TENEMOS!',label:'',layout:'center',x:960,y:405,scale:1.04,light:.23},
@@ -33,17 +32,47 @@
     {id:'mission',start:61000,end:64400,title:'MISIÓN\nCUMPLIDA.',label:'',layout:'center',x:960,y:380,scale:1.06,light:.22},
     {id:'yours',start:64400,end:narrativeDurationMs,title:'ESTE MOMENTO\nES VUESTRO.',label:'LA PIRÁMIDE',layout:'final',x:1450,y:342,scale:.65,light:1.14}
   ].map(shot=>({...shot,start:shot.start+chargeMs,end:shot.end+chargeMs}));
-  shots.unshift({id:'charge',start:0,end:chargeMs,title:'',label:'',layout:'center',x:960,y:410,scale:1.05,light:1.1});
+  esShots.unshift({id:'charge',start:0,end:chargeMs,title:'',label:'',layout:'center',x:960,y:410,scale:1.05,light:1.1});
+  // Phrase boundaries extracted locally from final_CAT.mp3; wording is the approved script.
+  // Times below are relative to the unmodified MP3, after the ten-second charge.
+  const caRecording={src:'/static/audios/intro/final-ca.mp3',durationMs:50442.4375,cues:[
+    [0,1400,'Ho heu aconseguit!'],
+    [2520,3700,'Respireu un moment.'],
+    [4660,6240,'Mireu fins on heu arribat.'],
+    [7340,10940,'Darrere de cada part d’aquesta Piràmide\nhi ha alguna cosa vostra:'],
+    [11520,12240,'una idea,'],
+    [12660,14180,'un dubte compartit,'],
+    [14540,15740,'un intent més…'],
+    [16240,18960,'i aquell instant en què tot encaixa\ni algú crida:'],
+    [19600,20500,'«Ja ho tenim!».'],
+    [21760,24260,'Heu hagut de trobar\nla vostra manera d’avançar.'],
+    [25100,27860,'Decidir, provar, canviar d’idea.'],
+    [28160,31200,'Fer un pas i confiar\nque els altres farien el següent.'],
+    [31920,34000,'I aquí en teniu el resultat.'],
+    [34640,37560,'Aquesta Piràmide porta\nl’aportació de tots vosaltres.'],
+    [38240,41320,'Compartiu una cosa que abans\nde començar no existia:'],
+    [41980,43700,'haver-ho aconseguit junts.'],
+    [44860,46640,'La missió està complerta.'],
+    [47600,49900,'Aquest moment és vostre.']
+  ].map(([startMs,endMs,text])=>({startMs,endMs,text}))};
+  const caCues=caRecording.cues.map(c=>({...c,startMs:c.startMs+chargeMs,endMs:c.endMs+chargeMs}));
+  const caStarts=[0,0,7340,19600,21760,31920,34640,38240,44860,47600];
+  const caTitles=['','','ALGUNA COSA VOSTRA.','JA HO TENIM!','LA VOSTRA MANERA\nD’AVANÇAR.','','L’APORTACIÓ\nDE TOTS.','JUNTS.','MISSIÓ\nCOMPLERTA.','AQUEST MOMENT\nÉS VOSTRE.'];
+  const caShots=esShots.map((shot,i)=>({...shot,title:caTitles[i],label:i===9?'LA PIRÀMIDE':'',start:i===0?0:chargeMs+caStarts[i],end:i===0?chargeMs:chargeMs+(caStarts[i+1]??caRecording.durationMs)}));
+  let language='es',cues=esCues,shots=esShots,durationMs=chargeMs+narrativeDurationMs;
+  const durationFor=lang=>chargeMs+(lang==='ca'?caRecording.durationMs:narrativeDurationMs);
+  function setLanguage(lang){language=lang;cues=lang==='ca'?caCues:esCues;shots=lang==='ca'?caShots:esShots;durationMs=durationFor(lang);}
   const clamp=t=>Math.max(0,Math.min(1,t));
   const smooth=t=>{t=clamp(t);return t*t*(3-2*t);};
-  const active=(c,language)=>c.kind==='closing'&&language==='es';
+  const active=(c,language)=>c.kind==='closing'&&['es','ca'].includes(language);
   const subtitleAt=ms=>cues.find(c=>ms>=c.startMs&&ms<c.endMs)?.text||'';
   const musicLevel=clock=>{
     if(clock<chargeMs)return .16+.22*smooth(clock/5800)*(1-smooth((clock-7000)/3000));
+    if(language==='ca')return .12;
     const ms=clock-chargeMs;
     return ms<24000?.16:ms<27500?.16+.13*Math.sin(Math.PI*(ms-24000)/3500):ms<43000?.16:ms<61000?.16+.1*smooth((ms-43000)/18000):ms<64400?.26+.08*smooth((ms-61000)/3400):.34-.24*smooth((ms-64400)/3600);
   };
-  const narration=cues.map(c=>c.text.replaceAll('\n',' ')).join(' ');
+  const narration=esCues.map(c=>c.text.replaceAll('\n',' ')).join(' ');
   let score=null,effect=null,paused=false,lastMs=0,effectStarted=false,effectFailed=false,audioIssue='';
   function persistent(){try{return window.top.BGM||null;}catch{return null;}}
   function music(){
@@ -52,7 +81,8 @@
     if(!score){score=new Audio('/static/audios/musica_ambient/musica_piramide.mp3');score.preload='auto';score.loop=true;}
     return {play:()=>score.play(),pause:()=>score.pause(),setVolume:level=>{score.volume=level;}};
   }
-  function sound(c,step,isPaused,reset=false){
+  function sound(c,step,isPaused,reset=false,lang='es'){
+    setLanguage(lang);
     paused=isPaused;const photo=c.steps[step]==='thanks';
     if(!effect){effect=new Audio('/static/audios/effects/final-charge.wav');effect.preload='auto';effect.volume=.72;}
     if(reset){effect.pause();effect.currentTime=0;lastMs=0;effectStarted=false;effectFailed=false;audioIssue='';}
@@ -71,7 +101,8 @@
       effect.play().catch(error=>{if(error.name==='AbortError')return;effectFailed=true;audioIssue='El efecto final no ha podido sonar. Repite el cierre con el sonido activado; la imagen continúa.';});
     }
   }
-  function markup(c,screen){
+  function markup(c,screen,lang='es'){
+    setLanguage(lang);
     const progress=100*(c.completed||0)/(c.total||1);
     const logo=PyramidLogo.markup({className:'f-pyramid',progress,cyan:'#39d6e5',pink:'#dc68a7','progress-color':'#71e7db',bloom:.48});
     return `<div class="f-cinema ${screen==='thanks'?'f-photo':''}" data-shot="charge" data-before="${100*(c.previous||0)/(c.total||1)}" data-after="${progress}">
@@ -80,7 +111,7 @@
       <div class="f-copy" data-layout="center"><p class="f-label"></p><h1 class="f-title"></h1><div class="f-rule" aria-hidden="true"></div></div>
       <div class="f-pulse" aria-hidden="true"></div><div class="f-charge-flash" aria-hidden="true"></div>
       <img class="f-adn" src="/static/images/shared/branding/adn-games.svg" alt="ADN Games"></div>
-      <div class="f-subtitle-zone" aria-label="Subtítulos"><p class="f-subtitle" aria-live="off"></p></div>
+      <div class="f-subtitle-zone" aria-label="${lang==='ca'?'Subtítols':'Subtítulos'}"><p class="f-subtitle" aria-live="off"></p></div>
     </div>`;
   }
   let root=null,nodes=null;
@@ -129,7 +160,7 @@
     nodes.copy.dataset.layout=shot.layout;
     const localMs=ms-shot.start;
     let heading=shot.title;
-    if(shot.id==='moments')heading=localMs<4500?'ALGO VUESTRO.':localMs<7800?'UNA IDEA.':localMs<10400?'UNA DUDA COMPARTIDA.':'UN INTENTO MÁS.';
+    if(shot.id==='moments')heading=language==='ca'?(ms<chargeMs+11520?'ALGUNA COSA VOSTRA.':ms<chargeMs+12660?'UNA IDEA.':ms<chargeMs+14540?'UN DUBTE COMPARTIT.':'UN INTENT MÉS.'):(localMs<4500?'ALGO VUESTRO.':localMs<7800?'UNA IDEA.':localMs<10400?'UNA DUDA COMPARTIDA.':'UN INTENTO MÁS.');
     if(nodes.title.textContent!==heading)nodes.title.textContent=heading;
     if(nodes.label.textContent!==shot.label)nodes.label.textContent=shot.label;
     const visible=reduced||isPhoto?1:smooth((ms-shot.start)/850)*(shot.id==='yours'?1:smooth((shot.end-ms)/600));
@@ -161,13 +192,14 @@
     root.querySelector('.f-pyramid').dataset.progress=String(100*fill/nodes.bricks.length);
     const chargeClimax=!reduced&&!isPhoto?smooth((ms-5700)/250)*(1-smooth((ms-6250)/2100)):0;
     root.style.setProperty('--charge-flash',String(chargeClimax*.48));
-    const climax=ms>=71000&&!isPhoto&&!reduced?smooth((ms-71000)/2200)*(1-smooth((ms-74900)/2800)):chargeClimax;
+    const missionStart=shots.find(s=>s.id==='mission').start,yoursStart=shots.at(-1).start;
+    const climax=ms>=missionStart&&!isPhoto&&!reduced?smooth((ms-missionStart)/2200)*(1-smooth((ms-(language==='ca'?yoursStart:74900))/2800)):chargeClimax;
     root.style.setProperty('--final-glow',String(isPhoto?.32:.22+climax*.48));
     root.style.setProperty('--final-pulse',String(climax));
-    root.style.setProperty('--pulse-scale',String(1+smooth((ms-(shot.id==='charge'?5800:71000))/3000)*2.4));
+    root.style.setProperty('--pulse-scale',String(1+smooth((ms-(shot.id==='charge'?5800:missionStart))/3000)*2.4));
     nodes.effects.render({shot:isPhoto?'photo':shot.id,ms,localMs,reduced,targets:nodes.targets,hits:nodes.hits});
     nodes.motes.forEach((mote,i)=>{mote.style.transform=`translateY(${reduced||isPhoto?0:-((ms/650+i*17)%180)}px)`;});
     if(!paused){music().setVolume(isPhoto?.1:musicLevel(ms));syncEffect(isPhoto?durationMs:ms);}
   }
-  window.PyramidClosing={active,chargeMs,durationMs,cues,shots,narration,subtitleAt,musicLevel,markup,update,sound,get issue(){return audioIssue;},stop(){score?.pause();effect?.pause();root=null;nodes=null;}};
+  window.PyramidClosing={active,chargeMs,durationFor,recording:lang=>lang==='ca'?caRecording:null,get durationMs(){return durationMs;},get cues(){return cues;},get shots(){return shots;},narration,subtitleAt,musicLevel,markup,update,sound,get issue(){return audioIssue;},stop(){score?.pause();effect?.pause();root=null;nodes=null;}};
 })();

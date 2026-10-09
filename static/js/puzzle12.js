@@ -109,6 +109,8 @@
     }
 
     function resetViewport() {
+        window.PyramidCountdownAudio?.reset('p12-wait');
+        window.PyramidCountdownAudio?.reset('p12-round');
         stopBallMotion();
         document.body.classList.remove('p12-danger-state', 'p12-success-state');
         patternEl.style.display = 'none';
@@ -287,6 +289,7 @@
 
     function startTimer(seconds) {
         clearInterval(timerInterval);
+        window.PyramidCountdownAudio?.reset('p12-round');
         timeLeft = seconds;
         updateTimerDisplay();
         timerInterval = setInterval(() => {
@@ -306,6 +309,7 @@
         const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
         const s = (timeLeft % 60).toString().padStart(2, '0');
         timerEl.textContent = `${m}:${s}`;
+        window.PyramidCountdownAudio?.tick('p12-round', timeLeft);
     }
 
     function showWaitCountdown(onDone) {
@@ -327,7 +331,7 @@
 
         let count = 3;
         countdownEl.textContent = count;
-        playEffect('beep_countdown.wav');
+        window.PyramidCountdownAudio?.tick('p12-wait', count);
 
         countdownInterval = setInterval(() => {
             count--;
@@ -337,10 +341,11 @@
                 waitScreen.style.display = 'none';
                 waitScreen.classList.remove('is-countdown');
                 countdownEl.textContent = '';
+                window.PyramidCountdownAudio?.reset('p12-wait');
                 onDone();
             } else {
-                playEffect('beep_countdown.wav');
                 countdownEl.textContent = count;
+                window.PyramidCountdownAudio?.tick('p12-wait', count);
             }
         }, 1000);
     }
@@ -423,6 +428,8 @@
         }
 
         if (d.puzzle_solved) {
+            window.PyramidCountdownAudio?.reset('p12-round');
+            window.PyramidCountdownAudio?.reset('p12-wait');
             clearInterval(timerInterval);
             clearInterval(countdownInterval);
             stopBallMotion();

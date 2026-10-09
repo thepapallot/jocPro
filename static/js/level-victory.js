@@ -2,16 +2,18 @@
 (() => {
   const game=window.PYRAMID_GAME;
   if(!game)return;
-  const effect=new Audio(new URL('../audios/effects/victory-celebration.wav',document.currentScript.src).href);
-  effect.preload='auto';effect.volume=.65;
-  let active=false,ready=false,leaving=false,frame=0,serial=0,stage,view,progress,elapsed=0,issue='';
   const host=()=>{try{return window.parent!==window&&window.parent.location.origin===location.origin?window.parent:null;}catch{return null;}};
+  // Keep one preloaded media element in the player across puzzle navigations.
+  const owner=host()||window;
+  const effect=owner.PyramidVictoryEffect||(owner.PyramidVictoryEffect=new (owner.Audio||Audio)(new URL('../audios/effects/victory-celebration.wav',document.currentScript.src).href));
+  effect.preload='auto';effect.volume=.65;
+  let active=false,ready=false,leaving=false,frame=0,serial=0,stage,view,progress,elapsed=0,issue='',blocked=false;
   const bgm=()=>host()?.BGM||window.BGM;
   const lang=()=>window.PyramidLanguage?.normalize(game.language)||game.language||'es';
   const practice=()=>game.puzzleId===game.tutorialId;
   const final=()=>game.puzzleId===game.finalId;
   function destination(){
-    if(final())return lang()==='es'?'/final?charge=1':'/final?celebrated=1';
+    if(final())return ['ca','es'].includes(lang())?'/final?charge=1':'/final?celebrated=1';
     if(practice())return '/presentacio/'+(game.order[0]||game.finalId);
     const index=game.order.indexOf(game.puzzleId);
     return index<0?null:'/presentacio/'+(game.order[index+1]||game.finalId);
@@ -28,33 +30,32 @@
   function stop(){serial++;cancelAnimationFrame(frame);effect.pause();bgm()?.setVolume(.22,300);}
   function showAudioIssue(message){
     issue=message;report();
-    if(stage.querySelector('.v-audio-retry'))return;
-    const button=document.createElement('button');button.className='v-audio-retry';
-    button.textContent=lang()==='ca'?'Repetir amb so':lang()==='es'?'Repetir con sonido':'Replay with sound';
-    button.addEventListener('click',()=>play());stage.append(button);
   }
   async function play(){
-    stop();const token=serial;ready=false;elapsed=0;issue='';stage.querySelector('.v-audio-retry')?.remove();
-    view=PyramidVictory.create(stage,{...progress,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});
-    report();effect.currentTime=0;
+    stop();const token=serial;ready=false;elapsed=0;issue='';blocked=false;
+    view=PyramidVictory.create(stage,{...progress,puzzleId:game.puzzleId,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});
+    stage.classList.add('v-awaiting-audio');
+    report();if(effect.error)effect.load();effect.currentTime=0;
     const music=bgm();music?.setVolume(.22,350);
-    music?.play().catch(()=>{if(token===serial)showAudioIssue('El navegador ha bloqueado la música. Pulsa «Repetir con sonido» en la pantalla de jugadores.');});
-    let audible=false,started=performance.now(),lastAudioTime=0,lastAudioChange=started;
-    // Do not let missing or blocked sound prevent a valid result reaching its hold.
-    effect.play().then(()=>{
+    music?.play().catch(()=>{if(token===serial)showAudioIssue('Música de fondo bloqueada. Revisa el audio de la ventana de jugadores y usa Repetir desde este control.');});
+    // No wall-clock fallback: loading/buffering must never consume the animation.
+    // A real failure stays at the start and is reported only to the GM.
+    try{await effect.play();}catch(error){
       if(token!==serial)return;
-      if(performance.now()-started>500){effect.pause();showAudioIssue('El efecto ha tardado en cargar. Puedes repetir la celebración con sonido.');return;}
-      audible=true;started=performance.now();lastAudioChange=started;
-    }).catch(()=>{if(token===serial)showAudioIssue('No se ha podido reproducir el efecto. La celebración continúa; puedes repetirla con sonido.');});
+      blocked=error.name==='NotAllowedError';
+      showAudioIssue(blocked?'Audio bloqueado por el navegador. Activa la ventana de jugadores con un clic o una tecla: la celebración empezará completa.':'No se puede cargar el efecto de celebración. Revisa el archivo de audio y usa Repetir desde este control.');
+      return;
+    }
+    if(token!==serial)return;
+    stage.classList.remove('v-awaiting-audio');
     const tick=()=>{
       if(token!==serial)return;
-      if(audible&&!effect.ended){
-        if(effect.currentTime!==lastAudioTime){lastAudioTime=effect.currentTime;lastAudioChange=performance.now();}
-        else if(performance.now()-lastAudioChange>1000){audible=false;started=performance.now()-elapsed*1000;effect.pause();showAudioIssue('El efecto se ha interrumpido. La celebración continúa; puedes repetirla con sonido.');}
+      if(effect.error){
+        showAudioIssue('El efecto de celebración se ha interrumpido. Revisa el audio y usa Repetir desde este control.');return;
       }
-      elapsed=audible&&!effect.error?effect.currentTime:(performance.now()-started)/1000;
+      elapsed=effect.currentTime;
       view.render(elapsed);music?.setVolume(PyramidVictory.musicLevel(elapsed));
-      if(elapsed<8.39&&!effect.ended){frame=requestAnimationFrame(tick);return;}
+      if(!effect.ended){frame=requestAnimationFrame(tick);return;}
       elapsed=8.4;view.render(elapsed);music?.setVolume(.22);ready=true;report();
       if(final())advance();
     };tick();
@@ -68,9 +69,9 @@
     progress={previous:before.filter(n=>ids.includes(n)).length,completed:after.filter(n=>ids.includes(n)).length,total:ids.length||1};
     if(!accepted)progress.previous=progress.completed;
     active=true;
-    // The Spanish finale owns its final fill, effects and message as one film.
+    // The Catalan and Spanish finales own the fill, effects and message as one film.
     // The earned snapshot is already saved; never play the generic win first.
-    if(final()&&lang()==='es'){ready=true;advance();return;}
+    if(final()&&['ca','es'].includes(lang())){ready=true;advance();return;}
     document.body.classList.add('level-success-visible');
     document.querySelectorAll('[id$="-solved-banner"]').forEach(el=>el.classList.add('hidden'));
     const holder=document.createElement('div');holder.innerHTML=PyramidVictory.markup();stage=holder.firstElementChild;
@@ -84,9 +85,12 @@
     if(action==='restart')play();
     if(action==='language'){
       game.language=window.PyramidLanguage?.set(value)||value;
-      view=PyramidVictory.create(stage,{...progress,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});view.render(elapsed);report();
+      view=PyramidVictory.create(stage,{...progress,puzzleId:game.puzzleId,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});view.render(elapsed);report();
     }
   });
-  addEventListener('pagehide',stop);
+  const unlock=()=>{if(active&&blocked&&!leaving)play();};
+  const surfaces=host()?[window,host()]:[window];
+  surfaces.forEach(surface=>['click','touchstart','keydown'].forEach(name=>surface.addEventListener(name,unlock,{passive:true})));
+  addEventListener('pagehide',()=>{stop();surfaces.forEach(surface=>['click','touchstart','keydown'].forEach(name=>surface.removeEventListener(name,unlock)));});
   window.PyramidLevelVictory={complete,get active(){return active;}};
 })();

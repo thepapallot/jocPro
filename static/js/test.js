@@ -660,6 +660,7 @@
 	      section.classList.toggle("is-active", isActive);
 	      section.hidden = !isActive;
 	    });
+	    if (els.gmStartBtn) els.gmStartBtn.hidden = panelId === "juego";
 	    if (panelId === "juego") refreshPuzzle1Board();
 	    window.dispatchEvent(new CustomEvent('pyramid-test-tab',{detail:panelId}));
 	  }
@@ -920,6 +921,13 @@
     // Await persistence before confirmation, including for a brand-new session.
     await saveSession({ silent: true });
 
+    // Saving an active session already refreshes it from the server. Returning
+    // to its controls must not reactivate it or reset progress.
+    if (activeSession?.dbSessionId === _loadedDbSessionId) {
+      goToSessionControl();
+      return;
+    }
+
     const response = await fetch("/test/session/confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -946,6 +954,7 @@
       sessionType: session.session_type || "real",
       gameMaster: session.game_master || "",
       observations: session.observations || "",
+      startedAt: session.started_at || null,
       confirmedAt: new Date().toISOString(),
       status: "confirmed",
     };
@@ -955,11 +964,17 @@
     if (!session.started_at) resetGameState();
 
     if (!silent) {
-      addSimpleEvent("Sesión confirmada");
-      setStatus("Sesión activa. Abre la partida cuando el grupo esté preparado.");
+      addSimpleEvent("Sesión preparada");
+      setStatus("Sesión preparada. Abre la pantalla de jugadores desde el control.");
     }
+    goToSessionControl();
     // Sync against backend to keep state authoritative
     syncConfirmedSession().catch(console.warn);
+  }
+
+  function goToSessionControl() {
+    switchTab("juego");
+    document.getElementById("director-open")?.focus();
   }
 
   function loadActiveSession() {
@@ -969,15 +984,14 @@
     } catch (error) {
       saved = null;
     }
-    // Restore form data so fields are pre-filled, but do NOT restore confirmed state.
-    // The user must click "Confirmar" again each time the page is opened.
+    // Restore the editor draft; the active session is recovered from the server.
     if (saved) {
       fillSessionForm(saved);
       if (saved.dbSessionId != null) {
         _loadedDbSessionId = Number(saved.dbSessionId) || null;
       }
     }
-    // Clear persisted confirmed state so the session shows as unconfirmed on load.
+    // Never trust browser storage as the authority for the active session.
     activeSession = null;
     window.localStorage.removeItem(activeSessionKey);
     renderActiveSession();
@@ -994,14 +1008,14 @@
     }
     const line = s
       ? `${s.sessionName || "Sesión"} · ${s.company || "Sin empresa"} · ${s.players || "--"} jugadores · ${languageLabel(s.gameLanguage)}`
-      : "Sin sesión confirmada";
+      : "Prepara una partida para pasar al control";
     if (els.activeSessionLine) els.activeSessionLine.textContent = line;
     if (els.headerSessionStatus) {
-      els.headerSessionStatus.textContent = s ? "Sesión confirmada" : "No confirmada";
+      els.headerSessionStatus.textContent = s ? (sessionStarted ? "En curso" : "Preparada") : "Sin preparar";
       els.headerSessionStatus.className = s ? "gm-status-ok" : "gm-status-muted";
     }
     if (els.gmStartBtn) {
-      els.gmStartBtn.disabled = !(s && !sessionStarted);
+      els.gmStartBtn.disabled = !s;
     }
     const pairs = {
       "gm-summary-company": s?.company || "--",
@@ -4932,9 +4946,6 @@
       setStatus("Nueva sesión preparada");
     });
     if (els.duplicateSessionBtn) els.duplicateSessionBtn.addEventListener("click", () => runSessionAction(duplicateSession));
-    if (els.confirmSessionBtn) {
-      els.confirmSessionBtn.addEventListener("click", () => runSessionAction(confirmSession));
-    }
 
     if (els.updateSessionBtn) {
       els.updateSessionBtn.addEventListener("click", async () => {
@@ -4948,12 +4959,9 @@
       });
     }
     if (els.gmStartBtn) {
-      els.gmStartBtn.addEventListener("click", async () => {
-        if (!activeSession || puzzleRuntime.startedAt) return;
-        renderActiveSession();
-        addSimpleEvent("Partida lanzada");
-        setStatus("Partida lanzada");
-        window.PyramidGM.open();
+      els.gmStartBtn.addEventListener("click", () => {
+        if (!activeSession) return;
+        goToSessionControl();
       });
     }
     if (els.checkAllBtn) els.checkAllBtn.addEventListener("click", () => refreshPreflightStatus().catch((error) => appendLog({ error: String(error) })));
@@ -5010,10 +5018,11 @@
     busy:()=>sessionActionBusy,
     selectedId:()=>_loadedDbSessionId,
     refresh:refreshDbSessionList,
+    prepare:()=>runSessionAction(confirmSession),
     create(kind){
       if(sessionActionBusy)return;
       clearSessionForm();window.PyramidSessions.fresh(kind);
-      setStatus(kind==='test'?'Sesión de prueba preparada. Elige el idioma y usa esta sesión.':'Nueva sesión preparada.');
+      setStatus(kind==='test'?'Prueba prellenada. Revisa los datos y continúa al control.':'Completa los datos y continúa al control.');
     },
     select(session){
       _loadedDbSessionId=session.session_id;selectedSessionId=`db_${session.session_id}`;
