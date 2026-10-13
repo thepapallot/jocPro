@@ -1,3 +1,2 @@
 Flask
 paho-mqtt
-openai-whisper
