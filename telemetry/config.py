@@ -21,7 +21,7 @@ PRAGMAS = {
 }
 
 # Schema version
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 5
 
 # Event types (enum-like constants)
 EVENT_TYPES = {

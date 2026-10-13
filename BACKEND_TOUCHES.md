@@ -14,6 +14,37 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-13 — Puntos de los puzzles jugados por sesión
+
+Tipo: `pendiente de revisar`. Autorización explícita de Olalla para modificar
+telemetría. Decisión final: conservar únicamente la puntuación de cada registro
+de puzzle, sin almacenar ni calcular automáticamente el total de la sesión.
+
+- `telemetry/schema.py`: `puzzles.total_points INTEGER NOT NULL DEFAULT 0`.
+  Se elimina `sessions.total_points`, los tres triggers de agregación de la
+  versión 4 y la reconciliación automática. Migración desde 3/4 sin borrar
+  sesiones, puzzles, sus puntuaciones ni eventos; `DROP COLUMN` requiere
+  SQLite 3.35 o superior. Las versiones no soportadas se rechazan sin borrar tablas.
+- `telemetry/config.py`: esquema 5, para migrar también las BD donde se aplicó
+  la versión 4 antes de esta rectificación.
+- `telemetry/queries.py`: solo los resultados de puzzles exponen `total_points`.
+  Se retiran los puntos de las consultas de sesiones. No se añade una función
+  de suma: queda para una tarea posterior.
+- `tests/test_telemetry_points.py`: pruebas aisladas de puntuación por registro,
+  ausencia de total/triggers y conservación de datos al migrar desde 3/4.
+
+Pendiente: programar el cálculo de puntos de cada puzzle. Hasta entonces los
+registros nuevos tienen cero puntos. Pep debe revisar cómo asignar la puntuación
+a cada ronda/intento; no se modifican MQTT, reglas ni pantallas.
+
+Verificación final: 7 pruebas de puntos/migración y 4 de sesiones aprobadas en
+BD temporales, sin iniciar Flask ni conectar MQTT/hardware. Migración aplicada
+a la BD local con copia SQLite consistente previa: se conserva su sesión y
+todos los registros restantes (sin puzzles/eventos registrados en ese momento).
+Esquema 5, sin columna de puntos en sesiones ni triggers de suma; integridad
+correcta y sin errores de claves foráneas. Reiniciar Flask para retirar las
+consultas antiguas de la memoria del proceso y recargar el visor de la BD.
+
 ## 2026-10-06 — Bloques antes y después del Trivial
 
 Archivo: `config.py`. Tipo: `pendiente de revisar` con terminales físicos.
