@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS puzzles (
     puzzle_num INTEGER NOT NULL,
     round_num INTEGER,
     puzzle_order INTEGER NOT NULL,
+    total_points INTEGER NOT NULL DEFAULT 0,
     started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     ended_at DATETIME,
     FOREIGN KEY(session_id) REFERENCES sessions(session_id)
@@ -81,9 +82,6 @@ CREATE INDEX IF NOT EXISTS idx_puzzles_session_num
     ON puzzles(session_id, puzzle_num);
 """
 
-DROPPABLE_TABLES = ["events", "puzzles", "answers", "timings", "sessions", "schema_info"]
-
-
 def _apply_pragmas(cursor: sqlite3.Cursor) -> None:
     for pragma_name, pragma_value in PRAGMAS.items():
         if pragma_name == "timeout":
@@ -100,23 +98,24 @@ def _get_existing_schema_version(cursor: sqlite3.Cursor) -> int:
         return 0
 
 
-def _rebuild_schema(cursor: sqlite3.Cursor) -> None:
-    cursor.execute("PRAGMA foreign_keys = OFF")
-    for table_name in DROPPABLE_TABLES:
-        cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
-    cursor.execute("PRAGMA foreign_keys = ON")
-
-
 def _initialize_schema(cursor: sqlite3.Cursor) -> None:
     cursor.executescript(SCHEMA_DDL)
-    # Additive migration: preserve existing sessions, puzzles and events.
+    # Preserve records while removing the redundant version 4 session total.
+    # Drop its triggers before the column so puzzle writes remain valid.
+    for trigger in ("puzzles_points_insert", "puzzles_points_update", "puzzles_points_delete"):
+        cursor.execute(f"DROP TRIGGER IF EXISTS {trigger}")
     columns = {row[1] for row in cursor.execute("PRAGMA table_info(sessions)")}
+    if "total_points" in columns:
+        cursor.execute("ALTER TABLE sessions DROP COLUMN total_points")
     for name, definition in {
         "session_type": "TEXT NOT NULL DEFAULT 'real' CHECK (session_type IN ('real', 'test'))",
         "game_master": "TEXT", "observations": "TEXT",
     }.items():
         if name not in columns:
             cursor.execute(f"ALTER TABLE sessions ADD COLUMN {name} {definition}")
+    puzzle_columns = {row[1] for row in cursor.execute("PRAGMA table_info(puzzles)")}
+    if "total_points" not in puzzle_columns:
+        cursor.execute("ALTER TABLE puzzles ADD COLUMN total_points INTEGER NOT NULL DEFAULT 0")
     cursor.executescript(INDEXES_DDL)
     cursor.execute(
         """
@@ -148,8 +147,11 @@ def init_schema(db_path: Path) -> None:
         cursor = conn.cursor()
         _apply_pragmas(cursor)
         current_version = _get_existing_schema_version(cursor)
-        if current_version not in (0, SCHEMA_VERSION):
-            _rebuild_schema(cursor)
+        if current_version not in (0, 3, 4, SCHEMA_VERSION):
+            raise ValueError(
+                f"Unsupported telemetry schema version {current_version}; "
+                "database preserved. Back up and migrate it explicitly."
+            )
         _initialize_schema(cursor)
         
         conn.commit()

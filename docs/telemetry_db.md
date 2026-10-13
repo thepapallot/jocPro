@@ -32,6 +32,25 @@ scriptsDb/
 
 ### Schema Overview
 
+### Puzzle points (schema version 5)
+
+Only `puzzles` has a `total_points` column (`INTEGER NOT NULL DEFAULT 0`).
+It stores the points of that recorded run/round. The scoring calculation is
+not implemented yet, so new records retain zero until points are assigned.
+Puzzle result queries expose this value without adding a scoring UI.
+
+`sessions` does not store points. There are no aggregation triggers or automatic
+session-total calculations. A future query/function may calculate a session's
+total from its own puzzle rows using `session_id`; this is not implemented here.
+Future scoring should store each run's own points, not repeat an accumulated
+puzzle score on every round.
+
+Versions 3 and 4 migrate to 5 while preserving sessions, puzzle scores and events.
+The version 4 session-total column and its three triggers are removed. Dropping
+that column requires SQLite 3.35 or newer. Unsupported schema versions raise an
+error without deleting tables. Back up the database before migrating. The older
+schema/API examples below are historical, not the current runtime schema.
+
 #### `sessions` table
 Records of individual puzzle plays.
 

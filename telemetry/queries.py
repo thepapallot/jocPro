@@ -133,6 +133,7 @@ class TelemetryQueries:
                 puzzle_num,
                 round_num,
                 puzzle_order,
+                total_points,
                 started_at,
                 ended_at
             FROM puzzles
