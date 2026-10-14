@@ -14,6 +14,73 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-14 — Sumas: guardar los puntos al completar
+
+Tipo: `pendiente de revisar`. Corrección solicitada por Olalla tras detectar una
+partida de Sumas registrada sin puntos.
+
+- Causa: existía la configuración de Sumas, pero el evento `puzzle_solved` no
+  incluía `total_points`; el cierre de telemetría no recibía su puntuación.
+- `mqtt/puzzles/puzzle1.py`: al completar calcula los puntos mediante
+  `calculate_points("puzzle1", round_errors)` y los añade al evento final.
+  Se aplica la configuración compartida: 100 puntos menos 3 por cada error
+  que provoca reinicio, incluidos los tiempos agotados, con suelo cero.
+  Repetir una suma sin reinicio después de diez errores no añade penalización.
+- `total_points` queda disponible en snapshots y se limpia al reiniciar el
+  puzzle. No se modifica el callback de Flask, el esquema de datos ni las
+  partidas ya guardadas. El límite de 30 intentos sigue solo configurado:
+  esta corrección no añade agotamiento ni modifica la duración del juego.
+- `tests/test_scoring.py`: reconoce Sumas entre los puzzles acordados y verifica
+  su penalización de 3 puntos, distinta de Cronómetro y Memory.
+- `tests/test_puzzle1_points.py`: ocho pruebas de integración con el cliente MQTT
+  real sin conexión, callback real de Flask aislado y SQLite temporal. Verifican
+  100 puntos sin errores, 94 con un error y un timeout, 70 tras diez reinicios
+  y repetición sin reinicio, duplicados, reset, configuración alternativa y suelo
+  cero. Los fallos no cierran la partida y las victorias no se puntúan dos veces.
+- Validación: 35 pruebas aprobadas entre Sumas, puntuación compartida y
+  persistencia de Cronómetro/Memory. Sin iniciar Flask conectado al broker,
+  sin hardware y sin tocar la base de datos real. Sin cambios visuales.
+
+Pep debe revisar el cómputo de errores penalizables y validar la puntuación con
+los terminales físicos. La partida anterior no se recalcula automáticamente.
+
+## 2026-10-14 — Sumas: repetición sin reinicio después de diez errores
+
+Tipo: `pendiente de revisar`. Cambio de lógica solicitado explícitamente por Olalla.
+
+- `mqtt/puzzles/puzzle1.py`: cuenta errores que provocan reinicio durante la
+  partida, incluidos los tiempos agotados. Los primeros diez reinician como
+  antes. A partir de ahí, una suma ya realizada publica el aviso existente
+  con `incorrect.resets_round = false`, conserva el tablero y permite seguir
+  jugando. Las sumas inexistentes y el tiempo agotado siguen reiniciando.
+- El reinicio completo del puzzle pone el contador a cero; regenerar el tablero
+  no lo borra. Los avisos sin reinicio no incrementan el contador. Se conserva
+  `alwaysCorrect`. Los trabajadores de error/timeout pendientes se invalidan
+  al detener o reiniciar la partida para que no sobrescriban el tablero nuevo.
+- `static/js/puzzle1.js`: el aviso sin reinicio mantiene el reloj activo y
+  desaparece a los cinco segundos. Un acierto, un reinicio, el tiempo agotado
+  o la victoria cancelan su limpieza pendiente para no borrar un estado posterior.
+  Los mensajes anteriores sin el campo nuevo mantienen su comportamiento.
+- No se aplica todavía la puntuación de `scoring_config.py` ni el límite de
+  30 intentos a la lógica de Sumas. No cambian las rutas ni los mensajes MQTT.
+- Validación: diez pruebas de backend aprobadas y seis escenarios de navegador
+  (ca/es/en a 1920 × 1080 y 1280 × 720), con plantillas reales y SSE/reloj/audio
+  simulados. Se comprueban conservación de enciertos, continuidad del reloj,
+  timeout durante el aviso, recuperación y finalización. Sin MQTT, hardware ni
+  base de datos real. Imágenes referenciadas cargadas; favicon preexistente 404.
+
+Pep debe revisar el cómputo de los diez reinicios y validar el comportamiento
+con los terminales físicos.
+
+## 2026-10-14 — Configuración de puntuación de Sumas
+
+Tipo: `pendiente de revisar`. Cambio solicitado explícitamente por Olalla.
+
+- `scoring_config.py`: añade `puzzle1` con máximo 100 puntos, penalización de
+  3 puntos por error y límite de 30 intentos.
+- Solo se añade la configuración acordada; no se modifica la lógica del puzzle
+  ni su integración MQTT/SSE. Pep debe revisar su aplicación en Sumas.
+
 ## 2026-10-14 — Puntuación compartida y reintentos del Cronómetro
 
 Tipo: `pendiente de revisar`. Backend y límite de diez intentos autorizados

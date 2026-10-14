@@ -52,6 +52,7 @@
     let pendingSolvedResult = null;
     let awaitingRecoveryOperations = false;
     let operationsDelayTimeout = null;
+    let incorrectFeedbackTimeout = null;
     let phasePopupTimer = null;
     let phasePopupDelayTimer = null;
     let phasePopupEl = null;
@@ -108,6 +109,14 @@
 
     function setDangerScreenActive(isActive) {
         document.body.classList.toggle('p1-danger-state', Boolean(isActive));
+    }
+
+    function clearIncorrectFeedback() {
+        if (incorrectFeedbackTimeout !== null) {
+            clearTimeout(incorrectFeedbackTimeout);
+            incorrectFeedbackTimeout = null;
+        }
+        puzzleContainer.querySelectorAll('.op.incorrect').forEach(op => op.classList.remove('incorrect'));
     }
 
     function renderStatus(kind, value = null) {
@@ -374,6 +383,7 @@
             console.log('Received data from state_queue:', data);
 
             if (data.puzzle_solved) {
+                clearIncorrectFeedback();
                 window.PyramidCountdownAudio?.reset('p1-round');
                 window.PyramidCountdownAudio?.reset('p1-next');
                 if (data.operations) renderOperations(data.operations);
@@ -385,6 +395,7 @@
             }
 
             if (data.start_timer) {
+                clearIncorrectFeedback();
                 playEffect('apareix_contingut.wav');
                 timerElement.classList.remove('expired');
                 setDangerScreenActive(false);
@@ -445,6 +456,8 @@
             }
 
             if (data.solved) {
+                clearIncorrectFeedback();
+                setDangerScreenActive(false);
                 puzzleContainer.querySelectorAll('.is-latest').forEach(op => op.classList.remove('is-latest'));
                 clearSolvedContainer();
                 setObjectiveMessage('');
@@ -472,12 +485,14 @@
             }
 
             if (data.incorrect) {
+                clearIncorrectFeedback();
                 if (operationsDelayTimeout) {
                     clearTimeout(operationsDelayTimeout);
                     operationsDelayTimeout = null;
                 }
                 awaitingRecoveryOperations = false;
                 const incorrectDisplayMs = Number(data.incorrect.display_ms) || 5000;
+                const resetsRound = data.incorrect.resets_round !== false;
 
                 playEffect('incorrecte.wav');
                 setDangerScreenActive(true);
@@ -487,8 +502,10 @@
                 setObjectiveMessage(window.PyramidLanguage?.current() === 'ca' ? incorrectLabel : data.incorrect.text, 'error');
                 setObjectiveFormula(data.incorrect.text, 'error', false, incorrectDisplayMs);
 
-                clearInterval(timerInterval);
-                timerRunning = false;
+                if (resetsRound) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                }
 
                 const incorrectOperation = document.querySelector(`.op[data-result="${data.incorrect.result}"]`);
                 if (incorrectOperation) {
@@ -496,10 +513,15 @@
                     animateIncorrect(incorrectOperation);
                 }
 
-                setTimeout(() => {
+                incorrectFeedbackTimeout = setTimeout(() => {
+                    incorrectFeedbackTimeout = null;
                     resetObjectiveFormula();
-                    //renderStatus('reset');
-                    awaitingRecoveryOperations = true;
+                    if (resetsRound) {
+                        awaitingRecoveryOperations = true;
+                    } else {
+                        clearIncorrectFeedback();
+                        setDangerScreenActive(false);
+                    }
                 }, incorrectDisplayMs);
             }
 
@@ -671,6 +693,7 @@
             updateTimerDisplay();
 
             if (timer <= 0) {
+                clearIncorrectFeedback();
                 clearInterval(timerInterval);
                 timerRunning = false;
                 timer = 0;
