@@ -14,6 +14,55 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-14 — Memory: puntos y límite de intentos
+
+Tipo: `pendiente de revisar`. Autorización explícita de Olalla para ampliar
+backend y telemetría. Regla confirmada: 100 puntos en el primer intento,
+90 en el segundo, 80 en el tercero; acertar al décimo todavía da 10 puntos.
+Si el décimo intento falla, se termina con cero puntos, sin un undécimo intento
+y sin registrar el puzzle como superado.
+
+- `mqtt/puzzles/puzzle8.py`: parámetros por defecto `INITIAL_POINTS = 100`,
+  `RETRY_PENALTY = 10`, `MAX_ATTEMPTS = 10`; el contador aumenta al comenzar
+  realmente el reintento, nunca por mensajes, snapshots ni aciertos parciales.
+  El fallo final conserva primero los cinco segundos de resultados, muestra
+  `exhausted` durante cinco segundos y luego publica `auto_advance = True`.
+  El éxito asigna `total_points` una sola vez. Reset limpia intentos, puntos y
+  esgotamiento; un identificador de ejecución descarta evaluaciones antiguas.
+- `app.py`: el fan-out SSE cierra la telemetría tanto al resolver como al agotar
+  el puzzle, enviando sus puntos. No cambia el comportamiento de otros puzzles
+  que no exponen `total_points`.
+- `mqtt/client.py`: `end_active_puzzle` admite puntuación opcional y mantiene la
+  protección de puzzle activo y el cierre único por registro.
+- `telemetry/writer.py`: `end_puzzle` guarda fin y puntos en una sola actualización
+  protegida por su lock. Las llamadas sin puntuación conservan el valor existente.
+  No se cambia el esquema ni se suma o almacena un total de sesión.
+- Frontend Memory: contador de intento y puntos disponibles; pantalla de
+  «INTENTS ESGOTATS» / «INTENTOS AGOTADOS» / «NO ATTEMPTS LEFT» con cero puntos.
+  Tras la autorización del backend se abre `/presentacio/<next_puzzle_id>`, con
+  el idioma seleccionado y el siguiente destino definido por el recorrido.
+  No se llama a la celebración ni a `PyramidRun.complete` por agotamiento.
+- `static/js/game-director.js`: informa del agotamiento y bloquea intervenciones
+  durante ese estado. `static/js/presentation-flow.js`: notas del GM coherentes
+  con conservación de aciertos, puntuación, límite y avance automático.
+- `tests/test_puzzle8.py`, `tests/test_puzzle8_points.py` y pruebas JavaScript:
+  puntuación, diez intentos reales, cierre con SQLite temporal, ausencia de puntos
+  parciales, reconexión, cancelación y navegación sin premios ficticios.
+
+Pep debe validar con ESP32 el uso del mensaje existente `P8End` también para
+detener el hardware al agotar intentos. El evento `puzzle_exhausted` distingue
+este desenlace del éxito; `puzzle_solved` permanece falso. No se modifican
+topics ni los tiempos anteriores de preparación, memoria, resultados o reintento.
+
+Verificación: 37 pruebas Python de Memory/persistencia, 7 de almacenamiento de
+puntos y 4 de sesiones aprobadas; 42 pruebas JavaScript de Memory, cuenta atrás,
+idiomas, presentación y ayudas del GM aprobadas. Chrome con fixtures aislados:
+36 casos de fases/idiomas/resoluciones, incluidas puntuación visible y pantalla
+de agotamiento a 1920 × 1080 y 1280 × 720, y navegación real al siguiente destino
+del recorrido actual, sin otorgar progreso por agotamiento. Capturas en
+`output/memory-confirmados/`. Solo simulación y SQLite temporal, sin MQTT ni
+hardware. No se modifica la base de datos real ni se recalculan partidas antiguas.
+
 ## 2026-10-14 — Memory: aciertos conservados por jugador
 
 ### Ampliación autorizada: pausa entre intentos

@@ -347,16 +347,20 @@ class TelemetryWriter:
             )
             self.db.commit()
 
-    def end_puzzle(self, puzzle_id: int, ended_at: Optional[str] = None) -> None:
-        """Update a puzzle end timestamp immediately."""
+    def end_puzzle(self, puzzle_id: int, ended_at: Optional[str] = None,
+                   total_points: Optional[int] = None) -> None:
+        """End a puzzle and optionally save its score atomically (not a session total)."""
+        if total_points is not None and (type(total_points) is not int or total_points < 0):
+            raise ValueError("total_points must be a non-negative integer")
         with self._flush_lock:
             self.db.execute(
                 """
                 UPDATE puzzles
-                SET ended_at = COALESCE(?, CURRENT_TIMESTAMP)
+                SET ended_at = COALESCE(?, CURRENT_TIMESTAMP),
+                    total_points = COALESCE(?, total_points)
                 WHERE puzzle_id = ?
                 """,
-                (ended_at, puzzle_id),
+                (ended_at, total_points, puzzle_id),
             )
             self.db.commit()
     

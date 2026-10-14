@@ -65,8 +65,11 @@ _sse_clients_lock = threading.Lock()
 _sse_clients = []  # list of queues, one per connected client
 
 def push_state_update(data):
-    if data.get("puzzle_solved") and data.get("puzzle_id") == mqtt_client.current_puzzle_id:
-        mqtt_client.end_active_puzzle(data.get("puzzle_id"))
+    if (data.get("puzzle_solved") or data.get("puzzle_exhausted")) and data.get("puzzle_id") == mqtt_client.current_puzzle_id:
+        if "total_points" in data:
+            mqtt_client.end_active_puzzle(data.get("puzzle_id"), total_points=data["total_points"])
+        else:
+            mqtt_client.end_active_puzzle(data.get("puzzle_id"))
     with _sse_clients_lock:
         for q in _sse_clients:
             q.put(data)

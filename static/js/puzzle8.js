@@ -15,12 +15,17 @@
     const retryScreen = document.getElementById('p8-retry-screen');
     const gridWrap = document.getElementById('p8-grid-wrap');
     const retryCountdownValue = document.getElementById('p8-retry-countdown-value');
+    const exhaustedScreen = document.getElementById('p8-exhausted-screen');
     let symbolsOrder = [];
     let solved = false;
     let countdownFrame = null;
     let countdownPhase = null;
     let confirmedBoxes = new Set();
     let confirmedEntries = {};
+    let leaving = false;
+    let attempt = 1;
+    let maxAttempts = 10;
+    let availablePoints = 100;
 
     const instructions = {
         idle: ['', '', ''],
@@ -28,6 +33,7 @@
         tokens: [tr('memoryObserve', "MEMORIZAD LAS DOS FORMAS"), tr('memoryObserveDetail', "Recordad también sus colores"), tr('memoryStep2', "PASO 2 DE 3 · MEMORIA")],
         input: [tr('memoryInput', "COMPLETAD LAS DOS FORMAS"), tr('memoryInputDetail', "Buscad las formas e introducid sus colores con vuestro token, en cualquier orden"), tr('memoryStep3', "PASO 3 DE 3 · RESPUESTA")],
         retry: [tr('memoryRetryTitle', "RESULTADO DEL INTENTO"), tr('memoryRetryDetail', "Los contenedores confirmados se conservan"), ''],
+        exhausted: ['', '', ''],
         completed: [tr('levelCompleted', "NIVEL SUPERADO"), '', '']
     };
 
@@ -77,9 +83,13 @@
         grid.dataset.phase = phase;
         instruction.dataset.phase = phase;
         retryScreen.hidden = phase !== 'retry';
-        gridWrap.hidden = phase === 'retry';
+        exhaustedScreen.hidden = phase !== 'exhausted';
+        gridWrap.hidden = ['retry', 'exhausted'].includes(phase);
         const [title, detail, step] = instructions[phase] || instructions.idle;
-        instructionStep.textContent = step;
+        instructionStep.textContent = ['numbers', 'tokens', 'input'].includes(phase)
+            ? tr('memoryAttempt', `INTENTO ${attempt}/${maxAttempts} · ${availablePoints} PUNTOS EN JUEGO`,
+                {attempt, limit: maxAttempts, points: availablePoints})
+            : step;
         instructionTitle.textContent = title;
         instructionDetail.textContent = detail;
     }
@@ -177,9 +187,22 @@
         document.getElementById('p8-solved-banner')?.classList.remove('hidden');
     }
 
+    function advanceAfterExhaustion() {
+        const nextId = window.NEXT_PUZZLE_ID ?? window.PYRAMID_GAME?.finalId;
+        if (leaving || !Number.isInteger(nextId)) return;
+        const path = '/presentacio/' + nextId;
+        const language = window.PyramidLanguage?.current?.() || window.PYRAMID_GAME?.language || 'es';
+        const url = window.PyramidLanguage?.path?.(path, language) || path + '?lang=' + encodeURIComponent(language);
+        leaving = true;
+        window.location.assign(url);
+    }
+
     function handleUpdate(data) {
         if (window.PyramidLevelVictory?.active) return;
         if (!data || data.puzzle_id !== 8) return;
+        if (Number.isInteger(data.attempt)) attempt = data.attempt;
+        if (Number.isInteger(data.max_attempts)) maxAttempts = data.max_attempts;
+        if (Number.isInteger(data.available_points)) availablePoints = data.available_points;
         if (Array.isArray(data.confirmed_boxes)) {
             confirmedBoxes = new Set(data.confirmed_boxes.map(Number));
             confirmedEntries = data.confirmed_entries || {};
@@ -187,6 +210,16 @@
         const previousPhase = grid.dataset.phase;
         renderTokenNumbers(data.token_numbers);
         syncCountdown(data);
+
+        if (data.puzzle_exhausted || data.phase === 'exhausted') {
+            stopCountdown();
+            setPhase('exhausted');
+            document.getElementById('p8-solved-banner')?.classList.add('hidden');
+            document.getElementById('p8-exhausted-score').textContent = tr('memoryExhaustedScore',
+                `${attempt} intentos · 0 puntos`, {attempt});
+            if (data.auto_advance) advanceAfterExhaustion();
+            return;
+        }
 
         if (data.puzzle_solved && !solved) {
             solved = true;

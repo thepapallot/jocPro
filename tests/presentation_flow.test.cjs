@@ -231,6 +231,10 @@ test('reviewed Spanish briefings require their warnings; the final has only thre
       if(id===5) {
         assert.ok(scene.copy.es.notes.at(-1).startsWith(scene.attentionCopy.es.text));
         assert.match(scene.copy.es.notes.at(-1),/memorizad el tiempo objetivo.*cuando se encienda vuestro terminal/);
+      } else if(id===8) {
+        assert.ok(scene.copy.es.notes.at(-1).startsWith(scene.attentionCopy.es.text));
+        assert.match(scene.copy.es.notes.at(-1),/100 puntos.*cada nuevo intento resta 10 puntos.*máximo de 10 intentos/);
+        assert.match(scene.copy.es.notes.at(-1),/INTENTOS AGOTADOS.*0 puntos.*sin marcar el reto como superado/);
       } else assert.equal(scene.copy.es.notes.at(-1),scene.attentionCopy.es.text);
       assert.ok(markup.includes('role="dialog"'));
       assert.ok(!markup.includes('b-attention-example'));

@@ -74,6 +74,10 @@ const inspect = () => inner(`(()=>{
             await command('Page.navigate', {url: base + '/?shell_target=/puzzle/8&lang=' + lang});
             await until('!!document.getElementById("game-shell-frame")?.contentWindow.auditStreams?.length');
             await inner('w.document.fonts.ready');
+            await push({phase: 'numbers', attempt: 3, max_attempts: 10, available_points: 80});
+            assert.ok((await inner("w.document.getElementById('p8-instruction-step').textContent")).includes('3/10'));
+            assert.ok((await inner("w.document.getElementById('p8-instruction-step').textContent")).includes('80'));
+            assert.notEqual(await inner("w.getComputedStyle(w.document.getElementById('p8-instruction-step')).display"), 'none');
             for (const phase of ['numbers', 'tokens', 'input']) {
                 await push({phase, clear: phase !== 'tokens', symbols, symbol_sets: sets});
                 const frames = await inspect();
@@ -85,7 +89,7 @@ const inspect = () => inner(`(()=>{
                 const layout = await inner(`(()=>{
                     // Measure content, not answer pseudo-elements: the existing memory
                     // halo deliberately extends 6px beyond each answer's border.
-                    const nodes=[...w.document.querySelectorAll('.p8-frame,.p8-answer-content,#p8-instruction-detail')];
+                    const nodes=[...w.document.querySelectorAll('.p8-frame,.p8-answer-content,#p8-instruction-detail,#p8-instruction-step')];
                     return {overflow:nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left<0||r.right>w.innerWidth+1||r.bottom>w.innerHeight+1||n.scrollWidth>n.clientWidth+1||n.scrollHeight>n.clientHeight+1}).map(n=>({node:n.className||n.id,width:n.clientWidth,scrollWidth:n.scrollWidth,height:n.clientHeight,scrollHeight:n.scrollHeight,bounds:n.getBoundingClientRect().toJSON()})),
                     missingImages:[...w.document.images].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)};
                 })()`);
@@ -132,7 +136,7 @@ const inspect = () => inner(`(()=>{
                     correct:w.document.getElementById('p8-retry-correct').textContent,
                     seconds:w.document.getElementById('p8-retry-countdown-value').textContent,
                     next:w.document.getElementById('p8-retry-next').textContent,
-                    overflow:nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left<0||r.right>w.innerWidth+1||r.bottom>w.innerHeight+1||n.scrollWidth>n.clientWidth+1||n.scrollHeight>n.clientHeight+1}).map(n=>n.id||n.className)};
+                    overflow:nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left<0||r.right>w.innerWidth+1||r.bottom>w.innerHeight+1||n.scrollWidth>n.clientWidth+1||n.scrollHeight>n.clientHeight+1}).map(n=>({node:n.id||n.className,width:n.clientWidth,scrollWidth:n.scrollWidth,height:n.clientHeight,scrollHeight:n.scrollHeight}))};
             })()`);
             assert.equal(retry.visible, true);
             assert.equal(retry.gridHidden, true);
@@ -152,6 +156,33 @@ const inspect = () => inner(`(()=>{
             assert.equal(await inner("w.document.getElementById('p8-retry-screen').hidden"), true);
             assert.equal(await inner("w.document.getElementById('p8-grid-wrap').hidden"), false);
             assert.ok((await inspect()).every(frame => frame.filled === 0 && !frame.correct && !frame.wrong));
+            const earned = await evaluate('PyramidRun.snapshot().completedIds');
+            await push({phase: 'exhausted', puzzle_exhausted: true, attempt: 10, max_attempts: 10,
+                available_points: 0, total_points: 0, auto_advance: false,
+                phase_duration_ms: 5000, phase_remaining_ms: 5000});
+            const exhausted = await inner(`(()=>{
+                const screen=w.document.getElementById('p8-exhausted-screen');
+                const nodes=[screen,...screen.children];
+                return {visible:!screen.hidden&&w.getComputedStyle(screen).display!=='none',
+                    title:w.document.getElementById('p8-exhausted-title').textContent,
+                    score:w.document.getElementById('p8-exhausted-score').textContent,
+                    victory:w.PyramidLevelVictory.active,
+                    overflow:nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left<0||r.right>w.innerWidth+1||r.bottom>w.innerHeight+1||n.scrollWidth>n.clientWidth+1||n.scrollHeight>n.clientHeight+1}).map(n=>({node:n.id||n.className,width:n.clientWidth,scrollWidth:n.scrollWidth,height:n.clientHeight,scrollHeight:n.scrollHeight}))};
+            })()`);
+            assert.equal(exhausted.visible, true);
+            assert.equal(exhausted.title, {ca: 'INTENTS ESGOTATS', es: 'INTENTOS AGOTADOS', eng: 'NO ATTEMPTS LEFT'}[lang]);
+            assert.equal(exhausted.score, {ca: '10 intents · 0 punts', es: '10 intentos · 0 puntos', eng: '10 attempts · 0 points'}[lang]);
+            assert.equal(exhausted.victory, false);
+            assert.deepEqual(exhausted.overflow, []);
+            assert.deepEqual(await evaluate('PyramidRun.snapshot().completedIds'), earned);
+            const exhaustedShot = await command('Page.captureScreenshot', {format: 'png', captureBeyondViewport: false});
+            fs.writeFileSync(`${out}/${lang}-${width}-exhausted.png`, Buffer.from(exhaustedShot.data, 'base64'));
+            reports.push({lang, width, height, phase: 'exhausted', ...exhausted});
+            const nextId = await inner('w.NEXT_PUZZLE_ID ?? w.PYRAMID_GAME.finalId');
+            await push({phase: 'exhausted', puzzle_exhausted: true, attempt: 10, total_points: 0, auto_advance: true});
+            await until(`document.getElementById("game-shell-frame").contentWindow.location.pathname===${JSON.stringify('/presentacio/' + nextId)}`);
+            assert.equal(await inner('w.location.search'), '?lang=' + lang);
+            assert.deepEqual(await evaluate('PyramidRun.snapshot().completedIds'), earned);
         }
         assert.deepEqual(errors, []);
         fs.writeFileSync(out + '/verification.json', JSON.stringify({reports, errors}, null, 2));

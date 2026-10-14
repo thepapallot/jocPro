@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-function memory() {
+function memory(nextId = 3) {
     const elements = new Map();
     const getElement = id => {
         if (!elements.has(id)) elements.set(id, {
@@ -25,9 +25,11 @@ function memory() {
     const timers = [];
     const sounds = [];
     const victories = [];
+    const navigations = [];
     const victory = {active:false,complete(id){victories.push(id);this.active=true;}};
     const context = vm.createContext({
-        window: {PyramidLevelVictory:victory}, console,
+        window: {PyramidLevelVictory:victory, NEXT_PUZZLE_ID:nextId,
+            PYRAMID_GAME:{language:'ca',finalId:6}, location:{assign:url=>navigations.push(url)}}, console,
         document: {
             getElementById: getElement,
             addEventListener: (name, handler) => { listeners[name] = handler; }
@@ -45,10 +47,45 @@ function memory() {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../static/js/puzzle8.js'), 'utf8'), context);
     listeners.DOMContentLoaded();
     return {
-        elements, timers, sounds, victories,
+        elements, timers, sounds, victories, navigations,
         update: data => stream.onmessage({data: JSON.stringify({puzzle_id: 8, ...data})})
     };
 }
+
+test('attempt and available points follow the backend without counting repeated updates', () => {
+    const game = memory();
+    const state = {phase: 'numbers', attempt: 3, max_attempts: 10, available_points: 80};
+    game.update(state);
+    game.update(state);
+    assert.match(game.elements.get('p8-instruction-step').textContent, /INTENTO 3\/10 · 80 PUNTOS EN JUEGO/);
+    assert.deepEqual(game.navigations, []);
+});
+
+test('exhaustion shows zero points without victory and advances only after backend authorization', () => {
+    const game = memory();
+    const exhausted = {phase: 'exhausted', puzzle_exhausted: true, attempt: 10,
+        available_points: 0, total_points: 0, phase_duration_ms: 5000, phase_remaining_ms: 5000};
+    game.update(exhausted);
+    assert.equal(game.elements.get('p8-exhausted-screen').hidden, false);
+    assert.equal(game.elements.get('p8-grid-wrap').hidden, true);
+    assert.equal(game.elements.get('p8-retry-screen').hidden, true);
+    assert.equal(game.elements.get('p8-exhausted-score').textContent, '10 intentos · 0 puntos');
+    assert.equal(game.elements.get('p8-countdown').hidden, true);
+    assert.deepEqual(game.victories, []);
+    assert.deepEqual(game.sounds, []);
+    assert.deepEqual(game.navigations, []);
+    game.update({...exhausted, auto_advance: true});
+    game.update({...exhausted, auto_advance: true});
+    assert.deepEqual(game.navigations, ['/presentacio/3?lang=ca']);
+    assert.deepEqual(game.victories, []);
+});
+
+test('recovering exhaustion already finished opens the next briefing, including the final fallback', () => {
+    const game = memory(null);
+    game.update({phase: 'exhausted', puzzle_exhausted: true, attempt: 10, total_points: 0, auto_advance: true});
+    assert.deepEqual(game.navigations, ['/presentacio/6?lang=ca']);
+    assert.deepEqual(game.victories, []);
+});
 
 test('a failed attempt shows container totals and the ten-second retry countdown', () => {
     const game = memory();
