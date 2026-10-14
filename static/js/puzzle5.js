@@ -1,5 +1,5 @@
 (function() {
-    const tr = (key, fallback) => window.PyramidLanguage?.t?.('game.' + key, fallback) ?? fallback;
+    const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
     const puzzleShellEl = document.getElementById('puzzle5-shell');
     const objectiveCardEl = document.getElementById('objective-card');
     const briefObjectiveEl = document.getElementById('brief-objective');
@@ -10,24 +10,26 @@
     const errorEl = document.getElementById('error-text');
     const errorLimitTextEl = document.getElementById('error-limit-text');
     const streakEl = document.getElementById('streak');
+    const preparationLimitEl = document.getElementById('p5-preparation-limit');
+    const exhaustedScreen = document.getElementById('p5-exhausted-screen');
+    let attempt = 1;
+    let maxAttempts = 10;
+    let availablePoints = 100;
+    let leaving = false;
     const playerBoxes = document.querySelectorAll('.player-box');
     const playersSection = document.getElementById('players-section');
     const errorSection = document.getElementById('error-section');
     const roundSteps = document.querySelectorAll('.round-step');
-    const totalRounds = roundSteps.length || 0;
     
     const preparationCountdownEl = document.getElementById('p5-countdown-value');
     let solved = false;
     let currentRound = 0;
     let countdownInterval = null;
-    let roundObjectives = 0;
-    let roundLimits = 0;
-    let backendTotalRounds = totalRounds;
+    let roundObjectives = 30;
+    let roundLimits = 10;
     let lastRoundResult = null;  // Track if we just showed a result
-    let snapshotRequested = false; // NEW: prevent double fetch on initial load
+    let snapshotPending = false;
     let activeCountdownDeadlineMs = null;
-    const phaseLimitByRound = { 1: 15, 2: 25 };
-    const phaseLimitByObjective = { 10: 15, 30: 25 };
 
     // Sound helpers and URLs
     function playSound(url) {
@@ -37,7 +39,6 @@
     const BTN_SOUND_URL = "/static/audios/effects/boto.wav";
     const ROUND_OK_SOUND_URL = "/static/audios/effects/fase_completada.wav";
     const ROUND_KO_SOUND_URL = "/static/audios/effects/fase_nocompletada.wav";
-    let objectivePulseTimeout = null;
     function setDisplayMode(mode = 'play') {
         const isCountdown = mode === 'countdown';
         if (puzzleShellEl) {
@@ -64,22 +65,6 @@
         if (briefObjectiveUnitEl) {
             briefObjectiveUnitEl.textContent = unit === 'segundos' ? 's' : unit;
         }
-    }
-
-    function pulseObjective() {
-        if (!briefObjectiveEl) return;
-        briefObjectiveEl.classList.remove('is-updating');
-        void briefObjectiveEl.offsetWidth;
-        briefObjectiveEl.classList.add('is-updating');
-
-        if (objectivePulseTimeout) {
-            clearTimeout(objectivePulseTimeout);
-        }
-
-        objectivePulseTimeout = setTimeout(() => {
-            briefObjectiveEl.classList.remove('is-updating');
-            objectivePulseTimeout = null;
-        }, 560);
     }
 
     function clearCountdown(preserveSound = false) {
@@ -129,9 +114,6 @@
 
         // Clear any countdown interval
         clearCountdown();
-        console.log('[P5] Showing game UI for round:', round);
-        console.log('[P5] Round objectives:', roundObjectives);
-        console .log('[P5] Round limits:', roundLimits);
         setDisplayMode('play');
 
         // Show boxes and error counter
@@ -143,17 +125,6 @@
         }
     }
 
-    function showObjectiveText(objective) {
-        if (objective !== undefined && objective !== null) {
-            const hasChanged = roundObjectives !== objective;
-            roundObjectives = objective; // update local state
-            if (hasChanged) {
-                pulseObjective();
-            }
-        }
-        setObjectiveValue(roundObjectives, 's');
-    }
-
     function showWaitingState({ objective = roundObjectives, message = null,
         waitingSeconds = null, deadline = null } = {}) {
         if (objective) roundObjectives = objective;
@@ -161,8 +132,10 @@
     }
 
     function updateStreak(round) {
-        if (streakEl && round) {
-            streakEl.textContent = `${round}/${backendTotalRounds || totalRounds || round}`;
+        if (streakEl) {
+            streakEl.textContent = tr('chronoAttemptPoints',
+                `INTENTO ${attempt}/${maxAttempts} · ${availablePoints} PUNTOS EN JUEGO`,
+                {attempt, limit: maxAttempts, points: availablePoints});
         }
         roundSteps.forEach(step => {
             const stepRound = Number(step.dataset.roundStep);
@@ -198,36 +171,27 @@
         }
     }
 
-    function resolvePhaseLimit(round = currentRound, objective = roundObjectives, explicitLimit = null) {
+    function resolvePhaseLimit(explicitLimit = null) {
         const numericExplicit = Number(explicitLimit);
         if (Number.isFinite(numericExplicit) && numericExplicit > 0) {
             return numericExplicit;
         }
 
-        const numericRound = Number(round);
-        if (Number.isFinite(numericRound) && phaseLimitByRound[numericRound]) {
-            return phaseLimitByRound[numericRound];
-        }
-
-        const numericObjective = Number(objective);
-        if (Number.isFinite(numericObjective) && phaseLimitByObjective[numericObjective]) {
-            return phaseLimitByObjective[numericObjective];
-        }
-
         const knownCurrentLimit = Number(roundLimits);
-        return Number.isFinite(knownCurrentLimit) && knownCurrentLimit > 0 ? knownCurrentLimit : phaseLimitByRound[1];
+        return Number.isFinite(knownCurrentLimit) && knownCurrentLimit > 0 ? knownCurrentLimit : 10;
     }
 
-    function refreshPhaseLimitLabel(round = currentRound, objective = roundObjectives, explicitLimit = null) {
+    function refreshPhaseLimitLabel(explicitLimit = null) {
         if (!errorLimitTextEl) {
             return;
         }
-        const limit = resolvePhaseLimit(round, objective, explicitLimit);
+        const limit = resolvePhaseLimit(explicitLimit);
         errorLimitTextEl.textContent = `${limit.toFixed(0)} S`;
+        if (preparationLimitEl) preparationLimitEl.textContent = `${limit.toFixed(0)} S`;
     }
 
     function updatePlayerBoxes(times) {
-        const objective = roundObjectives || 10;
+        const objective = roundObjectives || 30;
         
         // Reset all boxes
         playerBoxes.forEach(box => {
@@ -286,37 +250,52 @@
 
     function handleUpdate(d,func) {
         if (window.PyramidLevelVictory?.active) return;
-        console.log('Pre handleUpdate called from:', func);
         if (!d || d.puzzle_id !== 5) return;
 
-        console.log('[P5] handleUpdate received:', d);
+        if (Number.isInteger(d.attempt)) attempt = d.attempt;
+        if (Number.isInteger(d.max_attempts)) maxAttempts = d.max_attempts;
+        if (Number.isInteger(d.available_points)) availablePoints = d.available_points;
+        const limit = Number(d.limit);
+        if (Number.isFinite(limit) && limit > 0) roundLimits = limit;
+        refreshPhaseLimitLabel();
+        updateStreak(currentRound);
 
-        if (d.total_rounds) {
-            backendTotalRounds = d.total_rounds;
+        // Results remain on the board until the backend publishes exhaustion.
+        // No local timer, victory or progress is authorized by a failed attempt.
+        if (d.puzzle_exhausted) {
+            clearCountdown();
+            puzzleShellEl.style.display = 'none';
+            exhaustedScreen.hidden = false;
+            document.getElementById('p5-exhausted-score').textContent = tr('memoryExhaustedScore',
+                `${attempt} intentos · 0 puntos`, {attempt});
+            if (d.auto_advance) advanceAfterExhaustion();
+            return;
         }
+        exhaustedScreen.hidden = true;
+        puzzleShellEl.style.display = '';
 
         // If backend snapshot says we're waiting but didn't include countdown_message,
         // rebuild the best possible UI instead of staying blank.
-        if (d.waiting && !d.active_round && !d.countdown_message && (d.round === 0 || d.round === undefined)) {
+        if (d.waiting && !d.active_round && !d.countdown_message && !d.round_result && (d.round === 0 || d.round === undefined)) {
             currentRound = 0;
             roundObjectives = d.objective || roundObjectives;
             roundLimits = d.limit || roundLimits;
-            refreshPhaseLimitLabel(1, roundObjectives, d.limit);
+            refreshPhaseLimitLabel(d.limit);
             updateStreak(1);
-                showWaitingState({
-                    objective: roundObjectives,
-                    message: d.countdown_message || 'Ronda empieza en 5 segundos',
-                    waitingSeconds: d.waiting_seconds,
-                    deadline: d.countdown_deadline
-                });
+            showWaitingState({
+                objective: roundObjectives,
+                message: d.countdown_message,
+                waitingSeconds: d.waiting_seconds,
+                deadline: d.countdown_deadline
+            });
             return;
         }
 
-        if (d.waiting && !d.active_round && !d.countdown_message && d.round) {
+        if (d.waiting && !d.active_round && !d.countdown_message && !d.round_result && d.round) {
             currentRound = d.round;
             roundLimits = d.limit || roundLimits;
             roundObjectives = d.objective || roundObjectives;
-            refreshPhaseLimitLabel(currentRound, roundObjectives, d.limit);
+            refreshPhaseLimitLabel(d.limit);
             updateStreak(d.round);
 
             if (Array.isArray(d.times) && d.times.length && !(Number(d.waiting_seconds) > 0 || Number(d.countdown_deadline) * 1000 > Date.now())) {
@@ -356,7 +335,7 @@
             }
             
             roundObjectives = d.objective || roundObjectives;
-            refreshPhaseLimitLabel(currentRound || 1, roundObjectives, d.limit);
+            refreshPhaseLimitLabel(d.limit);
             showCountdownMessage(d.countdown_message, d.waiting_seconds, d.countdown_deadline);
 
             return;
@@ -367,7 +346,7 @@
             currentRound = d.round;
             roundLimits = d.limit || roundLimits;
             roundObjectives = d.objective || roundObjectives;
-            refreshPhaseLimitLabel(currentRound, roundObjectives, d.limit);
+            refreshPhaseLimitLabel(d.limit);
             setRoundResultVisual(null);
             showGameUI(d.round);
             updateStreak(d.round);
@@ -396,14 +375,16 @@
         if (d.round_result) {
             const rr = d.round_result;
             const result = rr.success ? 'success' : 'failure';
-            lastRoundResult = result;  // Remember we showed a result
+            const repeatResult = lastRoundResult === `${attempt}:${result}`;
+            lastRoundResult = `${attempt}:${result}`;
+            showGameUI(d.round || 1);
+            roundLimits = resolvePhaseLimit(rr.limit);
+            refreshPhaseLimitLabel();
             updateErrorCounter(rr.total, rr.limit, result);
             setRoundResultVisual(result);
             // Play corresponding round result sound
-            if (rr.success) {
-                playSound(ROUND_OK_SOUND_URL);
-            } else {
-                playSound(ROUND_KO_SOUND_URL);
+            if (func !== 'loadSnapshot' && !repeatResult) {
+                playSound(rr.success ? ROUND_OK_SOUND_URL : ROUND_KO_SOUND_URL);
             }
         }
 
@@ -415,13 +396,30 @@
         }
     }
 
+    function advanceAfterExhaustion() {
+        const nextId = window.NEXT_PUZZLE_ID ?? window.PYRAMID_GAME?.finalId;
+        if (leaving || !Number.isInteger(nextId)) return;
+        const path = '/presentacio/' + nextId;
+        const language = window.PyramidLanguage?.current?.() || window.PYRAMID_GAME?.language || 'es';
+        const url = window.PyramidLanguage?.path?.(path, language) || path + '?lang=' + encodeURIComponent(language);
+        leaving = true;
+        window.location.assign(url);
+    }
+
     function installDebugHelpers() {
-        function getDebugObjective(round) {
-            return round === 1 ? 10 : 30;
+        function getDebugObjective() {
+            return 30;
         }
 
-        function getDebugLimit(round) {
-            return round === 1 ? 15 : 25;
+        function getDebugLimit(attempt) {
+            return 10 + 4 * (attempt - 1);
+        }
+
+        function debugState(attempt = 1) {
+            return {round: 1, total_rounds: 1, objective: 30,
+                attempt, max_attempts: 10, available_points: 100 - 10 * (attempt - 1),
+                total_points: 0, puzzle_exhausted: false, auto_advance: false,
+                limit: getDebugLimit(attempt)};
         }
 
         window.puzzle5Debug = {
@@ -431,30 +429,32 @@
             countdown(seconds = 5, objective = null, round = 1) {
                 handleUpdate({
                     puzzle_id: 5,
+                    ...debugState(round),
                     countdown_message: `Ronda ${round} empieza en ${seconds} segundos`,
                     waiting_seconds: seconds,
                     objective: objective ?? getDebugObjective(round),
-                    total_rounds: 2
+                    total_rounds: 1
                 }, 'debug-countdown');
             },
             round(round = 1, objective = null, limit = null) {
                 handleUpdate({
                     puzzle_id: 5,
-                    round,
+                    ...debugState(round),
                     round_start: true,
                     objective: objective ?? getDebugObjective(round),
                     limit: limit ?? getDebugLimit(round),
-                    total_rounds: 2
+                    total_rounds: 1,
+                    times: [], total: 0
                 }, 'debug-round');
             },
             partial(times, round = 1, objective = null, limit = null) {
                 const total = (times || []).reduce((acc, item) => acc + Math.abs(item.time), 0);
                 handleUpdate({
                     puzzle_id: 5,
-                    round,
+                    ...debugState(round),
                     objective: objective ?? getDebugObjective(round),
                     limit: limit ?? getDebugLimit(round),
-                    total_rounds: 2,
+                    total_rounds: 1,
                     times,
                     total
                 }, 'debug-partial');
@@ -462,7 +462,8 @@
             success(round = 1, total = 7.5, limit = null) {
                 handleUpdate({
                     puzzle_id: 5,
-                    total_rounds: 2,
+                    ...debugState(round),
+                    total_points: 100 - 10 * (round - 1),
                     round_result: {
                         success: true,
                         total,
@@ -473,13 +474,17 @@
             failure(round = 1, total = 38.1, limit = null) {
                 handleUpdate({
                     puzzle_id: 5,
-                    total_rounds: 2,
+                    ...debugState(round),
                     round_result: {
                         success: false,
                         total,
                         limit: limit ?? getDebugLimit(round)
                     }
                 }, 'debug-failure');
+            },
+            exhausted(autoAdvance = false) {
+                this.push({...debugState(10), puzzle_exhausted: true,
+                    available_points: 0, total_points: 0, auto_advance: autoAdvance});
             },
             solved() {
                 const previousSolved = solved;
@@ -503,11 +508,11 @@
                     { player: 8, time: -0.9 },
                     { player: 9, time: 0.3 }
                 ];
-                this.countdown(3, 10, 1);
-                setTimeout(() => this.round(1, 10, 20), 3200);
-                setTimeout(() => this.partial(times.slice(0, 5), 1, 10, 20), 4800);
-                setTimeout(() => this.partial(times, 1, 10, 20), 6800);
-                setTimeout(() => this.success(1, 7.5, 20), 8600);
+                this.countdown();
+                setTimeout(() => this.round(), 5000);
+                setTimeout(() => this.partial(times.slice(0, 5)), 6500);
+                setTimeout(() => this.partial(times), 8500);
+                setTimeout(() => this.success(), 10500);
             },
             demoFailure() {
                 const times = [
@@ -522,27 +527,24 @@
                     { player: 8, time: 3.1 },
                     { player: 9, time: -2.8 }
                 ];
-                this.countdown(3, 30, 2);
-                setTimeout(() => this.round(2, 30, 30), 3200);
-                setTimeout(() => this.partial(times, 2, 30, 30), 5400);
-                setTimeout(() => this.failure(2, 38.1, 30), 7600);
+                this.countdown();
+                setTimeout(() => this.round(), 5000);
+                setTimeout(() => this.partial(times), 7000);
+                setTimeout(() => this.failure(), 9000);
+                setTimeout(() => this.countdown(9, 30, 2), 14000);
             }
         };
     }
 
-    function loadSnapshot(func) {
-        console.log('[P5] Loading snapshot from server:', func);
+    function loadSnapshot() {
+        if (snapshotPending) return;
+        snapshotPending = true;
 
-        if (snapshotRequested) return;
-        snapshotRequested = true;
-
-        console.log('[P5] Fetching current state snapshot');
-
-        fetch('/current_state')
+        return fetch('/current_state')
             .then(r => r.json())
             .then(d => handleUpdate(d,'loadSnapshot'))
-            .catch((e) => console.error('[P5] Snapshot load error:', e));
-            
+            .catch(e => console.error('[P5] Snapshot load error:', e))
+            .finally(() => { snapshotPending = false; });
     }
 
     function initSSE() {
@@ -555,10 +557,9 @@
             } 
         };
         es.onopen = () => {
-            loadSnapshot('SSE-open');
-            // Start puzzle 5 when SSE is connected
+            // Start is idempotent. Recover state after it, on every reconnection.
             fetch("/start_puzzle/5", { method: "POST" })
-                .then(() => loadSnapshot('start_puzzle/5'))
+                .then(() => loadSnapshot())
                 .catch(err => console.warn("Failed to start puzzle 5:", err));
         };
         es.onerror = () => console.error('[P5] SSE error');
@@ -566,6 +567,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        updateStreak(1);
         setDisplayMode('countdown');
         playersSection.style.display = 'none';
         errorSection.style.display = 'none';
@@ -575,11 +577,6 @@
 
     // Clean up interval on page unload
     window.addEventListener('beforeunload', () => {
-        console.log('[P5] Cleaning up before unload');
         clearCountdown();
-        if (objectivePulseTimeout) {
-            clearTimeout(objectivePulseTimeout);
-        }
-        console.log('[P5] Cleanup complete');
     });
 })();
