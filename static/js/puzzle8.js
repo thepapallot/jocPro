@@ -12,16 +12,22 @@
     const countdownValue = document.getElementById('p8-countdown-value');
     const timeTrack = document.getElementById('p8-time-track');
     const timeFill = document.getElementById('p8-time-fill');
+    const retryScreen = document.getElementById('p8-retry-screen');
+    const gridWrap = document.getElementById('p8-grid-wrap');
+    const retryCountdownValue = document.getElementById('p8-retry-countdown-value');
     let symbolsOrder = [];
     let solved = false;
     let countdownFrame = null;
     let countdownPhase = null;
+    let confirmedBoxes = new Set();
+    let confirmedEntries = {};
 
     const instructions = {
         idle: ['', '', ''],
         numbers: [tr('memoryPrepare', "ATENTOS A LA PANTALLA"), tr('memoryPrepareDetail', "Preparaos: aparecerán dos formas"), tr('memoryStep1', "PASO 1 DE 3 · PREPARACIÓN")],
         tokens: [tr('memoryObserve', "MEMORIZAD LAS DOS FORMAS"), tr('memoryObserveDetail', "Recordad también sus colores"), tr('memoryStep2', "PASO 2 DE 3 · MEMORIA")],
         input: [tr('memoryInput', "COMPLETAD LAS DOS FORMAS"), tr('memoryInputDetail', "Buscad las formas e introducid sus colores con vuestro token, en cualquier orden"), tr('memoryStep3', "PASO 3 DE 3 · RESPUESTA")],
+        retry: [tr('memoryRetryTitle', "RESULTADO DEL INTENTO"), tr('memoryRetryDetail', "Los contenedores confirmados se conservan"), ''],
         completed: [tr('levelCompleted', "NIVEL SUPERADO"), '', '']
     };
 
@@ -35,7 +41,7 @@
     }
 
     function syncCountdown(data) {
-        if (data.puzzle_solved || !['numbers', 'tokens'].includes(data.phase)) {
+        if (data.puzzle_solved || !['numbers', 'tokens', 'retry'].includes(data.phase)) {
             if (data.phase || data.clear || data.puzzle_solved) stopCountdown();
             return;
         }
@@ -59,6 +65,7 @@
             const leftMs = Math.max(0, deadline - performance.now());
             const seconds = String(Math.ceil(leftMs / 1000));
             if (countdownValue.textContent !== seconds) countdownValue.textContent = seconds;
+            if (data.phase === 'retry') retryCountdownValue.textContent = seconds;
             window.PyramidCountdownAudio?.tick('p8-phase', seconds);
             timeFill.style.transform = `scaleX(${leftMs / durationMs})`;
             countdownFrame = leftMs > 0 ? requestAnimationFrame(tick) : null;
@@ -69,6 +76,8 @@
     function setPhase(phase) {
         grid.dataset.phase = phase;
         instruction.dataset.phase = phase;
+        retryScreen.hidden = phase !== 'retry';
+        gridWrap.hidden = phase === 'retry';
         const [title, detail, step] = instructions[phase] || instructions.idle;
         instructionStep.textContent = step;
         instructionTitle.textContent = title;
@@ -123,11 +132,25 @@
         resetAnswers();
         setPhase('tokens');
         slots.forEach((slot, index) => {
+            if (confirmedBoxes.has(index)) return;
             const answers = slot.querySelectorAll('.p8-answer');
             symbolSets.slice(0, 2).forEach((symbolSet, step) => {
                 const symbol = symbolSet?.symbols?.[index];
                 fillAnswer(answers[step], symbol, symbolSet?.colors?.[symbol]);
             });
+        });
+        renderConfirmedAnswers();
+    }
+
+    function renderConfirmedAnswers() {
+        confirmedBoxes.forEach(box => {
+            const slot = slots[box];
+            if (!slot) return;
+            const answers = slot.querySelectorAll('.p8-answer');
+            (confirmedEntries[box] || []).slice(0, 2).forEach((entry, index) => {
+                fillAnswer(answers[index], entry.symbol, entry.color);
+            });
+            slot.closest('.p8-frame').classList.add('p8-correct');
         });
     }
 
@@ -157,6 +180,10 @@
     function handleUpdate(data) {
         if (window.PyramidLevelVictory?.active) return;
         if (!data || data.puzzle_id !== 8) return;
+        if (Array.isArray(data.confirmed_boxes)) {
+            confirmedBoxes = new Set(data.confirmed_boxes.map(Number));
+            confirmedEntries = data.confirmed_entries || {};
+        }
         const previousPhase = grid.dataset.phase;
         renderTokenNumbers(data.token_numbers);
         syncCountdown(data);
@@ -169,15 +196,26 @@
             return;
         }
 
+        if (data.phase === 'retry') {
+            setPhase('retry');
+            const summary = data.retry_summary || {};
+            document.getElementById('p8-retry-errors').textContent = String(summary.errors ?? 10 - confirmedBoxes.size);
+            document.getElementById('p8-retry-correct').textContent = String(summary.accumulated_correct ?? confirmedBoxes.size);
+            if (data.input_result && previousPhase !== 'retry') playSound(PHASE_KO_SOUND_URL);
+            return;
+        }
+
         if (data.clear) {
             resetAnswers();
             setPhase(data.phase || 'numbers');
+            renderConfirmedAnswers();
         }
 
         if (data.phase === 'numbers') {
             document.getElementById('p8-solved-banner')?.classList.add('hidden');
             resetAnswers();
             setPhase('numbers');
+            renderConfirmedAnswers();
             if (previousPhase !== 'numbers') playSound(LLETRES_SOUND_URL);
             return;
         }
@@ -212,8 +250,9 @@
                     colorBox(Number(box), color, data.input_symbols?.[box]);
                 });
             }
-            if (previousPhase !== 'input') playSound(LLETRES_SOUND_URL);
-            return;
+            renderConfirmedAnswers();
+            if (previousPhase !== 'input' && !data.input_result) playSound(LLETRES_SOUND_URL);
+            if (!data.input_result) return;
         }
 
         if (data.input_update && entersInputPhase) {
@@ -237,13 +276,13 @@
                     // The shared victory starts only once puzzle_solved confirms completion.
                     stopCountdown();
                     setPhase('completed');
-                    playSound(PHASE_OK_SOUND_URL);
+                    if (!data.clear) playSound(PHASE_OK_SOUND_URL);
                 } else {
                     showCompletion();
-                    playSound(PHASE_OK_SOUND_URL);
+                    if (!data.clear) playSound(PHASE_OK_SOUND_URL);
                 }
             } else {
-                playSound(PHASE_KO_SOUND_URL);
+                if (!data.clear) playSound(PHASE_KO_SOUND_URL);
             }
         }
     }

@@ -14,6 +14,65 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-14 — Memory: aciertos conservados por jugador
+
+### Ampliación autorizada: pausa entre intentos
+
+- `mqtt/puzzles/puzzle8.py`: los intentos incorrectos entran en la nueva fase
+  `retry`, de 10 segundos, antes de repetir preparación y memoria. Corrección
+  solicitada: primero se mantiene el tablero de resultados durante cinco segundos,
+  con las letras registradas y los marcos de acierto/error; después empieza
+  la pausa de diez segundos. El éxito mantiene su flujo anterior.
+  Un timer cancelable reinicia únicamente los contenedores
+  pendientes. No se aceptan entradas durante la pausa.
+- SSE y snapshots exponen `retry_summary.errors` (contenedores pendientes) y
+  `retry_summary.accumulated_correct` (contenedores confirmados acumulados),
+  junto con los campos existentes de duración y tiempo restante.
+- `templates/puzzle8.html`, `static/js/puzzle8.js`, `static/css/puzzle8.css` y
+  `static/js/game-copy.js`: pantalla de resultados y cuenta atrás en los tres
+  idiomas; una reconexión recupera el tiempo restante, sin reiniciar la pausa.
+- Pruebas de lógica y navegador cubren resumen acumulado, pausa, entradas
+  ignoradas, cancelación y regreso al tablero. Pendiente validación con ESP32.
+- El snapshot de respuesta conserva `input_result` durante la revisión del
+  tablero. Al reconectar se recuperan las letras y sus resultados sin repetir
+  el sonido. Se limpia el resultado anterior al reiniciar o detener la prueba.
+
+Verificación de la ampliación y su corrección: 23 pruebas Python de Memory y 13 pruebas
+JavaScript de Memory, cuenta atrás y copia catalana aprobadas. Chrome con fixture
+aislado: 30 casos de fases/idiomas/resoluciones, incluidos el tablero de resultados
+y la nueva pausa a
+1920 × 1080 y 1280 × 720, sin desbordes. Capturas en
+`output/memory-confirmados/`. Solo simulación, sin MQTT ni hardware.
+La revisión adicional de idiomas detecta una falla ajena al cambio: el test del
+launcher nativo busca `openNativePlayer`, que ya no existe en el archivo
+`static/js/presentation-gm.js`, no modificado en esta tarea.
+
+Tipo: `pendiente de revisar`. Autorización explícita de Olalla para modificar
+backend y pantalla.
+
+- `mqtt/puzzles/puzzle8.py`: cada evaluación confirma los contenedores con sus
+  dos parejas letra/color correctas, en cualquier orden. Los reintentos limpian
+  solo los contenedores incorrectos y mantienen las parejas objetivo del intento.
+  Las entradas posteriores de jugadores confirmados se ignoran. Reiniciar,
+  detener o pasar a una nueva ronda borra las confirmaciones.
+- SSE y snapshots añaden `confirmed_boxes` y `confirmed_entries`, sin retirar
+  campos ni modificar mensajes o topics MQTT.
+- `static/js/puzzle8.js`: conserva las dos respuestas y el marco de acierto
+  durante preparación, memoria y respuesta; también al recuperar el estado.
+- `tests/test_puzzle8.py`: regresiones de reintentos, acumulación de aciertos,
+  entradas ignoradas y reinicio. Validación aislada, sin hardware.
+
+Pep debe revisar la persistencia por token y validar los reintentos con ESP32.
+Salvo la nueva pausa entre intentos descrita arriba, no se cambian las duraciones
+de preparación y memoria, la puntuación ni el mensaje final `P8End`.
+
+Verificación: 17 pruebas Python de Memory y 9 pruebas JavaScript de celebración
+y cuenta atrás aprobadas. Chrome con plantillas reales y SSE simulado: las tres
+fases en castellano, catalán e inglés, a 1920 × 1080 y 1280 × 720 (18 casos),
+incluida recuperación de respuestas y limpieza al reiniciar, sin desbordes de
+contenido ni imágenes ausentes. Capturas en `output/memory-confirmados/`.
+Solo simulación; sin conexión a MQTT ni hardware.
+
 ## 2026-10-13 — Puntos de los puzzles jugados por sesión
 
 Tipo: `pendiente de revisar`. Autorización explícita de Olalla para modificar

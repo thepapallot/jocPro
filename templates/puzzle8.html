@@ -23,6 +23,26 @@
 {% block puzzle_content %}
 <div id="p8-shell">
     <section id="p8-stage" class="p8-panel">
+        <section id="p8-retry-screen" aria-labelledby="p8-retry-next" hidden>
+            <div class="p8-retry-stats" role="status">
+                <div class="p8-retry-stat p8-retry-stat--errors">
+                    <span class="p8-retry-stat-mark" aria-hidden="true">×</span>
+                    <strong id="p8-retry-errors">0</strong>
+                    <span data-i18n="game.memoryRetryErrors">errores</span>
+                </div>
+                <div class="p8-retry-stat p8-retry-stat--correct">
+                    <span class="p8-retry-stat-mark" aria-hidden="true">✓</span>
+                    <strong id="p8-retry-correct">0</strong>
+                    <span data-i18n="game.memoryRetryCorrect">aciertos acumulados</span>
+                </div>
+            </div>
+            <div class="p8-retry-timer">
+                <h2 id="p8-retry-next" data-i18n="game.memoryRetryNext">El siguiente intento empieza en:</h2>
+                <div class="p8-retry-countdown" role="timer" aria-live="off">
+                    <strong id="p8-retry-countdown-value">10</strong><span>s</span>
+                </div>
+            </div>
+        </section>
         <div id="p8-grid-wrap">
             <div id="p8-grid" data-phase="numbers">
                 {% for index in range(10) %}
