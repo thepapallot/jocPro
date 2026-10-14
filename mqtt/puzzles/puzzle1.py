@@ -1,4 +1,5 @@
 from .base import BasePuzzle
+from scoring import calculate_points
 import threading
 import time
 import random
@@ -18,6 +19,10 @@ class Puzzle1(BasePuzzle):
         self.round_sizes = {1: 16}
         self.total_rounds = len(self.round_sizes)
         self.incorrect_feedback_seconds = 5
+        self.round_errors = 0
+        self.total_points = 0
+        self.duplicate_reset_limit = 10
+        self._run_serial = 0
         
     def _reset_operations(self, size=None):
         """Generate random operations for current round"""
@@ -31,6 +36,9 @@ class Puzzle1(BasePuzzle):
         """Full reset returns to round 1"""
         super().reset()
         with self.lock:
+            self._run_serial += 1
+            self.round_errors = 0
+            self.total_points = 0
             self.round = 1
             self._reset_operations()
             self.processing_wrong_result = False
@@ -62,6 +70,7 @@ class Puzzle1(BasePuzzle):
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:
+            self._run_serial += 1
             self.processing_wrong_result = False
             self.countdown_next_round_active = False
             
@@ -72,7 +81,8 @@ class Puzzle1(BasePuzzle):
                 "puzzle_id": self.id,
                 "operations": self.operations_with_metadata.copy(),
                 "round": self.round,
-                "round_size": self.round_sizes[self.round]
+                "round_size": self.round_sizes[self.round],
+                "total_points": self.total_points
             }
             
     def handle_message(self, parts):
@@ -88,7 +98,7 @@ class Puzzle1(BasePuzzle):
     def _check_sum_or_reset(self, a, b):
         """Validate sum and update state"""
         with self.lock:
-            if self.processing_wrong_result or self.countdown_next_round_active:
+            if self.solved or self.processing_wrong_result or self.countdown_next_round_active:
                 return
                 
             result = a + b
@@ -155,12 +165,14 @@ class Puzzle1(BasePuzzle):
                             threading.Thread(target=_countdown_and_advance, daemon=True).start()
                         else:
                             # Puzzle complete
+                            self.total_points = calculate_points("puzzle1", self.round_errors)
                             self.solved = True
                             self.countdown_next_round_active = False
                             self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
                             self._push({
                                 "puzzle_solved": True,
-                                "round": self.round
+                                "round": self.round,
+                                "total_points": self.total_points
                             })
                     return
                 break
@@ -169,7 +181,6 @@ class Puzzle1(BasePuzzle):
             if self.alwaysCorrect:
                 return
 
-            self.processing_wrong_result = True
             if matching_operation is None:
                 reason = "Suma no existente"
                 reason_key = "not_existing"
@@ -177,23 +188,32 @@ class Puzzle1(BasePuzzle):
                 reason = "Suma ya realizada"
                 reason_key = "already_solved"
 
+            resets_round = matching_operation is None or self.round_errors < self.duplicate_reset_limit
+            if resets_round:
+                self.round_errors += 1
+                self.processing_wrong_result = True
+
             self._push({
                 "operations": self.operations_with_metadata.copy(),
                 "incorrect": {
                     "result": result,
                     "text": f"{reason}  {a} + {b} = {result}",
                     "reason": reason_key,
+                    "resets_round": resets_round,
                     "display_ms": self.incorrect_feedback_seconds * 1000
                 },
                 "round": self.round,
                 "round_size": self.round_sizes[self.round]
             })
-            threading.Thread(target=self._delayed_reset, daemon=True).start()
+            if resets_round:
+                threading.Thread(target=self._delayed_reset, args=(self._run_serial,), daemon=True).start()
             
-    def _delayed_reset(self):
+    def _delayed_reset(self, run_serial):
         """Reset operations after wrong answer"""
         time.sleep(self.incorrect_feedback_seconds)
         with self.lock:
+            if run_serial != self._run_serial:
+                return
             self.processing_wrong_result = False
             self._reset_operations()
             self._push({
@@ -206,13 +226,17 @@ class Puzzle1(BasePuzzle):
     def timer_expired(self):
         """Handle timer expiration - reset current round only"""
         with self.lock:
-            if self.processing_wrong_result:
+            if self.solved or self.processing_wrong_result or self.countdown_next_round_active:
                 return
             self.processing_wrong_result = True
+            self.round_errors += 1
+            run_serial = self._run_serial
             
         def _later():
             time.sleep(5)  # Show timeout message
             with self.lock:
+                if run_serial != self._run_serial:
+                    return
                 self._reset_operations()
                 self.processing_wrong_result = False
                 self._push({

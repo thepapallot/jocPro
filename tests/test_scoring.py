@@ -10,20 +10,22 @@ from scoring_config import SCORING_CONFIG
 
 class ScoringTests(unittest.TestCase):
     def test_config_contains_only_agreed_puzzles(self):
-        self.assertEqual(set(SCORING_CONFIG), {"puzzle5", "puzzle8"})
+        self.assertEqual(set(SCORING_CONFIG), {"puzzle1", "puzzle5", "puzzle8"})
 
     def test_points_for_each_failed_attempt_and_floor(self):
-        for puzzle_id in SCORING_CONFIG:
+        for puzzle_id, penalty, max_attempts in (("puzzle1", 3, 30),
+                             ("puzzle5", 10, 10),
+                             ("puzzle8", 10, 10)):
             for errors in range(11):
                 with self.subTest(puzzle=puzzle_id, errors=errors):
                     self.assertEqual(calculate_points(puzzle_id, errors),
-                                     max(0, 100 - 10 * errors))
+                                     max(0, 100 - penalty * errors))
             self.assertEqual(calculate_points(puzzle_id, 1000000), 0)
-            self.assertEqual(get_max_attempts(puzzle_id), 10)
+            self.assertEqual(get_max_attempts(puzzle_id), max_attempts)
 
     def test_unknown_puzzles_do_not_get_invented_scores(self):
-        for function, args in ((calculate_points, ("puzzle1", 0)),
-                               (get_max_attempts, ("puzzle1",))):
+        for function, args in ((calculate_points, ("puzzle2", 0)),
+                       (get_max_attempts, ("puzzle2",))):
             with self.assertRaises(KeyError):
                 function(*args)
 

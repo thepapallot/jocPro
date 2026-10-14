@@ -5,6 +5,11 @@ Timing and gameplay rules belong in the puzzle classes, not in this file.
 """
 
 SCORING_CONFIG = {
+    "puzzle1": {
+        "max_points": 100,
+        "penalty_per_error": 3,
+        "max_attempts": 30,
+    },
     "puzzle5": {
         "max_points": 100,
         "penalty_per_error": 10,
