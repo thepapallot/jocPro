@@ -14,6 +14,70 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-14 — Puntuación compartida y reintentos del Cronómetro
+
+Tipo: `pendiente de revisar`. Backend y límite de diez intentos autorizados
+explícitamente por Olalla; configuración y cálculo compartidos solicitados después.
+
+- `scoring_config.py`: `SCORING_CONFIG` contiene exclusivamente las reglas
+  acordadas para `puzzle5` y `puzzle8`: máximo 100, penalización 10 e intento
+  máximo 10. No se asignan los valores de ejemplo a otros puzzles.
+- `scoring.py`: `calculate_points(puzzle_id, errors)` calcula la puntuación sin
+  efectos secundarios, con suelo cero; rechaza errores negativos/no enteros y
+  puzzles sin configuración. `get_max_attempts` consulta el límite compartido.
+- `mqtt/puzzles/puzzle8.py`: sustituye las constantes y fórmula locales por
+  consultas compartidas. Conserva las fases, conservación de aciertos y
+  contratos SSE/MQTT existentes.
+- `mqtt/puzzles/puzzle5.py`: primer intento 100 puntos y margen 10 s; cada
+  reintento iniciado resta 10 puntos y amplía el margen 4 s. Acertar al décimo
+  da 10 puntos; fallarlo publica agotamiento y cero puntos, mantiene cinco
+  segundos esa pantalla y autoriza avance sin victoria. Los puntos finales
+  usan el cierre de telemetría existente, sin modificar su esquema.
+- Cronómetro conserva objetivo 30 s, preparación 5 s, resultados 2 + 5 s,
+  reintento 9 s y mensajes `P5_Round2` / `P5_End`. Timers cancelables y seriales
+  descartan callbacks tras stop/reset; se ignoran entradas duplicadas,
+  terminales inválidos y errores no finitos. Snapshots incluyen resultado y
+  puntuación para reconexiones. El intento solo aumenta al iniciar el reintento.
+- `tests/test_scoring.py`, `tests/test_puzzle5.py` y
+  `tests/test_puzzle5_points.py`: cálculo centralizado,
+  configuración alternativa, diez intentos, márgenes, límites inclusivos,
+  agotamiento, cancelación y persistencia en SQLite temporal.
+  `README.md` explica el uso compartido.
+
+Pep debe revisar reglas y la detención del ESP32 mediante el mensaje existente
+`P5_End` también al agotar intentos. No se modifica la base de datos real ni
+se recalculan partidas anteriores. Validación aislada, sin MQTT ni hardware.
+
+Verificación: 61 pruebas Python aprobadas de puntuación compartida, Cronómetro,
+Memory y persistencia; 21 pruebas JavaScript aprobadas de Cronómetro, Memory y
+audio de cuenta atrás. Sin cambios visuales adicionales en esta centralización.
+
+Revisión previa a guardar: eliminadas variables, funciones y logs sin uso del
+frontend del Cronómetro; los snapshots se vuelven a solicitar tras cada
+reconexión SSE y un fallo de consulta no bloquea consultas posteriores.
+Corregida la visibilidad del contador de intento/puntos, que el CSS compartido
+ocultaba, y los textos ingleses de la preparación y margen. Nuevas pruebas
+de reconexión y `tests/puzzle5_browser.cjs` para la revisión aislada.
+Resultado final: 61 pruebas Python y 51 JavaScript aprobadas; 42 pantallas Chrome
+en ca/es/eng a 1920 × 1080 y 1280 × 720, sin recortes, imágenes ausentes ni
+errores JavaScript. Capturas e informe local en `output/chrono-revisio/`.
+Solo simulación, sin hardware. La comprobación visual permite explícitamente
+la ausencia del paquete de audio USB: faltan seis audios referenciados
+(`musica_ambient/musica_piramide.mp3` y cinco efectos: `beep_countdown.wav`,
+`victory-celebration.wav`, `boto.wav`, `fase_completada.wav`,
+`fase_nocompletada.wav`). El favicon también devuelve 404; se registra como
+diagnóstico, no como fallo de juego. No se crean ni sustituyen esos recursos.
+
+## 2026-10-14 — Cronómetro: límite de error general
+
+Tipo: `pendiente de revisar`. Cambio de backend autorizado explícitamente por Olalla.
+
+- `mqtt/puzzles/puzzle5.py`: el límite de error total de la ronda baja de 20 a
+  10 segundos. Se mantiene la suma de los valores absolutos de los errores de
+  los diez jugadores y el criterio de éxito `total <= limit`.
+- No cambian el objetivo de 30 segundos, los tiempos de espera ni los contratos
+  MQTT/SSE. Pep debe revisar el nuevo umbral antes de validarlo con hardware.
+
 ## 2026-10-14 — Memory: puntos y límite de intentos
 
 Tipo: `pendiente de revisar`. Autorización explícita de Olalla para ampliar

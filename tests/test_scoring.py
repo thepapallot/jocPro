@@ -1,0 +1,64 @@
+"""Shared scoring tests; no MQTT, Flask startup or persistent database."""
+import unittest
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
+
+from mqtt.puzzles.puzzle8 import Puzzle8
+from scoring import calculate_points, get_max_attempts
+from scoring_config import SCORING_CONFIG
+
+
+class ScoringTests(unittest.TestCase):
+    def test_config_contains_only_agreed_puzzles(self):
+        self.assertEqual(set(SCORING_CONFIG), {"puzzle5", "puzzle8"})
+
+    def test_points_for_each_failed_attempt_and_floor(self):
+        for puzzle_id in SCORING_CONFIG:
+            for errors in range(11):
+                with self.subTest(puzzle=puzzle_id, errors=errors):
+                    self.assertEqual(calculate_points(puzzle_id, errors),
+                                     max(0, 100 - 10 * errors))
+            self.assertEqual(calculate_points(puzzle_id, 1000000), 0)
+            self.assertEqual(get_max_attempts(puzzle_id), 10)
+
+    def test_unknown_puzzles_do_not_get_invented_scores(self):
+        for function, args in ((calculate_points, ("puzzle1", 0)),
+                               (get_max_attempts, ("puzzle1",))):
+            with self.assertRaises(KeyError):
+                function(*args)
+
+    def test_invalid_errors_are_rejected(self):
+        for errors in (-1, 1.5, "2", None, True, False):
+            with self.subTest(errors=errors):
+                with self.assertRaises(ValueError):
+                    calculate_points("puzzle5", errors)
+
+    def test_configuration_is_the_only_source_of_points_and_penalties(self):
+        with patch.dict(SCORING_CONFIG, {
+            "example": {"max_points": 150, "penalty_per_error": 15, "max_attempts": 10},
+        }):
+            self.assertEqual(calculate_points("example", 2), 120)
+            self.assertEqual(calculate_points("example", 11), 0)
+        self.assertNotIn("example", SCORING_CONFIG)
+
+    def test_memory_reads_shared_configuration_and_resets_attempt_limit(self):
+        client = SimpleNamespace(push_update=Mock(), current_puzzle_id=8,
+                                 send_message=Mock())
+        puzzle = Puzzle8(client)
+        puzzle._schedule = Mock()
+        rules = {"max_points": 70, "penalty_per_error": 15, "max_attempts": 4}
+        with patch.dict(SCORING_CONFIG, {"puzzle8": rules}):
+            puzzle.reset()
+            self.assertEqual(puzzle.get_state()["max_attempts"], 4)
+            self.assertEqual(puzzle.get_state()["available_points"], 70)
+            puzzle.attempt = 3
+            self.assertEqual(puzzle.get_state()["available_points"], 40)
+            puzzle.exhausted = True
+            self.assertEqual(puzzle.get_state()["available_points"], 0)
+        puzzle.reset()
+        self.assertEqual(puzzle.get_state()["max_attempts"], 10)
+        self.assertEqual(puzzle.get_state()["available_points"], 100)
+
+
+if __name__ == "__main__":
+    unittest.main()

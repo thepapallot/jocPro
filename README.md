@@ -18,6 +18,7 @@ Juego cooperativo para 10–20 jugadores, diez terminales y una pantalla compart
 | `static/images/no_usadas/` | Reserva local de imágenes, ignorada por Git |
 | `static/audios/` | Audios organizados por puzzle, efectos, intro y fondo; ignorados y distribuidos por USB |
 | `app.py`, `config.py`, `mqtt/` | Rutas, orden y lógica del juego con hardware |
+| `scoring_config.py`, `scoring.py` | Reglas de puntuación y cálculo compartido |
 | `data/puzzle3/` | Preguntas de Trivial |
 | `telemetry/`, `data/db/`, `scriptsDb/` | Sesiones, base de datos y telemetría |
 | `tests/` | Pruebas y fixture sin hardware |
@@ -36,6 +37,26 @@ Juego cooperativo para 10–20 jugadores, diez terminales y una pantalla compart
 
 Recorrido actual: práctica 11 → 2 → 3 → 8 → 1 → 5 → 12 → 4 → final 6.
 El orden se configura en `config.py`.
+
+## Puntuaciones
+
+`scoring_config.py` centraliza las reglas acordadas en `SCORING_CONFIG`, con
+claves como `puzzle5` y `puzzle8`. Cada entrada define `max_points`,
+`penalty_per_error` y `max_attempts`. Los demás puzzles quedan pendientes de
+definir; no reciben valores por defecto ni las cifras de ejemplos anteriores.
+
+Los puzzles usan `calculate_points(puzzle_id, errors)` de `scoring.py`.
+`errors` es el número de intentos fallidos: cero antes del primer intento,
+uno al empezar el segundo. El cálculo resta la penalización por cada fallo y
+nunca devuelve menos de cero. No cuenta fallos individuales de terminales ni
+guarda puntos en la base de datos: cada puzzle decide cuándo finalizar y
+publica `total_points` por el flujo existente de telemetría.
+
+Memory y Cronómetro permiten actualmente diez intentos: 100 puntos en el
+primero, 90 en el segundo y 10 si se acierta en el décimo. Diez intentos
+fallidos terminan con cero puntos, sin marcar el puzzle como superado.
+El margen del Cronómetro empieza en 10 segundos y aumenta 4 por intento fallido;
+es una regla de juego y permanece en su clase, no en el cálculo de puntos.
 
 ## Antes de editar
 

@@ -8,7 +8,7 @@
 
 {% block top_right %}
 <div id="streak-panel">
-    <div id="streak">1/1</div>
+    <div id="streak">INTENTO 1/10 · 100 PUNTOS EN JUEGO</div>
 </div>
 {% endblock %}
 
@@ -40,6 +40,7 @@
             <div id="objective-subtext" data-i18n="game.seconds">segundos</div>
             <div id="p5-preparation-countdown"><span data-i18n="game.preparation">Preparación</span> · <strong id="p5-countdown-value">—</strong></div>
             <p id="p5-preparation-hint" data-i18n="game.startOnTerminal">Empezad a contar cuando se encienda vuestro terminal.</p>
+            <p id="p5-preparation-margin"><span data-i18n="game.errorMargin">Margen de error:</span> <strong id="p5-preparation-limit">10 S</strong></p>
             <div id="countdown-orbit" aria-hidden="true">
                 <div class="orbit-ring orbit-ring-a"></div>
                 <div class="orbit-ring orbit-ring-b"></div>
@@ -71,13 +72,18 @@
             <div class="error-shell">
                 <div class="error-meta">
                     <span class="error-label-inline" data-i18n="game.errorMargin">Margen de error:</span>
-                    <span id="error-limit-text">15 S</span>
+                    <span id="error-limit-text">10 S</span>
                 </div>
-                <span id="error-text">0.0 / 15</span>
+                <span id="error-text">0.0 / 10</span>
             </div>
         </div>
     </section>
 </div>
+<section id="p5-exhausted-screen" hidden aria-live="polite">
+    <h2 data-i18n="game.memoryExhausted">INTENTOS AGOTADOS</h2>
+    <p id="p5-exhausted-score">10 intentos · 0 puntos</p>
+    <p data-i18n="game.memoryExhaustedNext">Continuamos con el siguiente nivel</p>
+</section>
 {% endblock %}
 
 {% block extra_js %}

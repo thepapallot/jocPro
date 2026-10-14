@@ -3,14 +3,12 @@ from collections import Counter
 import threading
 import time
 import random
+from scoring import calculate_points, get_max_attempts
 
 class Puzzle8(BasePuzzle):
     NUMBERS_DURATION_SECONDS = 5
     TOKENS_DURATION_SECONDS = 6
     RETRY_DURATION_SECONDS = 10
-    INITIAL_POINTS = 100
-    RETRY_PENALTY = 10
-    MAX_ATTEMPTS = 10
     EXHAUSTED_DURATION_SECONDS = 5
 
     def __init__(self, mqtt_client):
@@ -33,6 +31,7 @@ class Puzzle8(BasePuzzle):
         self._phase_deadline = None
         self._input_result = None
         self.attempt = 1
+        self.max_attempts = get_max_attempts("puzzle8")
         self.total_points = 0
         self.exhausted = False
         self.auto_advance = False
@@ -77,9 +76,9 @@ class Puzzle8(BasePuzzle):
     def _scoring_state_locked(self):
         return {
             "attempt": self.attempt,
-            "max_attempts": self.MAX_ATTEMPTS,
-            "available_points": 0 if self.exhausted else max(
-                0, self.INITIAL_POINTS - self.RETRY_PENALTY * (self.attempt - 1)
+            "max_attempts": self.max_attempts,
+            "available_points": 0 if self.exhausted else calculate_points(
+                "puzzle8", self.attempt - 1
             ),
             "total_points": self.total_points,
             "puzzle_exhausted": self.exhausted,
@@ -140,6 +139,7 @@ class Puzzle8(BasePuzzle):
             self._cancel_timers()
             self._run_serial += 1
             self.attempt = 1
+            self.max_attempts = get_max_attempts("puzzle8")
             self.total_points = 0
             self.exhausted = False
             self.auto_advance = False
@@ -471,7 +471,7 @@ class Puzzle8(BasePuzzle):
                     self.mqtt_client.current_puzzle_id != self.id or self.phase != "input"):
                     return
                 if not success:
-                    if self.attempt >= self.MAX_ATTEMPTS:
+                    if self.attempt >= self.max_attempts:
                         self.phase = "exhausted"
                         self.exhausted = True
                         self.total_points = 0
@@ -511,7 +511,7 @@ class Puzzle8(BasePuzzle):
         with self.lock:
             if self.mqtt_client.current_puzzle_id != self.id or self.phase != "retry":
                 return
-            if self.attempt >= self.MAX_ATTEMPTS:
+            if self.attempt >= self.max_attempts:
                 return
             self.attempt += 1
             self._show_numbers_locked(retry=True)
