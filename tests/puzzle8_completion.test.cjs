@@ -50,6 +50,40 @@ function memory() {
     };
 }
 
+test('a failed attempt shows container totals and the ten-second retry countdown', () => {
+    const game = memory();
+    game.update({phase: 'input', input_result: {success: false, box_results: {}}});
+    assert.equal(game.elements.get('p8-retry-screen').hidden, true);
+    assert.equal(game.elements.get('p8-grid-wrap').hidden, false);
+    game.update({phase: 'retry', phase_duration_ms: 10000, phase_remaining_ms: 10000,
+        confirmed_boxes: [0, 1, 2, 3, 4, 5, 6, 7],
+        retry_summary: {errors: 2, accumulated_correct: 8}});
+    assert.equal(game.elements.get('p8-retry-screen').hidden, false);
+    assert.equal(game.elements.get('p8-grid-wrap').hidden, true);
+    assert.equal(game.elements.get('p8-retry-errors').textContent, '2');
+    assert.equal(game.elements.get('p8-retry-correct').textContent, '8');
+    assert.equal(game.elements.get('p8-retry-countdown-value').textContent, '10');
+    assert.deepEqual(game.sounds, ['/static/audios/effects/fase_nocompletada.wav']);
+    assert.deepEqual(game.victories, []);
+    // Recovering an ongoing pause uses its remaining time, without another failure sound.
+    game.update({phase: 'retry', phase_duration_ms: 10000, phase_remaining_ms: 4300,
+        retry_summary: {errors: 2, accumulated_correct: 8}});
+    assert.equal(game.elements.get('p8-retry-countdown-value').textContent, '5');
+    assert.equal(game.sounds.length, 1);
+    game.update({phase: 'numbers'});
+    assert.equal(game.elements.get('p8-retry-screen').hidden, true);
+    assert.equal(game.elements.get('p8-grid-wrap').hidden, false);
+});
+
+test('a result snapshot restores the board without repeating its failure sound', () => {
+    const game = memory();
+    game.update({phase: 'input', clear: true, symbols: [], input_entries: {},
+        input_result: {success: false, box_results: {}}});
+    assert.equal(game.elements.get('p8-retry-screen').hidden, true);
+    assert.equal(game.elements.get('p8-grid-wrap').hidden, false);
+    assert.deepEqual(game.sounds, []);
+});
+
 test('a successful Memory round shows the green completion screen without navigating', () => {
     const game = memory();
     game.update({phase: 'input', input_result: {success: true, box_results: {}}});

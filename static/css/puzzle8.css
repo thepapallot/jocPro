@@ -18,6 +18,87 @@
     min-height: 0;
 }
 
+#p8-grid-wrap[hidden],
+#p8-retry-screen[hidden],
+#p8-instruction[data-phase='retry'] #p8-countdown {
+    display: none;
+}
+
+#p8-retry-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 72px;
+    height: 100%;
+    color: #F3EEE4;
+    text-align: center;
+}
+
+.p8-retry-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 600px);
+    gap: 80px;
+}
+
+.p8-retry-stat {
+    display: grid;
+    grid-template-columns: 80px auto;
+    justify-content: center;
+    align-items: center;
+    column-gap: 22px;
+    row-gap: 12px;
+}
+
+.p8-retry-stat strong {
+    font-size: 144px;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.p8-retry-stat > span:last-child {
+    grid-column: 1 / -1;
+    color: #F3EEE4;
+    font-size: 40px;
+    line-height: 1.2;
+}
+
+.p8-retry-stat-mark {
+    font-size: 74px;
+    line-height: 1.2;
+}
+
+.p8-retry-stat--errors {
+    color: #F15C68;
+}
+
+.p8-retry-stat--correct {
+    color: #71E7DB;
+}
+
+.p8-retry-timer h2 {
+    margin: 0 0 12px;
+    font-size: 40px;
+    line-height: 1.2;
+    font-weight: 500;
+}
+
+.p8-retry-countdown {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 14px;
+    color: var(--p8-cyan);
+    font-size: 42px;
+}
+
+.p8-retry-countdown strong {
+    min-width: 2ch;
+    font-size: 156px;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
 #p8-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));

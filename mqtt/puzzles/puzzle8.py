@@ -7,6 +7,7 @@ import random
 class Puzzle8(BasePuzzle):
     NUMBERS_DURATION_SECONDS = 5
     TOKENS_DURATION_SECONDS = 6
+    RETRY_DURATION_SECONDS = 10
 
     def __init__(self, mqtt_client):
         super().__init__(puzzle_id=8, mqtt_client=mqtt_client)
@@ -26,6 +27,7 @@ class Puzzle8(BasePuzzle):
         self._timers = []
         self._phase_duration_ms = 0
         self._phase_deadline = None
+        self._input_result = None
         
         # Target data shown during "tokens" phase
         self.target_symbols_order = []      # Box order symbols (round 1 compatibility)
@@ -36,6 +38,7 @@ class Puzzle8(BasePuzzle):
         # Player inputs during "input" phase
         self.player_colors = {}   # boxIndex -> list of colors
         self.player_symbols = {}  # boxIndex -> list of symbols
+        self.confirmed_boxes = set()
         
         # MQTT code mappings
         self.color_code_map = {
@@ -57,8 +60,28 @@ class Puzzle8(BasePuzzle):
     def _push(self, data):
         payload = {"round_total": self.round_total, "token_numbers": self.token_numbers[:]}
         payload.update(self._phase_timing_locked())
+        payload.update(self._confirmed_state_locked())
         payload.update(data)
         super()._push(payload)
+
+    def _confirmed_state_locked(self):
+        return {
+            "confirmed_boxes": sorted(self.confirmed_boxes),
+            "confirmed_entries": {
+                box: [
+                    {"symbol": symbol, "color": color}
+                    for symbol, color in zip(self.player_symbols.get(box, []),
+                                             self.player_colors.get(box, []))
+                ]
+                for box in sorted(self.confirmed_boxes)
+            }
+        }
+
+    def _retry_summary_locked(self):
+        return {
+            "errors": len(self.token_numbers) - len(self.confirmed_boxes),
+            "accumulated_correct": len(self.confirmed_boxes)
+        }
 
     def _set_phase_timing_locked(self, seconds):
         self._phase_duration_ms = seconds * 1000
@@ -95,6 +118,7 @@ class Puzzle8(BasePuzzle):
             self._cancel_timers()
             self.round = 1
             self.solved = False
+            self.confirmed_boxes.clear()
             self._show_numbers_locked()
             
     def stop(self):
@@ -105,6 +129,8 @@ class Puzzle8(BasePuzzle):
             self._set_phase_timing_locked(0)
             self.player_colors.clear()
             self.player_symbols.clear()
+            self.confirmed_boxes.clear()
+            self._input_result = None
 
     def _build_solution_rows_locked(self):
         """Build a per-terminal solution snapshot for the simulator."""
@@ -171,6 +197,7 @@ class Puzzle8(BasePuzzle):
                 "puzzle_solved": self.solved
             }
             state.update(self._phase_timing_locked())
+            state.update(self._confirmed_state_locked())
 
             if self.target_sets:
                 state["solution_rows"] = self._build_solution_rows_locked()
@@ -194,6 +221,9 @@ class Puzzle8(BasePuzzle):
                     state["symbols"] = self.target_symbols_order[:]
                     state["colors"] = self.target_colors_per_symbol.copy()
                     
+            elif self.phase == "retry":
+                state["retry_summary"] = self._retry_summary_locked()
+
             elif self.phase == "input":
                 state["clear"] = True
                 # Provide first set symbols for reference
@@ -224,6 +254,11 @@ class Puzzle8(BasePuzzle):
                     if self.player_symbols.get(box) and self.player_colors.get(box)
                 }
                 state["input_status"] = self._build_input_status_locked(state["input_required"])
+                if self._input_result is not None:
+                    state["input_result"] = {
+                        "success": self._input_result["success"],
+                        "box_results": self._input_result["box_results"].copy()
+                    }
             else:
                 state["clear"] = True
                 
@@ -236,15 +271,17 @@ class Puzzle8(BasePuzzle):
                 return
             self._show_numbers_locked()
 
-    def _show_numbers_locked(self):
+    def _show_numbers_locked(self, retry=False):
         """Start or retry immediately, without an empty-screen interval."""
         self.phase = "numbers"
-        self.target_symbols_order = []
-        self.target_colors_per_symbol = {}
-        self.target_sets = []
+        self._input_result = None
+        if not retry:
+            self.confirmed_boxes.clear()
+            self.target_symbols_order = []
+            self.target_colors_per_symbol = {}
+            self.target_sets = []
         self._tokens_part = 0
-        self.player_colors = {}
-        self.player_symbols = {}
+        self._clear_unconfirmed_inputs_locked()
         self._set_phase_timing_locked(self.NUMBERS_DURATION_SECONDS)
         self._push({
             "clear": True,
@@ -253,6 +290,12 @@ class Puzzle8(BasePuzzle):
             "token_numbers": self.token_numbers
         })
         self._schedule(self._show_tokens, self.NUMBERS_DURATION_SECONDS)
+
+    def _clear_unconfirmed_inputs_locked(self):
+        self.player_colors = {box: colors for box, colors in self.player_colors.items()
+                              if box in self.confirmed_boxes}
+        self.player_symbols = {box: symbols for box, symbols in self.player_symbols.items()
+                               if box in self.confirmed_boxes}
             
     def _show_tokens(self):
         """Phase 2: Show both symbol/color combinations at the same time."""
@@ -262,25 +305,27 @@ class Puzzle8(BasePuzzle):
                 
             self.phase = "tokens"
             self._tokens_part = 0
-            symbols1 = random.sample(self.symbols, len(self.symbols))
+            if not self.target_sets:
+                symbols1 = random.sample(self.symbols, len(self.symbols))
 
-            # Avoid showing the same Greek letter twice on a single token.
-            symbols2 = random.sample(self.symbols, len(self.symbols))
-            while any(first == second for first, second in zip(symbols1, symbols2)):
+                # Avoid showing the same Greek letter twice on a single token.
                 symbols2 = random.sample(self.symbols, len(self.symbols))
+                while any(first == second for first, second in zip(symbols1, symbols2)):
+                    symbols2 = random.sample(self.symbols, len(self.symbols))
 
-            colors1 = {symbol: random.choice(self.palette) for symbol in symbols1}
-            colors2 = {symbol: random.choice(self.palette) for symbol in symbols2}
-            self.target_sets = [
-                {"symbols": symbols1, "colors": colors1},
-                {"symbols": symbols2, "colors": colors2}
-            ]
+                colors1 = {symbol: random.choice(self.palette) for symbol in symbols1}
+                colors2 = {symbol: random.choice(self.palette) for symbol in symbols2}
+                self.target_sets = [
+                    {"symbols": symbols1, "colors": colors1},
+                    {"symbols": symbols2, "colors": colors2}
+                ]
+            symbols1, colors1 = self.target_sets[0]["symbols"], self.target_sets[0]["colors"]
             self.target_symbols_order = symbols1[:]
             self.target_colors_per_symbol = colors1.copy()
 
             symbol_sets = [
-                {"symbols": symbols1, "colors": colors1},
-                {"symbols": symbols2, "colors": colors2}
+                {"symbols": target["symbols"][:], "colors": target["colors"].copy()}
+                for target in self.target_sets
             ]
             self._set_phase_timing_locked(self.TOKENS_DURATION_SECONDS)
             self._push({
@@ -337,8 +382,7 @@ class Puzzle8(BasePuzzle):
                 
             self.phase = "input"
             self._set_phase_timing_locked(0)
-            self.player_colors = {}
-            self.player_symbols = {}
+            self._clear_unconfirmed_inputs_locked()
             
             base_symbols = (self.target_sets[0]["symbols"] if self.target_sets 
                           else self.target_symbols_order[:])
@@ -370,22 +414,36 @@ class Puzzle8(BasePuzzle):
             success = True
             box_results = {i: True for i in range(10)}
 
+        self.confirmed_boxes.update(box for box, correct in box_results.items() if correct)
+
         # Show results in separate thread
         def _flow():
             time.sleep(2)
             with self.lock:
+                if self.mqtt_client.current_puzzle_id != self.id or self.phase != "input":
+                    return
+                self._input_result = {
+                    "success": success,
+                    "box_results": box_results
+                }
                 self._push({
                     "round": self.round, "phase": self.phase,
-                    "input_result": {
-                        "success": success,
-                        "box_results": box_results
-                    }
+                    "input_result": self._input_result
                 })
                 
             time.sleep(5)
             
             with self.lock:
-                if self.mqtt_client.current_puzzle_id != self.id:
+                if self.mqtt_client.current_puzzle_id != self.id or self.phase != "input":
+                    return
+                if not success:
+                    self.phase = "retry"
+                    self._set_phase_timing_locked(self.RETRY_DURATION_SECONDS)
+                    self._push({
+                        "round": self.round, "phase": self.phase,
+                        "retry_summary": self._retry_summary_locked()
+                    })
+                    self._schedule(self._resume_retry, self.RETRY_DURATION_SECONDS)
                     return
                 # saltarPuzzle: treat round 1 success as a full win
                 saltar = self.saltarPuzzle
@@ -400,9 +458,16 @@ class Puzzle8(BasePuzzle):
                     self.round += 1
                     self.mqtt_client.start_next_round(self.id, self.round)
 
-                self._show_numbers_locked()
+                self._show_numbers_locked(retry=not success)
                 
         threading.Thread(target=_flow, daemon=True).start()
+
+    def _resume_retry(self):
+        """Resume only after the full retry pause; stop/reset cancel its timer."""
+        with self.lock:
+            if self.mqtt_client.current_puzzle_id != self.id or self.phase != "retry":
+                return
+            self._show_numbers_locked(retry=True)
         
     def handle_message(self, parts):
         """
@@ -442,6 +507,9 @@ class Puzzle8(BasePuzzle):
                 return
                 
             if not (0 <= box <= 9):
+                return
+
+            if box in self.confirmed_boxes:
                 return
                 
             # Get or create entry lists for this box
