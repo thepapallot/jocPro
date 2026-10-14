@@ -8,7 +8,7 @@
 
 {% block top_right %}
 <div id="p8-instruction" data-phase="numbers">
-    <span id="p8-instruction-step" data-i18n="game.memoryStep1">PASO 1 DE 3 · PREPARACIÓN</span>
+    <span id="p8-instruction-step"></span>
     <div class="p8-instruction-heading">
         <span id="p8-instruction-title" aria-live="polite" data-i18n="game.memoryPrepare">ATENTOS A LA PANTALLA</span>
         <span id="p8-countdown" role="timer" aria-live="off">
@@ -23,6 +23,12 @@
 {% block puzzle_content %}
 <div id="p8-shell">
     <section id="p8-stage" class="p8-panel">
+        <section id="p8-exhausted-screen" role="status" aria-labelledby="p8-exhausted-title" hidden>
+            <span class="p8-exhausted-mark" aria-hidden="true">×</span>
+            <h2 id="p8-exhausted-title" data-i18n="game.memoryExhausted">INTENTOS AGOTADOS</h2>
+            <p id="p8-exhausted-score">10 intentos · 0 puntos</p>
+            <p class="p8-exhausted-next" data-i18n="game.memoryExhaustedNext">Continuamos con el siguiente nivel</p>
+        </section>
         <section id="p8-retry-screen" aria-labelledby="p8-retry-next" hidden>
             <div class="p8-retry-stats" role="status">
                 <div class="p8-retry-stat p8-retry-stat--errors">

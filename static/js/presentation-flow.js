@@ -269,6 +269,13 @@
       if(id===5) {
         t.notes[t.notes.length-1]+=local(' En iniciar, s’obre la preparació: memoritzeu el temps objectiu durant el compte enrere i comenceu a comptar quan s’encengui el vostre terminal.',' Al iniciar se abre la preparación: memorizad el tiempo objetivo durante la cuenta atrás y empezad a contar cuando se encienda vuestro terminal.',' Starting opens preparation: memorise the target time during the countdown and start counting when your terminal lights up.')[lang];
       }
+      if(id===8) {
+        const scoreNote=local(' Els contenidors amb les dues formes i colors correctes es conserven. El primer intent dona 100 punts; cada nou intent resta 10 punts. Hi ha un màxim de 10 intents: encertar al desè dona 10 punts. Si també falla, es mostra «INTENTS ESGOTATS» durant 5 segons i es passa automàticament a la següent presentació amb 0 punts, sense marcar el repte com a superat.',
+          ' Los contenedores con las dos formas y colores correctos se conservan. El primer intento da 100 puntos; cada nuevo intento resta 10 puntos. Hay un máximo de 10 intentos: acertar al décimo da 10 puntos. Si también falla, se muestra «INTENTOS AGOTADOS» durante 5 segundos y se pasa automáticamente a la siguiente presentación con 0 puntos, sin marcar el reto como superado.',
+          ' Containers with both correct shapes and colours stay confirmed. The first attempt awards 100 points; each new attempt subtracts 10 points. There are at most 10 attempts: success on attempt ten awards 10 points. If it also fails, «NO ATTEMPTS LEFT» appears for 5 seconds before automatically opening the next briefing with 0 points, without awarding completion.')[lang];
+        t.notes[t.notes.length-1]+=scoreNote;
+        t.guidance.rhythm+=scoreNote;
+      }
       if(id===tutorialId){
         if(['es','ca'].includes(lang))t.stepLabels=lang==='ca'?['Objectiu','Eines','Acció']:['Objetivo','Herramientas','Acción'];
         // Explain the shared equipment before introducing the practice.

@@ -17,7 +17,7 @@
   $('route-list').innerHTML=`<div class="director-route-row" data-scene-kind="welcome"><strong>Espera</strong>${routeButton('Mostrar','/?embed=1')}</div><div class="director-route-row" data-scene-kind="opening"><strong>Apertura</strong>${routeButton('Presentar','/videoIntro')}</div>`+
     order.map((id,i)=>`<div class="director-route-row" data-route-puzzle="${id}"><strong><small>${i===0?'P':i===order.length-1?'▲':i}</small>${escape(names[id]||'Puzzle '+id)}<span class="director-earned" aria-label="Completado" hidden>✓</span></strong><div>${routeButton('Presentar','/presentacio/'+id,names[id])}${routeButton('Iniciar','/puzzle/'+id,names[id])}</div></div>`).join('')+
     `<div class="director-route-row" data-scene-kind="closing"><strong>Cierre y foto</strong>${routeButton('Celebración','/final')}${routeButton('Foto','/final-loop')}</div>`;
-  function canIntervene(){const {connected,state}=player.snapshot(),game=api.snapshot();return connected&&state?.phase==='game'&&Number(state.puzzleId)===Number(game.state?.puzzle_id)&&!game.state?.puzzle_solved&&!game.state?.solved;}
+  function canIntervene(){const {connected,state}=player.snapshot(),game=api.snapshot();return connected&&state?.phase==='game'&&Number(state.puzzleId)===Number(game.state?.puzzle_id)&&!game.state?.puzzle_solved&&!game.state?.solved&&!game.state?.puzzle_exhausted;}
   function button(label,action,primary=false){return `<button type="button" data-director-command="${action}" class="${primary?'primary-action':''}">${escape(label)}</button>`;}
   function render(){
     if(!visible())return;
@@ -63,7 +63,7 @@
     $('game').hidden=!playing;
     $('progress').textContent=matched?game.progress.progress:'';
     const memoryWaiting=matched&&activeId===8&&game.state.phase!=='input';
-    $('game-state').textContent=!matched?'Esperando el estado del puzzle que aparece en pantalla…':game.state.puzzle_solved?'Puzzle completado. Esperando la celebración…':memoryWaiting?'Memoria Extrema está mostrando las formas. Las ayudas se activarán en la fase de respuesta.':activeId===6&&game.state.solve_mode?'Ayuda de energía activada. El juego terminará al acabar su temporizador.':game.progress.status;
+    $('game-state').textContent=!matched?'Esperando el estado del puzzle que aparece en pantalla…':game.state.puzzle_solved?'Puzzle completado. Esperando la celebración…':game.state.puzzle_exhausted?'Intentos agotados. 0 puntos; se abrirá automáticamente la siguiente presentación.':memoryWaiting?'Memoria Extrema está preparando el siguiente intento. Las ayudas se activarán en la fase de respuesta.':activeId===6&&game.state.solve_mode?'Ayuda de energía activada. El juego terminará al acabar su temporizador.':game.progress.status;
     const actions=activeId?api.actions(activeId):[];
     const actionKey=JSON.stringify([activeId,actions]);
     if(actionKey!==gameSignature){gameSignature=actionKey;$('resolvers').innerHTML=actions.map(action=>`<button type="button" data-director-resolve="${escape(action.id)}" class="primary-action" title="${escape(action.detail)}">${escape(activeId===6?'Mantener energía hasta el final':action.label)}</button>`).join('');}

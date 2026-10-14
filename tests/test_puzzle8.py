@@ -74,6 +74,109 @@ class Puzzle8UnorderedAnswersTest(unittest.TestCase):
         self.assertEqual(state['input_required'], 2)
         self.thread.assert_not_called()
 
+    def test_first_attempt_awards_one_hundred_points_only_when_solved(self):
+        self.assertEqual(self.puzzle.get_state()['available_points'], 100)
+        self.assertEqual(self.puzzle.get_state()['total_points'], 0)
+        self.fill_round()
+        self.finish_evaluation()
+        self.assertEqual(self.puzzle.get_state()['total_points'], 100)
+        self.assertEqual(self.client.push_update.call_args.args[0]['total_points'], 100)
+
+    def test_actual_retries_reduce_score_ten_points_and_tenth_success_awards_ten(self):
+        first = self.expected(0)[0]
+        for attempt in range(1, 11):
+            self.assertEqual(self.puzzle.attempt, attempt)
+            self.assertEqual(self.puzzle.get_state()['available_points'], 110 - 10 * attempt)
+            self.thread.reset_mock()
+            self.fill_round(override_first=[first, first] if attempt < 10 else None)
+            result = self.finish_evaluation()
+            if attempt < 10:
+                self.assertFalse(result['success'])
+                self.assertEqual(self.puzzle.total_points, 0)
+                self.retry_input()
+            else:
+                self.assertTrue(result['success'])
+                self.assertEqual(self.puzzle.total_points, 10)
+                self.assertTrue(self.puzzle.solved)
+                self.assertFalse(self.puzzle.exhausted)
+        self.client.send_message.assert_called_once_with('FROM_FLASK', 'P8End')
+
+    def test_second_attempt_success_awards_ninety_points(self):
+        first = self.expected(0)[0]
+        self.fill_round(override_first=[first, first])
+        self.finish_evaluation()
+        self.retry_input()
+        self.fill_round()
+        self.finish_evaluation()
+        self.assertEqual(self.puzzle.total_points, 90)
+
+    def test_ten_failed_attempts_exhaust_without_awarding_partial_points_or_victory(self):
+        first = self.expected(0)[0]
+        for attempt in range(1, 11):
+            self.thread.reset_mock()
+            self.puzzle._schedule.reset_mock()
+            self.fill_round(override_first=[first, first])
+            self.assertFalse(self.finish_evaluation()['success'])
+            if attempt < 10:
+                self.retry_input()
+        state = self.puzzle.get_state()
+        self.assertEqual(state['phase'], 'exhausted')
+        self.assertEqual(state['attempt'], 10)
+        self.assertEqual(state['available_points'], 0)
+        self.assertEqual(state['total_points'], 0)
+        self.assertFalse(state['puzzle_solved'])
+        self.assertTrue(state['puzzle_exhausted'])
+        self.assertFalse(state['auto_advance'])
+        self.assertEqual(state['phase_duration_ms'], 5000)
+        self.assertEqual(len(state['confirmed_boxes']), 9)
+        self.puzzle._schedule.assert_called_once_with(self.puzzle._finish_exhausted, 5)
+        self.client.send_message.assert_called_once_with('FROM_FLASK', 'P8End')
+        before = self.client.push_update.call_count
+        self.submit(0, self.expected(0)[1])
+        self.assertEqual(self.client.push_update.call_count, before)
+        self.puzzle._resume_retry()
+        self.assertEqual(self.puzzle.attempt, 10)
+        self.puzzle._finish_exhausted()
+        self.assertTrue(self.puzzle.get_state()['auto_advance'])
+        self.assertEqual(self.puzzle.get_state()['phase_remaining_ms'], 0)
+        self.puzzle._finish_exhausted()
+        self.assertEqual(self.client.push_update.call_count, before + 1)
+        self.assertFalse(any(call.args[0].get('puzzle_solved') for call in self.client.push_update.call_args_list))
+
+    def test_reset_clears_attempts_points_and_exhaustion(self):
+        self.puzzle.attempt = 10
+        self.puzzle.total_points = 10
+        self.puzzle.exhausted = True
+        self.puzzle.auto_advance = True
+        self.puzzle.reset()
+        state = self.puzzle.get_state()
+        self.assertEqual(state['attempt'], 1)
+        self.assertEqual(state['available_points'], 100)
+        self.assertEqual(state['total_points'], 0)
+        self.assertFalse(state['puzzle_exhausted'])
+        self.assertFalse(state['auto_advance'])
+
+    def test_stale_evaluation_cannot_award_a_restarted_run(self):
+        self.fill_round()
+        old_flow = self.thread.call_args.kwargs['target']
+        self.puzzle.reset()
+        self.puzzle.phase = 'input'
+        self.client.push_update.reset_mock()
+        with patch('mqtt.puzzles.puzzle8.time.sleep'):
+            old_flow()
+        self.assertFalse(self.puzzle.solved)
+        self.assertEqual(self.puzzle.total_points, 0)
+        self.client.send_message.assert_not_called()
+        self.client.push_update.assert_not_called()
+
+    def test_stop_cancels_exhaustion_advance(self):
+        self.puzzle.phase = 'exhausted'
+        self.puzzle.exhausted = True
+        self.puzzle.stop()
+        self.puzzle._finish_exhausted()
+        self.assertFalse(self.puzzle.auto_advance)
+        self.client.push_update.assert_not_called()
+
     def test_display_order_still_solves_the_round(self):
         self.fill_round()
         result = self.finish_evaluation()

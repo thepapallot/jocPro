@@ -8,6 +8,10 @@ class Puzzle8(BasePuzzle):
     NUMBERS_DURATION_SECONDS = 5
     TOKENS_DURATION_SECONDS = 6
     RETRY_DURATION_SECONDS = 10
+    INITIAL_POINTS = 100
+    RETRY_PENALTY = 10
+    MAX_ATTEMPTS = 10
+    EXHAUSTED_DURATION_SECONDS = 5
 
     def __init__(self, mqtt_client):
         super().__init__(puzzle_id=8, mqtt_client=mqtt_client)
@@ -28,6 +32,11 @@ class Puzzle8(BasePuzzle):
         self._phase_duration_ms = 0
         self._phase_deadline = None
         self._input_result = None
+        self.attempt = 1
+        self.total_points = 0
+        self.exhausted = False
+        self.auto_advance = False
+        self._run_serial = 0
         
         # Target data shown during "tokens" phase
         self.target_symbols_order = []      # Box order symbols (round 1 compatibility)
@@ -61,8 +70,21 @@ class Puzzle8(BasePuzzle):
         payload = {"round_total": self.round_total, "token_numbers": self.token_numbers[:]}
         payload.update(self._phase_timing_locked())
         payload.update(self._confirmed_state_locked())
+        payload.update(self._scoring_state_locked())
         payload.update(data)
         super()._push(payload)
+
+    def _scoring_state_locked(self):
+        return {
+            "attempt": self.attempt,
+            "max_attempts": self.MAX_ATTEMPTS,
+            "available_points": 0 if self.exhausted else max(
+                0, self.INITIAL_POINTS - self.RETRY_PENALTY * (self.attempt - 1)
+            ),
+            "total_points": self.total_points,
+            "puzzle_exhausted": self.exhausted,
+            "auto_advance": self.auto_advance
+        }
 
     def _confirmed_state_locked(self):
         return {
@@ -116,6 +138,11 @@ class Puzzle8(BasePuzzle):
         super().reset()
         with self.lock:
             self._cancel_timers()
+            self._run_serial += 1
+            self.attempt = 1
+            self.total_points = 0
+            self.exhausted = False
+            self.auto_advance = False
             self.round = 1
             self.solved = False
             self.confirmed_boxes.clear()
@@ -125,6 +152,9 @@ class Puzzle8(BasePuzzle):
         """Cleanup on puzzle stop"""
         with self.lock:
             self._cancel_timers()
+            self._run_serial += 1
+            self.exhausted = False
+            self.auto_advance = False
             self.phase = "idle"
             self._set_phase_timing_locked(0)
             self.player_colors.clear()
@@ -198,6 +228,7 @@ class Puzzle8(BasePuzzle):
             }
             state.update(self._phase_timing_locked())
             state.update(self._confirmed_state_locked())
+            state.update(self._scoring_state_locked())
 
             if self.target_sets:
                 state["solution_rows"] = self._build_solution_rows_locked()
@@ -415,12 +446,14 @@ class Puzzle8(BasePuzzle):
             box_results = {i: True for i in range(10)}
 
         self.confirmed_boxes.update(box for box, correct in box_results.items() if correct)
+        run_serial = self._run_serial
 
         # Show results in separate thread
         def _flow():
             time.sleep(2)
             with self.lock:
-                if self.mqtt_client.current_puzzle_id != self.id or self.phase != "input":
+                if (run_serial != self._run_serial or
+                    self.mqtt_client.current_puzzle_id != self.id or self.phase != "input"):
                     return
                 self._input_result = {
                     "success": success,
@@ -434,9 +467,19 @@ class Puzzle8(BasePuzzle):
             time.sleep(5)
             
             with self.lock:
-                if self.mqtt_client.current_puzzle_id != self.id or self.phase != "input":
+                if (run_serial != self._run_serial or
+                    self.mqtt_client.current_puzzle_id != self.id or self.phase != "input"):
                     return
                 if not success:
+                    if self.attempt >= self.MAX_ATTEMPTS:
+                        self.phase = "exhausted"
+                        self.exhausted = True
+                        self.total_points = 0
+                        self._set_phase_timing_locked(self.EXHAUSTED_DURATION_SECONDS)
+                        self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+                        self._push({"round": self.round, "phase": self.phase})
+                        self._schedule(self._finish_exhausted, self.EXHAUSTED_DURATION_SECONDS)
+                        return
                     self.phase = "retry"
                     self._set_phase_timing_locked(self.RETRY_DURATION_SECONDS)
                     self._push({
@@ -450,6 +493,7 @@ class Puzzle8(BasePuzzle):
                 if success and (self.round >= self.round_total or saltar):
                     # Puzzle solved!
                     self.solved = True
+                    self.total_points = self._scoring_state_locked()["available_points"]
                     self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
                     self._push({"puzzle_solved": True})
                     return
@@ -467,7 +511,20 @@ class Puzzle8(BasePuzzle):
         with self.lock:
             if self.mqtt_client.current_puzzle_id != self.id or self.phase != "retry":
                 return
+            if self.attempt >= self.MAX_ATTEMPTS:
+                return
+            self.attempt += 1
             self._show_numbers_locked(retry=True)
+
+    def _finish_exhausted(self):
+        """Authorize navigation after showing exhaustion; never award a victory."""
+        with self.lock:
+            if (self.mqtt_client.current_puzzle_id != self.id or
+                self.phase != "exhausted" or self.auto_advance):
+                return
+            self.auto_advance = True
+            self._set_phase_timing_locked(0)
+            self._push({"round": self.round, "phase": self.phase})
         
     def handle_message(self, parts):
         """

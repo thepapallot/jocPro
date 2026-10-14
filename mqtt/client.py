@@ -178,7 +178,8 @@ class MQTTClient:
             self.active_puzzle_row_id = puzzle_row_id
             self.active_puzzle_num = puzzle_id
 
-    def end_active_puzzle(self, puzzle_num: Optional[int] = None):
+    def end_active_puzzle(self, puzzle_num: Optional[int] = None,
+                          total_points: Optional[int] = None):
         with self.lock:
             if self.active_puzzle_row_id is None or self.telemetry_writer is None:
                 return
@@ -190,7 +191,10 @@ class MQTTClient:
             self.active_puzzle_num = None
 
         try:
-            self.telemetry_writer.end_puzzle(puzzle_row_id)
+            if total_points is None:
+                self.telemetry_writer.end_puzzle(puzzle_row_id)
+            else:
+                self.telemetry_writer.end_puzzle(puzzle_row_id, total_points=total_points)
         except Exception as e:
             print(f"[telemetry] end_puzzle failed: {e}")
             
