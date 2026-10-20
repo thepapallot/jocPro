@@ -22,6 +22,19 @@
 
 {% block puzzle_content %}
 <div id="puzzle3-shell">
+    <div id="golden-question-badge" hidden>
+        <span data-i18n="game.quizGoldenBadge">PREGUNTA DORADA</span>
+        <span>· <span id="golden-question-points">20</span> <span data-i18n="game.quizPoints">Puntos</span></span>
+    </div>
+    <section id="golden-announcement" role="status" aria-live="polite" aria-atomic="true" hidden>
+        <div class="golden-announcement-card">
+            <div class="golden-multiplier" aria-hidden="true">×2</div>
+            <h2 data-i18n="game.quizGoldenTitle">¡PREGUNTA DORADA!</h2>
+            <p data-i18n="game.quizGoldenDouble">Si respondéis correctamente, sumaréis el doble de puntos.</p>
+            <div class="golden-clock-paused" data-i18n="game.quizGoldenPaused">Tiempo en pausa</div>
+            <p class="golden-wait" data-i18n="game.quizGoldenWait">Preparaos. La pregunta aparecerá a continuación.</p>
+        </div>
+    </section>
     <section id="quiz-stage" class="quiz-panel">
         <div id="question-area">
             <div id="question-text"><span class="quiz-fit-content"></span></div>

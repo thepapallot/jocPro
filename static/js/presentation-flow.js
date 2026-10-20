@@ -149,7 +149,7 @@
     "tools": "Botons dels terminals.",
     "action": "Llegiu la pregunta → identifiqueu les respostes correctes → marqueu cada resposta al seu terminal.",
     "attention": [
-      "Cada pregunta amb els 10 terminals correctes suma 10 punts: 4 respostes amb el verd i 6 amb el vermell. Amb errors, 0 punts i pregunta següent; els errors no resten punts.",
+      "Els 10 terminals correctes sumen 10 punts: 4 respostes amb el verd i 6 amb el vermell. Amb errors, 0 punts; els errors no resten punts.",
       "Podeu canviar amb l’altre botó fins que tots els terminals hagin respost. Continueu amb noves preguntes fins que acabin els 5 minuts."
     ]
   },
@@ -212,8 +212,8 @@
       Object.assign(intro.copy.es,{objectiveTitle:'Completar la serpiente correspondiente a cada token.',objectiveLead:'Completar la serpiente correspondiente a cada token.',exampleLead:'Tokens y símbolos de los terminales.',warning:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.',coordinateLead:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.'});
     }
     if(id===3){
-      const paragraphs=['Cada pregunta con los 10 terminales correctos suma 10 puntos: 4 respuestas con el verde y 6 con el rojo. Con errores, 0 puntos y siguiente pregunta; los errores no restan puntos.','Podéis cambiar con el otro botón hasta que todos los terminales hayan respondido. Continuad con nuevas preguntas hasta que terminen los 5 minutos.'];
-      const englishParagraphs=['Each question with all 10 terminals correct earns 10 points: 4 green answers and 6 red. With mistakes, 0 points and the next question; wrong answers do not deduct points.','You can change with the other button until all terminals have answered. Keep answering new questions until the 5 minutes are up.'];
+      const paragraphs=['Los 10 terminales correctos suman 10 puntos: 4 respuestas con el verde y 6 con el rojo. Con errores, 0 puntos; los errores no restan puntos.','Podéis cambiar con el otro botón hasta que todos los terminales hayan respondido. Continuad con nuevas preguntas hasta que terminen los 5 minutos.'];
+      const englishParagraphs=['All 10 terminals correct earn 10 points: 4 green answers and 6 red. With mistakes, 0 points; wrong answers do not deduct points.','You can change with the other button until all terminals have answered. Keep answering new questions until the 5 minutes are up.'];
       intro.attentionCopy={es:{text:paragraphs.join(' '),paragraphs},eng:{text:englishParagraphs.join(' '),paragraphs:englishParagraphs}};
       intro.steps.push('attention');
       Object.assign(intro.copy.es,{objectiveTitle:'Sumar puntos durante 5 minutos.',objectiveLead:'Sumar puntos durante 5 minutos.',exampleLead:'Botones de los terminales.',warning:'Leed la pregunta → identificad las respuestas correctas → marcad cada respuesta en su terminal.',coordinateLead:'Leed la pregunta → identificad las respuestas correctas → marcad cada respuesta en su terminal.'});
@@ -234,6 +234,14 @@
       if(catalan.attention)intro.attentionCopy.ca={text:catalan.attention.join(' '),paragraphs:catalan.attention,...(id===2?{before:4,after:5}:{})};
     }
     if(id===tutorialId)intro.elementsCopy.ca={title:'LA MISSIÓ ÉS A LES VOSTRES MANS',tokenTitle:'EL VOSTRE TOKEN ÉS PERSONAL',tokenLead:'Conserveu el vostre durant tota la partida.',terminalTitle:'ELS TERMINALS',terminalLead:'Botons, llums i símbols per resoldre els reptes.',action:'Acosteu el vostre token al lector del terminal per interactuar.',team:'Un únic equip: compartiu informació i coordineu-vos.',notes:'El token és personal: cada persona o parella conserva el seu durant tota la partida. Mostra el lector, els botons, els llums i els símbols del terminal. Per interactuar, cal acostar el token al lector.'};
+    if(id===3)for(const lang of ['ca','es','eng']){
+      const golden=local('Cada 5a pregunta és daurada: val el doble (20 punts). L’avís previ pausa el temps.',
+        'Cada 5.ª pregunta es dorada: vale el doble (20 puntos). El aviso previo pausa el tiempo.',
+        'Every 5th question is golden: double points (20). Time pauses for the announcement.')[lang];
+      const attention=intro.attentionCopy[lang];
+      attention.paragraphs.push(golden);
+      attention.text=attention.paragraphs.join(' ');
+    }
     if(id===tutorialId){
       Object.assign(intro.elementsCopy.es,{screenTitle:'LA PANTALLA COMPARTIDA',screenLead:'Aquí veréis los juegos, las pistas y las instrucciones.',screenItems:['JUEGOS','PISTAS','INSTRUCCIONES'],parts:['LECTOR DEL TOKEN','BOTONES','LUCES','SÍMBOLOS'],notes:'Explicad primero la pantalla compartida: muestra los juegos, las pistas y las instrucciones. Cada persona o pareja conserva su token durante toda la partida. Mostrad en un terminal real el lector del token, los botones, las luces y los símbolos; explicad que su uso cambia según el reto. Acercad un token al lector para mostrar cómo se interactúa. Todo el grupo es un único equipo: compartid información y coordinaos. Después avanzad al título del Simulacro Inicial y explicad la práctica.'});
       Object.assign(intro.elementsCopy.ca,{screenTitle:'LA PANTALLA COMPARTIDA',screenLead:'Aquí veureu els jocs, les pistes i les instruccions.',screenItems:['JOCS','PISTES','INSTRUCCIONS'],parts:['LECTOR DEL TOKEN','BOTONS','LLUMS','SÍMBOLS'],notes:'Explica primer la pantalla compartida: mostra els jocs, les pistes i les instruccions. Cada persona o parella conserva el seu token durant tota la partida. Mostra en un terminal real el lector del token, els botons, els llums i els símbols; explica que el seu ús canvia segons el repte. Acosta un token al lector per mostrar com s’interactua. Tot el grup és un únic equip: compartiu informació i coordineu-vos. Després avança al títol del Simulacre Inicial i explica la pràctica.'});
@@ -271,9 +279,9 @@
         t.footers.push('');
       }
       if(id===3){
-        const timingNote=local(' El rellotge continua durant els 7 segons de resultats. Després es passa a una altra pregunta, també si hi ha errors. No hi ha un límit de preguntes ni un objectiu de ratxa. Quan el temps arriba a zero, la prova acaba amb els punts acumulats, encara que siguin 0, i segueix la transició habitual de nivell completat.',
-          ' El reloj continúa durante los 7 segundos de resultados. Después se pasa a otra pregunta, también si hay errores. No hay límite de preguntas ni objetivo de racha. Cuando el tiempo llega a cero, la prueba termina con los puntos acumulados, aunque sean 0, y sigue la transición habitual de nivel completado.',
-          ' The clock keeps running during the 7-second results. Another question follows, even after wrong answers. There is no question limit or streak goal. At zero, the challenge ends with the accumulated points, even 0, and follows the normal level-completed transition.')[lang];
+        const timingNote=local(' Les preguntes 5, 10, 15… són daurades, comptant tots els intents, també els fallits. Abans de mostrar-les, hi ha un avís de 4 segons amb el rellotge pausat i sense acceptar respostes. El rellotge continua durant els 7 segons de resultats. Després es passa a una altra pregunta, també si hi ha errors. No hi ha un límit de preguntes ni un objectiu de ratxa. Quan el temps arriba a zero, la prova acaba amb els punts acumulats, encara que siguin 0, i segueix la transició habitual de nivell completat.',
+          ' Las preguntas 5, 10, 15… son doradas, contando todos los intentos, también los fallidos. Antes de mostrarlas, hay un aviso de 4 segundos con el reloj pausado y sin aceptar respuestas. El reloj continúa durante los 7 segundos de resultados. Después se pasa a otra pregunta, también si hay errores. No hay límite de preguntas ni objetivo de racha. Cuando el tiempo llega a cero, la prueba termina con los puntos acumulados, aunque sean 0, y sigue la transición habitual de nivel completado.',
+          ' Questions 5, 10, 15… are golden, counting every attempt, including wrong answers. Before they appear, a 4-second announcement pauses the clock and answers are not accepted. The clock keeps running during the 7-second results. Another question follows, even after wrong answers. There is no question limit or streak goal. At zero, the challenge ends with the accumulated points, even 0, and follows the normal level-completed transition.')[lang];
         t.notes[t.notes.length-1]+=timingNote;
         t.guidance.rhythm+=' '+intro.attentionCopy[lang].text+timingNote;
       }

@@ -144,6 +144,28 @@ async function inspect(lang, width, height, phase, selectors) {
             assert.equal(await inner("w.document.getElementById('timer').textContent"), '03:08');
             assert.equal(await inner("w.auditRequests.filter(r=>r.url==='/start_puzzle/3').length"), 1, 'reconnection never restarts');
             await inspect(lang, width, height, 'result', ['.quiz-hud-stat', '#question-text', '.answer-text']);
+            const goldenWarning = {golden_announcement: true, golden_question: true, clock_paused: true,
+                question_number: 5, question_points: 20, remaining: 188, total_points: 40};
+            await push(goldenWarning);
+            assert.equal(await inner("w.document.getElementById('golden-announcement').hidden"), false);
+            assert.equal(await inner("w.getComputedStyle(w.document.getElementById('quiz-stage')).visibility"), 'hidden');
+            assert.equal(await inner("w.document.getElementById('quiz-stage').inert"), true);
+            await push({remaining: 188});
+            await recover(goldenWarning);
+            assert.equal(await inner("w.document.getElementById('timer').textContent"), '03:08');
+            assert.equal(await inner("w.document.getElementById('golden-announcement').hidden"), false, 'snapshot preserves warning');
+            await inspect(lang, width, height, 'golden-warning', ['#golden-announcement h2', '#golden-announcement p', '.golden-clock-paused', '.golden-multiplier', '.quiz-hud-stat']);
+            await push({question: question(5), question_number: 5, question_result: null,
+                golden_announcement: false, golden_question: true, clock_paused: false, question_points: 20, remaining: 188});
+            assert.equal(await inner("w.document.getElementById('golden-announcement').hidden"), true);
+            assert.equal(await inner("w.document.getElementById('golden-question-badge').hidden"), false);
+            assert.equal(await inner("w.document.getElementById('quiz-stage').inert"), false);
+            await inspect(lang, width, height, 'golden-question', ['#golden-question-badge', '#question-text', '.answer-text']);
+            await push({question_result: result(true), total_points: 60, correct_count: 5});
+            assert.equal(await inner("w.document.getElementById('streak').textContent"), '60');
+            await push({question: question(6), question_number: 6, question_result: null,
+                golden_announcement: false, golden_question: false, clock_paused: false, question_points: 10});
+            assert.equal(await inner("w.document.getElementById('golden-question-badge').hidden"), true);
             await navigate('/puzzle/3', lang);
             await recover({...failed, remaining: 180});
             assert.equal(await inner("w.document.querySelectorAll('.answer-row.correct').length"), 9, 'fresh page restores result rows');

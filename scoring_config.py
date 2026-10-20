@@ -12,6 +12,7 @@ SCORING_CONFIG = {
     },
     "puzzle3": {
         "points_per_correct": 10,
+        "golden_multiplier": 2,
         "penalty_per_error": 0,
     },
     "puzzle5": {

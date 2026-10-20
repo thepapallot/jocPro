@@ -1,4 +1,62 @@
 /* Solved banner styles (matching puzzle8 green) */
+/* An opaque board-only warning keeps the shared timer and score visible. */
+#golden-announcement[hidden],
+#golden-question-badge[hidden] { display: none; }
+#golden-announcement {
+    position: absolute;
+    inset: 22px 28px 28px;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    padding: 48px;
+    border: 3px solid #edb970;
+    border-radius: 26px;
+    background: radial-gradient(ellipse at 50% 35%, #49351e, #0a1016 72%);
+    color: #f3eee4;
+    text-align: center;
+    box-shadow: inset 0 0 100px #edb97018, 0 0 36px #edb97030;
+}
+.is-golden-announcement #quiz-stage { visibility: hidden; }
+.golden-announcement-card { max-width: 1400px; }
+.golden-multiplier {
+    color: #edb970;
+    font: 900 150px/1 Arial, sans-serif;
+    text-shadow: 0 0 60px #edb97060;
+}
+#golden-announcement h2 {
+    margin: 16px 0;
+    color: #edb970;
+    font: 900 96px/1.08 PiramideDisplay, Arial, sans-serif;
+    overflow-wrap: anywhere;
+}
+#golden-announcement p { margin: 20px 0; font: 700 40px/1.3 Arial, sans-serif; }
+.golden-clock-paused {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 16px 36px;
+    border: 2px solid #edb970;
+    border-radius: 999px;
+    color: #edb970;
+    font: 700 32px/1.2 Arial, sans-serif;
+}
+#golden-announcement .golden-wait { color: #a8bbc5; font-size: 28px; }
+#golden-question-badge {
+    position: absolute;
+    z-index: 3;
+    top: 4px;
+    right: 56px;
+    display: flex;
+    gap: 12px;
+    padding: 4px 18px;
+    border: 1px solid #edb970;
+    border-radius: 999px;
+    background: #0a1016;
+    color: #edb970;
+    font: 700 24px/1.2 Arial, sans-serif;
+}
+body.pyramid-game[data-puzzle="3"] .is-golden-question #quiz-stage { border-top-color: #edb970; }
+#timer.is-clock-paused { outline: 2px solid #edb970; outline-offset: 6px; border-radius: 6px; }
+
 .p3-solved-banner {
     position: fixed;
     top: 0;

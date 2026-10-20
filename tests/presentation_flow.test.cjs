@@ -218,6 +218,20 @@ test('QUIZ keeps its journey and requires the answer-change warning before start
   assert.ok(!markup.includes('symbol_undefined'),'no missing image references');
 });
 
+test('QUIZ explains every fifth double-points question and the server pause in every language',()=>{
+  const quiz=flow().find(s=>s.puzzleId===3&&s.kind==='puzzle');
+  for(const lang of ['ca','es','eng']){
+    const golden=quiz.attentionCopy[lang].paragraphs.at(-1);
+    assert.match(golden,/5/);
+    assert.match(golden,/20/);
+    assert.match(golden,lang==='ca'?/doble.*pausa/:lang==='es'?/doble.*pausa/:/double.*pauses/);
+    assert.match(quiz.copy[lang].notes.at(-1),/5, 10, 15/);
+    assert.match(quiz.copy[lang].notes.at(-1),/4/);
+    assert.ok(quiz.copy[lang].guidance.rhythm.includes(golden));
+    assert.ok(quiz.attentionCopy[lang].paragraphs.every(p=>p.length<200),'compact player paragraphs');
+  }
+});
+
 test('reviewed Spanish briefings require their warnings; the final has only three reveals',()=>{
   const scenes=flow();
   const context=vm.createContext({window:{},PyramidLogo:{markup:()=>'<svg></svg>'}});

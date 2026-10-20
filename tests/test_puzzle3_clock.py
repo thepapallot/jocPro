@@ -48,6 +48,8 @@ class Puzzle3ClockTests(unittest.TestCase):
 
     def advance(self):
         self.puzzle._next_question_timer.fire()
+        if self.puzzle.golden_announcement:
+            self.puzzle._golden_timer.fire()
 
     def test_starts_at_five_minutes_with_no_points(self):
         state = self.puzzle.get_state()
@@ -60,7 +62,7 @@ class Puzzle3ClockTests(unittest.TestCase):
         for count in range(1, 14):
             self.answer()
             state = self.puzzle.get_state()
-            self.assertEqual(state['total_points'], count * 10)
+            self.assertEqual(state['total_points'], (count + count // 5) * 10)
             self.assertEqual(state['correct_count'], count)
             self.assertFalse(state['puzzle_solved'])
             self.advance()
@@ -190,6 +192,92 @@ class Puzzle3ClockTests(unittest.TestCase):
                       ['P3', '10', '1'], ['P5', '0', '5'], ['P3', 'x', '5']):
             self.puzzle.handle_message(parts)
         self.assertEqual(self.puzzle.get_state(), state)
+
+    def enter_golden_announcement(self):
+        for _ in range(3):
+            self.answer(False)
+            self.advance()
+        self.answer(False)
+        self.puzzle._next_question_timer.fire()
+        self.assertTrue(self.puzzle.golden_announcement)
+
+    def test_every_fifth_question_is_medium_even_after_errors(self):
+        for number in range(1, 16):
+            state = self.puzzle.get_state()
+            question = self.puzzle.chosen_questions[self.puzzle.current_question_idx]
+            golden = number % 5 == 0
+            self.assertEqual(question['_source'], 'medium' if golden else 'easy')
+            self.assertEqual(state['golden_question'], golden)
+            self.assertEqual(state['question_points'], 20 if golden else 10)
+            self.answer(False)
+            self.advance()
+        self.assertEqual(self.puzzle.total_points, 0)
+
+    def test_golden_announcement_freezes_exact_time_and_blocks_answers(self):
+        self.enter_golden_announcement()
+        state = self.puzzle.get_state()
+        self.assertTrue(state['clock_paused'])
+        self.assertTrue(state['golden_announcement'])
+        self.assertNotIn('question', state)
+        self.assertEqual(self.puzzle._golden_timer.interval, 4)
+        self.now += 4
+        self.answer()
+        self.puzzle.timer_expired()
+        self.assertEqual(self.puzzle.answered_players, {})
+        self.assertEqual(self.puzzle.get_state(), state)
+        self.puzzle._golden_timer.fire()
+        revealed = self.puzzle.get_state()
+        self.assertFalse(revealed['clock_paused'])
+        self.assertIn('question', revealed)
+        self.assertEqual(revealed['remaining'], state['remaining'])
+        self.now += 1
+        self.assertEqual(self.puzzle.get_state()['remaining'], state['remaining'] - 1)
+        self.answer()
+        self.assertEqual(self.puzzle.total_points, 20)
+
+    def test_golden_warning_near_timeout_does_not_expire_or_gain_fractional_time(self):
+        for _ in range(3):
+            self.answer(False)
+            self.advance()
+        self.answer(False)
+        stale_clock = self.puzzle._clock_timer
+        self.now = self.puzzle.deadline - 0.5
+        self.puzzle._next_question_timer.fire()
+        self.assertEqual(self.puzzle.get_state()['remaining'], 1)
+        events = self.client.push_update.call_count
+        self.now += 4
+        stale_clock.fire()
+        self.puzzle.timer_expired()
+        self.assertFalse(self.puzzle.solved)
+        self.assertEqual(self.client.push_update.call_count, events)
+        reveal = self.puzzle._golden_timer
+        reveal.fire()
+        deadline = self.puzzle.deadline
+        self.assertEqual(deadline - self.now, 0.5)
+        reveal.fire()
+        self.assertEqual(self.puzzle.deadline, deadline, 'Duplicate reveal must not extend time')
+        self.now += 0.5
+        self.puzzle.timer_expired()
+        self.assertTrue(self.puzzle.solved)
+
+    def test_reset_and_stop_invalidate_a_pending_golden_warning(self):
+        for action in ('reset', 'stop'):
+            self.puzzle.reset()
+            self.enter_golden_announcement()
+            reveal = self.puzzle._golden_timer
+            getattr(self.puzzle, action)()
+            state = self.puzzle.get_state()
+            events = self.client.push_update.call_count
+            reveal.fire()
+            self.assertEqual(self.puzzle.get_state(), state)
+            self.assertEqual(self.client.push_update.call_count, events)
+
+    def test_hard_and_company_banks_never_enter_the_new_pattern(self):
+        self.puzzle.company_bank = [dict(self.puzzle.easy_bank[0], _source='company')]
+        for _ in range(3):
+            self.puzzle._choose_new_set()
+            self.assertEqual([q['_source'] for q in self.puzzle.chosen_questions],
+                             ['easy', 'easy', 'easy', 'easy', 'medium'])
 
 
 if __name__ == '__main__':

@@ -74,6 +74,9 @@ class Puzzle3PointsIntegrationTests(unittest.TestCase):
     def advance(self):
         # The most recently created timer is the result transition.
         self.timer_mock.call_args.args[1]()
+        if self.puzzle.golden_announcement:
+            self.now += self.puzzle.golden_announcement_seconds
+            self.timer_mock.call_args.args[1]()
 
     def finish(self):
         self.now += 300
@@ -107,7 +110,14 @@ class Puzzle3PointsIntegrationTests(unittest.TestCase):
             self.advance()
         self.assertIsNone(self.saved()['ended_at'])
         self.finish()
-        self.assertEqual(self.saved()['total_points'], 70)
+        self.assertEqual(self.saved()['total_points'], 80)
+
+    def test_golden_correct_and_incorrect_questions_persist_mixed_points(self):
+        for number in range(1, 11):
+            self.answer(success=number != 10)
+            self.advance()
+        self.finish()
+        self.assertEqual(self.saved()['total_points'], 100)
 
     def test_duplicate_completion_cannot_overwrite_saved_points(self):
         self.answer()
