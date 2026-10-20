@@ -235,9 +235,9 @@
     }
     if(id===tutorialId)intro.elementsCopy.ca={title:'LA MISSIÓ ÉS A LES VOSTRES MANS',tokenTitle:'EL VOSTRE TOKEN ÉS PERSONAL',tokenLead:'Conserveu el vostre durant tota la partida.',terminalTitle:'ELS TERMINALS',terminalLead:'Botons, llums i símbols per resoldre els reptes.',action:'Acosteu el vostre token al lector del terminal per interactuar.',team:'Un únic equip: compartiu informació i coordineu-vos.',notes:'El token és personal: cada persona o parella conserva el seu durant tota la partida. Mostra el lector, els botons, els llums i els símbols del terminal. Per interactuar, cal acostar el token al lector.'};
     if(id===3)for(const lang of ['ca','es','eng']){
-      const golden=local('Cada 5a pregunta és daurada: val el doble (20 punts). L’avís previ pausa el temps.',
-        'Cada 5.ª pregunta es dorada: vale el doble (20 puntos). El aviso previo pausa el tiempo.',
-        'Every 5th question is golden: double points (20). Time pauses for the announcement.')[lang];
+      const golden=local('Cada 6a pregunta és daurada: val el doble (20 punts). El temps es pausa durant l’avís i els resultats.',
+        'Cada 6.ª pregunta es dorada: vale el doble (20 puntos). El tiempo se pausa durante el aviso y los resultados.',
+        'Every 6th question is golden: double points (20). Time pauses for the announcement and results.')[lang];
       const attention=intro.attentionCopy[lang];
       attention.paragraphs.push(golden);
       attention.text=attention.paragraphs.join(' ');
@@ -279,9 +279,9 @@
         t.footers.push('');
       }
       if(id===3){
-        const timingNote=local(' Les preguntes 5, 10, 15… són daurades, comptant tots els intents, també els fallits. Abans de mostrar-les, hi ha un avís de 4 segons amb el rellotge pausat i sense acceptar respostes. El rellotge continua durant els 7 segons de resultats. Després es passa a una altra pregunta, també si hi ha errors. No hi ha un límit de preguntes ni un objectiu de ratxa. Quan el temps arriba a zero, la prova acaba amb els punts acumulats, encara que siguin 0, i segueix la transició habitual de nivell completat.',
-          ' Las preguntas 5, 10, 15… son doradas, contando todos los intentos, también los fallidos. Antes de mostrarlas, hay un aviso de 4 segundos con el reloj pausado y sin aceptar respuestas. El reloj continúa durante los 7 segundos de resultados. Después se pasa a otra pregunta, también si hay errores. No hay límite de preguntas ni objetivo de racha. Cuando el tiempo llega a cero, la prueba termina con los puntos acumulados, aunque sean 0, y sigue la transición habitual de nivel completado.',
-          ' Questions 5, 10, 15… are golden, counting every attempt, including wrong answers. Before they appear, a 4-second announcement pauses the clock and answers are not accepted. The clock keeps running during the 7-second results. Another question follows, even after wrong answers. There is no question limit or streak goal. At zero, the challenge ends with the accumulated points, even 0, and follows the normal level-completed transition.')[lang];
+        const timingNote=local(' Les preguntes 6, 12, 18… són daurades, comptant tots els intents, també els fallits. Abans de mostrar-les, hi ha un avís de 4 segons amb el rellotge pausat i sense acceptar respostes. El rellotge també es pausa durant els 7 segons de resultats, tant si la resposta és correcta com incorrecta. Es reprèn amb la pregunta següent, després de l’avís si és daurada. No hi ha un límit de preguntes ni un objectiu de ratxa. Quan el temps arriba a zero, la prova acaba amb els punts acumulats, encara que siguin 0, i segueix la transició habitual de nivell completat.',
+          ' Las preguntas 6, 12, 18… son doradas, contando todos los intentos, también los fallidos. Antes de mostrarlas, hay un aviso de 4 segundos con el reloj pausado y sin aceptar respuestas. El reloj también se pausa durante los 7 segundos de resultados, tanto si la respuesta es correcta como incorrecta. Se reanuda con la siguiente pregunta, después del aviso si es dorada. No hay límite de preguntas ni objetivo de racha. Cuando el tiempo llega a cero, la prueba termina con los puntos acumulados, aunque sean 0, y sigue la transición habitual de nivel completado.',
+          ' Questions 6, 12, 18… are golden, counting every attempt, including wrong answers. Before they appear, a 4-second announcement pauses the clock and answers are not accepted. The clock also pauses during the 7-second results, whether the answer is correct or incorrect. It resumes with the next question, after the announcement if it is golden. There is no question limit or streak goal. At zero, the challenge ends with the accumulated points, even 0, and follows the normal level-completed transition.')[lang];
         t.notes[t.notes.length-1]+=timingNote;
         t.guidance.rhythm+=' '+intro.attentionCopy[lang].text+timingNote;
       }

@@ -79,6 +79,8 @@ class Puzzle3PointsIntegrationTests(unittest.TestCase):
             self.timer_mock.call_args.args[1]()
 
     def finish(self):
+        if self.puzzle.question_result is not None:
+            self.advance()
         self.now += 300
         self.puzzle.timer_expired()
 
@@ -113,11 +115,11 @@ class Puzzle3PointsIntegrationTests(unittest.TestCase):
         self.assertEqual(self.saved()['total_points'], 80)
 
     def test_golden_correct_and_incorrect_questions_persist_mixed_points(self):
-        for number in range(1, 11):
-            self.answer(success=number != 10)
+        for number in range(1, 13):
+            self.answer(success=number != 12)
             self.advance()
         self.finish()
-        self.assertEqual(self.saved()['total_points'], 100)
+        self.assertEqual(self.saved()['total_points'], 120)
 
     def test_duplicate_completion_cannot_overwrite_saved_points(self):
         self.answer()
