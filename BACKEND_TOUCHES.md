@@ -14,6 +14,27 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-20 — QUIZ: pausa del reloj durante los resultados
+
+Tipo: `pendiente de revisar`. Cambio solicitado por Olalla: congelar también
+el tiempo mientras se revisan respuestas correctas e incorrectas.
+
+- `mqtt/puzzles/puzzle3.py`: conserva los segundos fraccionarios al completar
+  los diez terminales, cancela e invalida el tick pendiente y publica
+  `clock_paused: true` con el resultado. Los 7 segundos de revisión ya no
+  consumen tiempo. Al mostrar otra pregunta reconstruye el plazo y reanuda el
+  reloj; si corresponde aviso daurado, mantiene la pausa hasta revelarla.
+- Se conserva el ajuste manual de Olalla: `golden_every = 6`. Instrucciones
+  del GM y pruebas actualizadas a preguntas 6, 12, 18… y revisión pausada.
+- No cambian puntuación, bancos, contratos MQTT ni persistencia. Snapshots y
+  SSE conservan el mismo contrato y la pantalla ya admite `clock_paused`.
+- Validación con relojes/temporizadores simulados y SQLite temporal, sin
+  iniciar Flask real ni conectar MQTT/hardware. Pep debe revisar reanudación,
+  transición resultado-aviso y cancelación de callbacks al parar o reiniciar.
+
+Esta entrada sustituye las referencias anteriores a resultados que consumen
+tiempo y a preguntas dauradas cada cinco.
+
 ## 2026-10-20 — QUIZ: preguntas dauradas cada cinco y pausa del aviso
 
 Tipo: `pendiente de revisar`. Nueva mecánica solicitada por Olalla y cambio de

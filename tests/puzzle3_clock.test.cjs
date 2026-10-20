@@ -112,6 +112,31 @@ test('explicit paused partial events suppress countdown audio without clearing c
     assert.equal(game.ticks.length, 2);
 });
 
+test('correct and incorrect results keep the clock paused and board visible through reconnect', async () => {
+    for (const success of [true, false]) {
+        const state = {puzzle_id: 3, question: question(), question_number: 1,
+            remaining: 8, clock_paused: true, golden_announcement: false,
+            question_result: result(success), total_points: success ? 10 : 0};
+        const game = quiz(state);
+        game.push(state);
+        assert.equal(game.element('timer').textContent, '00:08');
+        assert.equal(game.element('quiz-stage').inert, false);
+        assert.equal(game.element('golden-announcement').hidden, true);
+        assert.equal(game.element('answer-change-hint').hidden, true);
+        const sounds = game.sounds.length;
+        game.push({remaining: 8});
+        game.open(); await settle();
+        assert.equal(game.element('timer').textContent, '00:08');
+        assert.equal(game.sounds.length, sounds);
+        assert.deepEqual(game.ticks, []);
+        assert.deepEqual(game.timers, []);
+        game.push({question: question(2), question_number: 2, question_result: null,
+            remaining: 8, clock_paused: false, golden_announcement: false});
+        assert.equal(game.element('answer-change-hint').hidden, false);
+        assert.equal(game.ticks.length, 1);
+    }
+});
+
 test('HUD displays only server time and points; partial ticks never erase the question or award victory', () => {
     const game = quiz();
     assert.equal(game.element('timer').textContent, '05:00');

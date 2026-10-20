@@ -109,7 +109,7 @@ class Puzzle3(BasePuzzle):
         return question
 
     def _stage_progress(self):
-        """Every fifth displayed question is medium; all others are easy."""
+        """Use the configured golden interval; all other questions are easy."""
         return "medium" if self.display_question_number % self.golden_every == 0 else "easy"
 
     def _pick_question_for_stage(self, stage, excluded=None):
@@ -189,14 +189,25 @@ class Puzzle3(BasePuzzle):
             "total_players": self.total_players
         })
 
-    def _begin_golden_announcement_locked(self):
-        """Freeze exact server time and keep the upcoming question private."""
+    def _pause_clock_locked(self):
+        """Preserve fractional seconds and invalidate any pending clock tick."""
+        if self.deadline is None or self._paused_remaining is not None:
+            return
         self._paused_remaining = max(0, self.deadline - time.monotonic())
-        self.golden_announcement = True
         self._clock_serial += 1
         if self._clock_timer is not None:
             self._clock_timer.cancel()
             self._clock_timer = None
+
+    def _resume_clock_locked(self):
+        if self._paused_remaining is not None:
+            self.deadline = time.monotonic() + self._paused_remaining
+            self._paused_remaining = None
+
+    def _begin_golden_announcement_locked(self):
+        """Freeze exact server time and keep the upcoming question private."""
+        self._pause_clock_locked()
+        self.golden_announcement = True
         run_serial = self._run_serial
         question_number = self.display_question_number
         self._push({"golden_announcement": True})
@@ -208,8 +219,7 @@ class Puzzle3(BasePuzzle):
                         or question_number != self.display_question_number):
                     return
                 self._golden_timer = None
-                self.deadline = time.monotonic() + self._paused_remaining
-                self._paused_remaining = None
+                self._resume_clock_locked()
                 self.golden_announcement = False
                 self._publish_question_locked()
                 self._schedule_clock_locked()
@@ -231,6 +241,7 @@ class Puzzle3(BasePuzzle):
                 self._next_question_timer = None
                 if self._expire_if_due_locked():
                     return
+                self._resume_clock_locked()
                 self.current_question_idx += 1
                 self.display_question_number += 1
                 if self.current_question_idx >= len(self.chosen_questions):
@@ -238,6 +249,8 @@ class Puzzle3(BasePuzzle):
                 self.question_result = None
                 self.answered_players = {}
                 self._push_question()
+                if self.deadline is not None and self._paused_remaining is None:
+                    self._schedule_clock_locked()
 
         self._next_question_timer = threading.Timer(delay, _later)
         self._next_question_timer.daemon = True
@@ -262,7 +275,7 @@ class Puzzle3(BasePuzzle):
             "puzzle_solved": self.solved,
             "golden_question": self._stage_progress() == "medium",
             "golden_announcement": self.golden_announcement,
-            "clock_paused": self.golden_announcement,
+            "clock_paused": self._paused_remaining is not None,
             "question_points": self._question_points_locked(),
         }
 
@@ -288,7 +301,7 @@ class Puzzle3(BasePuzzle):
     def _expire_if_due_locked(self):
         if self.solved or self._stopped:
             return True
-        if self.golden_announcement:
+        if self._paused_remaining is not None:
             return False
         if self.deadline is None or time.monotonic() < self.deadline:
             return False
@@ -306,7 +319,7 @@ class Puzzle3(BasePuzzle):
         def tick():
             with self.lock:
                 if (run_serial != self._run_serial or clock_serial != self._clock_serial
-                    or self._stopped or self.solved or self.golden_announcement):
+                    or self._stopped or self.solved or self._paused_remaining is not None):
                     return
                 self._clock_timer = None
                 if not self._expire_if_due_locked():
@@ -505,6 +518,7 @@ class Puzzle3(BasePuzzle):
                     "correct_answers": expected_by_slot,
                     "player_answers": player_answers_snapshot,
                 }
+                self._pause_clock_locked()
                 self._push({
                     "question_result": self.question_result,
                     "question_number": self.display_question_number

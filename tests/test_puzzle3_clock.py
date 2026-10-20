@@ -62,7 +62,7 @@ class Puzzle3ClockTests(unittest.TestCase):
         for count in range(1, 14):
             self.answer()
             state = self.puzzle.get_state()
-            self.assertEqual(state['total_points'], (count + count // 5) * 10)
+            self.assertEqual(state['total_points'], (count + count // self.puzzle.golden_every) * 10)
             self.assertEqual(state['correct_count'], count)
             self.assertFalse(state['puzzle_solved'])
             self.advance()
@@ -77,16 +77,57 @@ class Puzzle3ClockTests(unittest.TestCase):
             self.advance()
             self.assertEqual(self.puzzle.display_question_number, number + 1)
 
-    def test_clock_runs_during_result_and_tick_is_a_partial_update(self):
-        self.answer()
+    def test_clock_tick_is_a_partial_update_while_answering(self):
         self.now += 4
         self.puzzle._clock_timer.fire()
         event = self.client.push_update.call_args.args[0]
         self.assertEqual(event['remaining'], 296)
-        self.assertEqual(event['total_points'], 10)
+        self.assertFalse(event['clock_paused'])
         self.assertNotIn('question', event)
         self.assertNotIn('question_result', event)
-        self.assertTrue(self.puzzle.get_state()['question_result']['success'])
+
+    def test_correct_and_wrong_results_freeze_exact_time_until_next_question(self):
+        for success in (True, False):
+            with self.subTest(success=success):
+                self.puzzle.reset()
+                self.now += 0.25
+                stale_clock = self.puzzle._clock_timer
+                self.answer(success)
+                state = self.puzzle.get_state()
+                event = self.client.push_update.call_args.args[0]
+                self.assertTrue(event['clock_paused'])
+                self.assertTrue(state['clock_paused'])
+                self.assertEqual(state['question_result']['success'], success)
+                self.assertEqual(self.puzzle._next_question_timer.interval, 7)
+                self.assertTrue(stale_clock.cancelled)
+                events = self.client.push_update.call_count
+                self.now += 20  # A late result callback must not consume game time.
+                stale_clock.fire()
+                self.puzzle.timer_expired()
+                self.answer(not success)
+                self.assertEqual(self.puzzle.get_state(), state)
+                self.assertEqual(self.client.push_update.call_count, events)
+                self.advance()
+                resumed = self.puzzle.get_state()
+                self.assertFalse(resumed['clock_paused'])
+                self.assertEqual(resumed['remaining'], state['remaining'])
+                self.assertEqual(self.puzzle.deadline - self.now, 299.75)
+                self.assertIsNotNone(self.puzzle._clock_timer)
+                self.assertFalse(self.client.push_update.call_args.args[0]['clock_paused'])
+                self.now += 1
+                self.assertEqual(self.puzzle.get_state()['remaining'], state['remaining'] - 1)
+
+    def test_golden_result_also_freezes_time(self):
+        self.enter_golden_announcement()
+        self.puzzle._golden_timer.fire()
+        self.answer()
+        state = self.puzzle.get_state()
+        self.now += 4
+        self.assertEqual(self.puzzle.get_state(), state)
+        self.assertTrue(state['clock_paused'])
+        self.assertEqual(state['total_points'], 20)
+        self.advance()
+        self.assertFalse(self.puzzle.get_state()['clock_paused'])
 
     def test_partial_answers_and_results_are_recoverable_snapshots(self):
         self.puzzle.handle_message(['P3', '0', '5'])
@@ -102,13 +143,15 @@ class Puzzle3ClockTests(unittest.TestCase):
 
     def test_timeout_finishes_once_with_accumulated_points(self):
         self.answer()
+        self.advance()
+        self.answer()
         pending = self.puzzle._next_question_timer
+        self.advance()
         self.now += 300
         self.puzzle._clock_timer.fire()
         self.assertTrue(self.puzzle.solved)
         self.assertEqual(self.puzzle.get_state()['remaining'], 0)
-        self.assertEqual(self.puzzle.get_state()['total_points'], 10)
-        self.assertTrue(pending.cancelled)
+        self.assertEqual(self.puzzle.get_state()['total_points'], 20)
         events = self.client.push_update.call_count
         pending.fire()
         self.answer()
@@ -140,17 +183,22 @@ class Puzzle3ClockTests(unittest.TestCase):
         self.assertTrue(self.puzzle.solved)
         self.assertEqual(self.puzzle.total_points, 0)
 
-    def test_next_question_callback_checks_deadline(self):
+    def test_result_near_timeout_resumes_with_exact_fractional_time(self):
+        self.now = self.puzzle.deadline - 0.5
         self.answer()
         number = self.puzzle.display_question_number
         self.now += 300
         self.advance()
+        self.assertFalse(self.puzzle.solved)
+        self.assertEqual(self.puzzle.display_question_number, number + 1)
+        self.assertEqual(self.puzzle.deadline - self.now, 0.5)
+        self.now += 0.5
+        self.puzzle.timer_expired()
         self.assertTrue(self.puzzle.solved)
-        self.assertEqual(self.puzzle.display_question_number, number)
 
     def test_reset_invalidates_all_pending_callbacks(self):
-        self.answer()
         old_clock = self.puzzle._clock_timer
+        self.answer()
         old_question = self.puzzle._next_question_timer
         self.now += 20
         self.puzzle.reset()
@@ -163,8 +211,8 @@ class Puzzle3ClockTests(unittest.TestCase):
         self.assertEqual(state['remaining'], 300)
 
     def test_stop_blocks_old_callbacks_and_hardware(self):
-        self.answer()
         clock = self.puzzle._clock_timer
+        self.answer()
         question = self.puzzle._next_question_timer
         self.puzzle.stop()
         events = self.client.push_update.call_count
@@ -194,18 +242,19 @@ class Puzzle3ClockTests(unittest.TestCase):
         self.assertEqual(self.puzzle.get_state(), state)
 
     def enter_golden_announcement(self):
-        for _ in range(3):
+        for _ in range(self.puzzle.golden_every - 2):
             self.answer(False)
             self.advance()
         self.answer(False)
         self.puzzle._next_question_timer.fire()
         self.assertTrue(self.puzzle.golden_announcement)
 
-    def test_every_fifth_question_is_medium_even_after_errors(self):
+    def test_every_sixth_question_is_medium_even_after_errors(self):
+        self.assertEqual(self.puzzle.golden_every, 6)
         for number in range(1, 16):
             state = self.puzzle.get_state()
             question = self.puzzle.chosen_questions[self.puzzle.current_question_idx]
-            golden = number % 5 == 0
+            golden = number % self.puzzle.golden_every == 0
             self.assertEqual(question['_source'], 'medium' if golden else 'easy')
             self.assertEqual(state['golden_question'], golden)
             self.assertEqual(state['question_points'], 20 if golden else 10)
@@ -236,12 +285,13 @@ class Puzzle3ClockTests(unittest.TestCase):
         self.assertEqual(self.puzzle.total_points, 20)
 
     def test_golden_warning_near_timeout_does_not_expire_or_gain_fractional_time(self):
-        for _ in range(3):
+        for _ in range(self.puzzle.golden_every - 2):
             self.answer(False)
             self.advance()
-        self.answer(False)
         stale_clock = self.puzzle._clock_timer
         self.now = self.puzzle.deadline - 0.5
+        self.answer(False)
+        self.now += 7
         self.puzzle._next_question_timer.fire()
         self.assertEqual(self.puzzle.get_state()['remaining'], 1)
         events = self.client.push_update.call_count
@@ -277,7 +327,7 @@ class Puzzle3ClockTests(unittest.TestCase):
         for _ in range(3):
             self.puzzle._choose_new_set()
             self.assertEqual([q['_source'] for q in self.puzzle.chosen_questions],
-                             ['easy', 'easy', 'easy', 'easy', 'medium'])
+                             ['easy'] * (self.puzzle.golden_every - 1) + ['medium'])
 
 
 if __name__ == '__main__':

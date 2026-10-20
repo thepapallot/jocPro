@@ -132,38 +132,42 @@ async function inspect(lang, width, height, phase, selectors) {
             assert.equal(await inner("w.document.getElementById('streak').textContent"), '70');
             await push({question: question(8), question_number: 8, question_result: null});
             const failed = {question: question(8), question_number: 8, remaining: 190, duration: 300,
-                total_points: 70, correct_count: 7, answered_map: result(false).player_answers, question_result: result(false)};
+                total_points: 70, correct_count: 7, clock_paused: true,
+                answered_map: result(false).player_answers, question_result: result(false)};
             await push(failed);
             const soundCount = await inner('w.auditAudios.length');
-            await push({remaining: 189});
-            await recover({...failed, remaining: 188});
+            await push({remaining: 190});
+            await recover(failed);
             assert.equal(await inner('w.auditAudios.length'), soundCount, 'result recovery does not repeat sounds');
             assert.equal(await inner("w.document.querySelectorAll('.answer-row.correct').length"), 9);
             assert.equal(await inner("w.document.querySelectorAll('.answer-row.wrong').length"), 1);
             assert.equal(await inner("w.document.getElementById('answer-change-hint').hidden"), true);
-            assert.equal(await inner("w.document.getElementById('timer').textContent"), '03:08');
+            assert.equal(await inner("w.document.getElementById('timer').textContent"), '03:10');
+            assert.equal(await inner("w.document.getElementById('timer').classList.contains('is-clock-paused')"), true);
+            assert.equal(await inner("w.document.getElementById('quiz-stage').inert"), false, 'paused results remain visible');
             assert.equal(await inner("w.auditRequests.filter(r=>r.url==='/start_puzzle/3').length"), 1, 'reconnection never restarts');
             await inspect(lang, width, height, 'result', ['.quiz-hud-stat', '#question-text', '.answer-text']);
             const goldenWarning = {golden_announcement: true, golden_question: true, clock_paused: true,
-                question_number: 5, question_points: 20, remaining: 188, total_points: 40};
+                question_number: 6, question_points: 20, remaining: 190, total_points: 40};
             await push(goldenWarning);
             assert.equal(await inner("w.document.getElementById('golden-announcement').hidden"), false);
             assert.equal(await inner("w.getComputedStyle(w.document.getElementById('quiz-stage')).visibility"), 'hidden');
             assert.equal(await inner("w.document.getElementById('quiz-stage').inert"), true);
-            await push({remaining: 188});
+            await push({remaining: 190});
             await recover(goldenWarning);
-            assert.equal(await inner("w.document.getElementById('timer').textContent"), '03:08');
+            assert.equal(await inner("w.document.getElementById('timer').textContent"), '03:10');
             assert.equal(await inner("w.document.getElementById('golden-announcement').hidden"), false, 'snapshot preserves warning');
             await inspect(lang, width, height, 'golden-warning', ['#golden-announcement h2', '#golden-announcement p', '.golden-clock-paused', '.golden-multiplier', '.quiz-hud-stat']);
-            await push({question: question(5), question_number: 5, question_result: null,
-                golden_announcement: false, golden_question: true, clock_paused: false, question_points: 20, remaining: 188});
+            await push({question: question(6), question_number: 6, question_result: null,
+                golden_announcement: false, golden_question: true, clock_paused: false, question_points: 20, remaining: 190});
             assert.equal(await inner("w.document.getElementById('golden-announcement').hidden"), true);
             assert.equal(await inner("w.document.getElementById('golden-question-badge').hidden"), false);
             assert.equal(await inner("w.document.getElementById('quiz-stage').inert"), false);
+            assert.equal(await inner("w.document.getElementById('timer').classList.contains('is-clock-paused')"), false);
             await inspect(lang, width, height, 'golden-question', ['#golden-question-badge', '#question-text', '.answer-text']);
-            await push({question_result: result(true), total_points: 60, correct_count: 5});
+            await push({question_result: result(true), total_points: 60, correct_count: 5, clock_paused: true});
             assert.equal(await inner("w.document.getElementById('streak').textContent"), '60');
-            await push({question: question(6), question_number: 6, question_result: null,
+            await push({question: question(7), question_number: 7, question_result: null,
                 golden_announcement: false, golden_question: false, clock_paused: false, question_points: 10});
             assert.equal(await inner("w.document.getElementById('golden-question-badge').hidden"), true);
             await navigate('/puzzle/3', lang);
