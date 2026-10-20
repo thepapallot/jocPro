@@ -29,6 +29,9 @@
     const current=Boolean(selected?.session_id&&selected.session_id===activeId);
     $('gm-confirm-session-btn').textContent=current?(dirty?'Guardar y volver al control →':'Volver al control →'):'Guardar e ir al control →';
     $('gm-save-session-btn').textContent=current||selected?.ended_at?'Guardar cambios':'Guardar para más tarde';
+    const canClose=Boolean(selected?.session_id&&!selected.ended_at&&(selected.started_at||current));
+    $('gm-close-session-btn').disabled=!canClose||Boolean(callbacks.busy?.());
+    $('gm-close-session-btn').title=canClose?'Cerrar esta sesión conservando sus resultados':'Selecciona una sesión en curso para cerrarla';
   }
   function render(){
     const query=$('gm-session-search').value.trim().toLocaleLowerCase();
@@ -101,6 +104,11 @@
     },
     error(message){$('gm-session-form-error').textContent=message;$('gm-session-form-error').hidden=false;},
     saved(id){dirty=false;selected=records.find(s=>s.session_id===id)||selected;editorState();render();if(id)detail(id);},
+    closed(id){
+      view='history';
+      document.querySelectorAll('[data-session-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.sessionView===view)));
+      this.saved(id);
+    },
     offline(){ $('gm-session-list-state').textContent='Sin conexión con el servidor. Se muestran copias de este navegador.';},
     active(session){
       activeId=session?.dbSessionId??null;$('gm-test-mode').hidden=session?.sessionType!=='test';
