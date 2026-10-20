@@ -42,6 +42,7 @@ class Puzzle1Tests(unittest.TestCase):
             self.repeat()
             self.assertTrue(self.updates[-1]['incorrect']['resets_round'])
             self.assertEqual(self.puzzle.round_errors, index + 1)
+            self.assertEqual(self.puzzle.scoring_errors, index + 1)
             self.finish_worker()
         self.board()
 
@@ -55,6 +56,7 @@ class Puzzle1Tests(unittest.TestCase):
         self.assertEqual(event['incorrect']['display_ms'], 5000)
         self.assertEqual(self.puzzle.operations_with_metadata, before)
         self.assertEqual(self.puzzle.round_errors, 10)
+        self.assertEqual(self.puzzle.scoring_errors, 11)
         self.assertFalse(self.puzzle.processing_wrong_result)
         self.assertEqual(self.workers, [])
         self.assertNotIn('start_timer', event)
@@ -92,10 +94,12 @@ class Puzzle1Tests(unittest.TestCase):
 
     def test_timeout_still_resets_during_nonblocking_duplicate_feedback(self):
         self.puzzle.round_errors = 10
+        self.puzzle.scoring_errors = 10
         self.repeat()
         self.puzzle.timer_expired()
         self.assertTrue(self.puzzle.processing_wrong_result)
         self.assertEqual(self.puzzle.round_errors, 11)
+        self.assertEqual(self.puzzle.scoring_errors, 12)
         self.finish_worker()
         self.assertTrue(self.updates[-1]['start_timer'])
 
@@ -110,10 +114,12 @@ class Puzzle1Tests(unittest.TestCase):
 
     def test_reset_starts_error_count_from_zero(self):
         self.puzzle.round_errors = 10
+        self.puzzle.scoring_errors = 12
         self.puzzle.reset()
         self.board()
         self.repeat()
         self.assertEqual(self.puzzle.round_errors, 1)
+        self.assertEqual(self.puzzle.scoring_errors, 1)
         self.assertTrue(self.updates[-1]['incorrect']['resets_round'])
 
     def test_pending_reset_ignores_repeated_messages_and_timeout(self):
@@ -121,6 +127,7 @@ class Puzzle1Tests(unittest.TestCase):
         self.repeat()
         self.puzzle.timer_expired()
         self.assertEqual(self.puzzle.round_errors, 1)
+        self.assertEqual(self.puzzle.scoring_errors, 1)
         self.assertEqual(len(self.workers), 1)
 
     def test_always_correct_does_not_count_or_publish_errors(self):
@@ -129,7 +136,18 @@ class Puzzle1Tests(unittest.TestCase):
         self.repeat()
         self.assertEqual(len(self.updates), count)
         self.assertEqual(self.puzzle.round_errors, 0)
+        self.assertEqual(self.puzzle.scoring_errors, 0)
         self.assertEqual(self.workers, [])
+
+    def test_each_nonblocking_duplicate_penalizes_without_restarting(self):
+        self.ten_errors()
+        for count in range(1, 4):
+            self.repeat()
+            self.assertEqual(self.puzzle.scoring_errors, 10 + count)
+            self.assertEqual(self.puzzle.round_errors, 10)
+            self.assertFalse(self.updates[-1]['incorrect']['resets_round'])
+            self.assertFalse(self.puzzle.processing_wrong_result)
+            self.assertEqual(self.workers, [])
 
     def test_old_workers_cannot_reset_a_stopped_or_new_game(self):
         for timeout in (False, True):

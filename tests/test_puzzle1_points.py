@@ -96,18 +96,22 @@ class Puzzle1PointsIntegrationTests(unittest.TestCase):
         self.assertEqual(self.saved()['total_points'], 0)
         self.assertEqual(self.client.active_puzzle_row_id, self.row)
 
-    def test_nonblocking_repetition_does_not_add_a_failed_attempt(self):
-        self.puzzle.round_errors = 10
+    def test_nonblocking_repetition_penalizes_and_preserves_the_round(self):
+        for _ in range(10):
+            self.error_and_restart()
         result = self.puzzle.get_state()['operations'][0][0]
         self.puzzle.handle_message(['P1', '2', str(result - 2)])
         self.puzzle.handle_message(['P1', '2', str(result - 2)])
         self.assertEqual(self.puzzle.round_errors, 10)
+        self.assertEqual(self.puzzle.scoring_errors, 11)
         self.assertFalse(self.puzzle.processing_wrong_result)
+        self.assertEqual(list(self.events.queue)[-1]['incorrect']['resets_round'], False)
         self.solve()
-        self.assertEqual(self.saved()['total_points'], 70)
+        self.assertEqual(self.saved()['total_points'], 67)
+        self.assertEqual(self.puzzle.get_state()['total_points'], 67)
 
     def test_replayed_messages_cannot_change_the_saved_score(self):
-        self.puzzle.round_errors = 3
+        self.puzzle.scoring_errors = 3
         self.solve()
         self.puzzle.handle_message(['P1', '100', '100'])
         self.puzzle.timer_expired()
@@ -116,23 +120,24 @@ class Puzzle1PointsIntegrationTests(unittest.TestCase):
         self.assertEqual(self.puzzle.get_state()['total_points'], 91)
 
     def test_reset_clears_earned_points_and_error_count(self):
-        self.puzzle.round_errors = 2
+        self.puzzle.scoring_errors = 2
         self.solve()
         self.puzzle.reset()
         self.assertEqual(self.puzzle.get_state()['total_points'], 0)
         self.assertEqual(self.puzzle.round_errors, 0)
+        self.assertEqual(self.puzzle.scoring_errors, 0)
         self.assertFalse(self.puzzle.solved)
         self.assertEqual(self.saved()['total_points'], 94)
 
     def test_uses_shared_configuration_instead_of_local_constants(self):
-        self.puzzle.round_errors = 2
+        self.puzzle.scoring_errors = 2
         rules = {'max_points': 80, 'penalty_per_error': 7, 'max_attempts': 30}
         with patch.dict(SCORING_CONFIG, {'puzzle1': rules}):
             self.solve()
         self.assertEqual(self.saved()['total_points'], 66)
 
     def test_points_never_become_negative(self):
-        self.puzzle.round_errors = 40
+        self.puzzle.scoring_errors = 40
         self.solve()
         self.assertEqual(self.saved()['total_points'], 0)
         self.assertIsNotNone(self.saved()['ended_at'])
