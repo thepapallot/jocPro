@@ -204,7 +204,10 @@ test('QUIZ keeps its journey and requires the answer-change warning before start
   assert.deepEqual(quiz.steps,['title','journey','objective','tools','interaction','attention']);
   for(const lang of ['ca','es','eng']){
     assert.equal(quiz.copy[lang].stepLabels.at(-1),{ca:'Atenció',es:'Atención',eng:'Attention'}[lang]);
-    assert.equal(quiz.copy[lang].notes.at(-1),(quiz.attentionCopy[lang]||quiz.attentionCopy.es).text);
+    const attention=quiz.attentionCopy[lang].text;
+    assert.ok(quiz.copy[lang].notes.at(-1).startsWith(attention));
+    assert.ok(quiz.copy[lang].guidance.rhythm.includes(attention));
+    assert.match(quiz.copy[lang].notes.at(-1),/7/,'GM notes also explain the timed result window');
   }
   const context=vm.createContext({window:{},PyramidLogo:{markup:()=>'<svg></svg>'}});
   vm.runInContext(script('presentation-briefing.js'),context);

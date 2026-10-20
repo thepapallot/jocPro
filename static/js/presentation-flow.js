@@ -145,11 +145,12 @@
     ]
   },
   "3": {
-    "objective": "Identificar les 4 respostes correctes.",
+    "objective": "Sumar punts durant 5 minuts.",
     "tools": "Botons dels terminals.",
     "action": "Llegiu la pregunta → identifiqueu les respostes correctes → marqueu cada resposta al seu terminal.",
     "attention": [
-      "Les respostes de cada terminal es poden canviar fins que s’hagi introduït una resposta a tots els terminals."
+      "Cada pregunta amb els 10 terminals correctes suma 10 punts: 4 respostes amb el verd i 6 amb el vermell. Amb errors, 0 punts i pregunta següent; els errors no resten punts.",
+      "Podeu canviar amb l’altre botó fins que tots els terminals hagin respost. Continueu amb noves preguntes fins que acabin els 5 minuts."
     ]
   },
   "8": {
@@ -211,9 +212,12 @@
       Object.assign(intro.copy.es,{objectiveTitle:'Completar la serpiente correspondiente a cada token.',objectiveLead:'Completar la serpiente correspondiente a cada token.',exampleLead:'Tokens y símbolos de los terminales.',warning:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.',coordinateLead:'Identificad vuestra serpiente → buscad los símbolos en el orden indicado → pasad el token por cada terminal.'});
     }
     if(id===3){
-      intro.attentionCopy={es:{text:'Las respuestas de cada terminal se pueden cambiar hasta que se haya introducido una respuesta en todos los terminales.'}};
+      const paragraphs=['Cada pregunta con los 10 terminales correctos suma 10 puntos: 4 respuestas con el verde y 6 con el rojo. Con errores, 0 puntos y siguiente pregunta; los errores no restan puntos.','Podéis cambiar con el otro botón hasta que todos los terminales hayan respondido. Continuad con nuevas preguntas hasta que terminen los 5 minutos.'];
+      const englishParagraphs=['Each question with all 10 terminals correct earns 10 points: 4 green answers and 6 red. With mistakes, 0 points and the next question; wrong answers do not deduct points.','You can change with the other button until all terminals have answered. Keep answering new questions until the 5 minutes are up.'];
+      intro.attentionCopy={es:{text:paragraphs.join(' '),paragraphs},eng:{text:englishParagraphs.join(' '),paragraphs:englishParagraphs}};
       intro.steps.push('attention');
-      Object.assign(intro.copy.es,{objectiveTitle:'Identificar las 4 respuestas correctas.',objectiveLead:'Identificar las 4 respuestas correctas.',exampleLead:'Botones de los terminales.',warning:'Leed la pregunta → identificad las respuestas correctas → marcad cada respuesta en su terminal.',coordinateLead:'Leed la pregunta → identificad las respuestas correctas → marcad cada respuesta en su terminal.'});
+      Object.assign(intro.copy.es,{objectiveTitle:'Sumar puntos durante 5 minutos.',objectiveLead:'Sumar puntos durante 5 minutos.',exampleLead:'Botones de los terminales.',warning:'Leed la pregunta → identificad las respuestas correctas → marcad cada respuesta en su terminal.',coordinateLead:'Leed la pregunta → identificad las respuestas correctas → marcad cada respuesta en su terminal.'});
+      Object.assign(intro.copy.eng,{objectiveTitle:'Score points over 5 minutes.',objectiveLead:'Score points over 5 minutes.'});
     }
     if(reviewedCopy[id]){
       const approved=reviewedCopy[id];
@@ -265,6 +269,13 @@
         t.stepLabels.push(local('Atenció','Atención','Attention')[lang]);
         t.notes.push((intro.attentionCopy[lang]||intro.attentionCopy.es).text);
         t.footers.push('');
+      }
+      if(id===3){
+        const timingNote=local(' El rellotge continua durant els 7 segons de resultats. Després es passa a una altra pregunta, també si hi ha errors. No hi ha un límit de preguntes ni un objectiu de ratxa. Quan el temps arriba a zero, la prova acaba amb els punts acumulats, encara que siguin 0, i segueix la transició habitual de nivell completat.',
+          ' El reloj continúa durante los 7 segundos de resultados. Después se pasa a otra pregunta, también si hay errores. No hay límite de preguntas ni objetivo de racha. Cuando el tiempo llega a cero, la prueba termina con los puntos acumulados, aunque sean 0, y sigue la transición habitual de nivel completado.',
+          ' The clock keeps running during the 7-second results. Another question follows, even after wrong answers. There is no question limit or streak goal. At zero, the challenge ends with the accumulated points, even 0, and follows the normal level-completed transition.')[lang];
+        t.notes[t.notes.length-1]+=timingNote;
+        t.guidance.rhythm+=' '+intro.attentionCopy[lang].text+timingNote;
       }
       if(id===5) {
         t.notes[t.notes.length-1]+=local(' En iniciar, s’obre la preparació: memoritzeu el temps objectiu durant el compte enrere i comenceu a comptar quan s’encengui el vostre terminal.',' Al iniciar se abre la preparación: memorizad el tiempo objetivo durante la cuenta atrás y empezad a contar cuando se encienda vuestro terminal.',' Starting opens preparation: memorise the target time during the countdown and start counting when your terminal lights up.')[lang];

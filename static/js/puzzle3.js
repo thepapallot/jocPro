@@ -1,5 +1,6 @@
 (function() {
-    const streakEl = document.getElementById('streak');
+    const pointsEl = document.getElementById('streak'); // Stable shared HUD hook.
+    const timerEl = document.getElementById('timer');
     const questionTextEl = document.getElementById('question-text');
     const answerAreaEl = document.getElementById('answer-area'); // was answersEl inside question-area
     const playerStatusEl = document.getElementById('player-status');
@@ -63,20 +64,22 @@
     let currentQuestionId = null;
     let activeQuestionNumber = 1;
     let solvedSequenceStarted = false;
+    let lastResult = null;
+    let updateRevision = 0;
+    let connectionGeneration = 0;
+    let startRequest = null;
 
-    function getDisplayStreak(streak, target) {
-        // Mostra el nombre real de respostes correctes (començant per 0)
-        return Math.max(0, Math.min(target, streak));
-    }
-
-    function getDisplayQuestionNumber(data, fallbackQuestionNumber, target) {
-        if (Number.isInteger(data && data.question_number)) {
-            return Math.max(1, Math.min(target, data.question_number));
+    function updateHud(data, silent = false) {
+        // Only the server owns the five-minute clock and awards points. A tick
+        // is a partial update: never clear the question, choices or result.
+        if (Number.isInteger(data.total_points)) {
+            pointsEl.textContent = String(Math.max(0, data.total_points));
         }
-        if (Number.isInteger(data && data.current_question_idx)) {
-            return Math.max(1, Math.min(target, data.current_question_idx + 1));
+        if (Number.isInteger(data.remaining)) {
+            const seconds = Math.max(0, data.remaining);
+            timerEl.textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+            if (!silent && !data.puzzle_solved) window.PyramidCountdownAudio?.tick('p3-clock', seconds);
         }
-        return Math.max(1, Math.min(target, fallbackQuestionNumber || 1));
     }
 
     function initPlayers(count = totalPlayers) {
@@ -115,13 +118,14 @@
         updatePlayerSummary(answeredPlayers.length || 0);
     }
 
-    function updatePlayerAnswered(player) {
+    function updatePlayerAnswered(player, silent = false) {
         const chip = document.getElementById('pchip-' + player);
         if (chip) {
             chip.classList.remove('correct','wrong');
             chip.classList.add('answered');
         }
         updatePlayerSummary(document.querySelectorAll('.player-chip.answered, .player-chip.correct, .player-chip.wrong').length);
+        if (silent) return;
         // Play boto.wav on each player submission (delay if blocked)
         const now = Date.now();
         const delay = soundBlockUntil > now ? (soundBlockUntil - now) : 0;
@@ -132,23 +136,18 @@
         if (!map) return;
         Object.entries(map).forEach(([p, v]) => {
             const index = parseInt(p, 10);
-            updatePlayerAnswered(index);
+            updatePlayerAnswered(index, true);
             markAnswerRowByValue(index, v);
         });
     }
 
-    function renderQuestion(qObj, streak, target, answeredPlayers = [], answeredMap = {}, questionNumber = null) {
-        const normalizedTarget = Number.isInteger(target) && target > 0 ? target : 6;
+    function renderQuestion(qObj, answeredPlayers = [], answeredMap = {}, questionNumber = null, silent = false) {
         // Play content appears sound on new question
-        playSound(APAREIX_SOUND_URL);
+        if (!silent) playSound(APAREIX_SOUND_URL);
 
         currentQuestionId = qObj.id;
-        const explicitQuestion = Number.isInteger(questionNumber) ? questionNumber : null;
-        activeQuestionNumber = getDisplayQuestionNumber(
-            { question_number: explicitQuestion },
-            explicitQuestion || 1,
-            normalizedTarget
-        );
+        activeQuestionNumber = Number.isInteger(questionNumber) ? questionNumber : activeQuestionNumber;
+        lastResult = null;
         questionTextEl.querySelector('.quiz-fit-content').textContent = qObj.q;
         document.getElementById("answer-change-hint").hidden = false;
         answerAreaEl.innerHTML = ""; // clear answer area
@@ -175,22 +174,11 @@
             row.appendChild(choice);
             answerAreaEl.appendChild(row); // append to answer-area
         });
-        streakEl.textContent = `${activeQuestionNumber}/${normalizedTarget}`;
         if (feedbackEl) { feedbackEl.textContent = ''; feedbackEl.className = ''; }
         resetPlayerChips(answeredPlayers); // Reset all chip styling first
         applyAnsweredMap(answeredMap);
         window.PyramidLanguage.apply(answerAreaEl);
         fitQuizText();
-    }
-
-    function setStreak(streak, target, questionNumber = null) {
-        const normalizedTarget = Number.isInteger(target) && target > 0 ? target : 6;
-        const displayNumber = getDisplayQuestionNumber(
-            { question_number: questionNumber },
-            questionNumber || activeQuestionNumber || 1,
-            normalizedTarget
-        );
-        streakEl.textContent = `${displayNumber}/${normalizedTarget}`;
     }
 
     function updatePlayerSummary(answeredCount) {
@@ -202,13 +190,14 @@
         if (feedbackEl) { feedbackEl.className = ''; feedbackEl.textContent = ''; }
     }
 
-    function showQuestionComplete(streak, target) {
+    function showQuestionComplete() {
         if (feedbackEl) { feedbackEl.className = ''; feedbackEl.textContent = ''; }
     }
 
     function showSolved() {
         if (solvedSequenceStarted) return;
         solvedSequenceStarted = true;
+        window.PyramidCountdownAudio?.reset('p3-clock');
         window.PyramidLevelVictory.complete(3);
     }
 
@@ -257,7 +246,7 @@
         }
     }
 
-    function showResult(result, streak, target) {
+    function showResult(result, silent = false) {
         if (!result) return;
 
         const playerAnswers = result.player_answers || {};
@@ -298,96 +287,109 @@
                 chip.classList.add('wrong');
             }
         });
+        const signature = JSON.stringify(result);
+        const playFeedback = !silent && signature !== lastResult;
+        lastResult = signature;
         if (result.success) {
-            playSoundAndBlock(CORRECT_SOUND_URL, 500);
-            showQuestionComplete(streak, target);
+            if (playFeedback) playSoundAndBlock(CORRECT_SOUND_URL, 500);
+            showQuestionComplete();
         } else {
-            playSoundAndBlock(INCORRECT_SOUND_URL, 500);
+            if (playFeedback) playSoundAndBlock(INCORRECT_SOUND_URL, 500);
             showWrong();
         }
     }
 
-    function handleUpdate(data) {
-        if (window.PyramidLevelVictory?.active) return;
-        if (data.puzzle_id !== 3) return;
+    function handleUpdate(data, silent = false) {
+        if (solvedSequenceStarted || window.PyramidLevelVictory?.active) return;
+        if (!data || data.puzzle_id !== 3) return;
+        updateHud(data, silent);
         if (typeof data.total_players === 'number' && data.total_players > 0 && data.total_players !== totalPlayers) {
             initPlayers(data.total_players);
         }
         if (data.question) {
-            renderQuestion(
-                data.question,
-                data.streak || 0,
-                data.target || 6,
-                data.answered_players || [],
-                data.answered_map || {},
-                data.question_number || null
-            );
-            setStreak(data.streak || 0, data.target || 6, data.question_number || null);
+            // During a result window question_number may already refer to the
+            // next question. Keep the displayed question and feedback intact.
+            const newQuestion = currentQuestionId !== data.question.id ||
+                (!data.question_result && ((data.question_result === null && lastResult !== null) ||
+                    (Number.isInteger(data.question_number) && activeQuestionNumber !== data.question_number)));
+            if (newQuestion) {
+                renderQuestion(data.question, data.answered_players || [], data.answered_map || {}, data.question_number, silent);
+            } else if (!lastResult) {
+                applyAnsweredMap(data.answered_map);
+            }
         }
         if (data.player_answer) {
-            updatePlayerAnswered(data.player_answer.player);
-            markAnswerRowByValue(data.player_answer.player, data.player_answer.answer, true);
+            updatePlayerAnswered(data.player_answer.player, silent);
+            markAnswerRowByValue(data.player_answer.player, data.player_answer.answer, !silent);
         }
         if (data.question_result) {
-            showResult(data.question_result, data.streak || 0, data.target || 6);
-            setStreak(data.streak || 0, data.target || 6, data.question_number || null);
+            showResult(data.question_result, silent);
         }
         if (data.puzzle_solved) {
             showSolved();
         }
     }
 
-    function loadSnapshot() {
-        fetch('/current_state')
+    function loadSnapshot(generation, retries = 2) {
+        const revision = updateRevision;
+        return fetch('/current_state', { cache: 'no-store' })
             .then(r => r.json())
             .then(d => {
-                if (d && d.puzzle_id === 3 && d.question) {
-                    if (typeof d.total_players === 'number' && d.total_players > 0 && d.total_players !== totalPlayers) {
-                        initPlayers(d.total_players);
-                    }
-                    renderQuestion(
-                        d.question,
-                        d.streak || 0,
-                        d.target || 6,
-                        d.answered_players || [],
-                        d.answered_map || {},
-                        d.question_number || null
-                    );
-                    setStreak(d.streak || 0, d.target || 6, d.question_number || null);
+                if (generation !== connectionGeneration) return;
+                // Never overwrite a newer live choice/tick with an older HTTP
+                // response. Fetch a fresh snapshot if an event raced recovery.
+                if (revision !== updateRevision) {
+                    if (retries > 0) return loadSnapshot(generation, retries - 1);
+                    return;
                 }
+                handleUpdate(d, true);
             })
-            .catch(() => {});
+            .catch(err => console.warn('Failed to recover puzzle 3:', err));
     }
 
     function initSSE() {
         const es = new EventSource('/state_stream');
         es.onmessage = evt => {
             try {
-                handleUpdate(JSON.parse(evt.data));
+                const data = JSON.parse(evt.data);
+                if (data.puzzle_id === 3) updateRevision++;
+                handleUpdate(data);
             } catch(e) {}
         };
         es.onopen = () => {
-            // Start Puzzle 3 when SSE is connected
-            fetch('/start_puzzle/3', { method: 'POST' })
-                .catch(err => console.warn("Failed to start puzzle 3:", err));
+            const generation = ++connectionGeneration;
+            // The endpoint is idempotent for an already-current puzzle. Call
+            // once on page entry, never again on EventSource reconnection.
+            if (!startRequest) {
+                startRequest = fetch('/start_puzzle/3', { method: 'POST' })
+                    .catch(err => console.warn('Failed to start puzzle 3:', err));
+            }
+            startRequest.then(() => {
+                if (generation === connectionGeneration) loadSnapshot(generation);
+            });
         };
-        //es.onopen = () => loadSnapshot();
     }
 
     function installDebugHelpers() {
         const sampleQuestion = {
             id: 999,
-            q: 'Que planeta es conocido como el planeta rojo?',
-            answers: ['Venus', 'Mercurio', 'Marte', 'Jupiter', 'Saturno', 'Neptuno']
+            q: '¿Qué países forman parte de Europa?',
+            answers: ['España', 'Japón', 'Francia', 'Brasil', 'Italia', 'Egipto', 'Alemania', 'Canadá', 'Australia', 'India']
         };
+        const correctAnswers = [5, 1, 5, 1, 5, 1, 5, 1, 1, 1];
 
         window.puzzle3Debug = {
+            push(data) {
+                handleUpdate({ puzzle_id: 3, ...data });
+            },
             question() {
                 handleUpdate({
                     puzzle_id: 3,
                     question: sampleQuestion,
-                    streak: 2,
-                    target: 10,
+                    question_number: 1,
+                    remaining: 300,
+                    duration: 300,
+                    total_points: 0,
                     answered_players: [],
                     answered_map: {}
                 });
@@ -397,7 +399,7 @@
                     setTimeout(() => {
                         handleUpdate({
                             puzzle_id: 3,
-                            player_answer: { player, answer: 3 }
+                            player_answer: { player, answer: correctAnswers[player] }
                         });
                     }, index * 250);
                 });
@@ -407,14 +409,11 @@
                     puzzle_id: 3,
                     question_result: {
                         success: true,
-                        correct_answer: 3,
-                        player_answers: {
-                            0: 3, 1: 3, 2: 3, 3: 3, 4: 3,
-                            5: 3, 6: 3, 7: 3, 8: 3, 9: 3
-                        }
+                        correct_answers: correctAnswers,
+                        player_answers: Object.fromEntries(correctAnswers.map((answer, player) => [player, answer]))
                     },
-                    streak: 3,
-                    target: 10
+                    total_points: 10,
+                    correct_count: 1
                 });
             },
             wrongResult() {
@@ -422,14 +421,9 @@
                     puzzle_id: 3,
                     question_result: {
                         success: false,
-                        correct_answer: 3,
-                        player_answers: {
-                            0: 3, 1: 2, 2: 3, 3: 4, 4: 3,
-                            5: 1, 6: 3, 7: 6, 8: 3, 9: 2
-                        }
-                    },
-                    streak: 0,
-                    target: 10
+                        correct_answers: correctAnswers,
+                        player_answers: Object.fromEntries(correctAnswers.map((answer, player) => [player, player === 0 ? 1 : answer]))
+                    }
                 });
             },
             solved() {
@@ -445,7 +439,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initPlayers();
-        setStreak(0, 6);
+        updateHud({ remaining: 300, total_points: 0 }, true);
         installDebugHelpers();
         const textLayoutObserver = new ResizeObserver(scheduleTextFit);
         textLayoutObserver.observe(questionTextEl);

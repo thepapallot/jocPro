@@ -1,5 +1,7 @@
 from .base import BasePuzzle
+from scoring import calculate_correct_points
 import importlib
+import math
 import threading
 import time
 import random
@@ -14,14 +16,19 @@ class Puzzle3(BasePuzzle):
         self.company_bank = []
         self._load_question_banks()
 
-        self.chosen_questions = []       # 6 questions for the current set
-        self.current_question_idx = 0    # index in chosen_questions (0..5)
-        self.display_question_number = 1 # visible progress counter; does not advance on misses
-        self.streak = 0                  # number of correctly answered questions in current run (0..6)
-        self.total_required = 6          # need 6 correct in a row
-        self.easy_required = 2
-        self.medium_required = 3
-        self.hard_required = 1
+        self.chosen_questions = []       # Refillable batches, not a completion target.
+        self.current_question_idx = 0
+        self.display_question_number = 1
+        self.streak = 0                  # Legacy alias for total correct questions.
+        self.correct_count = 0
+        self.total_points = 0
+        self.duration = 5 * 60
+        self.deadline = None
+        self.question_result = None
+        self._stopped = True
+        self._run_serial = 0
+        self._clock_timer = None
+        self._next_question_timer = None
         self.correct_by_difficulty = {"easy": 0, "medium": 0, "hard": 0}
         self.total_players = 10
         self.answered_players = {}       # {player: answer_idx}
@@ -94,22 +101,9 @@ class Puzzle3(BasePuzzle):
             question["correct"] = [value for _, value in pairs]
         return question
 
-    def _checkpoint_for_streak(self, streak):
-        """Return the last unlocked checkpoint based on solved questions."""
-        if streak >= 6:
-            return 6
-        if streak >= 3:
-            return 3
-        return 0
-
     def _stage_progress(self):
-        """Visible difficulty gate for the six-question round.
-
-        1/6 and 2/6 are easy, 3/6 to 5/6 are medium, and 6/6 is hard.
-        Because wrong answers do not advance the progress slot, the stage is based
-        on the current visible question number, not the number of solved questions.
-        """
-        slot = self.display_question_number
+        """Repeat the existing easy/medium/hard ordering without a six-question cap."""
+        slot = (self.display_question_number - 1) % 6 + 1
         if slot <= 2:
             return "easy"
         if slot <= 5:
@@ -135,10 +129,11 @@ class Puzzle3(BasePuzzle):
         return random.choice(candidates)
         
     def _choose_new_set(self):
-        """Pick 6 questions in difficulty order: 2 easy, 3 medium, 1 hard.
-        The progression is enforced by the same order as the game goals:
-        easy until 2 correct, medium until 3 more correct, then hard for the final slot.
-        Company questions are injected with priority, at most one per difficulty tier."""
+        """Refill in the existing 2 easy / 3 medium / 1 hard order.
+
+        Company questions keep their existing injection slots. Recycle banks only
+        if all questions were answered correctly; never end early on exhaustion.
+        """
 
         def available(bank):
             return [q for q in bank if (q["_source"], q["id"]) not in self.correct_question_ids]
@@ -147,6 +142,12 @@ class Puzzle3(BasePuzzle):
         medium_pool  = available(self.medium_bank)
         hard_pool    = available(self.hard_bank)
         company_pool = available(self.company_bank)
+        if not (easy_pool or medium_pool or hard_pool or company_pool):
+            self.correct_question_ids.clear()
+            easy_pool = list(self.easy_bank)
+            medium_pool = list(self.medium_bank)
+            hard_pool = list(self.hard_bank)
+            company_pool = list(self.company_bank)
 
         # Base selection per tier, respecting the requested order.
         easy_chosen   = random.sample(easy_pool,   min(2, len(easy_pool)))
@@ -181,9 +182,6 @@ class Puzzle3(BasePuzzle):
 
         self.chosen_questions = chosen
         self.current_question_idx = 0
-        self.display_question_number = 1
-        self.streak = 0
-        self.correct_by_difficulty = {"easy": 0, "medium": 0, "hard": 0}
         self.answered_players = {}
         # Keep self.correct_question_ids so correctly solved questions
         # are not reintroduced when creating new sets after failures.
@@ -196,7 +194,8 @@ class Puzzle3(BasePuzzle):
         q = self.chosen_questions[self.current_question_idx]
         stage = self._stage_progress()
         current_pair = (q.get("_source"), q.get("id"))
-        replacement = self._pick_question_for_stage(stage, excluded={current_pair})
+        replacement = (self._pick_question_for_stage(stage, excluded={current_pair})
+                   if q.get("_source") != "company" else None)
         if replacement is not None:
             q = replacement
 
@@ -212,67 +211,156 @@ class Puzzle3(BasePuzzle):
                 "answers": q["answers"]
             },
             "question_number": self.display_question_number,
-            "streak": self.streak,
-            "target": self.total_required,
+            "question_result": None,
+            "answered_players": [],
+            "answered_map": {},
             "total_players": self.total_players
         })
         
     def _schedule_next_question(self, delay=5, advance=True):
-        """Schedule next question after delay. Wrong answers keep the same display slot."""
+        """Both correct and incorrect results advance; old callbacks are harmless."""
+        run_serial = self._run_serial
+        result = self.question_result
+
         def _later():
-            time.sleep(delay)
             with self.lock:
-                if self.streak >= self.total_required:
-                    return  # already solved
-
-                if advance:
-                    self.current_question_idx += 1
-                if self.current_question_idx >= len(self.chosen_questions):
+                if (run_serial != self._run_serial or self._stopped or self.solved
+                        or self.question_result is not result or result is None):
                     return
-
+                self._next_question_timer = None
+                if self._expire_if_due_locked():
+                    return
+                self.current_question_idx += 1
+                self.display_question_number += 1
+                if self.current_question_idx >= len(self.chosen_questions):
+                    self._choose_new_set()
+                self.question_result = None
                 self.answered_players = {}
                 self._push_question()
 
-        threading.Thread(target=_later, daemon=True).start()
+        self._next_question_timer = threading.Timer(delay, _later)
+        self._next_question_timer.daemon = True
+        self._next_question_timer.start()
+
+    def _remaining_locked(self):
+        if self.solved:
+            return 0
+        if self.deadline is None:
+            return self.duration
+        return max(0, math.ceil(self.deadline - time.monotonic()))
+
+    def _hud_locked(self):
+        return {
+            "remaining": self._remaining_locked(),
+            "duration": self.duration,
+            "total_points": self.total_points,
+            "correct_count": self.correct_count,
+            "streak": self.streak,
+            "puzzle_solved": self.solved,
+        }
+
+    def _push(self, data):
+        """Internal callers hold the puzzle lock; partial events retain the HUD."""
+        state = self._hud_locked()
+        state.update(data)
+        super()._push(state)
+
+    def _cancel_timers_locked(self):
+        for timer in (self._clock_timer, self._next_question_timer):
+            if timer is not None:
+                timer.cancel()
+        self._clock_timer = None
+        self._next_question_timer = None
+
+    def _expire_if_due_locked(self):
+        if self.solved or self._stopped:
+            return True
+        if self.deadline is None or time.monotonic() < self.deadline:
+            return False
+        self.solved = True
+        self._cancel_timers_locked()
+        self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+        self._push({"puzzle_solved": True})
+        return True
+
+    def _schedule_clock_locked(self):
+        run_serial = self._run_serial
+
+        def tick():
+            with self.lock:
+                if run_serial != self._run_serial or self._stopped or self.solved:
+                    return
+                self._clock_timer = None
+                if not self._expire_if_due_locked():
+                    self._push({})
+                    self._schedule_clock_locked()
+
+        delay = min(1, max(0, self.deadline - time.monotonic()))
+        self._clock_timer = threading.Timer(delay, tick)
+        self._clock_timer.daemon = True
+        self._clock_timer.start()
         
     def reset(self):
-        """Full reset to start"""
-        super().reset()
+        """Start one authoritative five-minute run, invalidating old timers."""
         with self.lock:
+            self._run_serial += 1
+            self._cancel_timers_locked()
+            self.solved = False
+            self.saltarPuzzle = False
+            self.alwaysCorrect = False
+            self._stopped = False
+            self.correct_count = 0
+            self.streak = 0
+            self.total_points = 0
+            self.display_question_number = 1
+            self.question_result = None
+            self.correct_by_difficulty = {"easy": 0, "medium": 0, "hard": 0}
             self._load_question_banks()
             self.correct_question_ids = set()
             self._choose_new_set()
+            self.deadline = time.monotonic() + self.duration
             self._push_question()
+            self._schedule_clock_locked()
 
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:
+            self._run_serial += 1
+            self._stopped = True
+            self._cancel_timers_locked()
             self.answered_players = {}
+
+    def timer_expired(self):
+        """A client timeout cannot shorten the server-owned run."""
+        with self.lock:
+            self._expire_if_due_locked()
             
     def get_state(self):
         """Return current puzzle state"""
         with self.lock:
-            if self.current_question_idx >= len(self.chosen_questions):
-                return {
-                    "puzzle_id": self.id,
-                    "streak": self.streak,
-                    "target": self.total_required
-                }
-
-            q = self.chosen_questions[self.current_question_idx]
-            return {
+            state = {
                 "puzzle_id": self.id,
-                "question": {
+                **self._hud_locked(),
+                "question_number": self.display_question_number,
+                "answered_players": list(self.answered_players),
+                "answered_map": dict(self.answered_players),
+                "total_players": self.total_players,
+            }
+            if self.current_question_idx < len(self.chosen_questions):
+                q = self.chosen_questions[self.current_question_idx]
+                state["question"] = {
                     "id": q["id"],
                     "q": q["q"],
-                    "answers": q["answers"]
-                },
-                "question_number": self.display_question_number,
-                "streak": self.streak,
-                "target": self.total_required,
-                "answered_players": list(self.answered_players.keys()),
-                "total_players": self.total_players
-            }
+                    "answers": list(q["answers"]),
+                }
+            if self.question_result is not None:
+                state["question_result"] = {
+                    **self.question_result,
+                    "correct_answer": list(self.question_result["correct_answer"]),
+                    "correct_answers": list(self.question_result["correct_answers"]),
+                    "player_answers": dict(self.question_result["player_answers"]),
+                }
+            return state
             
     def _normalize_green_red_answer(self, answer_value):
         """Accept the hardware contract: 1=red, 5=green."""
@@ -322,21 +410,20 @@ class Puzzle3(BasePuzzle):
         color contract: 1=red, 5=green. Until all slots are answered, the same answer
         slot may be updated with a new value.
         """
-        if len(parts) < 3:
+        if len(parts) != 3 or parts[0] != "P3":
             return
 
         try:
             player = int(parts[1])
             answer_idx = self._normalize_green_red_answer(parts[2])
-        except ValueError:
+        except (TypeError, ValueError):
             return
 
         if answer_idx is None:
             return
 
         with self.lock:
-            # Ignore if already solved
-            if self.streak >= self.total_required:
+            if self._expire_if_due_locked():
                 return
 
             # Validate answer slot range: there are 10 answer positions, 0..9.
@@ -363,9 +450,7 @@ class Puzzle3(BasePuzzle):
                 "player_answer": {
                     "player": player,
                     "answer": answer_idx
-                },
-                "streak": self.streak,
-                "target": self.total_required
+                }
             })
 
             # When every answer slot has been answered, check if the set is correct.
@@ -381,47 +466,28 @@ class Puzzle3(BasePuzzle):
                 all_correct = all(
                     self.answered_players.get(slot, 0) == expected_by_slot[slot]
                     for slot in range(self.total_players)
-                )
+                ) and expected_by_slot.count(5) == 4 and expected_by_slot.count(1) == 6
 
                 player_answers_snapshot = self.answered_players.copy()
 
                 if all_correct:
-                    self.streak += 1
+                    self.correct_count += 1
+                    self.streak = self.correct_count
+                    self.total_points = calculate_correct_points("puzzle3", self.correct_count)
                     difficulty = q.get("_source")
                     if difficulty in self.correct_by_difficulty:
                         self.correct_by_difficulty[difficulty] += 1
-                    self.display_question_number = min(
-                        self.display_question_number + 1,
-                        self.total_required
-                    )
                     self.correct_question_ids.add((q.get("_source"), q.get("id")))
 
+                self.question_result = {
+                    "success": all_correct,
+                    "correct_answer": expected_by_slot,
+                    "correct_answers": expected_by_slot,
+                    "player_answers": player_answers_snapshot,
+                }
                 self._push({
-                    "question_result": {
-                        "success": all_correct,
-                        "correct_answer": expected_by_slot,
-                        "correct_answers": expected_by_slot,
-                        "player_answers": player_answers_snapshot
-                    },
-                    "streak": self.streak,
-                    "target": self.total_required,
+                    "question_result": self.question_result,
                     "question_number": self.display_question_number
                 })
 
-                if self.streak >= self.total_required:
-                    self.solved = True
-                    self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
-                    self._push({
-                        "puzzle_solved": True,
-                        "streak": self.streak,
-                        "target": self.total_required
-                    })
-                    return
-
-                if all_correct:
-                    # Correct answers advance to the next slot.
-                    self._schedule_next_question(delay=7, advance=True)
-                else:
-                    # Wrong answers keep the same progress slot but fetch a fresh question
-                    # from the current valid difficulty stage.
-                    self._schedule_next_question(delay=7, advance=False)
+                self._schedule_next_question(delay=7, advance=True)

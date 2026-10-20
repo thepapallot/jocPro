@@ -1,6 +1,7 @@
 /* Player UI catalog. Puzzle data, symbols and MQTT states stay independent of language. */
 window.PyramidLanguage.register('game', {
   "ca": {
+    "quizPoints": "Punts",
     "quizUnanswered": "Sense resposta",
     "quizYesSelected": "Seleccionat: sí, botó verd",
     "quizNoSelected": "Seleccionat: no, botó vermell",
@@ -128,6 +129,7 @@ window.PyramidLanguage.register('game', {
     "musicOrdinal8": "vuitè"
   },
   "es": {
+    "quizPoints": "Puntos",
     "quizUnanswered": "Sin respuesta",
     "quizYesSelected": "Seleccionado: sí, botón verde",
     "quizNoSelected": "Seleccionado: no, botón rojo",
@@ -255,6 +257,7 @@ window.PyramidLanguage.register('game', {
     "musicOrdinal8": "octavo"
   },
   "eng": {
+    "quizPoints": "Points",
     "quizUnanswered": "No answer yet",
     "quizYesSelected": "Selected: yes, green button",
     "quizNoSelected": "Selected: no, red button",
@@ -265,10 +268,10 @@ window.PyramidLanguage.register('game', {
     "fullSample": "Muestra completa",
     "register": "Enable recording",
     "deleteLast": "Borrar último registro",
-    "correctAnswers": "CORRECTAS",
-    "incorrectAnswers": "INCORRECTAS",
-    "greenButton": "Botón verde",
-    "redButton": "Botón rojo",
+    "correctAnswers": "CORRECT",
+    "incorrectAnswers": "INCORRECT",
+    "greenButton": "Green button",
+    "redButton": "Red button",
     "prepareTime": "Get ready: memorise the target time",
     "seconds": "seconds",
     "preparation": "Preparation",
@@ -282,7 +285,7 @@ window.PyramidLanguage.register('game', {
     "objectivesLabel": "16 números objetivo",
     "operationLabel": "Temporizador y operación actual",
     "singleRound": "Ronda única",
-    "quizReminder": "Hay 4 respuestas correctas y 6 incorrectas. Marca las correctas con verde y las incorrectas con rojo.",
+    "quizReminder": "There are 4 correct and 6 incorrect answers. Mark correct answers with green and incorrect answers with red.",
     "individualError": "Individual error",
     "energyPanel": "Panel central de energía",
     "tokenColours": "Tokens y códigos de color",

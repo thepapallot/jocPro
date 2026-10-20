@@ -21,3 +21,10 @@ def calculate_points(puzzle_id, errors):
 def get_max_attempts(puzzle_id):
     """Return the configured attempt limit for an attempt-based puzzle."""
     return SCORING_CONFIG[puzzle_id]["max_attempts"]
+
+
+def calculate_correct_points(puzzle_id, correct_count):
+    """Score a timed quiz by correct questions, without an invented score cap."""
+    if isinstance(correct_count, bool) or not isinstance(correct_count, int) or correct_count < 0:
+        raise ValueError("correct_count must be a non-negative integer")
+    return SCORING_CONFIG[puzzle_id]["points_per_correct"] * correct_count

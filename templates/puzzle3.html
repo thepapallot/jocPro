@@ -9,8 +9,14 @@
 
 {% block top_right %}
 <div id="streak-panel">
-    <div class="hud-label" data-i18n="game.progress">Progreso</div>
-    <div id="streak">1/6</div>
+    <div class="quiz-hud-stat">
+        <span class="hud-label" data-i18n="game.timeLabel">Tiempo restante</span>
+        <span id="timer" role="timer">05:00</span>
+    </div>
+    <div class="quiz-hud-stat">
+        <span class="hud-label" data-i18n="game.quizPoints">Puntos</span>
+        <span id="streak">0</span>
+    </div>
 </div>
 {% endblock %}
 
