@@ -14,6 +14,45 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-20 — QUIZ: preguntas dauradas cada cinco y pausa del aviso
+
+Tipo: `pendiente de revisar`. Nueva mecánica solicitada por Olalla y cambio de
+backend autorizado explícitamente. Sustituye la selección 2 easy / 3 medium /
+1 hard y la puntuación uniforme del QUIZ descritas más abajo.
+
+- `mqtt/puzzles/puzzle3.py`: selección aleatoria de easy salvo las preguntas
+  5, 10, 15… que son de medium, contando tanto aciertos como fallos. No se
+  introducen preguntas hard ni de empresa. Se conserva la mezcla de opciones
+  y la validación de los diez terminales (4 verdes / 6 rojos). Los aciertos se
+  excluyen de su banco hasta agotarlo; solo se recicla el mismo nivel, sin
+  sustituirlo por preguntas de otro banco.
+- `scoring_config.py`: añade `golden_multiplier = 2` al QUIZ. La puntuación
+  acumula el valor de cada pregunta: con la base actual de 10 puntos, 20 en las
+  dauradas. Los errores siguen sin restar y no borran puntos. Los puntos mixtos
+  se guardan por el mismo callback al agotarse el tiempo; no cambia SQLite.
+- Antes de revelar cada pregunta de medium se muestra un aviso de 4 segundos.
+  El servidor conserva el tiempo restante exacto, oculta la pregunta en los
+  snapshots y bloquea respuestas MQTT durante el aviso. Al revelar la pregunta
+  reconstruye el plazo conservado y reanuda el reloj. La pausa no depende del
+  navegador ni de una recarga; incluye cualquier retraso real del callback sin
+  consumir tiempo de juego ni redondear segundos para ganar tiempo adicional.
+- SSE/snapshots añaden `golden_announcement`, `golden_question`, `clock_paused`
+  y `question_points`. Los temporizadores antiguos quedan invalidados en
+  reset/stop y no pueden revelar una pregunta de una partida nueva. Se mantienen
+  los 300 segundos de juego y los 7 segundos de revisión, que sí consumen tiempo.
+- Pantalla e instrucciones del GM en ca/es/en: aviso de doble puntuación,
+  reloj pausado visible y distintivo persistente durante la pregunta daurada.
+  No se recolorean las respuestas, botones, aciertos o errores.
+- Validación: 33 pruebas Python del QUIZ, 7 de puntuación y 28 JavaScript de
+  reloj/presentación/audio aprobadas. Persistencia con SQLite temporal, patrones
+  tras fallos, pausa junto al límite, bloqueos, reset/stop y callbacks antiguos.
+  Chrome: 30 estados a 1920 × 1080 y 1280 × 720 en tres idiomas; regresiones de
+  selección y ajuste de 396 textos aprobadas. Solo simulación aislada; sin
+  broker, hardware, cambios de audio/imágenes ni base de datos real.
+
+Pep debe revisar selección, acumulación mixta y pausa del reloj, y validar
+la reanudación y las entradas físicas durante el aviso con los terminales.
+
 ## 2026-10-20 — Cerrar sesiones antiguas desde Sesiones
 
 Tipo: `pendiente de revisar`. Cambio de backend autorizado explícitamente por

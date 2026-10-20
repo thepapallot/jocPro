@@ -2,6 +2,11 @@
 window.PyramidLanguage.register('game', {
   "ca": {
     "quizPoints": "Punts",
+    "quizGoldenTitle": "PREGUNTA DAURADA!",
+    "quizGoldenBadge": "PREGUNTA DAURADA",
+    "quizGoldenDouble": "Si responeu correctament, sumareu el doble de punts.",
+    "quizGoldenPaused": "Temps en pausa",
+    "quizGoldenWait": "Prepareu-vos. La pregunta apareixerà tot seguit.",
     "quizUnanswered": "Sense resposta",
     "quizYesSelected": "Seleccionat: sí, botó verd",
     "quizNoSelected": "Seleccionat: no, botó vermell",
@@ -130,6 +135,11 @@ window.PyramidLanguage.register('game', {
   },
   "es": {
     "quizPoints": "Puntos",
+    "quizGoldenTitle": "¡PREGUNTA DORADA!",
+    "quizGoldenBadge": "PREGUNTA DORADA",
+    "quizGoldenDouble": "Si respondéis correctamente, sumaréis el doble de puntos.",
+    "quizGoldenPaused": "Tiempo en pausa",
+    "quizGoldenWait": "Preparaos. La pregunta aparecerá a continuación.",
     "quizUnanswered": "Sin respuesta",
     "quizYesSelected": "Seleccionado: sí, botón verde",
     "quizNoSelected": "Seleccionado: no, botón rojo",
@@ -258,6 +268,11 @@ window.PyramidLanguage.register('game', {
   },
   "eng": {
     "quizPoints": "Points",
+    "quizGoldenTitle": "GOLDEN QUESTION!",
+    "quizGoldenBadge": "GOLDEN QUESTION",
+    "quizGoldenDouble": "Answer correctly to earn double points.",
+    "quizGoldenPaused": "Time paused",
+    "quizGoldenWait": "Get ready. The question will appear next.",
     "quizUnanswered": "No answer yet",
     "quizYesSelected": "Selected: yes, green button",
     "quizNoSelected": "Selected: no, red button",

@@ -6,6 +6,10 @@
     const playerStatusEl = document.getElementById('player-status');
     const feedbackEl = document.getElementById('feedback');
     const playerSummaryEl = document.getElementById('player-summary');
+    const shellEl = document.getElementById('puzzle3-shell');
+    const stageEl = document.getElementById('quiz-stage');
+    const announcementEl = document.getElementById('golden-announcement');
+    const goldenBadgeEl = document.getElementById('golden-question-badge');
 
 
     // Measure in the game's logical canvas: CSS transforms scale the complete
@@ -68,6 +72,33 @@
     let updateRevision = 0;
     let connectionGeneration = 0;
     let startRequest = null;
+    let goldenAnnouncement = false;
+    let goldenQuestion = false;
+    let clockPaused = false;
+
+    function updateGoldenState(data) {
+        // Missing fields on partial events do not dismiss a warning or resume
+        // the clock. Only a server question (or completion) reveals the board.
+        if (typeof data.golden_question === 'boolean') goldenQuestion = data.golden_question;
+        if (typeof data.clock_paused === 'boolean') clockPaused = data.clock_paused;
+        if (data.golden_announcement === true) goldenAnnouncement = true;
+        else if (data.question && data.golden_announcement !== true && data.clock_paused !== true) goldenAnnouncement = false;
+        if (data.puzzle_solved) {
+            goldenAnnouncement = false;
+            goldenQuestion = false;
+            clockPaused = false;
+        }
+        announcementEl.hidden = !goldenAnnouncement;
+        goldenBadgeEl.hidden = !goldenQuestion || goldenAnnouncement;
+        shellEl.classList.toggle('is-golden-announcement', goldenAnnouncement);
+        shellEl.classList.toggle('is-golden-question', goldenQuestion);
+        stageEl.inert = goldenAnnouncement;
+        stageEl.setAttribute('aria-hidden', String(goldenAnnouncement));
+        timerEl.classList.toggle('is-clock-paused', clockPaused || goldenAnnouncement);
+        if (Number.isInteger(data.question_points)) {
+            document.getElementById('golden-question-points').textContent = String(data.question_points);
+        }
+    }
 
     function updateHud(data, silent = false) {
         // Only the server owns the five-minute clock and awards points. A tick
@@ -78,7 +109,7 @@
         if (Number.isInteger(data.remaining)) {
             const seconds = Math.max(0, data.remaining);
             timerEl.textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-            if (!silent && !data.puzzle_solved) window.PyramidCountdownAudio?.tick('p3-clock', seconds);
+            if (!silent && !data.puzzle_solved && !clockPaused && !goldenAnnouncement) window.PyramidCountdownAudio?.tick('p3-clock', seconds);
         }
     }
 
@@ -196,6 +227,7 @@
 
     function showSolved() {
         if (solvedSequenceStarted) return;
+        updateGoldenState({ puzzle_solved: true });
         solvedSequenceStarted = true;
         window.PyramidCountdownAudio?.reset('p3-clock');
         window.PyramidLevelVictory.complete(3);
@@ -302,7 +334,13 @@
     function handleUpdate(data, silent = false) {
         if (solvedSequenceStarted || window.PyramidLevelVictory?.active) return;
         if (!data || data.puzzle_id !== 3) return;
+        updateGoldenState(data);
         updateHud(data, silent);
+        if (data.puzzle_solved) {
+            showSolved();
+            return;
+        }
+        if (goldenAnnouncement) return;
         if (typeof data.total_players === 'number' && data.total_players > 0 && data.total_players !== totalPlayers) {
             initPlayers(data.total_players);
         }

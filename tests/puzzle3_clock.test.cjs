@@ -9,18 +9,19 @@ const settle = () => new Promise(resolve => setImmediate(resolve));
 // Real quiz controller, minimal DOM. Full ten-row rendering is covered by the
 // isolated browser regressions; no server, MQTT or client clock is used here.
 function quiz(snapshot = {}) {
-    const elements = new Map(), listeners = {}, sounds = [], victories = [], requests = [], timers = [];
+    const elements = new Map(), listeners = {}, sounds = [], victories = [], requests = [], timers = [], ticks = [];
     let stream, snapshotProvider = () => Promise.resolve(snapshot);
     const element = id => {
         if (['player-status', 'player-summary', 'feedback'].includes(id) || id.startsWith('pchip-')) return null;
         if (!elements.has(id)) elements.set(id, {
             textContent: '', innerHTML: '', hidden: false, clientHeight: 0, style: {},
+            classList: {toggle() {}}, setAttribute() {},
             querySelector: selector => element(id + selector), querySelectorAll: () => []
         });
         return elements.get(id);
     };
     const window = {addEventListener() {}, PyramidLanguage: {apply() {}},
-        PyramidCountdownAudio: {tick() {}, reset() {}},
+        PyramidCountdownAudio: {tick: (...args) => ticks.push(args), reset() {}},
         PyramidLevelVictory: {active: false, complete: id => victories.push(id)}};
     vm.runInNewContext(script('puzzle3.js'), {
         window, document: {getElementById: element, querySelectorAll: () => [],
@@ -37,13 +38,79 @@ function quiz(snapshot = {}) {
         setTimeout: (fn, ms) => timers.push({fn, ms}), Date
     });
     listeners.DOMContentLoaded();
-    return {element, sounds, victories, requests, timers,
+    return {element, sounds, victories, requests, timers, ticks,
         snapshotProvider: fn => {snapshotProvider = fn;},
         open: () => stream.onopen(),
         push: data => stream.onmessage({data: JSON.stringify({puzzle_id: 3, ...data})})};
 }
 const question = (id = 1) => ({id, q: 'Question ' + id, answers: []});
 const result = success => ({success, player_answers: {}, correct_answers: []});
+const goldenWarning = {golden_question: true, golden_announcement: true, clock_paused: true,
+    question_points: 20, question_number: 5, answered_players: [], answered_map: {}, question_result: null};
+
+test('golden warning hides the old result, survives partial ticks and only a full server question dismisses it', () => {
+    const game = quiz();
+    game.push({question: question(4), question_number: 4, question_result: result(false), remaining: 200, total_points: 30});
+    const sounds = game.sounds.length, ticks = game.ticks.length;
+    game.push({...goldenWarning, remaining: 200});
+    assert.equal(game.element('golden-announcement').hidden, false);
+    assert.equal(game.element('quiz-stage').inert, true);
+    assert.equal(game.element('golden-question-badge').hidden, true);
+    for (let n = 0; n < 5; n++) game.push({remaining: 200});
+    game.push({clock_paused: false, golden_announcement: false});
+    game.push({remaining: 200, player_answer: {player: 0, answer: 5}, question_result: result(true)});
+    assert.equal(game.element('golden-announcement').hidden, false, 'partial events cannot expose the old board');
+    assert.equal(game.sounds.length, sounds);
+    assert.equal(game.ticks.length, ticks, 'no countdown ticks, including partial events');
+    assert.equal(game.element('streak').textContent, '30');
+    assert.deepEqual(game.timers, [], 'no frontend announcement timeout');
+    game.push({question: question(5), question_number: 5, question_result: null,
+        golden_question: true, golden_announcement: false, clock_paused: false, question_points: 20, remaining: 200});
+    assert.equal(game.element('golden-announcement').hidden, true);
+    assert.equal(game.element('quiz-stage').inert, false);
+    assert.equal(game.element('golden-question-badge').hidden, false);
+    assert.equal(game.element('golden-question-points').textContent, '20');
+    assert.equal(game.element('question-text.quiz-fit-content').textContent, 'Question 5');
+    game.push({remaining: 199});
+    assert.equal(game.ticks.length, ticks + 2);
+    assert.equal(game.element('golden-question-badge').hidden, false, 'partial ticks preserve golden styling');
+    game.push({question_result: result(true), total_points: 50});
+    assert.equal(game.element('streak').textContent, '50');
+    game.push({question: question(6), question_number: 6, question_result: null,
+        golden_question: false, golden_announcement: false, clock_paused: false, question_points: 10});
+    assert.equal(game.element('golden-question-badge').hidden, true);
+});
+
+test('golden snapshots restore silently on entry/reconnect, retain frozen HUD and completion removes warning', async () => {
+    const state = {puzzle_id: 3, ...goldenWarning, remaining: 8, total_points: 40};
+    const game = quiz(state);
+    game.open(); await settle();
+    assert.equal(game.element('golden-announcement').hidden, false);
+    assert.equal(game.element('timer').textContent, '00:08');
+    assert.equal(game.element('streak').textContent, '40');
+    game.push({remaining: 8, clock_paused: true});
+    game.open(); await settle();
+    assert.deepEqual(game.requests, ['/start_puzzle/3', '/current_state', '/current_state']);
+    assert.deepEqual(game.sounds, []);
+    assert.deepEqual(game.ticks, []);
+    assert.deepEqual(game.timers, []);
+    assert.equal(game.element('golden-announcement').hidden, false);
+    game.push({puzzle_solved: true, remaining: 0});
+    assert.equal(game.element('golden-announcement').hidden, true);
+    assert.equal(game.element('golden-question-badge').hidden, true);
+    assert.deepEqual(game.victories, [3]);
+});
+
+test('explicit paused partial events suppress countdown audio without clearing choices', () => {
+    const game = quiz();
+    game.push({question: question(), remaining: 9, clock_paused: false});
+    game.push({remaining: 8, clock_paused: true});
+    game.push({remaining: 8});
+    assert.equal(game.ticks.length, 1);
+    assert.equal(game.element('question-text.quiz-fit-content').textContent, 'Question 1');
+    game.push({remaining: 7, clock_paused: false});
+    assert.equal(game.ticks.length, 2);
+});
 
 test('HUD displays only server time and points; partial ticks never erase the question or award victory', () => {
     const game = quiz();

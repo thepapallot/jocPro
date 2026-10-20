@@ -1,5 +1,6 @@
 from .base import BasePuzzle
 from scoring import calculate_correct_points
+from scoring_config import SCORING_CONFIG
 import importlib
 import math
 import threading
@@ -23,6 +24,12 @@ class Puzzle3(BasePuzzle):
         self.correct_count = 0
         self.total_points = 0
         self.duration = 5 * 60
+        self.golden_every = 6
+        self.golden_announcement_seconds = 4
+        self.golden_announcement = False
+        self._paused_remaining = None
+        self._golden_timer = None
+        self._clock_serial = 0
         self.deadline = None
         self.question_result = None
         self._stopped = True
@@ -102,13 +109,8 @@ class Puzzle3(BasePuzzle):
         return question
 
     def _stage_progress(self):
-        """Repeat the existing easy/medium/hard ordering without a six-question cap."""
-        slot = (self.display_question_number - 1) % 6 + 1
-        if slot <= 2:
-            return "easy"
-        if slot <= 5:
-            return "medium"
-        return "hard"
+        """Every fifth displayed question is medium; all others are easy."""
+        return "medium" if self.display_question_number % self.golden_every == 0 else "easy"
 
     def _pick_question_for_stage(self, stage, excluded=None):
         """Pick a question from the active stage, excluding already-used ones."""
@@ -129,62 +131,25 @@ class Puzzle3(BasePuzzle):
         return random.choice(candidates)
         
     def _choose_new_set(self):
-        """Refill in the existing 2 easy / 3 medium / 1 hard order.
-
-        Company questions keep their existing injection slots. Recycle banks only
-        if all questions were answered correctly; never end early on exhaustion.
-        """
-
-        def available(bank):
-            return [q for q in bank if (q["_source"], q["id"]) not in self.correct_question_ids]
-
-        easy_pool    = available(self.easy_bank)
-        medium_pool  = available(self.medium_bank)
-        hard_pool    = available(self.hard_bank)
-        company_pool = available(self.company_bank)
-        if not (easy_pool or medium_pool or hard_pool or company_pool):
-            self.correct_question_ids.clear()
-            easy_pool = list(self.easy_bank)
-            medium_pool = list(self.medium_bank)
-            hard_pool = list(self.hard_bank)
-            company_pool = list(self.company_bank)
-
-        # Base selection per tier, respecting the requested order.
-        easy_chosen   = random.sample(easy_pool,   min(2, len(easy_pool)))
-        medium_chosen = random.sample(medium_pool, min(3, len(medium_pool)))
-        hard_chosen   = random.sample(hard_pool,   min(1, len(hard_pool)))
-
-        chosen = easy_chosen + medium_chosen + hard_chosen
-
-        if len(chosen) < 6:
-            remaining = [
-                q for q in easy_pool + medium_pool + hard_pool
-                if q not in chosen
-            ]
-            fill_needed = 6 - len(chosen)
-            if fill_needed > 0 and remaining:
-                chosen.extend(random.sample(remaining, min(fill_needed, len(remaining))))
-
-        # Inject company questions: at most 1 per tier, spread across the set.
-        if company_pool:
-            n_inject = min(len(company_pool), 3)
-            company_sample = random.sample(company_pool, n_inject)
-
-            tier_ranges = [(0, 1), (2, 4), (5, 5)]
-            for i, (lo, hi) in enumerate(tier_ranges):
-                if i >= len(company_sample):
-                    break
-                if lo >= len(chosen):
-                    break
-                hi = min(hi, len(chosen) - 1)
-                slot = random.randint(lo, hi)
-                chosen[slot] = company_sample[i]
-
+        """Refill exclusively from easy/medium, never hard or company questions."""
+        chosen = []
+        for offset in range(self.golden_every):
+            number = self.display_question_number + offset
+            stage = "medium" if number % self.golden_every == 0 else "easy"
+            bank = self.medium_bank if stage == "medium" else self.easy_bank
+            candidates = [q for q in bank
+                          if (q["_source"], q["id"]) not in self.correct_question_ids
+                          and q not in chosen]
+            if not candidates:
+                # Recycle only this tier; do not substitute another difficulty.
+                self.correct_question_ids.difference_update(
+                    (q["_source"], q["id"]) for q in bank)
+                candidates = [q for q in bank if q not in chosen] or bank
+            chosen.append(random.choice(candidates))
         self.chosen_questions = chosen
         self.current_question_idx = 0
         self.answered_players = {}
-        # Keep self.correct_question_ids so correctly solved questions
-        # are not reintroduced when creating new sets after failures.
+        # Correctly solved questions remain excluded until their tier runs out.
         
     def _push_question(self):
         """Send current question to frontend."""
@@ -194,8 +159,7 @@ class Puzzle3(BasePuzzle):
         q = self.chosen_questions[self.current_question_idx]
         stage = self._stage_progress()
         current_pair = (q.get("_source"), q.get("id"))
-        replacement = (self._pick_question_for_stage(stage, excluded={current_pair})
-                   if q.get("_source") != "company" else None)
+        replacement = self._pick_question_for_stage(stage, excluded={current_pair})
         if replacement is not None:
             q = replacement
 
@@ -203,6 +167,14 @@ class Puzzle3(BasePuzzle):
         # Store that same order for MQTT validation and state snapshots.
         q = self._shuffle_question_display(q)
         self.chosen_questions[self.current_question_idx] = q
+
+        if stage == "medium":
+            self._begin_golden_announcement_locked()
+        else:
+            self._publish_question_locked()
+
+    def _publish_question_locked(self):
+        q = self.chosen_questions[self.current_question_idx]
 
         self._push({
             "question": {
@@ -216,6 +188,35 @@ class Puzzle3(BasePuzzle):
             "answered_map": {},
             "total_players": self.total_players
         })
+
+    def _begin_golden_announcement_locked(self):
+        """Freeze exact server time and keep the upcoming question private."""
+        self._paused_remaining = max(0, self.deadline - time.monotonic())
+        self.golden_announcement = True
+        self._clock_serial += 1
+        if self._clock_timer is not None:
+            self._clock_timer.cancel()
+            self._clock_timer = None
+        run_serial = self._run_serial
+        question_number = self.display_question_number
+        self._push({"golden_announcement": True})
+
+        def reveal():
+            with self.lock:
+                if (self._stopped or self.solved or run_serial != self._run_serial
+                        or not self.golden_announcement
+                        or question_number != self.display_question_number):
+                    return
+                self._golden_timer = None
+                self.deadline = time.monotonic() + self._paused_remaining
+                self._paused_remaining = None
+                self.golden_announcement = False
+                self._publish_question_locked()
+                self._schedule_clock_locked()
+
+        self._golden_timer = threading.Timer(self.golden_announcement_seconds, reveal)
+        self._golden_timer.daemon = True
+        self._golden_timer.start()
         
     def _schedule_next_question(self, delay=5, advance=True):
         """Both correct and incorrect results advance; old callbacks are harmless."""
@@ -245,6 +246,8 @@ class Puzzle3(BasePuzzle):
     def _remaining_locked(self):
         if self.solved:
             return 0
+        if self._paused_remaining is not None:
+            return max(0, math.ceil(self._paused_remaining))
         if self.deadline is None:
             return self.duration
         return max(0, math.ceil(self.deadline - time.monotonic()))
@@ -257,7 +260,15 @@ class Puzzle3(BasePuzzle):
             "correct_count": self.correct_count,
             "streak": self.streak,
             "puzzle_solved": self.solved,
+            "golden_question": self._stage_progress() == "medium",
+            "golden_announcement": self.golden_announcement,
+            "clock_paused": self.golden_announcement,
+            "question_points": self._question_points_locked(),
         }
+
+    def _question_points_locked(self):
+        multiplier = SCORING_CONFIG["puzzle3"].get("golden_multiplier", 2) if self._stage_progress() == "medium" else 1
+        return calculate_correct_points("puzzle3", 1) * multiplier
 
     def _push(self, data):
         """Internal callers hold the puzzle lock; partial events retain the HUD."""
@@ -266,15 +277,19 @@ class Puzzle3(BasePuzzle):
         super()._push(state)
 
     def _cancel_timers_locked(self):
-        for timer in (self._clock_timer, self._next_question_timer):
+        self._clock_serial += 1
+        for timer in (self._clock_timer, self._next_question_timer, self._golden_timer):
             if timer is not None:
                 timer.cancel()
         self._clock_timer = None
         self._next_question_timer = None
+        self._golden_timer = None
 
     def _expire_if_due_locked(self):
         if self.solved or self._stopped:
             return True
+        if self.golden_announcement:
+            return False
         if self.deadline is None or time.monotonic() < self.deadline:
             return False
         self.solved = True
@@ -285,10 +300,13 @@ class Puzzle3(BasePuzzle):
 
     def _schedule_clock_locked(self):
         run_serial = self._run_serial
+        self._clock_serial += 1
+        clock_serial = self._clock_serial
 
         def tick():
             with self.lock:
-                if run_serial != self._run_serial or self._stopped or self.solved:
+                if (run_serial != self._run_serial or clock_serial != self._clock_serial
+                    or self._stopped or self.solved or self.golden_announcement):
                     return
                 self._clock_timer = None
                 if not self._expire_if_due_locked():
@@ -314,6 +332,8 @@ class Puzzle3(BasePuzzle):
             self.total_points = 0
             self.display_question_number = 1
             self.question_result = None
+            self.golden_announcement = False
+            self._paused_remaining = None
             self.correct_by_difficulty = {"easy": 0, "medium": 0, "hard": 0}
             self._load_question_banks()
             self.correct_question_ids = set()
@@ -346,7 +366,7 @@ class Puzzle3(BasePuzzle):
                 "answered_map": dict(self.answered_players),
                 "total_players": self.total_players,
             }
-            if self.current_question_idx < len(self.chosen_questions):
+            if not self.golden_announcement and self.current_question_idx < len(self.chosen_questions):
                 q = self.chosen_questions[self.current_question_idx]
                 state["question"] = {
                     "id": q["id"],
@@ -423,7 +443,7 @@ class Puzzle3(BasePuzzle):
             return
 
         with self.lock:
-            if self._expire_if_due_locked():
+            if self._expire_if_due_locked() or self.golden_announcement:
                 return
 
             # Validate answer slot range: there are 10 answer positions, 0..9.
@@ -473,7 +493,7 @@ class Puzzle3(BasePuzzle):
                 if all_correct:
                     self.correct_count += 1
                     self.streak = self.correct_count
-                    self.total_points = calculate_correct_points("puzzle3", self.correct_count)
+                    self.total_points += self._question_points_locked()
                     difficulty = q.get("_source")
                     if difficulty in self.correct_by_difficulty:
                         self.correct_by_difficulty[difficulty] += 1
