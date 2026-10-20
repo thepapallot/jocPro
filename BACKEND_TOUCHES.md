@@ -14,6 +14,32 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-20 — Sumas: penalizar también las repeticiones sin reinicio
+
+Tipo: `pendiente de revisar`. Cambio de regla solicitado explícitamente por Olalla.
+Sustituye el criterio anterior que solo penalizaba errores con reinicio.
+
+- `mqtt/puzzles/puzzle1.py`: separa `scoring_errors` (todos los errores aceptados
+  y los tiempos agotados) de `round_errors` (errores que reinician la ronda).
+  El resultado final usa `calculate_points("puzzle1", scoring_errors)`.
+- Después de diez reinicios, repetir una suma resuelta sigue mostrando el aviso
+  sin regenerar el tablero ni reiniciar o pausar el reloj, pero resta 3 puntos.
+  Ejemplo: diez reinicios y una repetición sin reinicio dan 67 puntos, no 70.
+  Los errores durante una pausa bloqueante y con `alwaysCorrect` siguen ignorados.
+- El reset completo limpia ambos contadores. Se mantiene el suelo de cero,
+  la persistencia del resultado al completar, los mensajes MQTT/SSE y los tiempos.
+  No se recalculan registros históricos ni se aplica un nuevo límite de intentos.
+- `tests/test_puzzle1.py`: verifica penalizaciones sucesivas sin reinicio,
+  timeout durante el aviso, reset y entradas ignoradas.
+- `tests/test_puzzle1_points.py`: verifica que los 67 puntos lleguen a SQLite
+  temporal mediante el callback real aislado. Las pruebas de configuración,
+  persistencia y suelo cero usan el contador de penalizaciones independiente.
+- Validación: 25 pruebas de lógica, puntuación compartida y persistencia
+  aprobadas; seis escenarios de navegador ca/es/en a 1920 × 1080 y 1280 × 720.
+  Solo simulación, sin broker, hardware ni base de datos real. Sin cambios visuales.
+
+Pep debe revisar la separación de contadores y validarla con terminales físicos.
+
 ## 2026-10-14 — Sumas: guardar los puntos al completar
 
 Tipo: `pendiente de revisar`. Corrección solicitada por Olalla tras detectar una

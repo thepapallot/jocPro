@@ -20,6 +20,7 @@ class Puzzle1(BasePuzzle):
         self.total_rounds = len(self.round_sizes)
         self.incorrect_feedback_seconds = 5
         self.round_errors = 0
+        self.scoring_errors = 0
         self.total_points = 0
         self.duplicate_reset_limit = 10
         self._run_serial = 0
@@ -38,6 +39,7 @@ class Puzzle1(BasePuzzle):
         with self.lock:
             self._run_serial += 1
             self.round_errors = 0
+            self.scoring_errors = 0
             self.total_points = 0
             self.round = 1
             self._reset_operations()
@@ -165,7 +167,7 @@ class Puzzle1(BasePuzzle):
                             threading.Thread(target=_countdown_and_advance, daemon=True).start()
                         else:
                             # Puzzle complete
-                            self.total_points = calculate_points("puzzle1", self.round_errors)
+                            self.total_points = calculate_points("puzzle1", self.scoring_errors)
                             self.solved = True
                             self.countdown_next_round_active = False
                             self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
@@ -188,6 +190,8 @@ class Puzzle1(BasePuzzle):
                 reason = "Suma ya realizada"
                 reason_key = "already_solved"
 
+            # Every accepted error penalizes; only restart-causing errors set the threshold.
+            self.scoring_errors += 1
             resets_round = matching_operation is None or self.round_errors < self.duplicate_reset_limit
             if resets_round:
                 self.round_errors += 1
@@ -230,6 +234,7 @@ class Puzzle1(BasePuzzle):
                 return
             self.processing_wrong_result = True
             self.round_errors += 1
+            self.scoring_errors += 1
             run_serial = self._run_serial
             
         def _later():
