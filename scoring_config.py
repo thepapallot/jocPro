@@ -25,4 +25,8 @@ SCORING_CONFIG = {
         "penalty_per_error": 10,
         "max_attempts": 10,
     },
+    "puzzle12": {
+        "max_points": 100,
+        "penalty_per_error": 10,
+    },
 }

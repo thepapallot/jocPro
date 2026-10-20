@@ -17,8 +17,9 @@ window.EventSource = class {};
 window.previewRequests = [];
 window.previewSounds = [];
 window.Audio = class {
-    constructor(url) { window.previewSounds.push(url); }
-    play() { return Promise.resolve(); }
+    constructor(url) { this.url = url; }
+    play() { window.previewSounds.push(this.url); return Promise.resolve(); }
+    pause() {}
 };
 window.fetch = (url, options) => {
     window.previewRequests.push({url, options});
@@ -69,9 +70,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pattern = document.getElementById('button-pattern');
     const viewport = document.getElementById('final-viewport');
     const shown = element => getComputedStyle(element).display !== 'none';
-    const target = [2, 2, 5, 2, 2, 2];
-    const start = round => window.puzzle12Debug.push({startRound: true,
-        round, total_rounds: 3, level_id: 3, target, duration: 2});
+    const target = [10, 4, 6, 4, 8, 2];
+    const reducedTarget = [10, 3, 5, 3, 7, 1];
+    const start = (round, counts = target) => window.puzzle12Debug.push({startRound: true,
+        round, total_rounds: 3, level_id: 3, target: counts, duration: round === 1 ? 90 : 2});
     const success = () => document.body.classList.contains('p12-success-state');
     const danger = () => document.body.classList.contains('p12-danger-state');
     const fits = element => {
@@ -92,9 +94,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     start(1);
     test('initial round starts without countdown', !shown(wait) && !shown(good) && !shown(wrong));
     test('initial timer starts immediately', shown(document.getElementById('timer-overlay')) &&
-        document.getElementById('timer-overlay').textContent === '00:02');
-    test('no initial countdown beep', !window.previewSounds.some(url => url.endsWith('beep_countdown.wav')));
-    test('button counts unchanged', shown(pattern) && pattern.children.length === 15);
+        document.getElementById('timer-overlay').textContent === '01:30');
+    test('no extra initial countdown beep', window.previewSounds.filter(url =>
+        url.endsWith('beep_countdown.wav')).length === 1);
+    test('full target has all 34 balls', shown(pattern) && pattern.children.length === 34);
+    test('full target fits viewport', [...pattern.children].every(fits));
     window.puzzle12Debug.success();
     test('phase success immediately green', success() && !danger() && shown(good) && !shown(pattern));
     checkFeedback('success');
@@ -118,7 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkFeedback('timeout');
     test('timeout still notifies backend once', window.previewRequests.filter(item => item.url === '/timer_expired' && item.options.method === 'POST').length === 1);
     test('timeout sound unchanged', window.previewSounds.filter(url => url.endsWith('fase_nocompletada.wav')).length === 1);
-    start(2);
+    start(2, reducedTarget);
     test('retry clears timeout', !danger() && !shown(wrong) && shown(wait));
     test('retry starts countdown at three', document.getElementById('countdown-number').textContent === '3' && !shown(pattern));
     window.advancePreview(2000);
@@ -126,6 +130,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.advancePreview(1000);
     test('retry starts pattern and full timer', shown(pattern) && !shown(wait) &&
         document.getElementById('timer-overlay').textContent === '00:02');
+    test('help renders the reduced target', pattern.children.length === 29);
+    test('help keeps ten black balls', pattern.querySelectorAll('.button-ball--black').length === 10);
+    test('help target fits viewport', [...pattern.children].every(fits));
+    window.advancePreview(2000);
+    start(2, [10, 1, 1, 1, 1, 1]);
+    window.advancePreview(3000);
+    test('minimum help target has fifteen balls', pattern.children.length === 15);
+    test('minimum help target fits viewport', [...pattern.children].every(fits));
     window.puzzle12Debug.success();
     window.puzzle12Debug.solved();
     test('final confirmation delegates to the shared victory', window.previewCompleted.join(',') === '12');
@@ -181,8 +193,8 @@ class Puzzle12FeedbackTests(unittest.TestCase):
                         self.assertIsNotNone(match, 'Browser did not finish the feedback fixture')
                         data = json.loads(html.unescape(match[1]))
                         self.assertEqual((data['width'], data['height']), (width, height))
-                        for check in data['checks']:
-                            self.assertTrue(check['ok'], check['name'])
+                        failures = [check['name'] for check in data['checks'] if not check['ok']]
+                        self.assertEqual(failures, [])
 
 
 if __name__ == '__main__':
