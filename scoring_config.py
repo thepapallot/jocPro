@@ -10,6 +10,10 @@ SCORING_CONFIG = {
         "penalty_per_error": 3,
         "max_attempts": 30,
     },
+    "puzzle3": {
+        "points_per_correct": 10,
+        "penalty_per_error": 0,
+    },
     "puzzle5": {
         "max_points": 100,
         "penalty_per_error": 10,

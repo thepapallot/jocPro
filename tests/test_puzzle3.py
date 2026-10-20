@@ -15,6 +15,7 @@ class Puzzle3ShuffledAnswersTest(unittest.TestCase):
             send_message=Mock(),
         )
         self.puzzle = Puzzle3(self.client)
+        self.puzzle._stopped = False
         self.puzzle._schedule_next_question = Mock()
         self.question = {
             'id': 1000,
@@ -84,14 +85,14 @@ class Puzzle3ShuffledAnswersTest(unittest.TestCase):
         for slot in range(10):
             self.puzzle.handle_message(['P3', str(slot), '5' if slot < 4 else '1'])
         self.assertEqual(self.puzzle.streak, 0)
-        self.puzzle._schedule_next_question.assert_called_once_with(delay=7, advance=False)
+        self.puzzle._schedule_next_question.assert_called_once_with(delay=7, advance=True)
 
     def assert_result_window_blocks_answers(self, success):
         next_question = {**copy.deepcopy(self.question), 'id': 1001, 'q': 'Next question'}
         self.puzzle.chosen_questions.append(next_question)
         # Exercise the real delayed transition without starting a thread or waiting.
         self.puzzle._schedule_next_question = Puzzle3._schedule_next_question.__get__(self.puzzle)
-        with patch('mqtt.puzzles.puzzle3.threading.Thread') as thread:
+        with patch('mqtt.puzzles.puzzle3.threading.Timer') as thread:
             for slot in range(10):
                 answer = 5 if slot < 4 else 1
                 if not success and slot == 0:
@@ -112,13 +113,11 @@ class Puzzle3ShuffledAnswersTest(unittest.TestCase):
             self.client.send_message.assert_not_called()
             thread.assert_called_once()
             thread.return_value.start.assert_called_once()
-            transition = thread.call_args.kwargs['target']
+            transition = thread.call_args.args[1]
 
-        with patch('mqtt.puzzles.puzzle3.time.sleep') as sleep:
-            with patch.object(self.puzzle, '_pick_question_for_stage', return_value=next_question):
-                transition()
-            sleep.assert_called_once_with(7)
-        self.assertEqual(self.puzzle.current_question_idx, int(success))
+        with patch.object(self.puzzle, '_pick_question_for_stage', return_value=next_question):
+            transition()
+        self.assertEqual(self.puzzle.current_question_idx, 1)
         self.assertEqual(self.puzzle.get_state()['question']['id'], 1001)
         self.assertEqual(self.puzzle.get_state()['answered_players'], [])
         self.puzzle.handle_message(['P3', '0', '5'])

@@ -113,6 +113,32 @@ body::after {
         0 0 22px rgba(255, 255, 255, 0.12);
 }
 
+/* Keep the existing HUD hooks, now showing time and score rather than rounds.
+   The shared surface hides ordinal panels; this is a functional timer panel. */
+body.pyramid-game.game-surface[data-puzzle="3"] #streak-panel {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 44px;
+}
+
+.quiz-hud-stat {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+body.pyramid-game.game-surface[data-puzzle="3"] #streak {
+    color: #f3eee4;
+    min-width: 3ch;
+    text-align: right;
+}
+
+body.pyramid-game.game-surface[data-puzzle="3"] #timer {
+    min-width: 5ch;
+    text-align: center;
+}
+
 #puzzle3-shell {
     position: relative;
     z-index: 2;

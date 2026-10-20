@@ -4,13 +4,23 @@ from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from mqtt.puzzles.puzzle8 import Puzzle8
-from scoring import calculate_points, get_max_attempts
+from scoring import calculate_correct_points, calculate_points, get_max_attempts
 from scoring_config import SCORING_CONFIG
 
 
 class ScoringTests(unittest.TestCase):
     def test_config_contains_only_agreed_puzzles(self):
-        self.assertEqual(set(SCORING_CONFIG), {"puzzle1", "puzzle5", "puzzle8"})
+        self.assertEqual(set(SCORING_CONFIG), {"puzzle1", "puzzle3", "puzzle5", "puzzle8"})
+
+    def test_quiz_scores_only_correct_questions_without_a_cap(self):
+        for count in (0, 1, 6, 7, 20):
+            self.assertEqual(calculate_correct_points("puzzle3", count), count * 10)
+        self.assertEqual(SCORING_CONFIG["puzzle3"]["penalty_per_error"], 0)
+        with patch.dict(SCORING_CONFIG, {"puzzle3": {"points_per_correct": 15}}):
+            self.assertEqual(calculate_correct_points("puzzle3", 3), 45)
+        for count in (-1, 1.5, "2", None, True, False):
+            with self.subTest(count=count), self.assertRaises(ValueError):
+                calculate_correct_points("puzzle3", count)
 
     def test_points_for_each_failed_attempt_and_floor(self):
         for puzzle_id, penalty, max_attempts in (("puzzle1", 3, 30),

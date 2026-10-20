@@ -14,6 +14,43 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-20 — QUIZ: cinco minutos y diez puntos por pregunta correcta
+
+Tipo: `pendiente de revisar`. Cambio solicitado por Olalla y autorizado
+explícitamente antes de modificar backend.
+
+- `mqtt/puzzles/puzzle3.py`: sustituye el objetivo de seis aciertos por una
+  partida de 300 segundos, con reloj monotónico del servidor que sigue activo
+  durante los resultados. Cada pregunta completamente correcta (4 verdes y
+  6 rojos) suma puntos; los errores no descuentan ni borran puntos acumulados.
+  Ambos resultados cargan otra pregunta después de los 7 segundos de revisión
+  existentes. Se conserva el orden de dificultad en tandas renovables, sin
+  finalizar al completar seis preguntas ni imponer un máximo de puntos.
+- `scoring_config.py` y `scoring.py`: regla aditiva del QUIZ, 10 puntos por
+  pregunta correcta y penalización cero. Los otros puzzles conservan su cálculo
+  por intentos; no se aplica al QUIZ un máximo de 60 o 100 puntos.
+- El servidor termina al vencer el plazo incluso sin respuestas ni navegador
+  conectado, envía el mismo `FROM_FLASK: P3End` y publica `puzzle_solved` con
+  `total_points` para que el callback existente cierre y puntúe la partida.
+  No se modifican `app.py`, el cliente MQTT, las tablas ni partidas históricas.
+- Snapshots y SSE exponen `remaining`, `duration`, `total_points`, `correct_count`,
+  y permiten recuperar las elecciones y el resultado sin reiniciar el reloj.
+  Reset y stop cancelan/inutilizan los temporizadores antiguos. Las respuestas
+  duplicadas, fuera de plazo o durante la revisión no vuelven a puntuar.
+- Pantalla, instrucciones y notas del GM actualizadas en catalán, castellano
+  e inglés. Conservados el contrato `P3,terminal,1|5`, los colores funcionales
+  y los recursos multimedia.
+- Validación automatizada aislada: 27 pruebas de lógica/persistencia del QUIZ
+  y 7 de puntuación compartida aprobadas. SQLite temporal y reloj simulado;
+  sin broker, hardware ni base de datos real. Revisión de navegador a
+  1920 × 1080 y 1280 × 720 en tres idiomas: reloj, elecciones, resultados,
+  recuperación y finalización. También pasan las regresiones de selección
+  y ajuste de los 396 textos activos. La suite JavaScript conserva un fallo
+  previo ajeno al QUIZ en `game_language.test.cjs` (`openNativePlayer`).
+
+Pep debe revisar el reloj y la puntuación aditiva y validar el flujo de
+resultados y fin de tiempo con los diez terminales físicos.
+
 ## 2026-10-20 — Sumas: penalizar también las repeticiones sin reinicio
 
 Tipo: `pendiente de revisar`. Cambio de regla solicitado explícitamente por Olalla.
