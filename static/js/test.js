@@ -914,6 +914,35 @@
     setStatus("Sesión eliminada");
   }
 
+  async function closeSelectedSession() {
+    const sessionId = _loadedDbSessionId;
+    if (sessionId == null) {
+      throw new Error("Selecciona la sesión que quieres cerrar.");
+    }
+    const name = getSessionField("sessionName")?.value || "esta sesión";
+    if (!window.confirm(`¿Cerrar «${name}»? Se guardarán los datos del formulario y se conservarán los resultados ya registrados. Los puzzles incompletos no se darán por superados. Si es la sesión activa, se detendrá su puzzle. No se abrirá la presentación final ni se cambiará otra sesión activa.`)) return;
+
+    await saveSession({ silent: true });
+    // Address the selected database row, never the global active session.
+    const response = await fetch(`/test/session/${sessionId}/close`, { method: "POST" });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || "No se ha podido cerrar la sesión. Actualiza la lista antes de volver a intentarlo.");
+    }
+    const detailResponse = await fetch(`/test/session/${sessionId}`, { cache: "no-store" });
+    if (!detailResponse.ok) throw new Error("No se ha podido verificar el cierre. Actualiza la lista para comprobarlo.");
+    const detail = await detailResponse.json();
+    await syncConfirmedSession();
+    await refreshDbSessionList();
+    if (!detail.session?.ended_at) {
+      throw new Error("El cierre no consta en la base de datos. Actualiza la lista para volver a intentarlo.");
+    }
+    window.PyramidSessions?.closed(sessionId);
+    switchTab("sesiones");
+    addSimpleEvent("Sesión cerrada", name);
+    setStatus("Sesión cerrada. Los resultados registrados se conservan en el historial.");
+  }
+
   async function confirmSession(options = {}) {
     const silent = Boolean(options.silent);
 
@@ -4939,6 +4968,7 @@
     if (els.deleteSessionBtn) {
       els.deleteSessionBtn.addEventListener("click", () => runSessionAction(deleteSelectedSession));
     }
+    document.getElementById("gm-close-session-btn")?.addEventListener("click", () => runSessionAction(closeSelectedSession));
     if (els.newSessionBtn) els.newSessionBtn.addEventListener("click", () => {
       if (sessionActionBusy) return;
       clearSessionForm();

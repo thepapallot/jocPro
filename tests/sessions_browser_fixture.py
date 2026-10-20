@@ -7,6 +7,7 @@ from flask import render_template,jsonify
 from werkzeug.serving import make_server,WSGIRequestHandler
 case=SessionTests();case.setUp();app=case.app
 app.template_folder=str(ROOT/'templates');app.static_folder=str(ROOT/'static')
+namespace=app.view_functions['test_session_confirm'].__globals__
 @app.route('/welcome')
 def welcome():return '',200
 @app.route('/audit')
@@ -21,6 +22,23 @@ def finished():
  sid=case.create(name='Grupo finalizado',observations='Buena coordinación')
  case.writer.start_session(sid);pid=case.writer.record_puzzle_start(sid,1,1,1);case.writer.end_puzzle(pid);case.writer.end_session(sid)
  return jsonify(session_id=sid)
+@app.route('/audit/results',methods=['POST'])
+def recorded_results():
+ sid=namespace['_active_game_session_id']
+ case.writer.start_session(sid)
+ pid=case.writer.record_puzzle_start(sid,3,1,4)
+ case.writer.end_puzzle(pid,total_points=60)
+ return jsonify(session_id=sid)
+@app.route('/audit/old',methods=['POST'])
+def old_runs():
+ ids=[]
+ for name in ('Primeres 3 proves','Provant puntuatge','Primeres 3 proves 2.0'):
+  sid=case.create(name=name)
+  case.writer.start_session(sid,started_at='2026-10-14 10:00:00')
+  pid=case.writer.record_puzzle_start(sid,3,1,4)
+  case.writer.end_puzzle(pid,total_points=60)
+  ids.append(sid)
+ return jsonify(session_ids=ids)
 class Quiet(WSGIRequestHandler):
  def log(self,*a):pass
 server=make_server('127.0.0.1',0,app,request_handler=Quiet);threading.Thread(target=server.serve_forever,daemon=True).start()

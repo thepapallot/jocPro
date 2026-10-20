@@ -1,9 +1,10 @@
 const fs=require('node:fs'),cp=require('node:child_process');
+const WebSocket=globalThis.WebSocket||require('undici').WebSocket;
 const base=process.argv[2],root=require('node:path').resolve(__dirname,'..'),out=root+'/output/revision-sesiones';fs.mkdirSync(out,{recursive:true});
 const profile=fs.mkdtempSync('/tmp/chrome-audit-es-');
 const chrome=cp.spawn('google-chrome',['--headless','--no-sandbox','--disable-gpu','--remote-debugging-port=0','--user-data-dir='+profile,'--hide-scrollbars','--mute-audio','about:blank'],{stdio:'ignore'});
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
-let ws,id=0,session;const pending=new Map(),errors=[],reports=[];
+let ws,id=0,session,acceptDialogs=false;const pending=new Map(),errors=[],reports=[];
 async function cmd(method,params={},sid=session){const n=++id;return new Promise((resolve,reject)=>{pending.set(n,{resolve,reject});ws.send(JSON.stringify({id:n,method,params,...sid?{sessionId:sid}:{}}));});}
 async function evaluate(expression){const r=await cmd('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw new Error(JSON.stringify(r.exceptionDetails));return r.result.value;}
 async function navigate(url){await cmd('Page.navigate',{url});for(let i=0;i<100;i++){await delay(20);if(await evaluate('!!window.PyramidTest && !!document.querySelector("#gm-session-list-state")?.textContent'))return;}throw Error('load timeout '+url);}
@@ -21,7 +22,7 @@ async function sessionsTab(){await evaluate('document.querySelector("[data-gm-se
 async function panel(){return evaluate('document.querySelector("[data-gm-panel]:not([hidden])").dataset.gmPanel');}
 (async()=>{try{
  for(let i=0;i<100&&!fs.existsSync(profile+'/DevToolsActivePort');i++)await delay(50);
- const lines=fs.readFileSync(profile+'/DevToolsActivePort','utf8').trim().split('\n');ws=new WebSocket('ws://127.0.0.1:'+lines[0]+lines[1]);await new Promise(r=>ws.addEventListener('open',r,{once:true}));ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result)}else if(m.method==='Page.javascriptDialogOpening'){console.error('Unexpected dialog',m.params.message);cmd('Page.handleJavaScriptDialog',{accept:false});}else if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails);});
+ const lines=fs.readFileSync(profile+'/DevToolsActivePort','utf8').trim().split('\n');ws=new WebSocket('ws://127.0.0.1:'+lines[0]+lines[1]);await new Promise(r=>ws.addEventListener('open',r,{once:true}));ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result)}else if(m.method==='Page.javascriptDialogOpening'){cmd('Page.handleJavaScriptDialog',{accept:acceptDialogs});}else if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails);});
  const target=await cmd('Target.createTarget',{url:'about:blank'},null);const attach=await cmd('Target.attachToTarget',{targetId:target.targetId,flatten:true},null);session=attach.sessionId;await cmd('Page.enable');await cmd('Runtime.enable');
  await cmd('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
  await navigate(base+'/audit');await delay(300);
@@ -29,6 +30,7 @@ async function panel(){return evaluate('document.querySelector("[data-gm-panel]:
    if(options.method&&options.method!=='GET')sessionWrites.push({url,method:options.method});
    if(window.rejectSave&&url==='/test/session/save')return new Response(JSON.stringify({error:'No se ha podido guardar la sesión.'}),{status:503,headers:{'Content-Type':'application/json'}});
    if(window.rejectActivation&&url==='/test/session/confirm')return new Response(JSON.stringify({error:'No se ha podido activar la sesión de prueba.'}),{status:409,headers:{'Content-Type':'application/json'}});
+    if(window.rejectClose&&String(url).endsWith('/close'))return new Response(JSON.stringify({error:'Close failed'}),{status:503});
    return actualFetch(url,options);
  }`);
  assert.equal(await evaluate('document.getElementById("gm-session-players").value'),'10');
@@ -82,7 +84,54 @@ async function panel(){return evaluate('document.querySelector("[data-gm-panel]:
  await capture('historial-1920');
  await cmd('Emulation.setDeviceMetricsOverride',{width:1280,height:720,deviceScaleFactor:1,mobile:false});await capture('historial-1280');
  await evaluate('document.querySelector("[data-session-view=pending]").click()');await field('gm-session-filter-type','test');await evaluate('document.querySelector("[data-agenda-id]").click()');await delay(200);await capture('prueba-1280');
+ assert.equal(await evaluate('document.getElementById("gm-close-session-btn").disabled'),true,'Unstarted inactive session cannot close');
+ const activeId=await evaluate('PyramidTest.session().dbSessionId');
+ await field('gm-session-filter-type','all');
+ const oldRuns=await evaluate('fetch("/audit/old",{method:"POST"}).then(r=>r.json())');
+ const activations=await evaluate('sessionWrites.filter(r=>r.url==="/test/session/confirm").length');
+ acceptDialogs=true;
+ for(const oldId of oldRuns.session_ids){
+   await evaluate('document.querySelector("[data-session-view=pending]").click()');await click('gm-refresh-sessions');
+   await evaluate(`document.querySelector('[data-agenda-id="${oldId}"]').click()`);await delay(200);
+   assert.equal(await evaluate('document.getElementById("gm-close-session-btn").disabled'),false,'Old started run can close directly');
+   await click('gm-close-session-btn');
+   const old=await evaluate(`fetch('/test/session/${oldId}').then(r=>r.json())`);
+   assert.ok(old.session.ended_at);assert.equal(old.puzzles[0].total_points,60);
+   assert.equal(await evaluate('PyramidTest.session().dbSessionId'),activeId,'Closing old run keeps current session active');
+   assert.equal(await evaluate('document.querySelector("[data-session-view=history]").getAttribute("aria-pressed")'),'true');
+   assert.ok((await list()).some(row=>row.id===oldId));
+ }
+ assert.equal(await evaluate('sessionWrites.filter(r=>r.url==="/test/session/confirm").length'),activations,'Old sessions were never reactivated');
+ acceptDialogs=false;
+ await evaluate('document.querySelector("[data-session-view=pending]").click()');
+ await field('gm-session-filter-type','all');await evaluate(`document.querySelector('[data-agenda-id="${activeId}"]').click()`);await delay(200);
+ assert.equal(await evaluate('document.getElementById("gm-close-session-btn").disabled'),false);
+ await evaluate('fetch("/audit/results",{method:"POST"}).then(r=>r.json())');
+ const before=await evaluate(`fetch('/test/session/${activeId}').then(r=>r.json())`);
+ assert.equal(before.puzzles.length,1);assert.equal(before.puzzles[0].total_points,60);
+ const closeCount=await evaluate('sessionWrites.filter(r=>r.url.endsWith("/close")).length');
+ await click('gm-close-session-btn');
+ assert.equal(await evaluate('sessionWrites.filter(r=>r.url.endsWith("/close")).length'),closeCount,'Cancelled confirmation must not close');
+ acceptDialogs=true;await evaluate('window.rejectClose=true');await click('gm-close-session-btn');
+ assert.equal(await evaluate('document.getElementById("gm-session-form-error").hidden'),false);
+ assert.equal(await evaluate('PyramidTest.session().dbSessionId'),activeId,'Failed close must keep session active');
+ await field('gm-session-observations','Cierre manual comprobado');
+ await evaluate('window.rejectClose=false');
+ const attempts=await evaluate('sessionWrites.filter(r=>r.url.endsWith("/close")).length');
+ await evaluate('document.getElementById("gm-close-session-btn").click();document.getElementById("gm-close-session-btn").click()');await delay(400);
+ assert.equal(await evaluate('sessionWrites.filter(r=>r.url.endsWith("/close")).length'),attempts+1,'Double click must only close once');
+ assert.equal(await evaluate('PyramidTest.session()'),null);
+ assert.equal(await evaluate('document.getElementById("gm-close-session-btn").disabled'),true);
+ assert.equal(await evaluate('document.getElementById("gm-confirm-session-btn").disabled'),true);
+ const closed=await evaluate(`fetch('/test/session/${activeId}').then(r=>r.json())`);
+ assert.ok(closed.session.ended_at);assert.equal(closed.session.observations,'Cierre manual comprobado');
+ assert.deepEqual(closed.puzzles,before.puzzles,'Close must preserve recorded puzzle results');
+ assert.equal(await evaluate('location.pathname'),'/audit','Do not navigate to final presentation');
+ await evaluate('document.querySelector("[data-session-view=history]").click()');
+ assert.ok((await list()).some(row=>row.id===activeId));
+ await capture('sesion-cerrada-1280');
+ await cmd('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});await capture('sesion-cerrada-1920');
  assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);
  assert.equal(errors.length,0,JSON.stringify(errors));
- fs.writeFileSync(out+'/verification.json',JSON.stringify({reports,errors,checks:'Single-action test and real preparation, automatic control navigation, double-click protection, save for later, active/editor isolation, return without reactivation, activation failure and retry without duplication, duplicate, delete cancel/confirm, validation, finished history and results'},null,2));console.log('Sessions browser checks passed; 7 screenshots; no runtime errors.');
+ fs.writeFileSync(out+'/verification.json',JSON.stringify({reports,errors,checks:'Single-action test and real preparation, automatic control navigation, double-click protection, save for later, active/editor isolation, return without reactivation, activation failure and retry without duplication, duplicate, delete cancel/confirm, validation, finished history and results, session close cancel/failure/success with saved notes and no final player navigation'},null,2));console.log('Sessions browser checks passed; 9 screenshots; no runtime errors.');
  }finally{ws?.close();chrome.kill('SIGTERM');}})().catch(e=>{console.error(e);process.exitCode=1});

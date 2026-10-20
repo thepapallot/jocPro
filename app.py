@@ -677,6 +677,34 @@ def test_session_delete(session_id):
     return jsonify({'session_id': session_id, 'deleted': True}), 200
 
 
+@app.route('/test/session/<int:session_id>/close', methods=['POST'])
+def test_session_close(session_id):
+    """Close the selected run, without activating it or changing another run."""
+    global _active_game_session_id
+    if _telemetry_writer is None or _telemetry_queries is None:
+        return jsonify({'error': 'telemetry_unavailable'}), 503
+    with _active_game_lock:
+        try:
+            session = _telemetry_queries.get_session_stats(session_id)
+            if not session:
+                return jsonify({'error': 'Sesión no encontrada.'}), 404
+            if (not session.get('started_at') and not session.get('ended_at')
+                    and _active_game_session_id != session_id):
+                return jsonify({'error': 'Esta sesión todavía no ha empezado.'}), 409
+            # Do not move the recorded end time on retries/double clicks.
+            if not session.get('ended_at'):
+                _telemetry_writer.end_session(session_id)
+        except Exception:
+            return jsonify({'error': 'No se ha podido cerrar la sesión.'}), 500
+        if _active_game_session_id == session_id:
+            # Stop only this active run's timers. Never solve unfinished puzzles
+            # or stop a different session when archiving an old run.
+            mqtt_client.stop_current_puzzle()
+            mqtt_client.set_active_session_id(None)
+            _active_game_session_id = None
+    return jsonify({'status': 'closed', 'session_id': session_id}), 200
+
+
 @app.route('/test/session/confirm', methods=['POST'])
 def test_session_confirm():
     global _active_game_session_id

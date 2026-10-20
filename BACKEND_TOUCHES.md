@@ -14,6 +14,38 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-20 — Cerrar sesiones antiguas desde Sesiones
+
+Tipo: `pendiente de revisar`. Cambio de backend autorizado explícitamente por
+Olalla después de comprobar que el botón solo permitía cerrar la sesión activa.
+
+- `app.py`: nuevo `POST /test/session/<session_id>/close`, que cierra por ID
+  la sesión seleccionada, sin reactivarla ni abrir el desenlace. Permite cerrar
+  sesiones iniciadas que quedaron abiertas tras una recarga/reinicio, aunque
+  exista otra partida activa. Una sesión futura no iniciada y no activa devuelve
+  409; una inexistente, 404; la telemetría no disponible, 503.
+- Mantiene los puzzles, puntos e inicio registrados. No inventa victorias ni
+  completa puzzles inconclusos. El cierre manual registra la hora actual; no
+  reconstruye la hora real de finalización de una partida antigua. Repetir el
+  cierre es idempotente y conserva un final ya registrado.
+- Solo si se cierra la sesión actualmente activa se detiene su puzzle y se
+  limpia la vinculación activa. Cerrar una sesión antigua no toca el puzzle,
+  el reloj ni la vinculación de otra sesión. No se modifican contratos MQTT,
+  el esquema de SQLite ni el endpoint `/final`.
+- `templates/test.html`, `static/js/test.js` y `static/js/session-manager.js`:
+  habilitan «Cerrar sesión» al seleccionar cualquier sesión en curso. Se pide
+  confirmación, se guardan las ediciones del formulario, se verifica el cierre
+  y se muestra la sesión en Historial, sin pasar por «Guardar e ir al control».
+- Validación aislada: 10 pruebas Python de sesiones y 22 pruebas JavaScript de
+  cierre/controles aprobadas. Chrome a 1920 × 1080 y 1280 × 720 con SQLite
+  temporal: tres sesiones antiguas cerradas sin reactivación, otra activa
+  conservada, puntos del QUIZ preservados, cancelación, fallo y doble clic.
+  Sin iniciar el servidor real, sin MQTT/hardware ni alterar sesiones reales.
+
+Pep debe revisar la coordinación del cierre con la sesión activa y los
+temporizadores del puzzle. No se han cerrado automáticamente las sesiones de
+Olalla; la acción queda disponible en el panel.
+
 ## 2026-10-20 — QUIZ: cinco minutos y diez puntos por pregunta correcta
 
 Tipo: `pendiente de revisar`. Cambio solicitado por Olalla y autorizado
