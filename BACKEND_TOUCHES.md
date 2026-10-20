@@ -14,6 +14,26 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-20 — Conexión Simultánea: diez botones de un color
+
+Tipo: `pendiente de revisar`. Cambio solicitado por Olalla y autorizado
+explícitamente antes de modificar backend.
+
+- `mqtt/puzzles/puzzle12.py`: cada una de las quince combinaciones tiene
+  exactamente un color con diez botones. El color varía entre combinaciones;
+  las cantidades de los otros cinco colores se conservan. Esto exige que
+  los diez terminales mantengan pulsado el botón de ese color.
+- Se conserva la única ronda activa (nivel 3), la selección aleatoria,
+  la duración, la confirmación de dos segundos y los contratos MQTT/SSE.
+  La pantalla representa los nuevos objetivos desde `target`, sin cambios
+  de frontend, colores, instrucciones ni recursos.
+- `tests/test_puzzle12.py`: regresiones aisladas de las quince combinaciones,
+  objetivos publicados y necesidad de los diez terminales. Sin iniciar Flask
+  ni conectar MQTT/hardware; temporizadores simulados.
+
+Pep debe revisar las cantidades y validar la pulsación simultánea con los
+diez terminales físicos. No se ha hecho validación visual ni con hardware.
+
 ## 2026-10-20 — QUIZ: pausa del reloj durante los resultados
 
 Tipo: `pendiente de revisar`. Cambio solicitado por Olalla: congelar también
