@@ -14,6 +14,47 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-20 — Conexión Simultánea: puntuación y ayuda desde el quinto reinicio
+
+Tipo: `pendiente de revisar`. Regla propuesta y confirmada explícitamente por
+Olalla antes de modificar backend.
+
+- `scoring_config.py`: añade `puzzle12`, máximo 100 puntos y penalización de
+  10 por tiempo agotado. Reutiliza `calculate_points`; no hay límite de
+  intentos ni finalización automática al llegar a cero.
+- `mqtt/puzzles/puzzle12.py`: cuenta una vez cada timeout aceptado y publica
+  `timeout_count`, `available_points` y `total_points` en el estado. Solo al
+  resolver emite los puntos ganados junto con `puzzle_solved`, para que el
+  callback existente cierre y puntúe la fila activa en SQLite. No cambian
+  Flask, el cliente MQTT, el esquema ni las partidas históricas.
+- `current_target` es la única fuente para mostrar, validar y recuperar el
+  objetivo. En los cuatro primeros reinicios se mantiene el sorteo existente;
+  desde el quinto se conserva la combinación actual y se resta una bola a
+  cada color distinto del que tiene diez, con mínimo de una. Cada reinicio
+  posterior repite la reducción: nunca aumenta la cantidad durante la ayuda.
+  Se conservan siempre las diez bolas de un color y los 90 segundos activos.
+- Reset limpia puntos, ayudas y estados de terminales. Stop/reset cancelan
+  temporizadores; una generación invalida callbacks antiguos de confirmación
+  o reinicio. Se rechazan terminales fuera de 1–10 y estados distintos de seis
+  bits, para no simular la participación de diez terminales con datos inválidos.
+  El reinicio conserva la espera de cinco segundos con un timer cancelable.
+- `tests/test_puzzle12.py`, `tests/test_puzzle12_points.py` y
+  `tests/test_scoring.py`: puntuación 100–0, continuación a cero, quinto reinicio,
+  reducción hasta 15 bolas, objetivo visible igual al validado, callbacks
+  invalidados y persistencia real con SQLite temporal.
+- `tests/test_puzzle12_feedback.py`: completa el mock de audio (`pause` y
+  registro al reproducir, no al precargar) y adapta las comprobaciones al tick
+  del reloj y al flujo timeout-reinicio. Verifica objetivos de 34, 29 y 15 bolas
+  y sus límites a 1920 × 1080 y 1280 × 720 en ca/es/en, con y sin movimiento
+  reducido. No se ha cambiado el frontend ni el significado de sus instrucciones.
+- Validación: 15 pruebas de puzzle 12 (incluida una con 12 variantes de
+  navegador) y 8 de puntuación compartida aprobadas. Solo simulación aislada,
+  sin broker/hardware ni base de datos real.
+
+Esta entrada actualiza la selección aleatoria descrita en la entrada anterior:
+se deja de sortear desde el quinto reinicio. Pep debe revisar la coordinación
+de timers y confirmar el comportamiento con los diez terminales físicos.
+
 ## 2026-10-20 — Conexión Simultánea: diez botones de un color
 
 Tipo: `pendiente de revisar`. Cambio solicitado por Olalla y autorizado

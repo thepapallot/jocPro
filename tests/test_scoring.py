@@ -10,7 +10,12 @@ from scoring_config import SCORING_CONFIG
 
 class ScoringTests(unittest.TestCase):
     def test_config_contains_only_agreed_puzzles(self):
-        self.assertEqual(set(SCORING_CONFIG), {"puzzle1", "puzzle3", "puzzle5", "puzzle8"})
+        self.assertEqual(set(SCORING_CONFIG), {"puzzle1", "puzzle3", "puzzle5", "puzzle8", "puzzle12"})
+
+    def test_buttons_score_timeouts_without_an_attempt_limit(self):
+        self.assertNotIn("max_attempts", SCORING_CONFIG["puzzle12"])
+        for timeouts in range(16):
+            self.assertEqual(calculate_points("puzzle12", timeouts), max(0, 100 - 10 * timeouts))
 
     def test_quiz_scores_only_correct_questions_without_a_cap(self):
         for count in (0, 1, 6, 7, 20):
