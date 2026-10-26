@@ -39,6 +39,7 @@
     let statusSectionEl = null;
     let progressSectionEl = null;
     let solved = false;
+    let exhausted = false;
     let showingCompletion = false;
     let flashingActive = false;
     let flashingCorrect = false;
@@ -400,6 +401,37 @@
         if (window.PyramidLevelVictory?.active) return;
         console.log('[P4] handleUpdate called with:', d);
         if (!d || d.puzzle_id !== 4) return;
+        if (solved || exhausted) return;
+        // Terminal state must bypass the inter-round queue and cancel all audio/UI work.
+        if (d.puzzle_exhausted) {
+            exhausted = true;
+            showingCompletion = false;
+            interRoundPauseActive = false;
+            queuedInterRoundUpdate = null;
+            clearActionFeedback();
+            clearFeedbackTimer();
+            stopFlashing();
+            clearTimeout(interRoundPauseTimer);
+            clearTimeout(delayedPopupTimer);
+            clearTimeout(phasePopupTimer);
+            phasePopupEl?.classList.remove('is-visible');
+            phasePopupEl?.classList.add('hidden');
+            samplePlaybackToken += 1;
+            currentSampleUrl = null;
+            trackAudio.pause();
+            sfxAudio.pause();
+            setSampleWaveActive(false);
+            updateProgressBoxes(-1, []);
+            document.getElementById('puzzle4-shell')?.classList.remove('is-recording');
+            const messages = {
+                ca: 'Temps esgotat · 0 punts',
+                es: 'Tiempo agotado · 0 puntos',
+                en: 'Time is up · 0 points'
+            };
+            const language = window.PYRAMID_GAME?.language;
+            setStatus(messages[language === 'eng' ? 'en' : language] || messages.ca, 'exhausted');
+            return;
+        }
         if (interRoundPauseActive && !d.show_completion && !d.puzzle_solved) {
             queuedInterRoundUpdate = d;
             return;
@@ -633,6 +665,12 @@
 
         es.onopen = () => {
             fetch("/start_puzzle/4", { method: "POST" })
+                .then(() => fetch('/current_state', {cache: 'no-store'}))
+                .then(response => {
+                    if (!response.ok) throw new Error('state_unavailable');
+                    return response.json();
+                })
+                .then(handleUpdate)
                 .catch(err => console.warn("Failed to start puzzle 4:", err));
         };
 

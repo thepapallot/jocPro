@@ -240,8 +240,41 @@ async function run() {
             assert.equal(await evaluate("document.querySelectorAll('#streak2-container .filled').length"), 7);
             await layout(prefix + '-second-record', [...playerSelectors, '#streak2-container', '#streak2-container .progress-box']);
         });
+        await check(prefix + '/deadline interrupts inter-round pause without celebrating or leaking stale audio', async () => {
+            await api('fresh'); await api('start');
+            const terminal = await api('expire');
+            assert.equal(terminal.state.total_points, 0);
+            assert.equal(terminal.state.puzzle_solved, false);
+            await evaluate('window.auditVictoryCalls=[];window.PyramidLevelVictory.complete=id=>auditVictoryCalls.push(id);');
+            await push({show_completion: true, streak: 1, total_required: 2});
+            await push({sample_song: {url:'/static/audios/P4_F2/song.wav'}, playing_sample:true, streak: -1});
+            await push(terminal.events.find(e => e.puzzle_exhausted));
+            const expected = {ca:'Temps esgotat · 0 punts',es:'Tiempo agotado · 0 puntos',eng:'Time is up · 0 points'}[lang];
+            assert.equal(await evaluate('document.getElementById("status-text").textContent'), expected);
+            assert.equal(await visible('#streak1-container'), false);
+            assert.equal(await visible('#streak2-container'), false);
+            assert.equal(await visible('#p4-phase-popup'), false);
+            assert.deepEqual(await evaluate('auditVictoryCalls'), []);
+            assert.equal(await evaluate('auditAudioObjects.filter(a=>/P4_|fase_/.test(a.src)).every(a=>a.paused)'), true);
+            await layout(prefix + '-exhausted', playerSelectors);
+            await delay(3600);
+            await push({puzzle_solved:true});
+            assert.equal(await evaluate('document.getElementById("status-text").textContent'), expected);
+            assert.equal(await visible('#p4-phase-popup'), false);
+            assert.deepEqual(await evaluate('auditVictoryCalls'), []);
+        });
+        await check(prefix + '/reconnection recovers exhausted snapshot without restarting the clock', async () => {
+            await navigate('/puzzle/4?lang=' + lang);
+            await until('auditStreams.length > 0');
+            await evaluate(`window.auditCurrentState={puzzle_id:4,puzzle_exhausted:true,total_points:0};
+                auditStreams.find(s=>typeof s.onopen==='function').onopen();`);
+            await until('document.getElementById("status-text").textContent.includes("0 ")');
+            assert.equal(await visible('#streak1-container'), false);
+            assert.equal(await visible('#streak2-container'), false);
+            assert.equal(await evaluate('window.PyramidLevelVictory.active'), false);
+        });
         await navigate('/test?panel=juego&lang=' + lang);
-        await gmReady(true);
+        await gmReady(false);
         await check(prefix + '/visible GM checkbox in music presentation before gameplay', async () => {
             assert.equal(await evaluate('document.querySelector("[data-gm-panel=juego]").hidden'), false);
             assert.equal(await evaluate(`${checkbox}.closest('#director-game') === null`), true);
@@ -250,7 +283,7 @@ async function run() {
         });
     }
     await check('GM/music option appears only for music and retains selection across navigation', async () => {
-        await gmReady(true);
+        await click('#music-second-round'); await gmReady(true);
         for (const puzzleId of [1, 3, 5, 8, 12, 6, null]) {
             await evaluate(`window.auditPlayer.state.puzzleId=${JSON.stringify(puzzleId)};`);
             await until('document.getElementById("director-music-options").hidden');
