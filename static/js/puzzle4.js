@@ -40,6 +40,7 @@
     let progressSectionEl = null;
     let solved = false;
     let exhausted = false;
+    let leaving = false;
     let showingCompletion = false;
     let flashingActive = false;
     let flashingCorrect = false;
@@ -397,6 +398,16 @@
         playTrack(trackPayload.url, onComplete);
     }
 
+    function advanceAfterExhaustion() {
+        const nextId = window.NEXT_PUZZLE_ID ?? window.PYRAMID_GAME?.finalId;
+        if (leaving || !Number.isInteger(nextId)) return;
+        const path = '/presentacio/' + nextId;
+        const language = window.PyramidLanguage?.current?.() || window.PYRAMID_GAME?.language || 'es';
+        const url = window.PyramidLanguage?.path?.(path, language) || path + '?lang=' + encodeURIComponent(language);
+        leaving = true;
+        window.location.assign(url);
+    }
+
     function handleUpdate(d) {
         if (window.PyramidLevelVictory?.active) return;
         console.log('[P4] handleUpdate called with:', d);
@@ -430,6 +441,7 @@
             };
             const language = window.PYRAMID_GAME?.language;
             setStatus(messages[language === 'eng' ? 'en' : language] || messages.ca, 'exhausted');
+            advanceAfterExhaustion();
             return;
         }
         if (interRoundPauseActive && !d.show_completion && !d.puzzle_solved) {

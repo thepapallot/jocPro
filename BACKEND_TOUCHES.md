@@ -14,6 +14,37 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-26 — Conexión Simultánea: puntuación al resolver desde Test
+
+Tipo: `pendiente de revisar`. Corrección de backend autorizada explícitamente
+por Olalla y reaplicada en su rama tras el cambio de rama solicitado.
+
+- Causa: «Resolver puzzle» del puzzle 12 llamaba a `/test/force_end`, que
+  marcaba `puzzle_solved` sin calcular ni emitir `total_points`. La fila se
+  cerraba conservando sus cero puntos iniciales, aunque había 100 disponibles.
+- `mqtt/puzzles/puzzle12.py`: incorpora `complete_by_gm` y comparte el cierre
+  con la resolución natural mediante `_complete_locked`. Usa la regla de
+  puntuación compartida (100 menos 10 por timeout, con suelo cero) y publica
+  los puntos junto a `puzzle_solved`; conserva `forced_by_gm` para Test.
+  Cancela confirmación/reintento e invalida callbacks antiguos. Una finalización
+  repetida o posterior al éxito natural no vuelve a enviar ni puntuar.
+- `app.py`: solo el puzzle 12 delega la finalización forzada en su clase. No
+  se cambian rutas, mensajes MQTT, interfaz ni reglas de otros puzzles.
+  Se mantiene `P12End`, sin añadir una espera a la petición del GM; la
+  resolución natural conserva su pausa de tres segundos antes del éxito.
+- `tests/test_puzzle12_points.py`: siete regresiones adicionales con la ruta
+  Flask real extraída por AST, MQTTClient/callback reales y SQLite temporal:
+  100 puntos, penalizaciones, suelo cero, reintento pendiente, confirmación
+  pendiente y duplicados, éxito natural previo y rechazo de otro puzzle activo.
+- Validación: 22 pruebas de puzzle 12 aprobadas (incluida simulación de
+  navegador), 17 de puntuación compartida y 15 de controles GM. Sin errores
+  de diagnóstico ni de espacios en el diff. Sin broker ni hardware; no se ha
+  arrancado la aplicación real ni modificado resultados de partidas existentes.
+  Sin cambios visuales ni cambios en las combinaciones actuales de botones.
+
+Pep debe revisar el cierre compartido y la coordinación del botón del GM con
+las confirmaciones y reintentos de los terminales físicos.
+
 ## 2026-10-26 — Código Sonoro: puntuación por tiempo y máximo diez minutos
 
 Tipo: `pendiente de revisar`. Olalla autoriza explícitamente los cambios de
@@ -45,8 +76,15 @@ backend y confirma cero puntos si se agotan los diez minutos sin resolver.
   mientras suena el último fragmento.
 - `static/js/puzzle4.js`: el agotamiento cancela audio, feedback y transiciones,
   muestra tiempo agotado y cero puntos en ca/es/eng y no concede logro ni
-  celebración. El GM conserva la navegación manual al siguiente reto. Recupera
+  celebración. Actualización solicitada el 26 de octubre: al agotarse el tiempo,
+  salta automáticamente a la presentación siguiente, conservando el idioma y
+  el orden configurado, también al recuperar un snapshot agotado. No se modifica
+  backend ni puntuación para añadir este salto. Recupera
   snapshot en cada conexión SSE, sin reiniciar el reloj del puzzle actual.
+- Revalidación del salto automático: 85 comprobaciones de navegador y 54
+  distribuciones/capturas a 1080p y 720p en ca/es/eng; comprueba salida por SSE
+  y por snapshot, idioma, cancelación de audio y ausencia de celebración.
+  Las 30 pruebas de Puzzle4 siguen aprobadas. Solo simulación aislada.
 - Validación aislada: 30 pruebas de Puzzle4 (incluida SQLite temporal con
   MQTTClient, callback real y las dos rondas), 17 de puntuación compartida,
   85 comprobaciones de navegador y 60 distribuciones/capturas a 1080p y 720p

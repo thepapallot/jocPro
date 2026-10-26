@@ -84,6 +84,31 @@ class Puzzle12(BasePuzzle):
             self._prepare_target()
             self._push({**self._round_state(), "startRound": True})
 
+    def complete_by_gm(self):
+        """Use the normal scoring rule without requiring held terminal buttons."""
+        with self.lock:
+            if self._stopped or self.solved:
+                return
+            self._complete_locked(forced_by_gm=True)
+
+    def _complete_locked(self, forced_by_gm=False):
+        """Finish once under self.lock, invalidating pending confirmation/retry work."""
+        self._generation += 1
+        for timer in (self._solve_timer, self._retry_timer):
+            if timer is not None:
+                timer.cancel()
+        self._solve_timer = self._retry_timer = None
+        self.processing_wrong_result = False
+        self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+        if not forced_by_gm:
+            time.sleep(3)  # Preserve the normal pause before declaring success.
+        self.solved = True
+        self.total_points = calculate_points("puzzle12", self.timeout_count)
+        payload = {"puzzle_solved": True, **self._score_state()}
+        if forced_by_gm:
+            payload["forced_by_gm"] = True
+        self._push(payload)
+
     def handle_message(self, parts):
         # parts = ['P12', '<box_id>', '<buttons_string>']
         if len(parts) < 3:
@@ -152,15 +177,7 @@ class Puzzle12(BasePuzzle):
             self._push({"puzzle_id": self.id, "streak_solved": True})
 
             if self.current_active_index >= self.streaks - 1 or self.saltarPuzzle:
-                self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
-                time.sleep(3)  # Brief pause before declaring puzzle solved
-                self.solved = True
-                self.total_points = calculate_points("puzzle12", self.timeout_count)
-                self._push({
-                    "puzzle_id": self.id,
-                    "puzzle_solved": True,
-                    **self._score_state(),
-                })
+                self._complete_locked()
             else:
                 time.sleep(4)  # Brief pause before next round
                 self._set_active_round(self.current_active_index + 1)

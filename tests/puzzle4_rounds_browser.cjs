@@ -240,7 +240,7 @@ async function run() {
             assert.equal(await evaluate("document.querySelectorAll('#streak2-container .filled').length"), 7);
             await layout(prefix + '-second-record', [...playerSelectors, '#streak2-container', '#streak2-container .progress-box']);
         });
-        await check(prefix + '/deadline interrupts inter-round pause without celebrating or leaking stale audio', async () => {
+        await check(prefix + '/deadline stops audio and advances once without celebrating', async () => {
             await api('fresh'); await api('start');
             const terminal = await api('expire');
             assert.equal(terminal.state.total_points, 0);
@@ -248,30 +248,30 @@ async function run() {
             await evaluate('window.auditVictoryCalls=[];window.PyramidLevelVictory.complete=id=>auditVictoryCalls.push(id);');
             await push({show_completion: true, streak: 1, total_required: 2});
             await push({sample_song: {url:'/static/audios/P4_F2/song.wav'}, playing_sample:true, streak: -1});
-            await push(terminal.events.find(e => e.puzzle_exhausted));
+            const result = await evaluate(`(()=>{
+                const nextId=window.NEXT_PUZZLE_ID ?? window.PYRAMID_GAME?.finalId;
+                auditPush(${JSON.stringify(terminal.events.find(e => e.puzzle_exhausted))});
+                auditPush({puzzle_id:4,puzzle_exhausted:true,total_points:0});
+                auditPush({puzzle_id:4,puzzle_solved:true});
+                return {nextId,status:document.getElementById('status-text').textContent,
+                    victory:auditVictoryCalls,
+                    audioPaused:auditAudioObjects.filter(a=>/P4_|fase_/.test(a.src)).every(a=>a.paused),
+                    popupHidden:document.getElementById('p4-phase-popup').classList.contains('hidden')};
+            })()`);
             const expected = {ca:'Temps esgotat · 0 punts',es:'Tiempo agotado · 0 puntos',eng:'Time is up · 0 points'}[lang];
-            assert.equal(await evaluate('document.getElementById("status-text").textContent'), expected);
-            assert.equal(await visible('#streak1-container'), false);
-            assert.equal(await visible('#streak2-container'), false);
-            assert.equal(await visible('#p4-phase-popup'), false);
-            assert.deepEqual(await evaluate('auditVictoryCalls'), []);
-            assert.equal(await evaluate('auditAudioObjects.filter(a=>/P4_|fase_/.test(a.src)).every(a=>a.paused)'), true);
-            await layout(prefix + '-exhausted', playerSelectors);
-            await delay(3600);
-            await push({puzzle_solved:true});
-            assert.equal(await evaluate('document.getElementById("status-text").textContent'), expected);
-            assert.equal(await visible('#p4-phase-popup'), false);
-            assert.deepEqual(await evaluate('auditVictoryCalls'), []);
+            assert.equal(result.status, expected);
+            assert.deepEqual(result.victory, []);
+            assert.equal(result.audioPaused, true);
+            assert.equal(result.popupHidden, true);
+            await until(`location.pathname === '/presentacio/${result.nextId}' && new URLSearchParams(location.search).get('lang') === '${lang}'`);
         });
-        await check(prefix + '/reconnection recovers exhausted snapshot without restarting the clock', async () => {
+        await check(prefix + '/reconnection to exhausted snapshot advances automatically', async () => {
             await navigate('/puzzle/4?lang=' + lang);
             await until('auditStreams.length > 0');
+            const nextId = await evaluate('window.NEXT_PUZZLE_ID ?? window.PYRAMID_GAME?.finalId');
             await evaluate(`window.auditCurrentState={puzzle_id:4,puzzle_exhausted:true,total_points:0};
                 auditStreams.find(s=>typeof s.onopen==='function').onopen();`);
-            await until('document.getElementById("status-text").textContent.includes("0 ")');
-            assert.equal(await visible('#streak1-container'), false);
-            assert.equal(await visible('#streak2-container'), false);
-            assert.equal(await evaluate('window.PyramidLevelVictory.active'), false);
+            await until(`location.pathname === '/presentacio/${nextId}' && new URLSearchParams(location.search).get('lang') === '${lang}'`);
         });
         await navigate('/test?panel=juego&lang=' + lang);
         await gmReady(false);

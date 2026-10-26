@@ -588,10 +588,13 @@ def test_force_end():
 
     end_payload = "P5_End" if puzzle_id == 5 else f"P{puzzle_id}End"
     try:
-        with puzzle.lock:
-            puzzle.solved = True
-        mqtt_client.send_message("FROM_FLASK", end_payload)
-        puzzle._push({"puzzle_solved": True, "forced_by_gm": True})
+        if puzzle_id == 12:
+            puzzle.complete_by_gm()
+        else:
+            with puzzle.lock:
+                puzzle.solved = True
+            mqtt_client.send_message("FROM_FLASK", end_payload)
+            puzzle._push({"puzzle_solved": True, "forced_by_gm": True})
     except Exception as exc:
         return jsonify({"error": "force_end_failed", "detail": str(exc)}), 500
 
