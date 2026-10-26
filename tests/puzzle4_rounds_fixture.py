@@ -7,12 +7,13 @@ and background workers mocked. No database, broker, or hardware is used.
 import ast
 import sys
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from flask import jsonify, render_template, request
 from presentation_fixture import create_runtime
 from mqtt.puzzles.puzzle4 import Puzzle4
+from test_puzzle4_scoring import ManualClock
 
 ROOT = Path(__file__).resolve().parents[1]
 app, mqtt = create_runtime()
@@ -26,6 +27,7 @@ mqtt.start_next_round = lambda *args: mqtt.rounds.append(args)
 mqtt.puzzles[4] = Puzzle4(mqtt)
 failure = None
 requests = []
+clock = ManualClock()
 
 # Compile only the two real route functions; never execute module startup.
 tree = ast.parse((ROOT / 'app.py').read_text())
@@ -40,11 +42,11 @@ namespace = dict(app=app, mqtt_client=mqtt, jsonify=jsonify, request=request,
 exec(compile(ast.Module(body=nodes, type_ignores=[]), str(ROOT / 'app.py'), 'exec'), namespace)
 
 STUB = '''<script>
-window.musicRoundsFixture=true;window.auditStreams=[];window.auditAudios=[];
+window.musicRoundsFixture=true;window.auditStreams=[];window.auditAudios=[];window.auditAudioObjects=[];
 window.EventSource=class {constructor(url){this.url=url;auditStreams.push(this);}close(){}};
 window.auditPush=data=>auditStreams.forEach(s=>s.onmessage?.({data:JSON.stringify(data)}));
 window.Audio=class extends EventTarget {
- constructor(src=''){super();this.src=src;this.currentTime=0;this.volume=1;this.paused=true;}
+ constructor(src=''){super();this.src=src;this.currentTime=0;this.volume=1;this.paused=true;auditAudioObjects.push(this);}
  setAttribute(){} load(){} pause(){this.paused=true;}
  play(){this.paused=false;auditAudios.push(this.src);return Promise.resolve();}
 };
@@ -54,7 +56,7 @@ window.fetch=(url,options={})=>{
  // Pass the real music endpoint and all assets through to Flask.
  if(p==='/test/puzzle4/round_options'||p.startsWith('/audit/')||p.startsWith('/static/'))return nativeFetch(url,options);
  const values={'/test/sessions':{sessions:[],active_session_id:null},
- '/test/session/active':{session:null},'/current_state':{},
+ '/test/session/active':{session:null},'/current_state':window.auditCurrentState||{},
  '/test/system_status':{mqtt_connected:false,puzzles_initialized:true}};
  if(p.startsWith('/test/')||p==='/current_state'||p.startsWith('/start_puzzle/'))
    return Promise.resolve(new Response(JSON.stringify(values[p]||{}),{headers:{'Content-Type':'application/json'}}));
@@ -102,11 +104,19 @@ def identity():
 
 @app.route('/audit/control', methods=['POST'])
 def control():
-    global failure
-    data = request.get_json()
+    with patch('mqtt.puzzles.puzzle4.time.monotonic', side_effect=lambda: clock.now), \
+            patch('mqtt.puzzles.puzzle4.threading.Timer',
+                  side_effect=lambda delay, callback: clock.timer(delay, callback)):
+        return control_with_clock(request.get_json())
+
+
+def control_with_clock(data):
+    global failure, clock
     puzzle = mqtt.puzzles[4]
     action = data['action']
     if action == 'fresh':
+        puzzle.stop()
+        clock = ManualClock()
         mqtt.puzzles[4] = puzzle = Puzzle4(mqtt)
         mqtt.current_puzzle_id = None
         mqtt.events.clear()
@@ -119,13 +129,14 @@ def control():
         failure = data['mode']
     elif action == 'start':
         mqtt.current_puzzle_id = 4
-        with patch('mqtt.puzzles.puzzle4.threading.Thread', return_value=Mock()):
-            puzzle.reset()
+        puzzle.reset()
     elif action == 'validate':
         puzzle.played_sequence = puzzle._get_current_required_order().copy()
-        # Run actual validation synchronously; suppress waits and worker launch.
-        with patch('mqtt.puzzles.puzzle4.time.sleep'), patch.object(puzzle, '_play_sample_with_delay'):
-            puzzle._handle_validation(True)
+        # Advance the real validation/countdown timers deterministically, no workers.
+        puzzle._handle_validation(True)
+        clock.advance(13)
+    elif action == 'expire':
+        clock.advance(puzzle.max_time_seconds)
     elif action == 'other-puzzle':
         mqtt.current_puzzle_id = 3
     else:

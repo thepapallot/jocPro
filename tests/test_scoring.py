@@ -1,16 +1,102 @@
 """Shared scoring tests; no MQTT, Flask startup or persistent database."""
+import math
 import unittest
+from copy import deepcopy
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from mqtt.puzzles.puzzle8 import Puzzle8
-from scoring import calculate_correct_points, calculate_points, get_max_attempts
+from scoring import (calculate_correct_points, calculate_points,
+                     calculate_time_points, get_max_attempts)
 from scoring_config import SCORING_CONFIG
 
 
 class ScoringTests(unittest.TestCase):
     def test_config_contains_only_agreed_puzzles(self):
-        self.assertEqual(set(SCORING_CONFIG), {"puzzle1", "puzzle3", "puzzle5", "puzzle8", "puzzle12"})
+        self.assertEqual(set(SCORING_CONFIG),
+                         {"puzzle1", "puzzle3", "puzzle4", "puzzle5", "puzzle8", "puzzle12"})
+
+    def test_music_config_contains_exactly_the_agreed_time_rules(self):
+        self.assertEqual(SCORING_CONFIG["puzzle4"], {
+            "max_points": 100,
+            "penalty_per_time_band": 10,
+            "penalty_thresholds_seconds": [180, 240, 300, 360, 420, 480],
+            "max_time_seconds": 600,
+            "exhaustion_points": 0,
+        })
+
+    def test_time_points_across_all_bands(self):
+        for elapsed, expected in ((0, 100), (90, 100), (179, 100),
+                                  (210, 90), (270, 80), (330, 70),
+                                  (390, 60), (450, 50), (540, 40)):
+            with self.subTest(elapsed=elapsed):
+                self.assertEqual(calculate_time_points("puzzle4", elapsed), expected)
+
+    def test_time_points_at_exact_thresholds_and_either_side(self):
+        for band, threshold in enumerate((180, 240, 300, 360, 420, 480), start=1):
+            for elapsed, expected in (
+                    (threshold - 1e-9, 100 - 10 * (band - 1)),
+                    (math.nextafter(threshold, -math.inf), 100 - 10 * (band - 1)),
+                    (threshold, 100 - 10 * band),
+                    (float(threshold), 100 - 10 * band),
+                    (math.nextafter(threshold, math.inf), 100 - 10 * band),
+                    (threshold + 1e-9, 100 - 10 * band)):
+                with self.subTest(threshold=threshold, elapsed=elapsed):
+                    self.assertEqual(calculate_time_points("puzzle4", elapsed), expected)
+
+    def test_time_points_do_not_apply_puzzle_exhaustion(self):
+        for elapsed in (599.999999999, 600, 600.000000001, 601, 1000000):
+            with self.subTest(elapsed=elapsed):
+                self.assertEqual(calculate_time_points("puzzle4", elapsed), 40)
+        with patch.dict(SCORING_CONFIG["puzzle4"], {
+            "max_time_seconds": 1, "exhaustion_points": 7,
+        }):
+            self.assertEqual(calculate_time_points("puzzle4", 600), 40)
+
+    def test_time_points_accept_nonnegative_ints_and_floats(self):
+        for elapsed, expected in ((0, 100), (0.0, 100), (-0.0, 100),
+                                  (12.5, 100), (10 ** 1000, 40)):
+            with self.subTest(elapsed=elapsed):
+                self.assertEqual(calculate_time_points("puzzle4", elapsed), expected)
+
+    def test_invalid_elapsed_seconds_are_rejected(self):
+        for elapsed in (-1, -0.001, -math.ulp(0.0), "180", None, True, False,
+                        math.nan, math.inf, -math.inf, [], {}, 1 + 0j):
+            with self.subTest(elapsed=elapsed), self.assertRaises(ValueError):
+                calculate_time_points("puzzle4", elapsed)
+
+    def test_time_points_read_mutated_configuration_without_cached_rules(self):
+        rules = SCORING_CONFIG["puzzle4"]
+        original_thresholds = rules["penalty_thresholds_seconds"][:]
+        try:
+            with patch.dict(rules, {"max_points": 150, "penalty_per_time_band": 15}):
+                rules["penalty_thresholds_seconds"][:] = [10, 20, 30]
+                self.assertEqual(calculate_time_points("puzzle4", 9.5), 150)
+                self.assertEqual(calculate_time_points("puzzle4", 10), 135)
+                self.assertEqual(calculate_time_points("puzzle4", 30), 105)
+        finally:
+            rules["penalty_thresholds_seconds"][:] = original_thresholds
+        self.assertEqual(calculate_time_points("puzzle4", 180), 90)
+
+    def test_time_points_use_configured_keys_and_floor_at_zero(self):
+        with patch.dict(SCORING_CONFIG, {"example": {
+            "max_points": 25,
+            "penalty_per_time_band": 15,
+            "penalty_thresholds_seconds": [1, 2, 3],
+        }}):
+            for elapsed, expected in ((0, 25), (1, 10), (2, 0), (3, 0), (100, 0)):
+                with self.subTest(elapsed=elapsed):
+                    self.assertEqual(calculate_time_points("example", elapsed), expected)
+            with patch.dict(SCORING_CONFIG["example"], {"penalty_thresholds_seconds": []}):
+                self.assertEqual(calculate_time_points("example", 100), 25)
+        self.assertNotIn("example", SCORING_CONFIG)
+
+    def test_time_points_are_repeatable_and_do_not_mutate_configuration(self):
+        original_config = deepcopy(SCORING_CONFIG)
+        for elapsed in (480, 0, 240, 480):
+            expected = {480: 40, 0: 100, 240: 80}[elapsed]
+            self.assertEqual(calculate_time_points("puzzle4", elapsed), expected)
+        self.assertEqual(SCORING_CONFIG, original_config)
 
     def test_buttons_score_timeouts_without_an_attempt_limit(self):
         self.assertNotIn("max_attempts", SCORING_CONFIG["puzzle12"])
@@ -40,6 +126,7 @@ class ScoringTests(unittest.TestCase):
 
     def test_unknown_puzzles_do_not_get_invented_scores(self):
         for function, args in ((calculate_points, ("puzzle2", 0)),
+                       (calculate_time_points, ("puzzle2", 0)),
                        (get_max_attempts, ("puzzle2",))):
             with self.assertRaises(KeyError):
                 function(*args)

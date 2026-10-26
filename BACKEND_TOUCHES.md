@@ -14,6 +14,47 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-26 — Código Sonoro: puntuación por tiempo y máximo diez minutos
+
+Tipo: `pendiente de revisar`. Olalla autoriza explícitamente los cambios de
+backend y confirma cero puntos si se agotan los diez minutos sin resolver.
+
+- `scoring_config.py`: bloque `puzzle4` con máximo 100, penalización de 10 por
+  umbral alcanzado y umbrales en segundos `[180, 240, 300, 360, 420, 480]`.
+  Menos de tres minutos da 100; a partir de 3/4/5/6/7/8 minutos da
+  90/80/70/60/50/40. `max_time_seconds: 600` y `exhaustion_points: 0`
+  configuran el límite y su resultado. Todos estos parámetros se editan juntos
+  y se aplican al reiniciar el servidor.
+- `scoring.py`: `calculate_time_points` centraliza el cálculo puro, valida
+  segundos finitos no negativos y descuenta al alcanzar exactamente cada umbral.
+  El agotamiento lo decide el puzzle, no el cálculo de puntos por tiempo.
+- `mqtt/puzzles/puzzle4.py`: un único reloj monotónico desde reset hasta aceptar
+  la secuencia final correcta. Cuenta muestras, errores y transición entre
+  rondas; se aplica el mismo total tanto con una ronda como con dos. La última
+  reproducción y la celebración no penalizan una respuesta ya aceptada antes
+  del límite. En dos rondas solo la última recibe los puntos del puzzle.
+- Sustituye esperas de hilos por timers cancelables y una generación que
+  invalida callbacks al parar, reiniciar, resolver o agotar el tiempo. A los
+  diez minutos sin resolver publica `puzzle_exhausted: true`, `puzzle_solved:
+  false` y `total_points: 0`, envía el `P4End` habitual y bloquea nuevas entradas.
+  No se cambian Flask, MQTTClient, esquema SQLite ni contratos de hardware.
+- Estado/SSE añade `elapsed_seconds`, `time_remaining_seconds`,
+  `available_points` y el resultado final `total_points`, guardado por el
+  callback existente. Las preferencias de segunda ronda sobreviven al reset;
+  su decisión se fija al aceptar la primera secuencia correcta, sin carreras
+  mientras suena el último fragmento.
+- `static/js/puzzle4.js`: el agotamiento cancela audio, feedback y transiciones,
+  muestra tiempo agotado y cero puntos en ca/es/eng y no concede logro ni
+  celebración. El GM conserva la navegación manual al siguiente reto. Recupera
+  snapshot en cada conexión SSE, sin reiniciar el reloj del puzzle actual.
+- Validación aislada: 30 pruebas de Puzzle4 (incluida SQLite temporal con
+  MQTTClient, callback real y las dos rondas), 17 de puntuación compartida,
+  85 comprobaciones de navegador y 60 distribuciones/capturas a 1080p y 720p
+  en ca/es/eng. Sin broker, hardware ni datos reales; audio y reloj simulados.
+
+Pep debe revisar los límites exactos, la aceptación previa al final del audio,
+la cancelación de timers y el cierre de dos rondas con los terminales físicos.
+
 ## 2026-10-26 — Código Sonoro: segunda ronda opcional desde el GM
 
 Tipo: `pendiente de revisar`. Cambio de funcionamiento solicitado por Olalla;

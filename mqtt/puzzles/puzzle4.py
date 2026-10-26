@@ -3,6 +3,10 @@ import threading
 import time
 import os
 import wave
+import math
+
+from scoring import calculate_time_points
+from scoring_config import SCORING_CONFIG
 
 class Puzzle4(BasePuzzle):
     def __init__(self, mqtt_client):
@@ -59,13 +63,30 @@ class Puzzle4(BasePuzzle):
         self.playing_sample = False
         self.validating = False
         self.VALIDATION_FEEDBACK_SECONDS = 3
+        self.exhausted = False
+        self.total_points = None
+        self.max_time_seconds = SCORING_CONFIG["puzzle4"]["max_time_seconds"]
+        if (isinstance(self.max_time_seconds, bool)
+                or not isinstance(self.max_time_seconds, (int, float))
+                or not math.isfinite(self.max_time_seconds)
+                or self.max_time_seconds <= 0):
+            raise ValueError("Puzzle4 requires a finite positive max_time_seconds")
+        self._generation = 0
+        self._timers = set()
+        self._active = False
+        self._started_at = None
+        self._completed_at = None
+        self._frozen_elapsed = None
+        self._validation_started = False
+        self._rounds_committed = False
 
     def set_second_round_enabled(self, enabled):
         with self.lock:
             self.second_round_enabled = enabled
             # Once round one is validated, finish the committed flow. Never
             # interrupt a running second round or reopen a completed puzzle.
-            if self.streak == 0 and not self.solved:
+            if (self.streak == 0 and not self.solved and not self.exhausted
+                    and not self._rounds_committed):
                 self.total_required = 2 if enabled else 1
             return {"second_round_enabled": self.second_round_enabled}
 
@@ -99,74 +120,144 @@ class Puzzle4(BasePuzzle):
             return 0
         
     def _play_sample_with_delay(self, sample_url, duration):
-        """Play sample and automatically unblock after duration"""
-        def _delayed_unblock():
-            time.sleep(duration)
+        """Called with self.lock held, like all scheduling helpers."""
+        def unblock():
+            self.playing_sample = False
+            self._push({
+                "playing_sample": False,
+                "streak": self.streak,
+                "total_required": self.total_required,
+                "current_progress": self.current_progress,
+                "played_sequence": [],
+                "storing": False,
+            })
+        self._schedule_locked(duration, unblock)
+
+    def _elapsed_locked(self):
+        if self._frozen_elapsed is not None:
+            return self._frozen_elapsed
+        if self._started_at is None:
+            return 0.0
+        end = self._completed_at if self._completed_at is not None else time.monotonic()
+        return max(0.0, end - self._started_at)
+
+    def _scoring_state_locked(self):
+        elapsed = self._elapsed_locked()
+        state = {
+            "puzzle_exhausted": self.exhausted,
+            "elapsed_seconds": elapsed,
+            "time_remaining_seconds": max(0.0, self.max_time_seconds - elapsed),
+            "available_points": (self.total_points if self.total_points is not None
+                                 else calculate_time_points("puzzle4", elapsed)),
+        }
+        # Only terminal events may carry earned points to the app callback.
+        if self.solved or self.exhausted:
+            state["total_points"] = self.total_points
+        return state
+
+    def _push(self, data):
+        # All callers hold the same non-reentrant puzzle lock. The app callback
+        # does not acquire it; do not call public locking methods from here.
+        payload = self._scoring_state_locked()
+        payload.update(data)
+        super()._push(payload)
+
+    def _invalidate_locked(self):
+        self._generation += 1
+        for timer in self._timers:
+            timer.cancel()
+        self._timers.clear()
+        self._validation_started = False
+
+    def _schedule_locked(self, delay, callback):
+        generation = self._generation
+
+        def run():
             with self.lock:
-                if not self.solved and self.playing_sample:
-                    self.playing_sample = False
-                    print(f"[Puzzle4] Sample finished after {duration}s, unblocking input")
-                    self._push({
-                        "playing_sample": False,
-                        "streak": self.streak,
-                        "total_required": self.total_required,
-                        "current_progress": self.current_progress,
-                        "played_sequence": [],
-                        "storing": False
-                    })
-        threading.Thread(target=_delayed_unblock, daemon=True).start()
-        
-    def reset(self):
-        """Full reset"""
-        super().reset()
-        
+                self._timers.discard(timer)
+                if generation != self._generation or not self._active:
+                    return
+                if self._expire_locked():
+                    return
+                callback()
+
+        timer = threading.Timer(max(0, delay), run)
+        timer.daemon = True
+        self._timers.add(timer)
+        timer.start()
+
+    def _expire_locked(self):
+        if (not self._active or self._completed_at is not None
+                or self._elapsed_locked() < self.max_time_seconds):
+            return False
+        self.exhausted = True
+        self.total_points = SCORING_CONFIG["puzzle4"]["exhaustion_points"]
+        self._frozen_elapsed = self.max_time_seconds
+        self._active = False
+        self.storing = self.playing_sample = self.validating = False
+        self._invalidate_locked()
+        self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+        self._push({"puzzle_solved": False, "playing_sample": False,
+                    "storing": False})
+        return True
+
+    def _deadline_locked(self):
+        # An early timer wakeup must not disable the hard deadline.
+        if self._completed_at is None:
+            self._schedule_locked(self.max_time_seconds - self._elapsed_locked(),
+                                  self._deadline_locked)
+
+    def timer_expired(self):
         with self.lock:
+            self._expire_locked()
+
+    def _start_sample_locked(self):
+        sample = self.streak1_sample if self.streak == 0 else self.streak2_sample
+        duration = (self.streak1_sample_duration if self.streak == 0
+                    else self.streak2_sample_duration)
+        duration = self._get_audio_duration(f"{self.AUDIO_SUBDIR}{sample}") or duration
+        self.playing_sample = True
+        self._push({
+            "streak": -1, "streak_bis": self.streak,
+            "total_required": self.total_required, "storing": False,
+            "current_progress": 0, "played_sequence": [],
+            "playing_sample": True,
+            "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{sample}"},
+            "listening": True,
+        })
+        self._play_sample_with_delay(sample, duration)
+
+    def reset(self):
+        """Start one monotonic budget, including samples and both rounds."""
+        with self.lock:
+            self._invalidate_locked()
+            self._started_at = time.monotonic()
+            self._completed_at = self._frozen_elapsed = None
+            self._active = True
+            self.solved = self.exhausted = False
+            self.saltarPuzzle = self.alwaysCorrect = False
+            self.total_points = None
+            self._rounds_committed = False
             self.total_required = 2 if self.second_round_enabled else 1
             self.streak = 0
-            self.storing = False
+            self.storing = self.validating = False
             self.current_progress = 0
             self.played_sequence = []
             self.history = []
-            self.solved = False
             self.playing_sample = True
-            
-            # Delay initial push so frontend is ready
-            def _later():
-                time.sleep(3)
-                with self.lock:
-                    if self.solved:
-                        return
-                    # Push sample start
-                    self._push({
-                        "streak": -1,
-                        "streak_bis": self.streak,
-                        "total_required": self.total_required,
-                        "storing": False,
-                        "current_progress": 0,
-                        "played_sequence": [],
-                        "playing_sample": True,
-                        "sample_song": {
-                            "url": f"/static/{self.AUDIO_SUBDIR}{self.streak1_sample}"
-                        },
-                        "listening": True
-                    })
-                    # Start unblock timer
-                    streak1_rel_path_full = f"{self.AUDIO_SUBDIR}{self.streak1_sample}"
-                    self.streak1_sample_duration = self._get_audio_duration(streak1_rel_path_full) or self.streak1_sample_duration
-                    self._play_sample_with_delay(
-                        self.streak1_sample,
-                        self.streak1_sample_duration
-                    )
-            threading.Thread(target=_later, daemon=True).start()
-            
+            self._schedule_locked(self.max_time_seconds, self._deadline_locked)
+            self._schedule_locked(3, self._start_sample_locked)
+
     def stop(self):
-        """Cleanup on puzzle stop"""
         with self.lock:
-            self.playing_sample = False
-            self.validating = False
+            self._frozen_elapsed = self._elapsed_locked()
+            self._active = False
+            self.storing = self.playing_sample = self.validating = False
+            self._invalidate_locked()
 
     def get_state(self):
         with self.lock:
+            self._expire_locked()
             return {
                 "puzzle_id": self.id,
                 "streak": self.streak,
@@ -176,105 +267,96 @@ class Puzzle4(BasePuzzle):
                 "played_sequence": self.played_sequence.copy(),
                 "history": self.history[-25:],
                 "puzzle_solved": self.solved,
-                "playing_sample": self.playing_sample
+                "playing_sample": self.playing_sample,
+                **self._scoring_state_locked(),
             }
 
-    def _handle_validation(self, is_correct, final_track_duration=0):
-        if final_track_duration and final_track_duration > 0:
-            time.sleep(final_track_duration)
+    def _handle_validation(self, is_correct, final_track_duration=0,
+                           generation=None, submitted_at=None):
+        """Compatibility entry point; playback/feedback now use cancellable timers.
 
-        if is_correct:
-            with self.lock:
-                temp_sequence = self.played_sequence.copy()
-                self.streak += 1
-                saltar = self.saltarPuzzle
-                if self.streak < self.total_required and not saltar:
-                    self.mqtt_client.start_next_round(self.id, self.streak + 1)
-                self.played_sequence = []
-                self.storing = False
-                self.current_progress = 0
-                self.playing_sample = True
-                self.validating = False
-                streak = self.streak
-                total_required = self.total_required
-
-            self._push({
-                "validation_feedback": True
-            })
-
-            # Show phase completion popup if NOT last phase
-            if streak < total_required:
-                self._push({
-                    "show_completion": True,
-                    "streak": streak,
-                    "total_required": total_required
-                })
-
-            if streak >= total_required or saltar:
-                time.sleep(2)
-                
-                with self.lock:
-                    if self.solved:
-                        return
-                    self.solved = True
-
-                self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
-                self._push({
-                    "puzzle_solved": True,
-                    "streak": streak,
-                    "total_required": total_required,
-                    "played_sequence": temp_sequence,
-                    "play_final": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_folder}/correcta.mp3"}
-                })
+        MQTT reserves the submission under the lock, not in a delayed worker.
+        Optional generation identifies externally queued validation work.
+        """
+        with self.lock:
+            if generation is not None and generation != self._generation:
                 return
+            if not self._active or self._expire_locked():
+                return
+            self._begin_validation_locked(is_correct, final_track_duration, submitted_at)
 
-            time.sleep(self.VALIDATION_FEEDBACK_SECONDS)
-            for seconds in [5, 4, 3, 2, 1]:
-                self._push({
-                    "sample_countdown_seconds": seconds,
-                    "streak": -1,
-                    "total_required": total_required
-                })
-                time.sleep(2)
+    def _begin_validation_locked(self, is_correct, duration, submitted_at=None):
+        if self._validation_started:
+            return
+        self._validation_started = True
+        self.validating = True
+        if is_correct:
+            self._rounds_committed = True
+        if is_correct and (self.streak + 1 >= self.total_required or self.saltarPuzzle):
+            # Capture acceptance BEFORE audio playback. The deadline callback
+            # cannot exhaust a valid submission that arrived strictly before it.
+            now = time.monotonic()
+            submitted_at = now if submitted_at is None else min(now, submitted_at)
+            if submitted_at - self._started_at >= self.max_time_seconds:
+                self._expire_locked()
+                return
+            self._completed_at = max(self._started_at, submitted_at)
+        self._schedule_locked(duration, lambda: self._finish_track_locked(is_correct))
 
-            with self.lock:
-                if self.solved:
-                    return
-                self._push({
-                    "streak": -1,    
-                    "streak_bis": self.streak,
-                    "total_required": total_required,
-                    "storing": False,
-                    "current_progress": 0,
-                    "played_sequence": [],
-                    "playing_sample": True,
-                    "sample_song": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_sample}"},
-                    "listening": True
-                })
-
-                streak2_rel_path_full = f"{self.AUDIO_SUBDIR}{self.streak2_sample}"
-                self.streak2_sample_duration = self._get_audio_duration(streak2_rel_path_full) or self.streak2_sample_duration
-                self._play_sample_with_delay(self.streak2_sample, self.streak2_sample_duration)
+    def _finish_track_locked(self, is_correct):
+        self._push({"validation_feedback": is_correct})
+        if not is_correct:
+            self._schedule_locked(self.VALIDATION_FEEDBACK_SECONDS,
+                                  self._clear_validation_locked)
             return
 
-        self._push({
-            "validation_feedback": False
-        })
+        sequence = self.played_sequence.copy()
+        self.streak += 1
+        self.played_sequence = []
+        self.storing = False
+        self.current_progress = 0
+        self.playing_sample = True
+        if self._completed_at is not None:
+            self._schedule_locked(2, lambda: self._complete_locked(sequence))
+            return
+        self.mqtt_client.start_next_round(self.id, self.streak + 1)
+        self._push({"show_completion": True, "streak": self.streak,
+                    "total_required": self.total_required})
+        self._schedule_locked(self.VALIDATION_FEEDBACK_SECONDS,
+                              lambda: self._countdown_locked(5))
 
-        time.sleep(self.VALIDATION_FEEDBACK_SECONDS)
+    def _clear_validation_locked(self):
+        self.current_progress = 0
+        self.played_sequence = []
+        self.storing = self.validating = False
+        self._validation_started = False
+        self._push({"streak": self.streak, "total_required": self.total_required,
+                    "storing": False, "current_progress": 0, "played_sequence": []})
 
-        with self.lock:
-            self.current_progress = 0
-            self.played_sequence = []
-            self.storing = False
+    def _countdown_locked(self, seconds):
+        if seconds == 0:
             self.validating = False
-            self._push({
-                "streak": self.streak,
-                "total_required": self.total_required,
-                "storing": False,
-                "current_progress": 0,
-                "played_sequence": []
-            })
+            self._validation_started = False
+            self._start_sample_locked()
+            return
+        self._push({"sample_countdown_seconds": seconds, "streak": -1,
+                    "total_required": self.total_required})
+        self._schedule_locked(2, lambda: self._countdown_locked(seconds - 1))
+
+    def _complete_locked(self, sequence):
+        self.total_points = calculate_time_points("puzzle4", self._elapsed_locked())
+        self._frozen_elapsed = self._elapsed_locked()
+        self.solved = True
+        self._active = False
+        self.storing = self.playing_sample = self.validating = False
+        self._invalidate_locked()
+        self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+        self._push({
+            "puzzle_solved": True, "streak": self.streak,
+            "total_required": self.total_required, "played_sequence": sequence,
+            "playing_sample": False,
+            "play_final": {"url": f"/static/{self.AUDIO_SUBDIR}{self.streak2_folder}/correcta.mp3"},
+        })
 
     def handle_message(self, parts):
         """Handle MQTT message: P4,button,song"""
@@ -288,7 +370,8 @@ class Puzzle4(BasePuzzle):
             return
             
         with self.lock:
-            if self.solved:
+            submitted_at = time.monotonic()
+            if not self._active or self._expire_locked():
                 return
                 
             # Block during sample playback
@@ -386,6 +469,8 @@ class Puzzle4(BasePuzzle):
                     if len(self.played_sequence) >= len(required_order):
                         self.validating = True
                         is_correct = self.played_sequence == required_order or self.alwaysCorrect
+                        duration = self._get_audio_duration(rel_path_full)
+                        self._begin_validation_locked(is_correct, duration, submitted_at)
                         
                         print(f"[Puzzle4] Validating: Expected={required_order}, "
                               f"Got={self.played_sequence}, Correct={is_correct}")
@@ -397,7 +482,7 @@ class Puzzle4(BasePuzzle):
                                 "track": track_name,
                                 "code": song,
                                 "url": f"/static/{rel_path_full}",
-                                "duration": self._get_audio_duration(rel_path_full)
+                                "duration": duration
                             },
                             "current_progress": self.current_progress,
                             "storing": False,
@@ -406,13 +491,6 @@ class Puzzle4(BasePuzzle):
                             "played_sequence": self.played_sequence.copy()
                         })
                                                 
-                        
-                        # Handle validation result in separate thread. What happens after validation (like playing sample, showing messages, etc) can take time, so we don't want to block MQTT message handling thread
-                        threading.Thread(
-                            target=self._handle_validation,
-                            args=(is_correct, self._get_audio_duration(rel_path_full)),
-                            daemon=True
-                        ).start()
                         
                         return
                         
