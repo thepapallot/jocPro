@@ -14,6 +14,39 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-26 — Código Sonoro: segunda ronda opcional desde el GM
+
+Tipo: `pendiente de revisar`. Cambio de funcionamiento solicitado por Olalla;
+se registra la implementación ya preparada en el árbol de trabajo.
+
+- `mqtt/puzzles/puzzle4.py`: añade la preferencia `second_round_enabled`,
+  desactivada inicialmente. Se conserva al reiniciar/iniciar el puzzle y puede
+  modificarse desde pruebas anteriores o durante la primera ronda. El bloqueo
+  de estado coordina el cambio con la validación: al validar correctamente la
+  primera ronda se decide finalizar o continuar. Una segunda ronda comprometida
+  no se interrumpe y un puzzle resuelto no vuelve a abrirse. Reiniciar el servidor
+  restablece la preferencia; no se añade persistencia en base de datos.
+- `app.py`: añade GET/POST `/test/puzzle4/round_options`, con booleano JSON
+  estricto. No activa música ni publica estados P4 en SSE al cambiar la opción
+  mientras está activo otro puzzle. Se conservan protocolos MQTT y campos SSE.
+- El panel de Control de juego incorpora la casilla solo en el contexto de música
+  (presentación y juego), recuperación al recargar/enfocar y aviso ante errores.
+  Ajuste posterior solicitado por Olalla: se oculta en las demás pruebas sin
+  borrar la preferencia ni modificar la lógica de backend. La presentación
+  deja de anunciar dos rondas y el tablero elimina el contador de rondas.
+- `tests/puzzle4_rounds_fixture.py` y `tests/puzzle4_rounds_browser.cjs`:
+  servidor aislado con rutas reales extraídas por AST y Puzzle4 real; nunca
+  importa el arranque de Flask/MQTT. Verifica selección anticipada, cambios
+  durante la primera ronda, reinicios, finalización, errores HTTP y recuperación.
+- Validación: 73 comprobaciones de música aprobadas, 54 capturas/distribuciones
+  en ca/es/eng a 1920 × 1080 y 1280 × 720, sin recursos gráficos ausentes ni
+  excepciones de navegador; otras 31 pruebas compartidas aprobadas. Resultados
+  en `output/music-rounds/verification.json`. Solo simulación: audio, tiempos
+  de backend y hardware simulados, sin broker ni base de datos real.
+
+Pep debe revisar el valor inicial de una ronda, la coordinación con validación
+y el arranque de la segunda ronda con los terminales físicos.
+
 ## 2026-10-20 — Conexión Simultánea: puntuación y ayuda desde el quinto reinicio
 
 Tipo: `pendiente de revisar`. Regla propuesta y confirmada explícitamente por

@@ -23,6 +23,7 @@
     if(!visible())return;
     const {connected,state:s}=player.snapshot(),game=api.snapshot(),playing=connected&&s?.phase==='game';
     const blocked=busy||game.busy;
+    $('music-options').hidden=!connected||Number(s?.puzzleId)!==4;
     activeId=playing?Number(s.puzzleId):null;
     if(activeId)api.select(activeId);
     const matched=playing&&Number(game.state?.puzzle_id)===activeId;

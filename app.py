@@ -474,6 +474,23 @@ def _parse_test_bool(value):
     raise ValueError(f"invalid_bool:{value}")
 
 
+@app.route('/test/puzzle4/round_options', methods=['GET', 'POST'])
+def test_puzzle4_round_options():
+    puzzle = mqtt_client.puzzles.get(4)
+    if puzzle is None:
+        return jsonify({"error": "puzzle4_not_found"}), 404
+
+    if request.method == 'GET':
+        return jsonify(puzzle.get_round_options())
+
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not isinstance(data.get("second_round_enabled"), bool):
+        return jsonify({"error": "invalid_second_round_enabled"}), 400
+
+    # Deliberately do not push P4 into SSE while another puzzle is active.
+    return jsonify(puzzle.set_second_round_enabled(data["second_round_enabled"]))
+
+
 @app.route('/test/puzzle_flags', methods=['POST'])
 def test_set_puzzle_flags():
     data = request.get_json(silent=True) or {}
