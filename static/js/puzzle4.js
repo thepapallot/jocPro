@@ -37,7 +37,6 @@
 
     let statusEl = null;
     let statusSectionEl = null;
-    let streakEl = null;
     let progressSectionEl = null;
     let solved = false;
     let showingCompletion = false;
@@ -225,13 +224,6 @@
             lastNormalStatusText = text || '';
             lastNormalStatusTone = tone || '';
         }
-    }
-
-    function updateRoundHud(streak, totalRequired) {
-        if (!streakEl || totalRequired === undefined) return;
-        const normalizedStreak = streak === -1 ? 0 : (streak || 0);
-        const currentRound = Math.min(normalizedStreak + 1, totalRequired);
-        streakEl.textContent = `${currentRound}/${totalRequired}`;
     }
 
     function updateStageClasses(streak) {
@@ -455,11 +447,6 @@
             stopFlashing();
         }
 
-        if (d.streak !== undefined && d.total_required !== undefined) {
-            const effectiveStreak = d.streak_bis !== undefined ? d.streak_bis : d.streak;
-            updateRoundHud(effectiveStreak, d.total_required);
-        }
-
         if (typeof d.sample_countdown_seconds !== 'undefined' && d.sample_countdown_seconds > 0) {
             showingCompletion = false;
             setStatus(tr('sampleCountdown', 'Reproduciendo muestra en {count} segundos', {count: d.sample_countdown_seconds}), 'countdown');
@@ -655,7 +642,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         statusEl = document.getElementById('status-text');
         statusSectionEl = document.getElementById('status-section');
-        streakEl = document.getElementById('streak');
         progressSectionEl = document.getElementById('progress-section');
         phasePopupEl = document.getElementById('p4-phase-popup');
         const popupMessages = {
@@ -672,7 +658,6 @@
         setStatus(tr('preparingSample', "Preparando muestra"), 'listening');
         setSampleWaveActive(false);
         updateProgressBoxes(-1, []);
-        updateRoundHud(0, 2);
         initSSE();
     });
 })();

@@ -48,7 +48,9 @@ class Puzzle4(BasePuzzle):
         self.streak2_required_order = ["6", "1", "0", "9", "8", "4", "2", "7"]
         
         # State
-        self.total_required = 2
+        # Operator preference survives reset/start, including selection in earlier puzzles.
+        self.second_round_enabled = False
+        self.total_required = 1
         self.streak = 0
         self.storing = False
         self.current_progress = 0
@@ -57,6 +59,19 @@ class Puzzle4(BasePuzzle):
         self.playing_sample = False
         self.validating = False
         self.VALIDATION_FEEDBACK_SECONDS = 3
+
+    def set_second_round_enabled(self, enabled):
+        with self.lock:
+            self.second_round_enabled = enabled
+            # Once round one is validated, finish the committed flow. Never
+            # interrupt a running second round or reopen a completed puzzle.
+            if self.streak == 0 and not self.solved:
+                self.total_required = 2 if enabled else 1
+            return {"second_round_enabled": self.second_round_enabled}
+
+    def get_round_options(self):
+        with self.lock:
+            return {"second_round_enabled": self.second_round_enabled}
         
     def _get_current_track_map(self):
         """Get track map for current streak"""
@@ -106,6 +121,7 @@ class Puzzle4(BasePuzzle):
         super().reset()
         
         with self.lock:
+            self.total_required = 2 if self.second_round_enabled else 1
             self.streak = 0
             self.storing = False
             self.current_progress = 0
@@ -124,7 +140,7 @@ class Puzzle4(BasePuzzle):
                     self._push({
                         "streak": -1,
                         "streak_bis": self.streak,
-                        "total_required": 2,
+                        "total_required": self.total_required,
                         "storing": False,
                         "current_progress": 0,
                         "played_sequence": [],

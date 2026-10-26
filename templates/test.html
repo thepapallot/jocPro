@@ -220,6 +220,12 @@
                 <div class="director-layout">
                     <nav class="director-route" aria-label="Recorrido completo"><h3>Recorrido</h3><p>Presentar explica el reto. Iniciar abre el juego directamente.</p><div id="director-route-list"></div></nav>
                     <div class="director-workspace">
+                        <section id="director-music-options" class="director-card director-music-options" aria-labelledby="music-round-title" hidden>
+                            <h3 id="music-round-title">Código Sonoro · música</h3>
+                            <label class="director-music-toggle"><input id="music-second-round" type="checkbox" disabled aria-describedby="music-round-help music-round-status"> Activar segunda ronda</label>
+                            <p id="music-round-help" class="gm-action-note">Puedes marcarla o desmarcarla desde la presentación de música y durante su primera ronda. Se decide al validar esa ronda. Si la segunda ya ha empezado, no se interrumpe. La opción se conserva al reiniciar el puzzle, hasta que la cambies o reinicies el servidor.</p>
+                            <p id="music-round-status" role="status" aria-live="polite">Consultando la opción…</p>
+                        </section>
                         <section class="director-card director-now" aria-label="Pantalla actual">
                             <div class="director-eyebrow"><span class="director-on-screen">En la pantalla de jugadores</span><span id="director-connection">Pantalla sin conectar</span></div>
                             <h2 id="director-title">Abre la pantalla de jugadores</h2>
@@ -257,5 +263,6 @@
     <script src="{{ url_for('static', filename='js/test.js') }}"></script>
     <script src="{{ url_for('static', filename='js/presentation-gm.js') }}"></script>
     <script src="{{ url_for('static', filename='js/game-director.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/music-round-control.js') }}"></script>
 </body>
 </html>

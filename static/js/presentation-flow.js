@@ -127,7 +127,7 @@
     1:{objective:'Resolver las sumas antes de que la cuenta atrás llegue a 0.',tools:'Tokens y números de los terminales.',action:'Identificad el número de vuestro token → buscad el número que completa la suma → acercad el token al terminal.',attention:['Si resolvéis una suma incorrectamente, la ronda se reiniciará.','Si resolvéis una suma que ya ha sido completada, la ronda se reiniciará.']},
     5:{objective:'Contar el tiempo exacto que aparece en pantalla.',tools:'Token y terminal.',action:'Memorizad el tiempo → esperad a que se encienda vuestro terminal → contad el tiempo → acercad el token al terminal.',attention:['Los segundos de más o de menos se sumarán al error común. Si se supera el margen de error permitido, la ronda se reiniciará.']},
     12:{objective:'Pulsar tantos botones como aparezcan en pantalla antes de que se acabe el tiempo.',tools:'Botones de los terminales.',action:'Contad las bolas → coordinad al equipo → pulsad el número exacto de botones → mantenedlos pulsados durante 3 segundos.',attention:['Si la cuenta atrás llega a 0, los botones indicados en pantalla cambiarán.']},
-    4:{objective:'Reconstruir y ordenar los fragmentos de la canción.',tools:'Tokens y terminales.',action:'Escuchad la canción → identificad el fragmento → marcadlo → buscad el siguiente.',attention:['Esta prueba tiene dos rondas.']},
+    4:{objective:'Reconstruir y ordenar los fragmentos de la canción.',tools:'Tokens y terminales.',action:'Escuchad la canción → identificad el fragmento → marcadlo → buscad el siguiente.',attention:[]},
     6:{objective:'Mantener las luces encendidas hasta que la cuenta atrás llegue a 0.',tools:'Tokens y luces de los terminales.',action:'Identificad el color de vuestro token → buscad la luz del mismo color → acercad el token → continuad con el siguiente color.'}
   };
   const reviewedCatalan={
@@ -191,9 +191,7 @@
     "objective": "Reconstruir i ordenar els fragments de la cançó.",
     "tools": "Tokens i terminals.",
     "action": "Escolteu la cançó → identifiqueu el fragment → marqueu-lo → busqueu el següent.",
-    "attention": [
-      "Aquesta prova té dues rondes."
-    ]
+    "attention": []
   },
   "6": {
     "objective": "Mantenir els llums encesos fins que el compte enrere arribi a 0.",

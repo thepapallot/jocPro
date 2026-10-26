@@ -22,6 +22,11 @@
 .director-route-row.is-current { background:#e5f4fa; border-left-color:#147a9e; }
 .director-earned { margin-left:auto; color:#128169; }
 .director-workspace { display:grid; gap:12px; min-width:0; }
+.director-music-options h3 { margin:0 0 12px; font-size:17px; }
+.director-music-toggle { display:flex; align-items:center; gap:10px; font-weight:700; cursor:pointer; }
+.director-music-toggle input { width:20px; height:20px; flex:0 0 20px; accent-color:#147a9e; }
+.director-music-options p { margin:10px 0 0; font-size:13px; line-height:1.5; color:#526574; }
+.director-music-toggle input:focus-visible { outline:3px solid #209db9; outline-offset:3px; }
 .director-card { padding:20px; min-width:0; border:1px solid #cbd7df; border-radius:10px; background:#fff; }
 .director-now { background:#10212b; border-color:#284554; color:#eff5f8; }
 .director-eyebrow { display:flex; justify-content:space-between; align-items:center; gap:12px; }
