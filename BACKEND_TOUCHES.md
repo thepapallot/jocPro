@@ -76,8 +76,15 @@ backend y confirma cero puntos si se agotan los diez minutos sin resolver.
   mientras suena el último fragmento.
 - `static/js/puzzle4.js`: el agotamiento cancela audio, feedback y transiciones,
   muestra tiempo agotado y cero puntos en ca/es/eng y no concede logro ni
-  celebración. El GM conserva la navegación manual al siguiente reto. Recupera
+  celebración. Actualización solicitada el 26 de octubre: al agotarse el tiempo,
+  salta automáticamente a la presentación siguiente, conservando el idioma y
+  el orden configurado, también al recuperar un snapshot agotado. No se modifica
+  backend ni puntuación para añadir este salto. Recupera
   snapshot en cada conexión SSE, sin reiniciar el reloj del puzzle actual.
+- Revalidación del salto automático: 85 comprobaciones de navegador y 54
+  distribuciones/capturas a 1080p y 720p en ca/es/eng; comprueba salida por SSE
+  y por snapshot, idioma, cancelación de audio y ausencia de celebración.
+  Las 30 pruebas de Puzzle4 siguen aprobadas. Solo simulación aislada.
 - Validación aislada: 30 pruebas de Puzzle4 (incluida SQLite temporal con
   MQTTClient, callback real y las dos rondas), 17 de puntuación compartida,
   85 comprobaciones de navegador y 60 distribuciones/capturas a 1080p y 720p
