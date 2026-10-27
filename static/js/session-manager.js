@@ -6,7 +6,7 @@
   const time=value=>value?Date.parse(value.includes('T')?value:value.replace(' ','T')+'Z'):NaN;
   const duration=(start,end)=>{const ms=time(end)-time(start);if(!Number.isFinite(ms)||ms<0)return '—';const sec=Math.round(ms/1000);return `${Math.floor(sec/60)} min ${sec%60} s`;};
   let records=[],activeId=null,selected=null,view='pending',dirty=false,callbacks={},detailRequest=0;
-  const status=s=>s.ended_at?'Finalizada':s.started_at?'En curso':s.session_id===activeId?'Preparada':'Pendiente';
+  const status=s=>s.ended_at?'Finalizada':s.started_at||s.puzzle_count?'En curso':s.session_id===activeId?'Preparada':'Pendiente';
   function typeRange(){
     const kind=$('gm-session-type').value;
     $('gm-session-players').min=kind==='test'?'1':'10';
@@ -17,8 +17,8 @@
   }
   function editorState(message){
     typeRange();
-    $('gm-session-editor-title').textContent=selected?.name||'Nueva sesión';
-    $('gm-session-type').disabled=Boolean(selected?.started_at);
+    $('gm-session-editor-title').textContent=selected?`Partida #${selected.session_id} · ${selected.name||'Sin nombre'}`:'Nueva partida · sin ID todavía';
+    $('gm-session-type').disabled=Boolean(selected?.started_at||selected?.puzzle_count);
     $('gm-confirm-session-btn').disabled=Boolean(selected?.ended_at);
     actionLabels();
     $('gm-delete-session-btn').disabled=!selected?.session_id||selected.session_id===activeId;
@@ -27,18 +27,23 @@
   }
   function actionLabels(){
     const current=Boolean(selected?.session_id&&selected.session_id===activeId);
-    $('gm-confirm-session-btn').textContent=current?(dirty?'Guardar y volver al control →':'Volver al control →'):'Guardar e ir al control →';
-    $('gm-save-session-btn').textContent=current||selected?.ended_at?'Guardar cambios':'Guardar para más tarde';
-    const canClose=Boolean(selected?.session_id&&!selected.ended_at&&(selected.started_at||current));
+    const recorded=Boolean(selected?.started_at||selected?.puzzle_count);
+    $('gm-confirm-session-btn').textContent=selected?.ended_at?'Partida finalizada':current?`${dirty?'Guardar y volver a':'Volver a'} la partida #${selected.session_id} →`:recorded?`Retomar la partida #${selected.session_id} →`:selected?`Preparar la partida #${selected.session_id} →`:'Crear y preparar esta partida →';
+    $('gm-save-session-btn').textContent=selected?'Guardar cambios':'Guardar para más adelante';
+    const canClose=Boolean(selected?.session_id&&!selected.ended_at&&(recorded||current));
+    $('gm-close-session-btn').textContent=selected?`Finalizar y archivar #${selected.session_id}`:'Finalizar y archivar partida';
     $('gm-close-session-btn').disabled=!canClose||Boolean(callbacks.busy?.());
-    $('gm-close-session-btn').title=canClose?'Cerrar esta sesión conservando sus resultados':'Selecciona una sesión en curso para cerrarla';
+    $('gm-close-session-btn').title=canClose?'Finalizar esta partida conservando sus resultados':'Selecciona una partida en curso para finalizarla';
+    const other=activeId&&selected?.session_id!==activeId?` La partida activa sigue siendo la #${activeId}.`:'';
+    $('gm-session-target').textContent=selected?`Estás editando la partida #${selected.session_id}. Guardar cambios no crea otra partida.${other}`:`Crearás una partida independiente, con un ID nuevo y sin resultados anteriores.${other}`;
+    $('gm-session-next-step').textContent=selected?.ended_at?'Esta partida está archivada. Para volver a jugar, copia sus datos a una partida nueva.':recorded?'Retomar añade los nuevos resultados a esta misma partida; no crea un ID nuevo.':'Preparar no inicia el juego. Después pulsa «Iniciar partida» en el control.';
   }
   function render(){
     const query=$('gm-session-search').value.trim().toLocaleLowerCase();
     const kind=$('gm-session-filter-type').value,day=$('gm-session-filter-date').value;
     const list=records.filter(s=>Boolean(s.ended_at)===(view==='history')&&(kind==='all'||(s.session_type||'real')===kind)&&(!day||s.expected_day===day)&&[s.name,s.company,s.place].join(' ').toLocaleLowerCase().includes(query));
     list.sort((a,b)=>{const aa=[a.expected_day,a.expected_time].join(' '),bb=[b.expected_day,b.expected_time].join(' ');return view==='pending'?aa.localeCompare(bb):bb.localeCompare(aa);});
-    $('gm-session-list').innerHTML=list.map(s=>`<button type="button" class="gm-session-item${selected?.session_id===s.session_id?' is-selected':''}${s.session_id===activeId?' is-current':''}" data-agenda-id="${s.session_id}"><span class="session-item-top"><strong>${esc(s.name||'Sesión sin nombre')}</strong><span class="session-badge${s.session_type==='test'?' session-test':''}">${s.session_type==='test'?'Prueba · ':''}${status(s)}</span></span><span>${esc([s.company,s.expected_day,s.expected_time].filter(Boolean).join(' · '))}</span><span>${esc([s.place,`${s.players_num??'—'} jugadores`,window.PyramidLanguage.label(s.language)].filter(Boolean).join(' · '))}</span>${s.session_id===activeId?'<span>Sesión activa</span>':''}</button>`).join('')||'<div class="gm-empty">No hay sesiones con estos filtros.</div>';
+    $('gm-session-list').innerHTML=list.map(s=>`<button type="button" class="gm-session-item${selected?.session_id===s.session_id?' is-selected':''}${s.session_id===activeId?' is-current':''}" data-agenda-id="${s.session_id}"><span class="session-item-top"><strong>#${s.session_id} · ${esc(s.name||'Partida sin nombre')}</strong><span class="session-badge${s.session_type==='test'?' session-test':''}">${s.session_type==='test'?'Prueba · ':''}${status(s)}</span></span><span>${esc([s.company,s.expected_day,s.expected_time].filter(Boolean).join(' · '))}</span><span>${esc([s.place,`${s.players_num??'—'} jugadores`,window.PyramidLanguage.label(s.language)].filter(Boolean).join(' · '))}</span>${s.session_id===activeId?'<span>Partida activa</span>':''}</button>`).join('')||'<div class="gm-empty">No hay sesiones con estos filtros.</div>';
     $('gm-session-list-state').textContent=`${list.length} ${view==='history'?'sesiones finalizadas':'sesiones pendientes o en curso'}`;
     $('gm-session-list').querySelectorAll('[data-agenda-id]').forEach(button=>button.addEventListener('click',async()=>{
       if(callbacks.busy?.())return;
@@ -91,7 +96,7 @@
       form.elements.players.value='10';$('gm-session-options').open=false;
       if(kind==='test'){form.elements.sessionName.value=`Prueba · ${localDay()}`;form.elements.company.value='Pruebas';form.elements.players.value='10';$('gm-session-filter-type').value='test';}
       else $('gm-session-filter-type').value='real';
-      editorState(kind==='test'?'Prueba prellenada. Revisa jugadores e idioma y continúa al control.':'Completa nombre y empresa, revisa los datos y continúa al control.');render();
+      editorState(kind==='test'?'Nueva prueba prellenada. Revisa los datos antes de crearla.':'Completa los datos de la partida nueva.');render();
     },
     validate(){
       typeRange();

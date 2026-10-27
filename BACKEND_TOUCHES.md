@@ -14,6 +14,49 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-27 — Partidas independientes: crear, preparar, iniciar, retomar y archivar
+
+Tipo: `pendiente de revisar`. Olalla autoriza la propuesta completa, incluidas
+las protecciones de backend para evitar mezclar puntuaciones entre partidas.
+
+- `app.py`: confirmar una partida con inicio o puzzles exige `resume: true`.
+  La comprobación y el cambio de ID activo se hacen bajo el mismo lock. Otra
+  partida en curso bloquea el cambio; las finalizadas no pueden reactivarse.
+  Iniciar exige el ID activo explícito; las rutas de inicio/reinicio de puzzles
+  y `/videoIntro` rechazan partidas sin inicio, finalizadas o sin telemetría.
+  La apertura deja de asignar el inicio implícitamente.
+- `/final` reutiliza el cierre verificado de sesiones: conserva resultados,
+  detiene el puzzle y libera la partida activa. Un error de escritura no se
+  presenta como cierre correcto. Los registros incompletos no reciben puntos.
+- `mqtt/client.py`: comprueba que la partida existe, está iniciada y no está
+  finalizada antes de arrancar un puzzle. Inserta su registro antes de reset,
+  timers y `P{id}Start`; un fallo de persistencia se propaga y no activa hardware
+  ni deja el puzzle marcado como iniciado.
+- `telemetry/queries.py`: añade `puzzle_count` en detalle y agenda, sin migrar
+  el esquema. Detecta partidas históricas con puzzles aunque falte su inicio.
+  No se modifican registros de la base real ni se separa la sesión 11.
+- Test muestra los IDs y diferencia el formulario de la partida activa.
+  Crear y preparar genera un ID nuevo; guardar para más adelante no activa;
+  guardar cambios no crea. Retomar exige confirmación y mantiene el ID.
+  Iniciar partida es una acción explícita posterior. La cabecera permite
+  finalizar la activa sin guardar ni cerrar por error la seleccionada en otro
+  formulario. Recargar no restaura la anterior como borrador a sobrescribir.
+- Documentación actualizada en README, guía editorial, idiomas y telemetría.
+
+Validación: 69 pruebas Python y 34 JavaScript específicas aprobadas; flujo real
+del formulario en navegador a 1920 × 1080 y 1280 × 720, nueve capturas temporales
+y ningún error de ejecución. Comprueba crear IDs independientes, inicio,
+reanudación/cancelación, cambio bloqueado durante partida, cierre desde cabecera,
+aislamiento de puntuaciones y fallos de persistencia/verificación. Solo SQLite
+temporal y MQTT simulado, sin arrancar la aplicación conectada al broker.
+Se detectó una prueba antigua ajena a este flujo en `game_language.test.cjs`
+que referencia `openNativePlayer`, función ya inexistente antes de estos cambios;
+no se modifica el lanzador para hacerla pasar. Las dos pruebas de confirmación
+de idioma afectadas por el contrato nuevo sí pasan.
+Pep debe revisar la coordinación de cierre,
+el arranque persistido antes de timers/hardware y las confirmaciones de reanudación.
+No se cambian reglas de puntuación, símbolos, idiomas del jugador ni topics MQTT.
+
 ## 2026-10-27 — Tras la Serpiente: puntuación por tiempo y máximo diez minutos
 
 Tipo: `pendiente de revisar`. Olalla autoriza explícitamente el backend,

@@ -29,6 +29,8 @@
                         <strong id="gm-game-time">--</strong>
                     </div>
                     <button type="button" id="gm-update-session-btn">Actualizar</button>
+                    <button type="button" id="gm-begin-session-btn" class="primary-action" hidden>Iniciar partida</button>
+                    <button type="button" id="gm-end-session-btn" class="danger-action" hidden>Finalizar y archivar partida</button>
                     <button type="button" id="gm-start-btn" class="gm-start-btn" disabled>Ir al control →</button>
                 </div>
             </div>
@@ -52,15 +54,16 @@
                             <h2>Sesiones</h2>
                         </div>
                         <div class="action-row gm-actions-compact">
-                            <button type="button" id="gm-new-session-btn">Crear sesión real</button>
-                            <button type="button" id="gm-new-test-session-btn">Crear sesión de prueba</button>
-                            <button type="button" id="gm-duplicate-session-btn">Duplicar sesión</button>
+                            <button type="button" id="gm-new-session-btn">Nueva partida real</button>
+                            <button type="button" id="gm-new-test-session-btn">Nueva partida de prueba</button>
+                            <button type="button" id="gm-duplicate-session-btn">Copiar datos a una partida nueva</button>
                         </div>
                     </div>
 
                     <div class="gm-session-layout">
                         <form id="gm-session-form" class="gm-session-form">
                             <div class="full-width session-form-heading"><div><strong id="gm-session-editor-title">Nueva sesión</strong><span id="gm-session-editor-state" class="session-badge">Borrador</span></div><p id="gm-session-save-state" role="status" aria-live="polite">Completa los datos para preparar la partida.</p></div>
+                            <p id="gm-session-target" class="full-width session-target" role="status" aria-live="polite">Crearás una partida independiente, con un ID nuevo y sin resultados anteriores.</p>
                             <label><span class="field-label">Tipo de sesión</span><select id="gm-session-type" name="sessionType"><option value="real">Partida real</option><option value="test">Prueba</option></select></label>
                             <label><span class="field-label">Nombre de la sesión</span><input id="gm-session-name" name="sessionName" type="text" required maxlength="160"></label>
                             <label><span class="field-label">Empresa / cliente</span><input id="gm-session-company" name="company" type="text" required maxlength="160"></label>
@@ -80,13 +83,13 @@
                             </details>
                             <p id="gm-session-form-error" class="full-width session-error" role="alert" hidden></p>
                             <div class="action-row full-width session-form-actions">
-                                <button type="submit" id="gm-confirm-session-btn" class="primary-action">Guardar e ir al control →</button>
+                                <button type="submit" id="gm-confirm-session-btn" class="primary-action">Crear y preparar esta partida →</button>
                                 <button type="button" id="gm-save-session-btn">Guardar para más tarde</button>
-                                <button type="button" id="gm-close-session-btn" class="danger-action" disabled aria-describedby="gm-close-session-help">Cerrar sesión</button>
+                                <button type="button" id="gm-close-session-btn" class="danger-action" disabled aria-describedby="gm-close-session-help">Finalizar y archivar partida</button>
                                 <button type="button" id="gm-delete-session-btn">Eliminar sesión</button>
                             </div>
-                            <p id="gm-close-session-help" class="full-width gm-action-note">Selecciona una sesión en curso y pulsa «Cerrar sesión», aunque sea de otro día. No hace falta activarla. Se conservarán sus resultados y pasará al historial, sin abrir la presentación final.</p>
-                            <p class="full-width gm-action-note session-next-step">Al continuar se guarda y activa esta sesión. En el control podrás abrir la pantalla de jugadores.</p>
+                            <p id="gm-close-session-help" class="full-width gm-action-note">Finalizar y archivar conserva los resultados y detiene el puzzle si esta es la partida activa. No da por superados los puzzles pendientes ni abre la presentación final.</p>
+                            <p id="gm-session-next-step" class="full-width gm-action-note session-next-step">Preparar no inicia el juego. Después pulsa «Iniciar partida» en el control.</p>
                         </form>
 
                         <aside class="gm-saved-sessions">

@@ -18,9 +18,10 @@
     const index=game.order.indexOf(game.puzzleId);
     return index<0?null:'/presentacio/'+(game.order[index+1]||game.finalId);
   }
+  const sessionId=host()?.PyramidRun?.snapshot().sessionId;
   function report(){
     if(!active)return;
-    (host()||window.opener)?.postMessage({type:'pyramid-presentation-state',realPage:true,phase:'slides',mode:'live',kind:'success',screen:'victory',step:0,labels:['Celebración'],puzzleId:game.puzzleId,language:lang(),name:game.name,canNext:ready&&!!destination(),nextLabel:final()?'Mostrar cierre y foto →':'Presentar siguiente reto →',automatic:false,
+    (host()||window.opener)?.postMessage({type:'pyramid-presentation-state',sessionId,realPage:true,phase:'slides',mode:'live',kind:'success',screen:'victory',step:0,labels:['Celebración'],puzzleId:game.puzzleId,language:lang(),name:game.name,canNext:ready&&!!destination(),nextLabel:final()?'Mostrar cierre y foto →':'Presentar siguiente reto →',automatic:false,
       note:issue||(ready?(destination()?'Celebradlo con el grupo. La pirámide espera; avanza cuando estén preparados.':'Prueba fuera del recorrido: celebrad el resultado y abrid la siguiente prueba desde el control del juego.'):'Celebración en curso. La música continúa; dejad que termine antes de avanzar.')},location.origin);
   }
   function advance(){

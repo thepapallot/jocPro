@@ -6,10 +6,15 @@ En `/test` → **Sesiones**, preparar nombre del grupo, empresa, fecha y hora,
 lugar, número de jugadores, idioma y notas. Idiomas disponibles: **Català**,
 **Castellano** y **English**.
 
-**Guardar sesión** conserva un borrador. **Confirmar sesión** guarda los campos
-visibles en el servidor y después activa esa sesión. También funciona con una
-sesión nueva; ya no exige guardarla primero. Si falla el guardado, no confirma.
+**Guardar para más adelante** crea una partida pendiente. **Crear y preparar
+esta partida** guarda los campos visibles con un ID nuevo y lo activa.
+**Preparar la partida #ID** usa una pendiente existente; **Retomar la partida
+#ID** confirma explícitamente que se continuará su registro de resultados.
+**Guardar cambios** actualiza la seleccionada, sin crear otra ni activarla.
+Si falla el guardado, no confirma.
 Durante la operación se bloquea la edición para evitar cambios concurrentes.
+La cabecera muestra el ID activo. **Iniciar partida #ID** es un paso posterior
+necesario antes de abrir la intro o iniciar puzzles.
 
 El resumen y la lista de sesiones muestran el idioma. La pantalla de jugadores
 usa el idioma confirmado al abrir bienvenida, intro, explicaciones, juegos y
@@ -39,8 +44,9 @@ el backend existente. Crear una nueva sesión para el siguiente grupo.
 puzzles y transiciones utilizan sus catálogos existentes. Los IDs, el orden y los
 mensajes MQTT no dependen del idioma.
 
-Se reutilizan las APIs de sesiones, el campo `language` de la base de datos y la
-selección de preguntas del QUIZ ya existentes. No se ha modificado el backend.
+Se reutilizan el campo `language` y la selección de preguntas del QUIZ existentes.
+El flujo de partidas se actualizó el 27 octubre de 2026; sus pasos se describen
+en [README.md](../README.md#partidas-y-resultados-en-test).
 
 ## Estado de las traducciones
 

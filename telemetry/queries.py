@@ -45,7 +45,8 @@ class TelemetryQueries:
                 language,
                 notes, session_type, game_master, observations,
                 started_at,
-                ended_at
+                ended_at,
+                (SELECT COUNT(*) FROM puzzles p WHERE p.session_id = sessions.session_id) AS puzzle_count
             FROM sessions
             WHERE session_id = ?
             """,
@@ -226,7 +227,9 @@ class TelemetryQueries:
     def get_session_agenda(self) -> List[Dict[str, Any]]:
         """Operator agenda and history, including clearly identified test sessions."""
         cursor = self.db.execute("""
-            SELECT * FROM sessions
+            SELECT sessions.*,
+                   (SELECT COUNT(*) FROM puzzles p WHERE p.session_id = sessions.session_id) AS puzzle_count
+            FROM sessions
             ORDER BY expected_day DESC, expected_time DESC, session_id DESC
         """)
         return [dict(row) for row in cursor.fetchall()]
