@@ -6,6 +6,8 @@
   let player = null, state = null, lastSeen = 0;
   const production=panel.dataset.playerUrl==='/';
   const channel=production?new BroadcastChannel('pyramid-player-control-v1'):null;
+  const activeSessionId=()=>window.PyramidTest?.session()?.dbSessionId??null;
+  let boundSessionId=activeSessionId();
   let hintLevel=0,guideKey='',sceneLabels='';
   const observations=[];
   const pause=document.createElement('button');pause.type='button';pause.dataset.presentationAction='pause';pause.hidden=true;
@@ -31,13 +33,18 @@
     return window.PyramidLanguage.normalize(window.PyramidTest?.session()?.gameLanguage || window.TEST_DEFAULT_SUBTITLE_LANG || 'ca');
   }
   function sessionPath(path) {
-    return window.PyramidLanguage.path(!path || path === '/' ? '/?embed=1' : path, sessionLanguage());
+    const target=window.PyramidLanguage.path(!path || path === '/' ? '/?embed=1' : path, sessionLanguage());
+    const id=activeSessionId();
+    if(!production||!Number.isInteger(id))return target;
+    const url=new URL(target,location.href);
+    url.searchParams.set('session_id',String(id));
+    return url.pathname+url.search+url.hash;
   }
   function send(action, value) {
-    if(channel){channel.postMessage({type:'pyramid-presentation-command',action,value});return;}
+    if(channel){channel.postMessage({type:'pyramid-presentation-command',action,value,sessionId:activeSessionId()});return;}
     if (player && !player.closed) player.postMessage({type:'pyramid-presentation-command', action, value}, location.origin);
   }
-  function connected() { return (channel || (player && !player.closed)) && !!state && Date.now()-lastSeen < 4000; }
+  function connected() { return (channel || (player && !player.closed)) && !!state && (!production||(activeSessionId()!==null&&state.sessionId===activeSessionId())) && Date.now()-lastSeen < 4000; }
   function render() {
     const online = connected();
     $('status').textContent = online ? (state.automatic?(state.autoPaused?'Secuencia en pausa':'Secuencia automática'):state.phase==='countdown'?'Cuenta atrás en curso':state.phase==='game'?`${state.name} · juego abierto`:`${state.step+1} / ${state.labels.length} · ${state.labels[state.step]}`) : 'Pantalla sin conectar';
@@ -76,6 +83,7 @@
     renderGuide();
   }
   function openPlayer(path) {
+    if(production)send('session');
     if (player && !player.closed) { if(path && path!=='/')send('navigate',path);else player.focus();send('sync');return true; }
     const url=new URL(panel.dataset.playerUrl,location.href);
     if(!production || state)url.searchParams.set('lang',$('language').value||'ca');
@@ -99,6 +107,7 @@
   window.PyramidGM={open:openPlayer,command:send,snapshot:()=>({connected:connected(),state:state?structuredClone(state):null})};
   $('open').addEventListener('click',()=>Promise.resolve(openPlayer()).catch(error=>{$('status').textContent=error.message;}));
   function receiveState(data){
+    if(production&&data.sessionId!==activeSessionId())return;
     const changed=!connected()||JSON.stringify(state)!==JSON.stringify(data);
     state=data;lastSeen=Date.now();if(changed)render();
   }
@@ -112,6 +121,15 @@
   $('language').addEventListener('change',e=>{if(!production)send('language',e.target.value);});
   window.addEventListener('pyramid-session-change',()=>{
     if(!production)return;
+    const nextId=activeSessionId();
+    if(nextId!==boundSessionId){
+      boundSessionId=nextId;
+      state=null;lastSeen=0;hintLevel=0;guideKey='';sceneLabels='';
+      observations.length=0;
+      $('note-count').textContent='0 notas · solo en este panel';
+      send('session');
+      render();
+    }
     $('language').value=sessionLanguage();
     if(connected()&&state.phase==='slides'&&state.language!==sessionLanguage())send('language',sessionLanguage());
   });

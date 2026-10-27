@@ -4,7 +4,30 @@
 
 The telemetry system is a standalone SQLite-based event logging and analytics storage layer for the game platform. It captures game sessions, player actions, answers, and timing data for analysis and reporting.
 
-**Current Status**: Standalone database layer with no integration into game flow yet. Phase 2 will integrate telemetry capture into the MQTT/Flask backend.
+**Current status**: Sessions and puzzle results are integrated with Flask/MQTT.
+The older schema/API examples below are historical; see the runtime lifecycle
+and schema-version-5 notes before using them.
+
+## Runtime session lifecycle
+
+- `POST /test/session/save` creates a pending row with a new auto-incremented ID;
+  `PATCH /test/session/<id>` only edits metadata.
+- `POST /test/session/confirm` selects a non-finalized row. If it already has a
+  start timestamp or puzzle rows, `resume: true` must be explicitly supplied.
+  Another active run with recorded gameplay must be finalized first.
+- `POST /test/session/start` requires the confirmed integer `session_id` in
+  JSON and records its start idempotently. It does not insert a new session.
+- Puzzle start/restart endpoints and MQTTClient reject missing, unstarted or
+  finalized sessions. The puzzle row is persisted before workers and hardware
+  start. Scores belong to that puzzle row and its parent session.
+- `POST /test/session/<id>/close` finalizes the selected row idempotently,
+  preserving scores. If active, its puzzle is stopped and the active pointers
+  are cleared. `/final` delegates to this same verified closure.
+- Sessions with legacy puzzle rows but no `started_at` still count as recorded
+  runs for resumption, switching, metadata protection and archiving.
+
+No schema migration or repair of existing mixed sessions is performed by this
+workflow. No automatic midnight closure is applied.
 
 ## Architecture
 
@@ -35,9 +58,9 @@ scriptsDb/
 ### Puzzle points (schema version 5)
 
 Only `puzzles` has a `total_points` column (`INTEGER NOT NULL DEFAULT 0`).
-It stores the points of that recorded run/round. The scoring calculation is
-not implemented yet, so new records retain zero until points are assigned.
-Puzzle result queries expose this value without adding a scoring UI.
+It stores the points of that recorded run/round. Agreed calculations live in
+`scoring.py` and `scoring_config.py`; terminal puzzle updates persist the result.
+Unfinished rows retain zero. Puzzle result queries expose each row's score.
 
 `sessions` does not store points. There are no aggregation triggers or automatic
 session-total calculations. A future query/function may calculate a session's

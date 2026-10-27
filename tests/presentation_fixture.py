@@ -30,7 +30,13 @@ def create_runtime():
     app = Flask(__name__, template_folder=str(ROOT / 'templates'), static_folder=str(ROOT / 'static'))
     app.config['TESTING'] = True
     mqtt = FakeMQTT()
+    @app.get('/test/session/active')
+    def preview_session():
+        return jsonify(active=True, session={'session_id': 1, 'language': mqtt.get_active_session_language()})
+    # Visual previews deliberately bypass the live session gate; lifecycle tests
+    # exercise it with a real temporary database in test_sessions.py.
     namespace = dict(globals(), app=app, mqtt_client=mqtt, BASE_DIR=ROOT,
+                     active_session_error=lambda: None,
                      SPECIAL_PUZZLE_IDS={PUZZLE_TUTORIAL, PUZZLE_FINAL},
                      _active_game_lock=threading.Lock(), _active_game_session_id=None, _telemetry_writer=None)
     functions = {'is_playable_puzzle_id', 'get_sequence_index', 'get_display_level',

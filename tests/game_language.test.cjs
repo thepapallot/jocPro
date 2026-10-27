@@ -38,7 +38,7 @@ function sessionHarness(saveToDb){
   };
   const requests=[],context={window:{localStorage:{setItem(){}}},activeSession:null,activeSessionKey:'active',selectedSessionId:null,_loadedDbSessionId:null,
     collectSessionForm:()=>({id:'draft',gameLanguage:'ca',company:'Equipo'}),readSessions:()=>[],writeSessions(){},saveSessionToDb:saveToDb,
-    syncConfirmedSession:async()=>{},renderActiveSession(){},resetGameState(){},addSimpleEvent(){},setStatus(){},goToSessionControl(){},
+    syncConfirmedSession:async()=>{},renderActiveSession(){},resetSessionControl(){},resetGameState(){},addSimpleEvent(){},setStatus(){},goToSessionControl(){},
     fetch:async(url,options)=>{requests.push([url,JSON.parse(options.body)]);return {ok:true,json:async()=>({session:{session_id:12,language:'ca'}})}},
     Date,console,JSON};
   context.window.PyramidLanguage={normalize:value=>value||'es'};
@@ -50,7 +50,7 @@ test('confirmation waits for saving the current language and details before acti
   const h=sessionHarness(async session=>{assert.equal(session.gameLanguage,'ca');await new Promise(resolve=>release=resolve);h.context._loadedDbSessionId=12;});
   const confirmation=h.confirm();await Promise.resolve();assert.equal(h.requests.length,0);
   release();await confirmation;
-  assert.deepEqual(h.requests,[['/test/session/confirm',{session_id:12}]]);
+  assert.deepEqual(h.requests,[['/test/session/confirm',{session_id:12,resume:false}]]);
   assert.equal(h.context.activeSession.gameLanguage,'ca');
 });
 test('failed persistence cannot confirm a local draft as the active game session',async()=>{

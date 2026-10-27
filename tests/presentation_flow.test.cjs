@@ -47,42 +47,87 @@ test('configured order is respected without duplicates or early summit',()=>{
   assert.equal(scenes.at(-1).total,3);
   assert.equal(scenes.find(s=>s.puzzleId===6).completed,2);
 });
-function shell(storage=new Map()){
-  const handlers={},child={postMessage(){}},opener={postMessage(){}},frame={contentWindow:child,addEventListener(){}},origin='http://localhost';
+async function shell(storage=new Map(),initialId=11,initialHistory=null){
+  const handlers={},loads={},child={postMessage(){},location:{href:'about:blank'}},opener={postMessage(){}},frame={contentWindow:child,addEventListener(name,fn){loads[name]=fn;}},origin='http://localhost';
+  let activeId=initialId;
   const window={opener,addEventListener(name,fn){(handlers[name]??=[]).push(fn)}};
-  const context=vm.createContext({BroadcastChannel:class{postMessage(){}},window,document:{getElementById:()=>frame},location:{origin,search:''},history:{state:null},URL,URLSearchParams,sessionStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)}});
+  const history={state:initialHistory,replaceState(state){this.state=state;}};
+  const context=vm.createContext({console,BroadcastChannel:class{postMessage(){}},window,document:{getElementById:()=>frame},location:{origin,search:''},history,URL,URLSearchParams,fetch:async()=>({ok:true,json:async()=>({active:activeId!==null,session:{session_id:activeId,language:'ca'}})}),sessionStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)}});
   vm.runInContext(script('game-shell.js'),context);
-  return {run:window.PyramidRun,child,frame,opener,storage,emit(data,source=child){for(const fn of handlers.message)fn({origin,source,data});}};
+  const flush=async()=>{for(let i=0;i<20;i++)await Promise.resolve();};
+  const load=()=>{child.location.href=frame.src;loads.load();};
+  await flush();load();
+  return {run:window.PyramidRun,child,frame,opener,storage,history,load,setSession(id){activeId=id;},async emit(data,source=child){if(data.type==='pyramid-presentation-state')data={sessionId:window.PyramidRun.snapshot().sessionId,...data};for(const fn of handlers.message)fn({origin,source,data});await flush();}};
 }
-test('the shell keeps the selected language between player routes and reconnects',()=>{
-  const s=shell();
-  s.emit({type:'pyramid-presentation-state',phase:'slides',language:'eng'});
-  s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/puzzle/8'},s.opener);
+test('the shell keeps the selected language between player routes and reconnects',async()=>{
+  const s=await shell();
+  await s.emit({type:'pyramid-presentation-state',phase:'slides',language:'eng'});
+  await s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/puzzle/8'},s.opener);
   assert.equal(new URL(s.frame.src).searchParams.get('lang'),'eng');
-  s.emit({type:'pyramid-presentation-state',phase:'game',puzzleId:8});
-  s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/videoPuzzles/3'},s.opener);
+  s.load();await s.emit({type:'pyramid-presentation-state',phase:'game',puzzleId:8});
+  await s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/videoPuzzles/3'},s.opener);
   assert.equal(new URL(s.frame.src).searchParams.get('lang'),'eng');
-  s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/presentacio/3?lang=ca'},s.opener);
+  await s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/presentacio/3?lang=ca'},s.opener);
   assert.equal(new URL(s.frame.src).searchParams.get('lang'),'ca');
 });
-test('earned progress survives refresh; navigation and unrelated messages cannot award it',()=>{
-  const s=shell();
+test('earned progress survives refresh; navigation and unrelated messages cannot award it',async()=>{
+  const s=await shell();
   const report=id=>s.emit({type:'pyramid-presentation-state',phase:'game',puzzleId:id});
   assert.equal(s.run.complete(2,s.child),false);
-  report(2);
+  await report(2);
   assert.equal(s.run.complete(2,{}),false);
   assert.equal(s.run.complete(3,s.child),false);
   assert.equal(s.run.complete(2,s.child),true);
   assert.equal(s.run.complete(2,s.child),true);
   assert.deepEqual(Array.from(s.run.snapshot().completedIds),[2]);
-  s.emit({type:'pyramid-presentation-state',phase:'slides',puzzleId:6});
+  await s.emit({type:'pyramid-presentation-state',phase:'slides',puzzleId:6});
   assert.equal(s.run.complete(6,s.child),false);
-  const reloaded=shell(s.storage);
+  const reloaded=await shell(s.storage);
   assert.deepEqual(Array.from(reloaded.run.snapshot().completedIds),[2]);
   reloaded.run.reset({});
   assert.equal(reloaded.run.snapshot().completedIds.length,1);
   reloaded.run.reset(reloaded.child);
   assert.equal(reloaded.run.snapshot().completedIds.length,0);
+});
+
+test('a different session discards the previous final screen and starts with no earned games',async()=>{
+  const s=await shell();
+  await s.emit({type:'pyramid-presentation-state',phase:'game',puzzleId:6});
+  s.run.complete(6,s.child);
+  await s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/presentacio/6'},s.opener);
+  s.load();
+  s.setSession(12);
+  await s.emit({type:'pyramid-presentation-command',action:'session',sessionId:12},s.opener);
+  assert.equal(new URL(s.frame.src).pathname,'/');
+  assert.equal(new URL(s.frame.src).searchParams.get('session_id'),'12');
+  assert.deepEqual(Array.from(s.run.snapshot().completedIds),[]);
+  s.load();
+  await s.emit({type:'pyramid-presentation-state',phase:'game',puzzleId:6,sessionId:11});
+  assert.equal(s.run.complete(6,s.child),false,'Old-session messages cannot award the new one');
+});
+
+test('session scope survives player reload and resuming another ID restores only its own progress',async()=>{
+  const s=await shell();
+  await s.emit({type:'pyramid-presentation-state',phase:'game',puzzleId:2});
+  s.run.complete(2,s.child);
+  await s.emit({type:'pyramid-presentation-command',action:'navigate',value:'/presentacio/3'},s.opener);
+  s.load();
+  const savedHistory=s.history.state;
+  const other=await shell(s.storage,12,savedHistory);
+  assert.deepEqual(Array.from(other.run.snapshot().completedIds),[]);
+  assert.equal(new URL(other.frame.src).pathname,'/');
+  const resumed=await shell(s.storage,11,other.history.state);
+  assert.deepEqual(Array.from(resumed.run.snapshot().completedIds),[2]);
+  assert.equal(new URL(resumed.frame.src).pathname,'/presentacio/3');
+  await resumed.emit({type:'pyramid-presentation-command',action:'session',sessionId:11},resumed.opener);
+  assert.deepEqual(Array.from(resumed.run.snapshot().completedIds),[2]);
+});
+
+test('unscoped legacy storage and history cannot mark a new session as completed',async()=>{
+  const storage=new Map([['pyramid-earned-progress-v1',JSON.stringify({completedIds:[2,3,6]})]]);
+  const s=await shell(storage,12,{pyramidTarget:'/puzzle/6'});
+  assert.deepEqual(Array.from(s.run.snapshot().completedIds),[]);
+  assert.equal(new URL(s.frame.src).pathname,'/');
 });
 
 test('journey blocks follow the configured order, including empty and unequal blocks',()=>{

@@ -1,15 +1,24 @@
-import sys,threading,subprocess
+import os,sys,threading,subprocess,tempfile
 from pathlib import Path
 REPO=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(REPO),str(REPO/'tests')]
 from test_sessions import SessionTests,ROOT
-from flask import render_template,jsonify
+from flask import render_template,jsonify,request
+from presentation_fixture import create_runtime
 from werkzeug.serving import make_server,WSGIRequestHandler
 case=SessionTests();case.setUp();app=case.app
 app.template_folder=str(ROOT/'templates');app.static_folder=str(ROOT/'static')
 namespace=app.view_functions['test_session_confirm'].__globals__
-@app.route('/welcome')
-def welcome():return '',200
+visual_app,_=create_runtime()
+@app.route('/')
+@app.route('/presentacio/<int:puzzle_id>')
+def welcome(puzzle_id=None):
+ with visual_app.test_client() as client:
+  return client.get(request.full_path).get_data(as_text=True)
+def closing_preview():
+ with visual_app.test_client() as client:
+  return client.get(request.full_path).get_data(as_text=True)
+app.view_functions['final']=closing_preview
 @app.route('/audit')
 def audit():
  return render_template('test.html',test_puzzle_order=[2,3,8,1,5,12,4],test_puzzle_aliases={},test_puzzle_tutorial=11,test_puzzle_final=6,game_language='ca')
@@ -41,6 +50,9 @@ def old_runs():
  return jsonify(session_ids=ids)
 class Quiet(WSGIRequestHandler):
  def log(self,*a):pass
-server=make_server('127.0.0.1',0,app,request_handler=Quiet);threading.Thread(target=server.serve_forever,daemon=True).start()
-try:subprocess.run(['node',str(REPO/'tests/sessions_browser.cjs'),f'http://127.0.0.1:{server.server_port}'],check=True,timeout=45)
+server=make_server('127.0.0.1',0,app,threaded=True,request_handler=Quiet);threading.Thread(target=server.serve_forever,daemon=True).start()
+try:
+ with tempfile.TemporaryDirectory(prefix='session-browser-') as output:
+  subprocess.run(['node',str(REPO/'tests/sessions_browser.cjs'),f'http://127.0.0.1:{server.server_port}'],
+                 env={**os.environ,'SESSION_BROWSER_OUTPUT':output},check=True,timeout=60)
 finally:server.shutdown();server.server_close();case.tearDown()

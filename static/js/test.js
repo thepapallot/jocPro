@@ -578,6 +578,7 @@
   ];
   const preflightState = Object.fromEntries(preflightItems.map((item) => [item.id, "unchecked"]));
   let currentGameState = null;
+  let controlSessionRevision = 0;
   let controlStateLoading = false;
   let controlActionBusy = false;
   let controlInitialSelectionSynced = false;
@@ -828,7 +829,8 @@
       });
       if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.error || `HTTP ${response.status}`); }
       const result = await response.json();
-      _loadedDbSessionId = result.session_id ?? null;
+      if (!Number.isInteger(result.session_id)) throw new Error("El servidor no ha confirmado el ID de la partida nueva.");
+      _loadedDbSessionId = result.session_id;
     }
     await refreshDbSessionList();
     window.PyramidSessions?.saved(_loadedDbSessionId);
@@ -914,15 +916,16 @@
     setStatus("Sesión eliminada");
   }
 
-  async function closeSelectedSession() {
-    const sessionId = _loadedDbSessionId;
+  async function closeSelectedSession({ active = false } = {}) {
+    const sessionId = active ? activeSession?.dbSessionId : _loadedDbSessionId;
     if (sessionId == null) {
       throw new Error("Selecciona la sesión que quieres cerrar.");
     }
-    const name = getSessionField("sessionName")?.value || "esta sesión";
-    if (!window.confirm(`¿Cerrar «${name}»? Se guardarán los datos del formulario y se conservarán los resultados ya registrados. Los puzzles incompletos no se darán por superados. Si es la sesión activa, se detendrá su puzzle. No se abrirá la presentación final ni se cambiará otra sesión activa.`)) return;
+    const saveForm = sessionId === _loadedDbSessionId;
+    const name = active ? activeSession.sessionName : getSessionField("sessionName")?.value || "esta sesión";
+    if (!window.confirm(`¿Finalizar y archivar la partida #${sessionId} · «${name}»? ${saveForm ? "Se guardarán los datos del formulario y se conservarán" : "Se conservarán"} los resultados ya registrados. Los puzzles incompletos no se darán por superados. Si es la sesión activa, se detendrá su puzzle. No se abrirá la presentación final ni se cambiará otra sesión activa.`)) return;
 
-    await saveSession({ silent: true });
+    if (saveForm) await saveSession({ silent: true });
     // Address the selected database row, never the global active session.
     const response = await fetch(`/test/session/${sessionId}/close`, { method: "POST" });
     if (!response.ok) {
@@ -937,7 +940,7 @@
     if (!detail.session?.ended_at) {
       throw new Error("El cierre no consta en la base de datos. Actualiza la lista para volver a intentarlo.");
     }
-    window.PyramidSessions?.closed(sessionId);
+    if (saveForm) window.PyramidSessions?.closed(sessionId);
     switchTab("sesiones");
     addSimpleEvent("Sesión cerrada", name);
     setStatus("Sesión cerrada. Los resultados registrados se conservan en el historial.");
@@ -945,6 +948,16 @@
 
   async function confirmSession(options = {}) {
     const silent = Boolean(options.silent);
+    let resume = false;
+    if (_loadedDbSessionId !== null) {
+      const response = await fetch(`/test/session/${_loadedDbSessionId}`, { cache: "no-store" });
+      if (!response.ok) throw new Error("No se ha podido comprobar la partida. Actualiza la lista.");
+      const { session, puzzles = [] } = await response.json();
+      if (!session || session.ended_at) throw new Error("Esta partida está finalizada. Crea una partida nueva.");
+      resume = Boolean(session.started_at || puzzles.length);
+      if (resume && activeSession?.dbSessionId !== _loadedDbSessionId
+          && !window.confirm(`¿Retomar la partida #${_loadedDbSessionId} · «${session.name || "Sin nombre"}»? Ya tiene ${puzzles.length} registros de puzzles. Los nuevos resultados se añadirán a esta misma partida. No se creará una partida nueva.`)) return;
+    }
 
     // Confirm exactly the language and details currently visible in the form.
     // Await persistence before confirmation, including for a brand-new session.
@@ -960,7 +973,7 @@
     const response = await fetch("/test/session/confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: _loadedDbSessionId }),
+      body: JSON.stringify({ session_id: _loadedDbSessionId, resume }),
     });
 
     const result = await response.json().catch(() => ({}));
@@ -969,8 +982,9 @@
     }
 
     const session = result.session || {};
+    if (activeSession?.dbSessionId !== session.session_id) resetSessionControl();
     activeSession = {
-      id: activeSession?.id || `session_${session.session_id}`,
+      id: `session_${session.session_id}`,
       dbSessionId: session.session_id,
       sessionName: session.name || "",
       company: session.company || "",
@@ -993,8 +1007,8 @@
     if (!session.started_at) resetGameState();
 
     if (!silent) {
-      addSimpleEvent("Sesión preparada");
-      setStatus("Sesión preparada. Abre la pantalla de jugadores desde el control.");
+      addSimpleEvent(resume ? `Partida #${session.session_id} retomada` : `Partida #${session.session_id} preparada`);
+      setStatus(resume ? `Los resultados se añadirán a la partida #${session.session_id}.` : `Partida #${session.session_id} preparada. Pulsa «Iniciar partida» en el control.`);
     }
     goToSessionControl();
     // Sync against backend to keep state authoritative
@@ -1007,23 +1021,27 @@
   }
 
   function loadActiveSession() {
-    let saved = null;
-    try {
-      saved = JSON.parse(window.localStorage.getItem(activeSessionKey) || "null");
-    } catch (error) {
-      saved = null;
-    }
-    // Restore the editor draft; the active session is recovered from the server.
-    if (saved) {
-      fillSessionForm(saved);
-      if (saved.dbSessionId != null) {
-        _loadedDbSessionId = Number(saved.dbSessionId) || null;
-      }
-    }
-    // Never trust browser storage as the authority for the active session.
+    // An old active session is not a new editor draft after reload.
+    clearSessionForm();
     activeSession = null;
     window.localStorage.removeItem(activeSessionKey);
     renderActiveSession();
+  }
+
+  async function beginConfirmedSession() {
+    if (!activeSession) throw new Error("Prepara una partida antes de iniciar el juego.");
+    const id = activeSession.dbSessionId;
+    if (!window.confirm(`¿Iniciar la partida #${id} · «${activeSession.sessionName}»? Los puzzles y sus puntos se registrarán en esta partida.`)) return;
+    const response = await fetch("/test/session/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: id })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "No se ha podido iniciar la partida.");
+    await syncConfirmedSession();
+    goToSessionControl();
+    setStatus(`Partida #${id} iniciada. Ya puedes conducir el juego.`);
   }
 
   function renderActiveSession() {
@@ -1036,8 +1054,8 @@
       window.dispatchEvent(new CustomEvent('pyramid-session-change', {detail: s ? structuredClone(s) : null}));
     }
     const line = s
-      ? `${s.sessionName || "Sesión"} · ${s.company || "Sin empresa"} · ${s.players || "--"} jugadores · ${languageLabel(s.gameLanguage)}`
-      : "Prepara una partida para pasar al control";
+      ? `PARTIDA ACTIVA #${s.dbSessionId} · ${s.sessionName || "Sin nombre"} · ${s.sessionType === "test" ? "PRUEBA" : "REAL"} · ${s.players || "--"} jugadores · ${languageLabel(s.gameLanguage)}`
+      : "SIN PARTIDA ACTIVA · Crea o selecciona una partida en Sesiones";
     if (els.activeSessionLine) els.activeSessionLine.textContent = line;
     if (els.headerSessionStatus) {
       els.headerSessionStatus.textContent = s ? (sessionStarted ? "En curso" : "Preparada") : "Sin preparar";
@@ -1045,6 +1063,17 @@
     }
     if (els.gmStartBtn) {
       els.gmStartBtn.disabled = !s;
+      els.gmStartBtn.textContent = s ? `Control de la partida #${s.dbSessionId} →` : "Ir al control →";
+    }
+    const begin = document.getElementById("gm-begin-session-btn");
+    if (begin) {
+      begin.hidden = !s || Boolean(s.startedAt);
+      begin.textContent = s ? `Iniciar partida #${s.dbSessionId}` : "Iniciar partida";
+    }
+    const end = document.getElementById("gm-end-session-btn");
+    if (end) {
+      end.hidden = !s;
+      end.textContent = s ? `Finalizar y archivar #${s.dbSessionId}` : "Finalizar y archivar partida";
     }
     const pairs = {
       "gm-summary-company": s?.company || "--",
@@ -1098,10 +1127,13 @@
   async function syncConfirmedSession() {
     let result;
     try {
-      const resp = await fetch("/test/session/active");
+      const resp = await fetch("/test/session/active", { cache: "no-store" });
+      if (!resp.ok) throw new Error("No se ha podido verificar la partida activa.");
       result = await resp.json();
-    } catch (_err) {
-      return; // Network error — leave current state intact
+      if (typeof result.active !== "boolean") throw new Error("El servidor no ha confirmado el estado de la partida.");
+    } catch (error) {
+      if (els.headerSessionStatus) els.headerSessionStatus.textContent = "Sin verificar";
+      throw error;
     }
 
     if (!result.active) {
@@ -1109,7 +1141,7 @@
       if (activeSession !== null) {
         activeSession = null;
         window.localStorage.removeItem(activeSessionKey);
-        resetGameState();
+        resetSessionControl();
         renderActiveSession();
       }
       return;
@@ -1119,8 +1151,9 @@
     const session = result.session || {};
     const newDbId = session.session_id;
 
+    if (activeSession?.dbSessionId !== newDbId) resetSessionControl();
     activeSession = {
-      id: activeSession?.id || `session_${newDbId}`,
+      id: `session_${newDbId}`,
       dbSessionId: newDbId,
       sessionName: session.name || "",
       company: session.company || "",
@@ -1425,9 +1458,11 @@
   }
 
   async function assertSelectedPuzzleActive() {
+    const revision = controlSessionRevision;
     const response = await fetch("/current_state", { cache: "no-store" });
     if (!response.ok) throw new Error("No se pudo consultar el puzzle activo");
     const data = await response.json();
+    if (revision !== controlSessionRevision) throw new Error("La partida ha cambiado. Repite la acción en la partida activa.");
     if (Number(data.puzzle_id) !== getSelectedPuzzleIdForBackend()) {
       currentGameState = data;
       renderControlLiveState();
@@ -4298,6 +4333,18 @@
     renderPuzzleProgress();
   }
 
+  function resetSessionControl() {
+    controlSessionRevision++;
+    currentGameState = null;
+    controlInitialSelectionSynced = false;
+    resetGameState();
+    const first = Array.from(els.puzzleSelect.options)
+      .find(option => option.value === String(window.TEST_PUZZLE_TUTORIAL));
+    if (first) selectPuzzle(first.value);
+    renderControlLiveState();
+    window.dispatchEvent(new Event('pyramid-test-state'));
+  }
+
   function loadGameState() {
     try {
       const saved = JSON.parse(window.localStorage.getItem(gameStateKey) || "{}");
@@ -4382,14 +4429,7 @@
   }
 
   function finishGame() {
-    if (!window.confirm("Finalizar partida?")) return;
-    puzzleRuntime.elapsedBeforePause = currentElapsedMs();
-    puzzleRuntime.startedAt = null;
-    puzzleRuntime.gameStatus = "Finalizada";
-    window.clearInterval(puzzleRuntime.timerId);
-    saveGameState();
-    renderGameTimer();
-    addSimpleEvent("Partida finalizada");
+    return runSessionAction(() => closeSelectedSession({ active: true }));
   }
 
   function renderIncidents() {
@@ -4801,10 +4841,12 @@
   async function refreshCurrentState() {
     if (controlStateLoading) return;
     controlStateLoading = true;
+    const revision = controlSessionRevision;
     try {
       const response = await fetch("/current_state", { cache: "no-store" });
       if (!response.ok) throw new Error("No se pudo consultar el estado");
       const data = await response.json();
+      if (revision !== controlSessionRevision) return;
       const previousState=currentGameState;
       currentGameState = data;
       if (!controlInitialSelectionSynced) {
@@ -4841,6 +4883,7 @@
 	      renderGMState(data);
 	      renderControlLiveState();
 	    } catch (error) {
+	      if (revision !== controlSessionRevision) return;
 	      currentGameState = null;
 	      if (els.controlLiveState) els.controlLiveState.textContent = `Sin conexión con el estado del juego: ${String(error)}`;
 	      if (els.simContent) els.simContent.inert = true;
@@ -4965,6 +5008,8 @@
       }
     });
     if (els.saveSessionBtn) els.saveSessionBtn.addEventListener("click", () => runSessionAction(() => saveSession()));
+    document.getElementById("gm-begin-session-btn")?.addEventListener("click", () => runSessionAction(beginConfirmedSession));
+    document.getElementById("gm-end-session-btn")?.addEventListener("click", finishGame);
     if (els.deleteSessionBtn) {
       els.deleteSessionBtn.addEventListener("click", () => runSessionAction(deleteSelectedSession));
     }
@@ -5009,7 +5054,7 @@
   async function runSessionAction(action) {
     if (sessionActionBusy) return;
     sessionActionBusy = true;
-    const controls = [...document.querySelectorAll('#gm-session-form input, #gm-session-form select, #gm-session-form textarea, #gm-session-form button'), els.duplicateSessionBtn, els.newSessionBtn, document.getElementById('gm-new-test-session-btn')].filter(Boolean);
+    const controls = [...document.querySelectorAll('#gm-session-form input, #gm-session-form select, #gm-session-form textarea, #gm-session-form button'), els.duplicateSessionBtn, els.newSessionBtn, document.getElementById('gm-new-test-session-btn'), document.getElementById('gm-begin-session-btn'), document.getElementById('gm-end-session-btn')].filter(Boolean);
     const disabled = controls.map(control => control.disabled);
     controls.forEach(control => { control.disabled = true; });
     try { await action(); }
@@ -5081,7 +5126,10 @@
   bindEvents();
   refreshCurrentState();
   window.setInterval(() => {
-    if (!document.hidden) refreshCurrentState();
+    if (!document.hidden) {
+      refreshCurrentState();
+      syncConfirmedSession().catch(error => console.warn("[session] Active session refresh failed:", error));
+    }
   }, 3000);
   window.setInterval(refreshPuzzle1Board, 1000);
   document.addEventListener("visibilitychange", () => {

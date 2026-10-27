@@ -38,6 +38,44 @@ Juego cooperativo para 10–20 jugadores, diez terminales y una pantalla compart
 Recorrido actual: práctica 11 → 2 → 3 → 8 → 1 → 5 → 12 → 4 → final 6.
 El orden se configura en `config.py`.
 
+## Partidas y resultados en Test
+
+1. **Nueva partida real** o **Nueva partida de prueba** abre un formulario
+   nuevo. **Crear y preparar esta partida** guarda un ID nuevo y lo activa,
+   sin iniciar el juego. **Guardar para más adelante** solo crea el registro
+   pendiente. Copiar datos a una partida nueva nunca copia resultados.
+2. Para una partida pendiente existente, **Preparar la partida #ID** utiliza
+   ese registro. Si ya tiene inicio o puzzles registrados, la acción es
+   **Retomar la partida #ID** y pide confirmar que se añadirán resultados al
+   mismo ID. Cancelar no guarda ni activa nada.
+3. La cabecera fija identifica siempre la **PARTIDA ACTIVA #ID**, nombre y
+   modalidad REAL/PRUEBA. El formulario avisa si se está editando otra partida.
+   Guardar cambios en una partida existente no crea una nueva ni la activa.
+4. **Iniciar partida #ID**, en la cabecera, registra el inicio explícito.
+   Hasta entonces no se pueden iniciar puzzles ni la apertura narrativa.
+   Una partida en curso bloquea la preparación de otra hasta finalizarla.
+5. **Finalizar y archivar #ID** conserva resultados y detiene el puzzle activo
+   sin conceder puntos por lo incompleto. La cabecera finaliza la partida
+   activa; el botón del formulario finaliza la seleccionada. El cierre
+   narrativo `/final` utiliza la misma finalización verificada.
+
+El inicio y la reanudación no generan otro ID. Una partida finalizada no se
+puede reabrir; para volver a jugar hay que crear una nueva. Reiniciar un puzzle
+añade otro registro dentro de la partida activa, no otra partida.
+Recargar Test no convierte la partida anterior en un borrador nuevo ni la
+reactiva tras reiniciar el servidor. No hay cierres automáticos por cambio de día.
+Los registros anteriores, incluida cualquier mezcla histórica, no se migran
+ni se separan automáticamente con este cambio.
+
+La pantalla de jugadores guarda los completados y la última pantalla por ID de
+partida en esa ventana del navegador. Preparar un ID nuevo limpia el recorrido,
+vuelve a bienvenida y devuelve el selector del GM a la práctica; no reutiliza la
+carga final anterior, aunque la ventana siga abierta. Volver a la misma partida
+o recargar Test conserva su propio recorrido. Los mensajes de otro ID se descartan.
+Al finalizar se puede mantener el cierre en pantalla hasta preparar otra partida.
+El caché antiguo sin ID no se asigna a una partida nueva. Este progreso visual
+no sustituye los resultados guardados en la base de datos.
+
 ## Puntuaciones
 
 `scoring_config.py` centraliza las reglas acordadas en `SCORING_CONFIG`, con

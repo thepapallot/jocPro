@@ -38,7 +38,7 @@ mqtt_client.set_special_puzzle_ids(
 mqtt_client.set_telemetry_writer(_telemetry_writer)
 mqtt_client.set_telemetry_queries(_telemetry_queries)
 
-# Active confirmed game session (Phase: session confirmation only)
+# The confirmed session is distinct from its explicit start and finalization.
 _active_game_lock = threading.Lock()
 _active_game_session_id = None
 
@@ -151,14 +151,10 @@ def welcome():
 
 @app.route('/videoIntro')
 def play_video_intro():
-    # If a session is confirmed and telemetry is available, mark it as started (idempotent).
     with _active_game_lock:
-        _sid = _active_game_session_id
-    if _sid is not None and _telemetry_writer is not None:
-        try:
-            _telemetry_writer.start_session(_sid)
-        except Exception as _e:
-            print(f'[telemetry] start_session failed: {_e}')
+        error = active_session_error()
+        if error:
+            return error
     return render_presentation('opening', url_for('play_video_tutorial'))
 
 
@@ -238,16 +234,12 @@ def scene_player_assets(filename):
 
 @app.route('/final', methods=['GET', 'POST'])
 def final():
-    global _active_game_session_id
     with _active_game_lock:
         _sid = _active_game_session_id
-        _active_game_session_id = None
-    mqtt_client.set_active_session_id(None)
-    if _sid is not None and _telemetry_writer is not None:
-        try:
-            _telemetry_writer.end_session(_sid)
-        except Exception as _e:
-            print(f'[telemetry] end_session failed: {_e}')
+    if _sid is not None:
+        result = test_session_close(_sid)
+        if result[1] != 200:
+            return result
     return render_presentation('closing')
 
 @app.route('/final-loop', methods=['GET'])
@@ -303,31 +295,52 @@ def puzzle4_sample_finished():
     return '', 204
 
 #To start the puzzle from frontend
+def active_session_error(require_started=True):
+    """Called with _active_game_lock held, before any gameplay side effects."""
+    if _telemetry_writer is None or _telemetry_queries is None:
+        return jsonify({"error": "No se puede registrar la partida: base de datos no disponible."}), 503
+    if _active_game_session_id is None:
+        return jsonify({"error": "Prepara una partida en Sesiones antes de iniciar el juego."}), 409
+    session = _telemetry_queries.get_session_stats(_active_game_session_id)
+    if not session or session.get("ended_at"):
+        return jsonify({"error": "La partida ya no está disponible. Prepara otra partida."}), 409
+    if require_started and not session.get("started_at"):
+        return jsonify({"error": f"Inicia la partida #{_active_game_session_id} desde el control antes de abrir el juego."}), 409
+    return None
+
+
 @app.route('/start_puzzle/<int:puzzle_id>', methods=['POST'])
 def start_puzzle_route(puzzle_id):
     if not is_playable_puzzle_id(puzzle_id):
         print("Invalid puzzle_id:", puzzle_id)
         return jsonify({"error": "invalid puzzle"}), 404
-    # Prevent restarting if already current
-    if mqtt_client.current_puzzle_id == puzzle_id:
-        print("Puzzle already started:", puzzle_id)
-        return jsonify({"status": "already_started"}), 200
-    
-    mqtt_client.start_puzzle(puzzle_id)
+    with _active_game_lock:
+        error = active_session_error()
+        if error:
+            return error
+        if mqtt_client.current_puzzle_id == puzzle_id:
+            return jsonify({"status": "already_started"}), 200
+        mqtt_client.start_puzzle(puzzle_id)
     return jsonify({"status": "started", "puzzle_id": puzzle_id}), 200
 
 @app.route('/start_puzzle_final', methods=['POST'])
 def start_puzzle_final():
-    mqtt_client.start_puzzle(PUZZLE_FINAL)
+    with _active_game_lock:
+        error = active_session_error()
+        if error:
+            return error
+        mqtt_client.start_puzzle(PUZZLE_FINAL)
     return jsonify({"status": "started", "puzzle_id": PUZZLE_FINAL}), 200
 
 @app.route('/restart_puzzle/<int:puzzle_id>', methods=['POST'])
 def restart_puzzle_route(puzzle_id):
     if not is_playable_puzzle_id(puzzle_id):
         return jsonify({"error": "invalid puzzle"}), 404
-    # Stop whatever is running, then start requested puzzle
-    mqtt_client.stop_current_puzzle()
-    mqtt_client.start_puzzle(puzzle_id)
+    with _active_game_lock:
+        error = active_session_error()
+        if error:
+            return error
+        mqtt_client.start_puzzle(puzzle_id)
     return jsonify({"status": "restarted", "puzzle_id": puzzle_id}), 200
 
 @app.route('/state_stream')
@@ -609,7 +622,7 @@ def session_form_fields(data, existing=None):
     kind = merged.get('session_type', 'real')
     if kind not in ('real', 'test'):
         raise ValueError('El tipo de sesión no es válido.')
-    if existing.get('started_at') and kind != existing.get('session_type', 'real'):
+    if (existing.get('started_at') or existing.get('puzzle_count')) and kind != existing.get('session_type', 'real'):
         raise ValueError('No se puede cambiar el tipo de una sesión que ya ha empezado.')
     name = str(merged.get('name') or '').strip()
     company = str(merged.get('company') or '').strip()
@@ -708,7 +721,7 @@ def test_session_close(session_id):
             session = _telemetry_queries.get_session_stats(session_id)
             if not session:
                 return jsonify({'error': 'Sesión no encontrada.'}), 404
-            if (not session.get('started_at') and not session.get('ended_at')
+            if (not session.get('started_at') and not session.get('puzzle_count') and not session.get('ended_at')
                     and _active_game_session_id != session_id):
                 return jsonify({'error': 'Esta sesión todavía no ha empezado.'}), 409
             # Do not move the recorded end time on retries/double clicks.
@@ -738,25 +751,26 @@ def test_session_confirm():
     except (TypeError, ValueError):
         return jsonify({'error': 'invalid_session_id'}), 400
 
-    try:
-        session = _telemetry_queries.get_session_stats(session_id)
-    except Exception as exc:
-        return jsonify({'error': 'query_failed', 'detail': str(exc)}), 500
-
-    if not session:
-        return jsonify({'error': 'session_not_found'}), 404
-
-    if session.get('ended_at'):
-        return jsonify({'error': 'session_already_ended'}), 409
-
     with _active_game_lock:
+        try:
+            session = _telemetry_queries.get_session_stats(session_id)
+        except Exception as exc:
+            return jsonify({'error': 'query_failed', 'detail': str(exc)}), 500
+        if not session:
+            return jsonify({'error': 'session_not_found'}), 404
+        if session.get('ended_at'):
+            return jsonify({'error': 'Esta partida está finalizada. Crea una partida nueva.'}), 409
         if _active_game_session_id not in (None, session_id):
             active = _telemetry_queries.get_session_stats(_active_game_session_id)
-            if active and active.get('started_at') and not active.get('ended_at'):
-                return jsonify({'error': 'Hay una partida en curso. Finalízala antes de usar otra sesión.'}), 409
-    with _active_game_lock:
+            if active and (active.get('started_at') or active.get('puzzle_count')) and not active.get('ended_at'):
+                return jsonify({'error': f'La partida #{_active_game_session_id} está en curso. Finalízala y archívala antes de preparar otra.'}), 409
+        if (session.get('started_at') or session.get('puzzle_count')) and data.get('resume') is not True:
+            return jsonify({'error': f'La partida #{session_id} ya tiene juego registrado. Confirma que quieres retomarla, no crear otra.',
+                            'resume_required': True}), 409
+        if _active_game_session_id is not None and _active_game_session_id != session_id:
+            mqtt_client.stop_current_puzzle()
         _active_game_session_id = session_id
-    mqtt_client.set_active_session_id(session_id)
+        mqtt_client.set_active_session_id(session_id)
 
     return jsonify({'status': 'confirmed', 'session': session}), 200
 
@@ -767,36 +781,37 @@ def test_session_active():
     global _active_game_session_id
     with _active_game_lock:
         _sid = _active_game_session_id
-    if _sid is None:
-        return jsonify({'active': False}), 200
-    if _telemetry_queries is None:
-        return jsonify({'active': False}), 200
-    try:
-        session = _telemetry_queries.get_session_stats(_sid)
-    except Exception as exc:
-        return jsonify({'error': 'query_failed', 'detail': str(exc)}), 500
-    if not session:
-        # Session disappeared from DB — clear stale global
-        with _active_game_lock:
+        if _sid is None:
+            return jsonify({'active': False}), 200
+        if _telemetry_queries is None:
+            return jsonify({'error': 'telemetry_unavailable'}), 503
+        try:
+            session = _telemetry_queries.get_session_stats(_sid)
+        except Exception as exc:
+            return jsonify({'error': 'query_failed', 'detail': str(exc)}), 500
+        if not session or session.get('ended_at'):
+            mqtt_client.stop_current_puzzle()
             _active_game_session_id = None
-        mqtt_client.set_active_session_id(None)
-        return jsonify({'active': False}), 200
-    return jsonify({'active': True, 'session': session}), 200
+            mqtt_client.set_active_session_id(None)
+            return jsonify({'active': False}), 200
+        return jsonify({'active': True, 'session': session}), 200
 
 
 @app.route('/test/session/start', methods=['POST'])
 def test_session_start():
-    """Write started_at for the confirmed session (idempotent). Used by GM Start button."""
+    """Start only the explicitly addressed, confirmed session; never create a row."""
+    data = request.get_json(silent=True) or {}
     with _active_game_lock:
+        error = active_session_error(require_started=False)
+        if error:
+            return error
         _sid = _active_game_session_id
-    if _sid is None:
-        return jsonify({'error': 'no_active_session'}), 409
-    if _telemetry_writer is None:
-        return jsonify({'error': 'telemetry_unavailable'}), 503
-    try:
-        _telemetry_writer.start_session(_sid)
-    except Exception as exc:
-        return jsonify({'error': 'start_failed', 'detail': str(exc)}), 500
+        if type(data.get('session_id')) is not int or data['session_id'] != _sid:
+            return jsonify({'error': 'La partida activa ha cambiado. Actualiza el control antes de iniciarla.'}), 409
+        try:
+            _telemetry_writer.start_session(_sid)
+        except Exception as exc:
+            return jsonify({'error': 'start_failed', 'detail': str(exc)}), 500
     return jsonify({'status': 'started', 'session_id': _sid}), 200
 
 

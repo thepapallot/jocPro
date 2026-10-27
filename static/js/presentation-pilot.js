@@ -6,6 +6,7 @@
   if(sceneIndex<0)throw new Error('Presentation not configured: '+page.sceneId);
   let config = flow[sceneIndex];
   const run=page&&window.parent!==window?window.parent.PyramidRun:null;
+  const sessionId=run?.snapshot().sessionId;
   if(run&&config.kind==='opening')run.reset(window);
   function restoreProgress(){
     if(!run||['welcome','opening'].includes(config.kind))return;
@@ -202,7 +203,7 @@
     $('p-announcement').textContent = phase === 'game' ? text().name : `${text().name}. ${text().stepLabels[step]}`;
     const host=page&&window.parent!==window?window.parent:window.opener;
     if (host && !host.closed) host.postMessage({
-      type: 'pyramid-presentation-state', realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
+      type: 'pyramid-presentation-state', sessionId, realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
       incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el funcionament →',es:'Tokens repartidos · explicar el funcionamiento →',eng:'Tokens handed out · explain the equipment →'}[language]:config.incremental?({'equipment-title':{ca:'Com funciona el joc →',es:'Cómo funciona el juego →',eng:'How the game works →'}[language],title:text().name+' →',elements:language==='ca'?'La missió és a les vostres mans →':'La misión está en vuestras manos →',objective:language==='ca'?'Mostrar objectiu →':'Mostrar objetivo →',tools:language==='ca'?'Mostrar eines →':'Mostrar herramientas →',interaction:language==='ca'?'Mostrar interacció →':'Mostrar interacción →',attention:language==='ca'?'Mostrar atenció →':'Mostrar atención →'}[config.steps[step+1]]||null):null,
       name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
       labels: text().stepLabels, kind: config.kind || 'puzzle',

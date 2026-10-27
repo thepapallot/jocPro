@@ -132,6 +132,7 @@ class MQTTClient:
             self.active_puzzle_num = puzzle_id
         except Exception as e:
             print(f"[telemetry] record_puzzle_start failed: {e}")
+            raise
 
     def start_next_round(self, puzzle_id: int, round_num: int):
         telemetry_writer = None
@@ -202,10 +203,18 @@ class MQTTClient:
         with self.lock:
             if puzzle_id not in self.puzzles:
                 return
+            if self.telemetry_writer is None or self.telemetry_queries is None or self.active_session_id is None:
+                raise ValueError("No hay una partida activa para registrar este puzzle.")
+            session = self.telemetry_queries.get_session_stats(self.active_session_id)
+            if not session or not session.get("started_at") or session.get("ended_at"):
+                raise ValueError("La partida debe estar iniciada y sin finalizar antes de abrir un puzzle.")
+            if self._resolve_puzzle_order(puzzle_id) < 0:
+                raise ValueError("Este puzzle no pertenece al recorrido de la partida.")
             self.stop_current_puzzle()
+            # Do not start timers or hardware unless the run has been persisted.
+            self._record_puzzle_start_locked(puzzle_id)
             self.current_puzzle_id = puzzle_id
             self.puzzles[puzzle_id].reset()
-            self._record_puzzle_start_locked(puzzle_id)
             self.send_message("FROM_FLASK", f"P{puzzle_id}Start")
             
     def stop_current_puzzle(self):

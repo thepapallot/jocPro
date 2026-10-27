@@ -98,7 +98,14 @@
   }
   $('open').addEventListener('click',async()=>{try{await player.open();render();}catch(error){feedback(error.message,true);}});
   $('refresh').addEventListener('click',async()=>{await api.refresh();player.command('sync');render();feedback(api.snapshot().state?'Estado actualizado.':'No se ha podido consultar el juego.',!api.snapshot().state);});
-  $('navigation').addEventListener('click',event=>{const b=event.target.closest('[data-director-command]');if(b&&!b.disabled)player.command(b.dataset.directorCommand);});
+  $('navigation').addEventListener('click',event=>{
+    const b=event.target.closest('[data-director-command]');if(!b||b.disabled)return;
+    const action=b.dataset.directorCommand,s=player.snapshot().state;
+    if((action==='start'||(action==='next'&&s?.kind==='welcome'))&&!api.session()?.startedAt){
+      feedback('Pulsa «Iniciar partida» en la cabecera antes de empezar el juego.',true);return;
+    }
+    player.command(action);
+  });
   $('presentation-options').addEventListener('click',event=>{const b=event.target.closest('[data-director-command]');if(b&&!b.disabled)player.command(b.dataset.directorCommand);});
   $('steps').addEventListener('click',event=>{const b=event.target.closest('[data-director-step]');if(b&&!b.disabled)player.command('step',Number(b.dataset.directorStep));});
   $('resolvers').addEventListener('click',event=>{const b=event.target.closest('[data-director-resolve]');if(b&&!b.disabled)intervene(b.dataset.directorResolve);});
@@ -113,8 +120,10 @@
     const active=s?.phase==='game'||(game.state?.puzzle_id&&!game.state.puzzle_solved);
     busy=true;render();
     try{
+      if((path.startsWith('/puzzle/')||path==='/videoIntro')&&!api.session()?.startedAt)
+        throw new Error('Prepara e inicia una partida desde la cabecera antes de abrir el juego.');
       if((path.startsWith('/puzzle/')||active)&&!await confirmRoute(path,name,active))return;
-      if(path==='/videoIntro'&&s?.earnedPuzzleIds?.length&&!confirm('Repetir la apertura reinicia la pirámide de logros. ¿Empezar de nuevo?'))return;
+      if(path==='/videoIntro'&&s?.earnedPuzzleIds?.length&&!confirm('Repetir la apertura reinicia la pirámide visual, pero no crea una partida nueva ni borra sus resultados. ¿Repetir dentro de esta misma partida?'))return;
       feedback('Abriendo '+name+' en la ventana de jugadores…');
       const opened=await player.open(path);
       if(opened===false)throw new Error('No se ha podido abrir la ventana de jugadores.');

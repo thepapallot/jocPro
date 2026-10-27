@@ -1,6 +1,6 @@
 # Guía de marca diseño y estilo de La Piràmide
 
-Referencia editorial vigente del proyecto. Última actualización: **9 octubre
+Referencia editorial vigente del proyecto. Última actualización: **27 octubre
 2026**. Recoge las decisiones del equipo, la información publicada y la revisión
 de recursos gráficos. Leer antes de editar, como establece [AGENTS.md](../AGENTS.md).
 
@@ -1114,9 +1114,10 @@ formato. Mantener legibles descriptor, capacidad y llamada a solicitar propuesta
 ### Idioma de la sesión
 
 Acordado e implementado: en `/test` → **Sesiones** se elige catalán, castellano o
-inglés junto con empresa, fecha, hora, lugar, jugadores y notas. **Guardar e ir
-al control** guarda los cambios, activa la sesión y abre **Control de juego**
-en una sola acción. El idioma de la sesión activa se aplica a la
+inglés junto con empresa, fecha, hora, lugar, jugadores y notas. **Crear y preparar
+esta partida** crea una partida independiente y abre **Control de juego**;
+**Preparar la partida #ID** selecciona una pendiente existente. El inicio es
+una acción posterior y explícita: **Iniciar partida #ID**. El idioma de la sesión activa se aplica a la
 pantalla de jugadores y sus rutas; el control de presentación lo muestra como
 dato de la sesión. El panel del GM conserva su propio idioma.
 
@@ -1134,7 +1135,7 @@ pendiente/preparada/en curso/finalizada, GM responsable y separación entre nota
 de preparación y observaciones finales. Selección del editor y sesión activa
 son estados distintos. Guardado y errores se explican junto al formulario.
 
-Simplificación implementada el 9 octubre 2026: **Guardar para más tarde** permite
+Simplificación del 9 octubre, actualizada el 27 octubre 2026: **Guardar para más adelante** permite
 guardar una sesión pendiente sin activarla ni salir del formulario. Hora, lugar,
 responsable y notas quedan en **Más datos y notas · Opcional**. La fecha de hoy
 y 10 jugadores aparecen prellenados. Volver al control de la sesión activa no
@@ -1143,13 +1144,23 @@ se permanece en Sesiones y se muestra el error. Abrir la ventana de jugadores
 sigue siendo una acción explícita desde el control; preparar una sesión no
 inicia ningún puzzle.
 
-**Crear sesión de prueba** abre un borrador prellenado. Una única modalidad,
+**Nueva partida de prueba** abre un borrador prellenado. Una única modalidad,
 con o sin hardware montado; no modifica las reglas del juego. **MODO PRUEBA**
 aparece en ámbar como etiqueta informativa del GM, con texto explícito, sin
 recolorear pistas ni señales de jugadores. Las pruebas se conservan en agenda
 e historial y se excluyen de estadísticas reales. Eliminar requiere confirmación;
 la sesión activa se protege. El resumen de resultados usa tiempos registrados,
 sin presentar como éxito un cierre de registro ni inventar errores o ayudas.
+
+**Acordado e implementado el 27 octubre 2026:** separar creación, preparación,
+inicio, reanudación y finalización. Los botones nombran su alcance y muestran
+el ID cuando trabajan sobre una partida existente. Una partida con juego
+registrado se **retoma**, previa confirmación de que los resultados se añaden
+al mismo ID. La cabecera fija identifica la partida activa y REAL/PRUEBA; el
+editor advierte si trabaja sobre otra. **Finalizar y archivar #ID** conserva
+resultados sin premiar puzzles incompletos. No confundir copiar datos para
+una partida nueva con continuar resultados anteriores. La interfaz del GM
+conserva el castellano; no cambia el idioma ni las señales de los jugadores.
 
 - Destacar la acción siguiente según la fase.
 - «Iniciar» junto a un puzzle siempre pide confirmación dentro del panel; no

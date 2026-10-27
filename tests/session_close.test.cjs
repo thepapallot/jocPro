@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const source = fs.readFileSync(path.join(__dirname, '../static/js/test.js'), 'utf8');
-const closeSource = source.slice(source.indexOf('  async function closeSelectedSession()'), source.indexOf('  async function confirmSession('));
+const closeSource = source.slice(source.indexOf('  async function closeSelectedSession('), source.indexOf('  async function confirmSession('));
 
 function harness(options = {}) {
     const calls = [], writes = [], errors = [], controls = [{disabled: false}];
@@ -81,6 +81,15 @@ test('old sessions close without activation even when another session is active'
         assert.deepEqual(h.writes, [['/test/session/12/close', 'POST'], ['/test/session/12', 'GET']]);
         assert.equal(h.context.activeSession, active);
     }
+});
+
+test('header finalizes the active ID without saving another editor or archiving its selection', async () => {
+    const h = harness();
+    h.context._loadedDbSessionId = 99;
+    await h.context.closeSession({active: true});
+    assert.deepEqual(h.writes, [['/test/session/12/close', 'POST'], ['/test/session/12', 'GET']]);
+    assert.ok(!h.calls.some(call => call[0] === 'save' || call[0] === 'closed'));
+    assert.match(h.calls[0][1], /#12/);
 });
 
 test('save, HTTP and missing database closure errors never report success', async () => {
