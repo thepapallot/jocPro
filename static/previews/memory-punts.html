@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Memòria Extrema · punts i moneda</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/puzzle8.css">
+  <link rel="stylesheet" href="../css/game-theme.css">
+  <link rel="stylesheet" href="../css/game-surface.css">
+  <style>
+    .points-preview .game-corner-progress { margin-left: auto; }
+    .points-preview #p8-instruction-step { color: #a8bbc5; }
+    #preview-controls {
+      position: fixed;
+      z-index: 100;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: max-content;
+      max-width: calc(100vw - 32px);
+      padding: 14px 18px;
+      border: 1px solid #5d7482;
+      border-radius: 8px;
+      background: #0a1016f5;
+      font: 14px/1.4 Arial, sans-serif;
+      color: #f3eee4;
+    }
+    #preview-controls[hidden] { display: none; }
+    #preview-controls p { flex: 0 0 100%; margin: 0 0 4px; text-align: center; }
+    #preview-controls button, #preview-controls select {
+      padding: 8px 12px;
+      border: 1px solid #5d7482;
+      border-radius: 4px;
+      background: #14232c;
+      color: #f3eee4;
+      font: inherit;
+      cursor: pointer;
+    }
+    #preview-controls button[aria-pressed="true"] { border-color: #39d6e5; color: #71e7db; }
+    #preview-controls :focus-visible { outline: 2px solid #39d6e5; outline-offset: 3px; }
+  </style>
+</head>
+<body class="pyramid-game game-surface points-preview" data-puzzle="8">
+  <main id="game-stage" aria-label="Maqueta de Memòria Extrema, sense connexió al joc">
+    <header class="game-corner-hud">
+      <div class="game-corner-identity"><h1 id="preview-title">Memòria Extrema</h1></div>
+      <div class="points-hud" role="status" aria-live="polite">
+        <span class="points-coin" aria-hidden="true">
+          <span class="points-coin-body">
+            <span class="points-coin-edge" style="--coin-depth: -3px"></span>
+            <span class="points-coin-edge" style="--coin-depth: -2px"></span>
+            <span class="points-coin-edge" style="--coin-depth: -1px"></span>
+            <span class="points-coin-edge" style="--coin-depth: 0px"></span>
+            <span class="points-coin-edge" style="--coin-depth: 1px"></span>
+            <span class="points-coin-edge" style="--coin-depth: 2px"></span>
+            <span class="points-coin-edge" style="--coin-depth: 3px"></span>
+            <img class="points-coin-face points-coin-front" src="../images/shared/gameplay/points-medallion.svg" alt="" width="64" height="64">
+            <img class="points-coin-face points-coin-back" src="../images/shared/gameplay/points-medallion.svg" alt="" width="64" height="64">
+          </span>
+        </span>
+        <div class="points-hud-value"><strong id="points-value">100</strong><span class="points-hud-label" id="points-label">PUNTS EN JOC</span></div>
+      </div>
+      <div class="game-corner-progress" id="preview-progress" aria-label="Progrés simulat de l’equip"></div>
+    </header>
+    <div id="bottom-area">
+      <div id="p8-shell">
+        <div id="p8-instruction" data-phase="input">
+          <span id="p8-instruction-step">INTENT 1/10</span>
+          <div class="p8-instruction-heading">
+            <span id="p8-instruction-title">COMPLETEU LES DUES FORMES</span>
+            <span id="p8-countdown" hidden><span id="p8-countdown-value">8</span><span class="p8-countdown-unit">s</span></span>
+          </div>
+          <span id="p8-instruction-detail">Busqueu les formes i introduïu-ne els colors amb el vostre token, en qualsevol ordre</span>
+          <div id="p8-time-track" hidden><span id="p8-time-fill"></span></div>
+        </div>
+        <section id="p8-stage" class="p8-panel">
+          <section id="p8-exhausted-screen" role="status" hidden>
+            <span class="p8-exhausted-mark" aria-hidden="true">×</span>
+            <h2 id="p8-exhausted-title">INTENTS ESGOTATS</h2>
+            <p id="p8-exhausted-score">10 intents · 0 punts</p>
+            <p class="p8-exhausted-next" id="exhausted-next">Continuem amb el següent nivell</p>
+          </section>
+          <section id="p8-retry-screen" hidden>
+            <div class="p8-retry-stats">
+              <div class="p8-retry-stat p8-retry-stat--errors"><span class="p8-retry-stat-mark" aria-hidden="true">×</span><strong>3</strong><span id="retry-errors">errors</span></div>
+              <div class="p8-retry-stat p8-retry-stat--correct"><span class="p8-retry-stat-mark" aria-hidden="true">✓</span><strong>7</strong><span id="retry-correct">encerts acumulats</span></div>
+            </div>
+            <div class="p8-retry-timer"><h2 id="retry-next">El següent intent comença en:</h2><div class="p8-retry-countdown"><strong>8</strong><span>s</span></div></div>
+          </section>
+          <div id="p8-grid-wrap"><div id="p8-grid" data-phase="input"></div></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <aside id="preview-controls" aria-label="Controls de la demostració">
+    <p><strong>DEMOSTRACIÓ · PUNTS EN JOC</strong> — Dades simulades. No inicia cap puzzle ni connecta amb MQTT.</p>
+    <select id="preview-language" aria-label="Idioma"><option value="ca">Català</option><option value="es">Castellano</option><option value="eng">English</option></select>
+    <button type="button" data-state="input" aria-pressed="true">100 · Resposta</button>
+    <button type="button" data-state="tokens" aria-pressed="false">100 · Observació</button>
+    <button type="button" data-state="retry" aria-pressed="false">Reintent · 100 → 90</button>
+    <button type="button" data-state="later" aria-pressed="false">90 · Segon intent</button>
+    <button type="button" data-state="zero" aria-pressed="false">0 · Final</button>
+    <button type="button" id="hide-controls">Amagar controls (H)</button>
+  </aside>
+  <script src="../js/pyramid-logo.js"></script>
+  <script>
+    (() => {
+      const byId = id => document.getElementById(id);
+      const params = new URLSearchParams(location.search);
+      const copy = {
+        ca: { name: 'Memòria Extrema', points: 'PUNTS EN JOC', attempt: 'INTENT', input: 'COMPLETEU LES DUES FORMES', inputDetail: 'Busqueu les formes i introduïu-ne els colors amb el vostre token, en qualsevol ordre', tokens: 'MEMORITZEU LES DUES FORMES', tokensDetail: 'Recordeu-ne també els colors', retry: 'RESULTAT DE L’INTENT', retryDetail: 'Els contenidors confirmats es conserven', errors: 'errors', correct: 'encerts acumulats', next: 'El següent intent comença en:', exhausted: 'INTENTS ESGOTATS', exhaustedDetail: 'Continuem amb el següent nivell', exhaustedScore: '10 intents · 0 punts' },
+        es: { name: 'Memoria Extrema', points: 'PUNTOS EN JUEGO', attempt: 'INTENTO', input: 'COMPLETAD LAS DOS FORMAS', inputDetail: 'Buscad las formas e introducid sus colores con vuestro token, en cualquier orden', tokens: 'MEMORIZAD LAS DOS FORMAS', tokensDetail: 'Recordad también sus colores', retry: 'RESULTADO DEL INTENTO', retryDetail: 'Los contenedores confirmados se conservan', errors: 'errores', correct: 'aciertos acumulados', next: 'El siguiente intento empieza en:', exhausted: 'INTENTOS AGOTADOS', exhaustedDetail: 'Continuamos con el siguiente nivel', exhaustedScore: '10 intentos · 0 puntos' },
+        eng: { name: 'Ghost Memory', points: 'POINTS AT STAKE', attempt: 'ATTEMPT', input: 'COMPLETE BOTH SHAPES', inputDetail: 'Find the shapes and enter their colours with your token, in either order', tokens: 'MEMORISE BOTH SHAPES', tokensDetail: 'Remember their colours too', retry: 'ATTEMPT RESULT', retryDetail: 'Confirmed containers are kept', errors: 'errors', correct: 'confirmed containers', next: 'The next attempt starts in:', exhausted: 'NO ATTEMPTS LEFT', exhaustedDetail: 'Moving on to the next level', exhaustedScore: '10 attempts · 0 points' }
+      };
+      let state = params.get('state') || 'input';
+      byId('preview-language').value = Object.hasOwn(copy, params.get('lang')) ? params.get('lang') : 'ca';
+      const numbers = [18, 14, 17, 5, 20, 10, 13, 31, 35, 22];
+      byId('p8-grid').innerHTML = numbers.map(number => `
+        <div class="p8-frame" aria-label="Token ${number}">
+          <div class="p8-token"><span class="p8-number">${number}</span><img class="p8-token-icon" src="../images/shared/gameplay/token_card.png" alt="" width="66" height="66"></div>
+          <div class="p8-slot">${[0, 1].map(() => '<div class="p8-answer"><div class="p8-answer-content"><span class="p8-placeholder" aria-hidden="true"><span class="p8-terminal-mark"></span></span></div></div>').join('')}</div>
+        </div>`).join('');
+      byId('preview-progress').innerHTML = PyramidLogo.markup({progress: 0, cyan: '#39d6e5', pink: '#dc68a7', bloom: .18});
+      function render() {
+        const language = byId('preview-language').value;
+        const text = copy[language];
+        const retry = state === 'retry';
+        const tokens = state === 'tokens';
+        const zero = state === 'zero';
+        const phase = retry ? 'retry' : tokens ? 'tokens' : zero ? 'exhausted' : 'input';
+        document.documentElement.lang = language === 'eng' ? 'en' : language;
+        byId('preview-title').textContent = text.name;
+        byId('points-label').textContent = text.points;
+        byId('points-value').textContent = zero ? '0' : state === 'later' ? '90' : '100';
+        byId('p8-instruction').dataset.phase = phase;
+        byId('p8-grid').dataset.phase = phase;
+        byId('p8-instruction-step').textContent = zero ? '' : `${text.attempt} ${retry ? 1 : state === 'later' ? 2 : 1}/10`;
+        byId('p8-instruction-title').textContent = zero ? '' : text[phase];
+        byId('p8-instruction-detail').textContent = zero ? '' : text[phase + 'Detail'];
+        byId('p8-countdown').hidden = !tokens;
+        byId('p8-time-track').hidden = !tokens;
+        byId('p8-time-fill').style.transform = 'scaleX(.8)';
+        byId('p8-grid-wrap').hidden = retry || zero;
+        byId('p8-retry-screen').hidden = !retry;
+        byId('p8-exhausted-screen').hidden = !zero;
+        byId('p8-exhausted-title').textContent = text.exhausted;
+        byId('p8-exhausted-score').textContent = text.exhaustedScore;
+        byId('exhausted-next').textContent = text.exhaustedDetail;
+        byId('retry-errors').textContent = text.errors;
+        byId('retry-correct').textContent = text.correct;
+        byId('retry-next').textContent = text.next;
+        const symbols = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'lambda', 'mu', 'omega', 'pi', 'sigma'];
+        const colours = ['white', 'red', 'green', 'blue', 'yellow', 'black'];
+        document.querySelectorAll('.p8-answer').forEach((answer, index) => {
+          answer.classList.toggle('is-filled', tokens);
+          answer.querySelector('.p8-answer-content').innerHTML = tokens
+            ? `<span class="p8-symbol-mask p8-color-${colours[index % 6]}" style="--p8-symbol-mask: url('../images/puzzle8/${symbols[index % 10]}.svg')" aria-hidden="true"></span>`
+            : '<span class="p8-placeholder" aria-hidden="true"><span class="p8-terminal-mark"></span></span>';
+        });
+        document.querySelectorAll('[data-state]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.state === state)));
+      }
+      function resize() {
+        byId('game-stage').style.transform = `translate(-50%, -50%) scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`;
+      }
+      document.querySelectorAll('[data-state]').forEach(button => button.addEventListener('click', () => { state = button.dataset.state; render(); }));
+      byId('preview-language').addEventListener('change', render);
+      byId('hide-controls').addEventListener('click', () => { byId('preview-controls').hidden = true; });
+      addEventListener('keydown', event => {
+        if (event.key.toLowerCase() === 'h' && !['SELECT', 'INPUT'].includes(event.target.tagName)) byId('preview-controls').hidden = !byId('preview-controls').hidden;
+      });
+      addEventListener('resize', resize, {passive: true});
+      byId('preview-controls').hidden = params.get('screen') === '1';
+      render();
+      resize();
+    })();
+  </script>
+</body>
+</html>

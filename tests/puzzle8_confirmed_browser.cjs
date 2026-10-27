@@ -71,13 +71,31 @@ const inspect = () => inner(`(()=>{
         await command('Runtime.enable');
         for (const lang of ['es', 'ca', 'eng']) for (const [width, height] of [[1920, 1080], [1280, 720]]) {
             await command('Emulation.setDeviceMetricsOverride', {width, height, deviceScaleFactor: 1, mobile: false});
-            await command('Page.navigate', {url: base + '/?shell_target=/puzzle/8&lang=' + lang});
+            const target = '/puzzle/8?lang=' + lang + '&session_id=1';
+            await command('Page.navigate', {url: base + '/?' + new URLSearchParams({shell_target: target, lang})});
             await until('!!document.getElementById("game-shell-frame")?.contentWindow.auditStreams?.length');
             await inner('w.document.fonts.ready');
             await push({phase: 'numbers', attempt: 3, max_attempts: 10, available_points: 80});
             assert.ok((await inner("w.document.getElementById('p8-instruction-step').textContent")).includes('3/10'));
-            assert.ok((await inner("w.document.getElementById('p8-instruction-step').textContent")).includes('80'));
+            assert.equal(await inner("w.document.getElementById('p8-points-value').textContent"), '80');
             assert.notEqual(await inner("w.getComputedStyle(w.document.getElementById('p8-instruction-step')).display"), 'none');
+            assert.equal(await inner("w.document.querySelector('.points-hud-label').textContent"),
+                {ca: 'PUNTS EN JOC', es: 'PUNTOS EN JUEGO', eng: 'POINTS AT STAKE'}[lang]);
+            assert.equal(await inner("w.getComputedStyle(w.document.querySelector('.points-coin-body')).animationName"), 'points-coin-turn');
+            const rotation = await inner(`(()=>{
+                const coin=w.document.querySelector('.points-coin-body');
+                const animation=coin.getAnimations()[0];
+                animation.pause();animation.currentTime=0;
+                const front=w.getComputedStyle(coin).transform;
+                animation.currentTime=2000;
+                const edge=w.getComputedStyle(coin).transform;
+                animation.currentTime=4000;
+                const back=w.getComputedStyle(coin).transform;
+                animation.currentTime=0;
+                return {front,edge,back};
+            })()`);
+            assert.notEqual(rotation.front, rotation.edge);
+            assert.notEqual(rotation.edge, rotation.back);
             for (const phase of ['numbers', 'tokens', 'input']) {
                 await push({phase, clear: phase !== 'tokens', symbols, symbol_sets: sets});
                 const frames = await inspect();
@@ -89,12 +107,20 @@ const inspect = () => inner(`(()=>{
                 const layout = await inner(`(()=>{
                     // Measure content, not answer pseudo-elements: the existing memory
                     // halo deliberately extends 6px beyond each answer's border.
-                    const nodes=[...w.document.querySelectorAll('.p8-frame,.p8-answer-content,#p8-instruction-detail,#p8-instruction-step')];
+                    const nodes=[...w.document.querySelectorAll('.p8-frame,.p8-answer-content,#p8-instruction-detail,#p8-instruction-step,#p8-points,#p8-points-value,.points-hud-label')];
                     return {overflow:nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left<0||r.right>w.innerWidth+1||r.bottom>w.innerHeight+1||n.scrollWidth>n.clientWidth+1||n.scrollHeight>n.clientHeight+1}).map(n=>({node:n.className||n.id,width:n.clientWidth,scrollWidth:n.scrollWidth,height:n.clientHeight,scrollHeight:n.scrollHeight,bounds:n.getBoundingClientRect().toJSON()})),
                     missingImages:[...w.document.images].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)};
                 })()`);
                 assert.deepEqual(layout.overflow, []);
                 assert.deepEqual(layout.missingImages, []);
+                const overlaps = await inner(`(()=>{
+                    const score=w.document.getElementById('p8-points').getBoundingClientRect();
+                    const instruction=w.document.getElementById('p8-instruction-detail').getBoundingClientRect();
+                    const title=w.document.getElementById('p8-instruction-title').getBoundingClientRect();
+                    const pyramid=w.document.querySelector('.game-corner-progress').getBoundingClientRect();
+                    return {instruction:score.left<instruction.right,title:score.left<title.right,pyramid:score.right>pyramid.left};
+                })()`);
+                assert.deepEqual(overlaps, {instruction:false,title:false,pyramid:false});
                 const shot = await command('Page.captureScreenshot', {format: 'png', captureBeyondViewport: false});
                 fs.writeFileSync(`${out}/${lang}-${width}-${phase}.png`, Buffer.from(shot.data, 'base64'));
                 reports.push({lang, width, height, phase, ...layout});
@@ -149,6 +175,9 @@ const inspect = () => inner(`(()=>{
             fs.writeFileSync(`${out}/${lang}-${width}-retry.png`, Buffer.from(retryShot.data, 'base64'));
             reports.push({lang, width, height, phase: 'retry', ...retry});
             await until(`document.getElementById('game-shell-frame').contentWindow.document.getElementById('p8-retry-countdown-value').textContent==='9'`);
+            await command('Emulation.setEmulatedMedia', {features: [{name:'prefers-reduced-motion', value:'reduce'}]});
+            assert.equal(await inner("w.getComputedStyle(w.document.querySelector('.points-coin-body')).animationName"), 'none');
+            await command('Emulation.setEmulatedMedia', {features: []});
             await push({phase: 'retry', retry_summary: {errors: 9, accumulated_correct: 1},
                 phase_duration_ms: 10000, phase_remaining_ms: 3400});
             assert.equal(await inner("w.document.getElementById('p8-retry-countdown-value').textContent"), '4');
@@ -181,7 +210,7 @@ const inspect = () => inner(`(()=>{
             const nextId = await inner('w.NEXT_PUZZLE_ID ?? w.PYRAMID_GAME.finalId');
             await push({phase: 'exhausted', puzzle_exhausted: true, attempt: 10, total_points: 0, auto_advance: true});
             await until(`document.getElementById("game-shell-frame").contentWindow.location.pathname===${JSON.stringify('/presentacio/' + nextId)}`);
-            assert.equal(await inner('w.location.search'), '?lang=' + lang);
+            assert.equal(await inner("new w.URLSearchParams(w.location.search).get('lang')"), lang);
             assert.deepEqual(await evaluate('PyramidRun.snapshot().completedIds'), earned);
         }
         assert.deepEqual(errors, []);

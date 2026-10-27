@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-function memory(nextId = 3) {
+function memory(nextId = 3, snapshot = {}) {
     const elements = new Map();
     const getElement = id => {
         if (!elements.has(id)) elements.set(id, {
@@ -26,6 +26,7 @@ function memory(nextId = 3) {
     const sounds = [];
     const victories = [];
     const navigations = [];
+    const requests = [];
     const victory = {active:false,complete(id){victories.push(id);this.active=true;}};
     const context = vm.createContext({
         window: {PyramidLevelVictory:victory, NEXT_PUZZLE_ID:nextId,
@@ -35,6 +36,10 @@ function memory(nextId = 3) {
             addEventListener: (name, handler) => { listeners[name] = handler; }
         },
         EventSource: class { constructor() { stream = this; } },
+        fetch: url => {
+            requests.push(url);
+            return Promise.resolve({ok: true, json: () => Promise.resolve(snapshot)});
+        },
         Audio: class {
             constructor(url) { this.url = url; }
             play() { sounds.push(this.url); return Promise.resolve(); }
@@ -47,7 +52,8 @@ function memory(nextId = 3) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../static/js/puzzle8.js'), 'utf8'), context);
     listeners.DOMContentLoaded();
     return {
-        elements, timers, sounds, victories, navigations,
+        elements, timers, sounds, victories, navigations, requests,
+        open: () => stream.onopen(),
         update: data => stream.onmessage({data: JSON.stringify({puzzle_id: 8, ...data})})
     };
 }
@@ -57,8 +63,45 @@ test('attempt and available points follow the backend without counting repeated 
     const state = {phase: 'numbers', attempt: 3, max_attempts: 10, available_points: 80};
     game.update(state);
     game.update(state);
-    assert.match(game.elements.get('p8-instruction-step').textContent, /INTENTO 3\/10 · 80 PUNTOS EN JUEGO/);
+    assert.equal(game.elements.get('p8-instruction-step').textContent, 'INTENTO 3/10');
+    assert.equal(game.elements.get('p8-points-value').textContent, '80');
     assert.deepEqual(game.navigations, []);
+});
+
+test('the points HUD follows score-only updates without calculating a local penalty', () => {
+    const game = memory();
+    game.update({phase: 'input', attempt: 2, available_points: 90});
+    game.update({available_points: 67});
+    assert.equal(game.elements.get('p8-points-value').textContent, '67');
+    game.update({input_result: {success: false, box_results: {}}});
+    game.update({phase: 'retry', attempt: 2});
+    assert.equal(game.elements.get('p8-points-value').textContent, '67');
+    game.update({phase: 'numbers', attempt: 3, available_points: 57});
+    assert.equal(game.elements.get('p8-points-value').textContent, '57');
+    assert.equal(game.elements.get('p8-instruction-step').textContent, 'INTENTO 3/10');
+});
+
+test('reconnection restores available points from the snapshot without awarding total points', async () => {
+    const game = memory(3, {puzzle_id: 8, phase: 'input', attempt: 4,
+        max_attempts: 10, available_points: 70, total_points: 0});
+    game.open();
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(game.requests, ['/start_puzzle/8', '/current_state']);
+    assert.equal(game.elements.get('p8-points-value').textContent, '70');
+    assert.equal(game.elements.get('p8-instruction-step').textContent, 'INTENTO 4/10');
+    assert.deepEqual(game.victories, []);
+});
+
+test('points remain unchanged through the retry wait and decrease only on the server update', () => {
+    const game = memory();
+    game.update({phase: 'input', attempt: 1, available_points: 100});
+    game.update({phase: 'retry', attempt: 1, available_points: 100,
+        phase_duration_ms: 10000, phase_remaining_ms: 10000});
+    assert.equal(game.elements.get('p8-points-value').textContent, '100');
+    game.update({phase: 'numbers', attempt: 2, available_points: 90});
+    assert.equal(game.elements.get('p8-points-value').textContent, '90');
+    game.update({phase: 'input', available_points: 90, total_points: 0});
+    assert.equal(game.elements.get('p8-points-value').textContent, '90');
 });
 
 test('exhaustion shows zero points without victory and advances only after backend authorization', () => {
@@ -70,6 +113,7 @@ test('exhaustion shows zero points without victory and advances only after backe
     assert.equal(game.elements.get('p8-grid-wrap').hidden, true);
     assert.equal(game.elements.get('p8-retry-screen').hidden, true);
     assert.equal(game.elements.get('p8-exhausted-score').textContent, '10 intentos · 0 puntos');
+    assert.equal(game.elements.get('p8-points-value').textContent, '0');
     assert.equal(game.elements.get('p8-countdown').hidden, true);
     assert.deepEqual(game.victories, []);
     assert.deepEqual(game.sounds, []);
