@@ -1162,7 +1162,11 @@ resultados sin premiar puzzles incompletos. No confundir copiar datos para
 una partida nueva con continuar resultados anteriores. La interfaz del GM
 conserva el castellano; no cambia el idioma ni las señales de los jugadores.
 
-- Destacar la acción siguiente según la fase.
+- Destacar la acción siguiente según la fase. Acordado e implementado el
+  27 octubre 2026: botones de creación más grandes y en negrita; preparar ocupa
+  una fila completa del formulario. Preparar, iniciar y volver al control tienen
+  mayor superficie de clic y texto más grande que las acciones secundarias.
+  Conservar los colores funcionales y diferenciar finalizar de iniciar.
 - «Iniciar» junto a un puzzle siempre pide confirmación dentro del panel; no
   depender de un aviso del navegador. Cancelar no abre ni inicia nada. Mostrar
   el progreso de apertura y cualquier error del lanzador.

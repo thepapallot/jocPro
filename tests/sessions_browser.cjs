@@ -18,6 +18,18 @@ async function capture(name,meta={}){
 const assert=require('node:assert/strict');
 async function click(id){console.log("click",id);await evaluate(`document.getElementById(${JSON.stringify(id)}).click()`);await delay(250);}
 async function field(id,value){await evaluate(`(()=>{const el=document.getElementById(${JSON.stringify(id)});el.value=${JSON.stringify(value)};el.dispatchEvent(new Event('input',{bubbles:true}))})()`);}
+async function checkSessionButtonSizes(){
+ const buttons=await evaluate(`['gm-new-session-btn','gm-new-test-session-btn','gm-confirm-session-btn','gm-begin-session-btn','gm-start-btn','gm-end-session-btn'].map(id=>{const el=document.getElementById(id),r=el.getBoundingClientRect(),s=getComputedStyle(el);return {id,width:r.width,height:r.height,font:parseFloat(s.fontSize),weight:Number(s.fontWeight),clipped:el.scrollWidth>el.clientWidth||el.scrollHeight>el.clientHeight,right:r.right,left:r.left};}).filter(el=>el.width&&el.height)`);
+ for(const button of buttons){
+   const creation=button.id==='gm-new-session-btn'||button.id==='gm-new-test-session-btn';
+   const secondary=button.id==='gm-end-session-btn';
+   assert.ok(button.height>=(secondary?44:creation?48:50),'Button touch target: '+JSON.stringify(button));
+   assert.ok(button.font>=(secondary?14:creation?15:16),'Button text size: '+JSON.stringify(button));
+   if(!secondary)assert.ok(button.weight>=700,'Primary button emphasis: '+JSON.stringify(button));
+   assert.equal(button.clipped,false,'Button text must fit: '+JSON.stringify(button));
+   assert.ok(button.left>=0 && button.right<=await evaluate('innerWidth'),'Button stays in viewport: '+JSON.stringify(button));
+ }
+}
 async function list(){return evaluate('[...document.querySelectorAll("[data-agenda-id]")].map(el=>({id:Number(el.dataset.agendaId),text:el.innerText}))');}
 async function sessionsTab(){await evaluate('document.querySelector("[data-gm-section=sesiones]").click()');}
 async function panel(){return evaluate('document.querySelector("[data-gm-panel]:not([hidden])").dataset.gmPanel');}
@@ -38,8 +50,8 @@ async function panel(){return evaluate('document.querySelector("[data-gm-panel]:
  assert.match(await evaluate('document.getElementById("gm-session-target").textContent'),/ID nuevo/);
  assert.equal(await evaluate('document.getElementById("gm-session-players").value'),'10');
  assert.equal(await evaluate('document.getElementById("gm-session-options").open'),false);
- await capture('preparar-1920');
- await cmd('Emulation.setDeviceMetricsOverride',{width:1280,height:720,deviceScaleFactor:1,mobile:false});await capture('preparar-1280');
+ await checkSessionButtonSizes();await capture('preparar-1920');
+ await cmd('Emulation.setDeviceMetricsOverride',{width:1280,height:720,deviceScaleFactor:1,mobile:false});await checkSessionButtonSizes();await capture('preparar-1280');
  const primaryLayout=await evaluate(`({bottom:document.getElementById("gm-confirm-session-btn").getBoundingClientRect().bottom,height:innerHeight,blocks:[...document.querySelectorAll('#gm-session-form>*')].map(el=>({id:el.id||el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height}))})`);
  assert.ok(primaryLayout.bottom<=primaryLayout.height,'Primary action must be visible at 720p: '+JSON.stringify(primaryLayout));
  await cmd('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
@@ -52,8 +64,8 @@ async function panel(){return evaluate('document.querySelector("[data-gm-panel]:
  const testId=await evaluate('PyramidTest.session().dbSessionId');
  assert.match(await evaluate('document.getElementById("gm-active-session-line").textContent'),new RegExp('#'+testId));
  assert.equal(await evaluate('document.getElementById("gm-begin-session-btn").hidden'),false);
- await capture('prueba-1920');
- await cmd('Emulation.setDeviceMetricsOverride',{width:1280,height:720,deviceScaleFactor:1,mobile:false});await capture('control-1280');
+ await checkSessionButtonSizes();await capture('prueba-1920');
+ await cmd('Emulation.setDeviceMetricsOverride',{width:1280,height:720,deviceScaleFactor:1,mobile:false});await checkSessionButtonSizes();await capture('control-1280');
  await cmd('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
  await sessionsTab();await click('gm-confirm-session-btn');assert.equal(await panel(),'juego');
  assert.equal(await evaluate('sessionWrites.filter(r=>r.url==="/test/session/confirm").length'),1,'Returning must not reactivate');
