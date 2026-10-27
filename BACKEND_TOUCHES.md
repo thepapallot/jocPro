@@ -14,6 +14,40 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-27 — Tras la Serpiente: puntuación por tiempo y máximo diez minutos
+
+Tipo: `pendiente de revisar`. Olalla autoriza explícitamente el backend,
+los mismos tramos que Música y el cierre con cero puntos a los diez minutos.
+
+- `scoring_config.py`: añade `puzzle2` con máximo 100, descuento de 10 en
+  los umbrales `[180, 240, 300, 360, 420, 480]`, límite de 600 segundos y
+  cero puntos al agotarse. No se añade penalización por errores.
+- `mqtt/puzzles/puzzle2.py`: reloj monotónico desde reset, incluyendo alarmas
+  y sus transiciones. Congela el tiempo al aceptar el último símbolo correcto,
+  antes de publicar progreso. Añade `available_points`, `elapsed_seconds`,
+  `time_remaining_seconds`, `puzzle_exhausted` y `total_points` solo al cerrar.
+  La resolución natural y la del GM comparten el cálculo y el cierre.
+- Al agotarse, emite `puzzle_exhausted: true`, `puzzle_solved: false`,
+  `total_points: 0` y el `P2End` habitual. Rechaza nuevas entradas y cierres
+  duplicados. Sustituye los hilos de transición de alarma por timers cancelables
+  con generación: parar, reiniciar, resolver o agotar invalida callbacks antiguos.
+  Conserva las secuencias, remapeo, bloqueo de cinco segundos y ciclos de alarma.
+- `app.py`: el cierre forzado del puzzle 2 delega en `complete_by_gm`, como
+  ya hacía el 12. Se mantienen rutas, contratos MQTT y persistencia existentes.
+- `static/js/puzzle2.js`: el agotamiento detiene alarma y movimiento y pasa a
+  la siguiente presentación en el idioma de la sesión, sin logro. Recupera
+  estados terminales también por snapshot tras conectar SSE. No se cambia el
+  diseño, los símbolos ni las instrucciones de presentación o del GM.
+- `scoring.py`: aclara que el agotamiento se decide en cada puzzle, no en el
+  cálculo puro. `README.md` documenta los tramos y el límite.
+
+Validación: 70 pruebas Python y 9 pruebas JavaScript aprobadas, incluyendo
+persistencia en SQLite temporal, resolución desde GM y recuperación por SSE.
+Tablero y ciclo de audio comprobados en Chrome a 1920 × 1080 y 1280 × 720
+(tres frecuencias de refresco y movimiento reducido). Solo simulación, sin
+arrancar la aplicación real ni conectar con hardware. Pep debe revisar el
+cierre `P2End`, los límites temporales y la cancelación de alarmas en terminales.
+
 ## 2026-10-26 — Conexión Simultánea: puntuación al resolver desde Test
 
 Tipo: `pendiente de revisar`. Corrección de backend autorizada explícitamente

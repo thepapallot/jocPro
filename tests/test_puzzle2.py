@@ -1,6 +1,6 @@
 import unittest
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from mqtt.puzzles.puzzle2 import Puzzle2
 
@@ -13,6 +13,9 @@ class Puzzle2AlarmSequenceTest(unittest.TestCase):
             push_update=Mock(),
         )
         self.puzzle = Puzzle2(self.client)
+        self.enterContext(patch('mqtt.puzzles.puzzle2.threading.Timer'))
+        self.puzzle.reset()
+        self.addCleanup(self.puzzle.stop)
 
     def test_state_exposes_player_sequences(self):
         state = self.puzzle.get_state()

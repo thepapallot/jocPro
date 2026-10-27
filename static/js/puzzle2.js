@@ -19,6 +19,7 @@
         10: [1, 4, 6, 3, 5],
     };
     let redirected = false;
+    let exhausted = false;
     let alarmMode = false;
     let alarmAudio = null;
     const progressByPlayer = {};
@@ -341,6 +342,25 @@
     function handleUpdate(data) {
         if (window.PyramidLevelVictory?.active) return;
         if (data.puzzle_id !== 2) return;
+        if (exhausted || redirected) return;
+        if (data.puzzle_exhausted) {
+            exhausted = true;
+            stopAlarmAudio();
+            clearErrorMarkers();
+            setAlarmMode(false);
+            if (movementFrame !== null) cancelAnimationFrame(movementFrame);
+            const nextId = window.NEXT_PUZZLE_ID ?? window.PYRAMID_GAME?.finalId;
+            if (!Number.isInteger(nextId)) {
+                console.error('Cannot advance exhausted puzzle 2: missing next puzzle ID');
+                return;
+            }
+            const path = '/presentacio/' + nextId;
+            const language = window.PyramidLanguage?.current?.() || window.PYRAMID_GAME?.language || 'es';
+            const url = window.PyramidLanguage?.path?.(path, language) || path + '?lang=' + encodeURIComponent(language);
+            redirected = true;
+            window.location.assign(url);
+            return;
+        }
 
         if (data.sequences) {
             Object.entries(data.sequences).forEach(([player, sequence]) => {
@@ -427,29 +447,17 @@
     }
 
     function loadCurrentState() {
-        fetch('/current_state')
+        return fetch('/current_state')
             .then((response) => response.json())
             .then((data) => {
                 if (!data || data.puzzle_id !== 2) return;
-                if (data.sequences) {
-                    Object.entries(data.sequences).forEach(([player, sequence]) => {
-                        if (Array.isArray(sequence)) {
-                            DEFAULT_SEQUENCES[Number(player)] = sequence.slice();
-                        }
-                    });
-                }
-                if (data.players) {
-                    applySnapshot(data.players);
-                }
-                if (data.alarm_mode !== undefined) {
-                    setAlarmMode(!!data.alarm_mode);
-                }
-                renderSnakes();
+                handleUpdate(data);
             })
             .catch((err) => console.warn('Failed to load current state for puzzle 2:', err));
     }
 
     function initSSE() {
+        if (exhausted || redirected) return;
         clearErrorMarkers();
         for (let player = 1; player <= PLAYER_COUNT; player++) {
             progressByPlayer[player] = 0;
@@ -466,9 +474,11 @@
 
         const es = new EventSource('/state_stream');
         es.onopen = () => {
-            fetch('/start_puzzle/2', { method: 'POST' }).catch((err) => {
-                console.warn('Failed to start puzzle 2:', err);
-            });
+            fetch('/start_puzzle/2', { method: 'POST' })
+                .then(loadCurrentState)
+                .catch((err) => {
+                    console.warn('Failed to start puzzle 2:', err);
+                });
         };
         es.onmessage = (evt) => {
             try {

@@ -30,7 +30,7 @@ def calculate_time_points(puzzle_id, elapsed_seconds):
 
     Accept finite, non-negative int/float seconds, excluding bool. Unknown puzzle
     keys raise KeyError. Exhaustion is handled by the puzzle, not by this helper:
-    Puzzle4 still has 40 time-based points at its configured 600-second limit.
+    Puzzles 2 and 4 still have 40 time-based points at their 600-second limit.
     """
     if (isinstance(elapsed_seconds, bool)
             or not isinstance(elapsed_seconds, (int, float))

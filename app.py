@@ -588,7 +588,7 @@ def test_force_end():
 
     end_payload = "P5_End" if puzzle_id == 5 else f"P{puzzle_id}End"
     try:
-        if puzzle_id == 12:
+        if puzzle_id in (2, 12):
             puzzle.complete_by_gm()
         else:
             with puzzle.lock:

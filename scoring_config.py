@@ -11,6 +11,13 @@ SCORING_CONFIG = {
         "penalty_per_error": 3,
         "max_attempts": 30,
     },
+    "puzzle2": {
+        "max_points": 100,
+        "penalty_per_time_band": 10,
+        "penalty_thresholds_seconds": [180, 240, 300, 360, 420, 480],
+        "max_time_seconds": 600,
+        "exhaustion_points": 0,
+    },
     "puzzle3": {
         "points_per_correct": 10,
         "golden_multiplier": 2,

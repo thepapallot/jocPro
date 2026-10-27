@@ -2,6 +2,10 @@ from .base import BasePuzzle
 import threading
 import time
 import random
+import math
+
+from scoring import calculate_time_points
+from scoring_config import SCORING_CONFIG
 
 class Puzzle2(BasePuzzle):
     def __init__(self, mqtt_client):
@@ -33,6 +37,104 @@ class Puzzle2(BasePuzzle):
         self.input_blocked = False
         self.block_until = 0
         self.error_counter = 0
+        self.exhausted = False
+        self.total_points = None
+        self.max_time_seconds = SCORING_CONFIG["puzzle2"]["max_time_seconds"]
+        if (isinstance(self.max_time_seconds, bool)
+                or not isinstance(self.max_time_seconds, (int, float))
+                or not math.isfinite(self.max_time_seconds)
+                or self.max_time_seconds <= 0):
+            raise ValueError("Puzzle2 requires a finite positive max_time_seconds")
+        self._active = False
+        self._started_at = None
+        self._frozen_elapsed = None
+        self._generation = 0
+        self._timers = set()
+
+    def _elapsed_locked(self):
+        if self._frozen_elapsed is not None:
+            return self._frozen_elapsed
+        if self._started_at is None:
+            return 0.0
+        return max(0.0, time.monotonic() - self._started_at)
+
+    def _scoring_state_locked(self):
+        elapsed = self._elapsed_locked()
+        state = {
+            "puzzle_solved": self.solved,
+            "puzzle_exhausted": self.exhausted,
+            "elapsed_seconds": elapsed,
+            "time_remaining_seconds": max(0.0, self.max_time_seconds - elapsed),
+            "available_points": (self.total_points if self.total_points is not None
+                                 else calculate_time_points("puzzle2", elapsed)),
+        }
+        if self.solved or self.exhausted:
+            state["total_points"] = self.total_points
+        return state
+
+    def _push(self, data):
+        payload = self._scoring_state_locked()
+        payload.update(data)
+        super()._push(payload)
+
+    def _invalidate_locked(self):
+        self._generation += 1
+        for timer in self._timers:
+            timer.cancel()
+        self._timers.clear()
+        self.alarm_timer = None
+
+    def _schedule_locked(self, delay, callback):
+        generation = self._generation
+
+        def run():
+            with self.lock:
+                self._timers.discard(timer)
+                if (generation != self._generation or not self._active
+                        or self.mqtt_client.current_puzzle_id != self.id):
+                    return
+                if not self._expire_locked():
+                    callback()
+
+        timer = threading.Timer(delay, run)
+        timer.daemon = True
+        self._timers.add(timer)
+        timer.start()
+        return timer
+
+    def _finish_locked(self, exhausted=False, forced_by_gm=False):
+        self._frozen_elapsed = (self.max_time_seconds if exhausted
+                                else self._elapsed_locked())
+        self.total_points = (SCORING_CONFIG["puzzle2"]["exhaustion_points"] if exhausted
+                             else calculate_time_points("puzzle2", self._frozen_elapsed))
+        self.solved = not exhausted
+        self.exhausted = exhausted
+        self._active = False
+        self._invalidate_locked()
+        self.input_blocked = False
+        self.alarm_mode = False
+        self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
+        payload = {"alarm_mode": False}
+        if forced_by_gm:
+            payload["forced_by_gm"] = True
+        self._push(payload)
+
+    def _expire_locked(self):
+        if self._active and self._elapsed_locked() >= self.max_time_seconds:
+            self._finish_locked(exhausted=True)
+            return True
+        return self.exhausted
+
+    def _deadline_locked(self):
+        # A timer can wake early; the monotonic deadline remains authoritative.
+        self._schedule_locked(self.max_time_seconds - self._elapsed_locked(),
+                              self._deadline_locked)
+
+    def complete_by_gm(self):
+        with self.lock:
+            if not self._active or self._expire_locked():
+                return
+            self._finish_locked(forced_by_gm=True)
         
     def get_player_sequence(self, player):
         """Return the fixed sequence shown on screen, independent of alarm mode."""
@@ -54,18 +156,21 @@ class Puzzle2(BasePuzzle):
 
     def reset(self):
         """Full reset of puzzle"""
-        super().reset()
         with self.lock:
+            self._invalidate_locked()
+            self.solved = False
+            self.saltarPuzzle = False
+            self.alwaysCorrect = False
+            self.exhausted = False
+            self.total_points = None
+            self._active = True
+            self._started_at = time.monotonic()
+            self._frozen_elapsed = None
             self.error_counter = 0
             self.progress = {p: 0 for p in self.sequences.keys()}
             self.alarm_mode = False
             self.input_blocked = False
             self.block_until = 0
-
-            if self.alarm_timer:
-                print(f"[Puzzle2] Cancelling existing alarm timer")
-                self.alarm_timer.cancel()
-                self.alarm_timer = None
 
             sequences = {
                 p: self.get_player_sequence(p)
@@ -81,19 +186,16 @@ class Puzzle2(BasePuzzle):
             # Schedule new alarm
             alarm_delay = random.randint(20, 40)
             print(f"[Puzzle2] Rescheduling alarm mode in {alarm_delay} seconds after reset")
-            self.alarm_timer = threading.Timer(alarm_delay, self._enter_alarm_mode)
-            self.alarm_timer.start()
+            self._schedule_locked(self.max_time_seconds, self._deadline_locked)
+            self.alarm_timer = self._schedule_locked(alarm_delay, self._enter_alarm_mode)
 
 
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:
-            if self.alarm_timer:
-                try:
-                    self.alarm_timer.cancel()
-                except Exception:
-                    pass
-                self.alarm_timer = None
+            self._frozen_elapsed = self._elapsed_locked()
+            self._active = False
+            self._invalidate_locked()
             self.input_blocked = False
             self.alarm_mode = False
             
@@ -104,106 +206,47 @@ class Puzzle2(BasePuzzle):
                 p: self.get_player_sequence(p)
                 for p in sorted(self.sequences.keys())
             }
-            return {
+            state = {
                 "puzzle_id": self.id,
                 "players": self._snapshot(),
                 "sequences": sequences,
                 "alarm_mode": self.alarm_mode,
                 "error_counter": self.error_counter
             }
+            state.update(self._scoring_state_locked())
+            return state
             
     def _enter_alarm_mode(self):
         """Enter alarm mode - play sound and switch symbol mapping"""
-        # Check if still active puzzle
-        if self.mqtt_client.current_puzzle_id != self.id:
-            print(f"[Puzzle2] Not current puzzle, cancelling alarm entry")
-            return
-            
         print(f"[Puzzle2] Playing alarm sound and blocking input for 5s")
-        with self.lock:
-            self.input_blocked = True
-            self.block_until = time.time() + 5
-
-            sequences = {
-                p: self.get_player_sequence(p)
-                for p in sorted(self.sequences.keys())
-            }
-
-            # Play alarm sound
-            self._push({
-                "play_alarm_sound": {
-                    "url": "/static/audios/effects/canvi_laberint.wav"
-                },
-                "sequences": sequences,
-                "alarm_mode": self.alarm_mode,
-            })
-            
-        # Activate alarm mode after 5s
-        def _later():
-            time.sleep(5)
-            with self.lock:
-                self.alarm_mode = True
-                self.input_blocked = False
-                print(f"[Puzzle2] Alarm mode ACTIVE, pushing update to frontend")
-
-                sequences = {
-                    p: self.get_player_sequence(p)
-                    for p in sorted(self.sequences.keys())
-                }
-                self._push({
-                    "alarm_mode": True,
-                    "sequences": sequences,
-                })
-
-                # Schedule exit after 20-40s
-                alarm_duration = random.randint(20, 40)
-                print(f"[Puzzle2] Scheduling alarm exit in {alarm_duration} seconds")
-                self.alarm_timer = threading.Timer(alarm_duration, self._exit_alarm_mode)
-                self.alarm_timer.start()
-                
-        threading.Thread(target=_later, daemon=True).start()
+        self._begin_alarm_transition_locked(True)
         
     def _exit_alarm_mode(self):
         """Exit alarm mode - play sound and revert mapping"""
-        if self.mqtt_client.current_puzzle_id != self.id:
-            print(f"[Puzzle2] Not current puzzle, cancelling alarm exit")
-            return
-            
         print(f"[Puzzle2] Playing normal sound and blocking input for 5s")
-        with self.lock:
-            self.input_blocked = True
-            self.block_until = time.time() + 5
-            
+        self._begin_alarm_transition_locked(False)
+
+    def _begin_alarm_transition_locked(self, alarm_mode):
+        self.input_blocked = True
+        self.block_until = time.monotonic() + 5
+        sound_key = "play_alarm_sound" if alarm_mode else "play_normal_sound"
+        self._push({
+            sound_key: {"url": "/static/audios/effects/canvi_laberint.wav"},
+            "sequences": {p: self.get_player_sequence(p) for p in self.sequences},
+            "alarm_mode": self.alarm_mode,
+        })
+
+        def finish_transition():
+            self.alarm_mode = alarm_mode
+            self.input_blocked = False
             self._push({
-                "play_normal_sound": {
-                    "url": "/static/audios/effects/canvi_laberint.wav"
-                }
+                "alarm_mode": alarm_mode,
+                "sequences": {p: self.get_player_sequence(p) for p in self.sequences},
             })
-            
-        # Deactivate alarm mode after 5s
-        def _later():
-            time.sleep(5)
-            with self.lock:
-                self.alarm_mode = False
-                self.input_blocked = False
-                print(f"[Puzzle2] Alarm mode INACTIVE, pushing update to frontend")
+            callback = self._exit_alarm_mode if alarm_mode else self._enter_alarm_mode
+            self.alarm_timer = self._schedule_locked(random.randint(20, 40), callback)
 
-                sequences = {
-                    p: self.get_player_sequence(p)
-                    for p in sorted(self.sequences.keys())
-                }
-                self._push({
-                    "alarm_mode": False,
-                    "sequences": sequences,
-                })
-
-                # Schedule next alarm entry after 20-40s
-                alarm_delay = random.randint(20, 40)
-                print(f"[Puzzle2] Scheduling next alarm mode in {alarm_delay} seconds")
-                self.alarm_timer = threading.Timer(alarm_delay, self._enter_alarm_mode)
-                self.alarm_timer.start()
-                
-        threading.Thread(target=_later, daemon=True).start()
+        self.alarm_timer = self._schedule_locked(5, finish_transition)
         
     def handle_message(self, parts):
         """Handle MQTT message: P2,player,symbol"""
@@ -217,8 +260,10 @@ class Puzzle2(BasePuzzle):
             return
             
         with self.lock:
+            if not self._active or self._expire_locked():
+                return
             # Block input during transition
-            if self.input_blocked and time.time() < self.block_until:
+            if self.input_blocked and time.monotonic() < self.block_until:
                 print(f"[Puzzle2] Input blocked, ignoring message from player {player}")
                 return
                 
@@ -242,6 +287,9 @@ class Puzzle2(BasePuzzle):
             if symbol == expected:
                 # Correct symbol
                 self.progress[player] += 1
+                complete = all(v >= 5 for v in self.progress.values())
+                if complete:
+                    self._frozen_elapsed = self._elapsed_locked()
                 
                 self._push({
                     "player_update": {
@@ -252,15 +300,8 @@ class Puzzle2(BasePuzzle):
                 })
                 
                 # Check if puzzle complete
-                if all(v >= 5 for v in self.progress.values()):
-                    # Cancel alarm timer
-                    if self.alarm_timer:
-                        self.alarm_timer.cancel()
-                        self.alarm_timer = None
-                        
-                    self.solved = True
-                    self.mqtt_client.send_message("FROM_FLASK", f"P{self.id}End")
-                    self._push({"puzzle_solved": True})
+                if complete:
+                    self._finish_locked()
                     
             else:
                 # Wrong symbol - increment shared error counter
