@@ -1,11 +1,13 @@
 from .base import BasePuzzle
+from scoring import calculate_points
 import threading
 import time
+
 
 class Puzzle6(BasePuzzle):
     def __init__(self, mqtt_client):
         super().__init__(puzzle_id=6, mqtt_client=mqtt_client)
-        
+
         self.duration_seconds = 60  # 1 minute countdown
         self.end_time = None
         self.active = False
@@ -16,7 +18,21 @@ class Puzzle6(BasePuzzle):
         self.monitor_thread = None
         self.last_sent_remaining = None
         self.solvePuzzle = False
-        
+        self.restart_count = 0
+        self.total_points = 0
+
+    def _scoring_state_locked(self):
+        return {
+            "restart_count": self.restart_count,
+            "available_points": calculate_points("puzzle6", self.restart_count),
+            "total_points": self.total_points,
+        }
+
+    def _push(self, data):
+        state = self._scoring_state_locked()
+        state.update(data)
+        super()._push(state)
+
     def _start_countdown_locked(self):
         """Start or restart the countdown timer"""
         self.active = True
@@ -60,6 +76,7 @@ class Puzzle6(BasePuzzle):
                 if remaining <= 0:
                     self.solved = True
                     self.active = False
+                    self.total_points = calculate_points("puzzle6", self.restart_count)
                     self.mqtt_client.send_message("FROM_FLASK", "P6End")
                     self._push({
                         "puzzle_solved": True
@@ -73,9 +90,28 @@ class Puzzle6(BasePuzzle):
         super().reset()
         with self.lock:
             self.solvePuzzle = False
+            self.restart_count = 0
+            self.total_points = 0
+            self.restart_pending = False
+            self.restart_deadline = None
+            self.last_reset_box = None
+            self.last_reset_message = None
             if not self.solved:
                 self._start_countdown_locked()
-                
+
+    def complete_by_gm(self):
+        """Complete the final puzzle with the same score as a natural solve."""
+        with self.lock:
+            if self.solved:
+                return
+            self.solved = True
+            self.active = False
+            self.restart_pending = False
+            self.restart_deadline = None
+            self.total_points = calculate_points("puzzle6", self.restart_count)
+            self.mqtt_client.send_message("FROM_FLASK", "P6End")
+            self._push({"puzzle_solved": True, "forced_by_gm": True})
+
     def stop(self):
         """Cleanup on puzzle stop"""
         with self.lock:
@@ -106,7 +142,8 @@ class Puzzle6(BasePuzzle):
                 "last_reset_box": self.last_reset_box,
                 "last_reset_message": self.last_reset_message,
                 "solve_mode": self.solvePuzzle,
-                "puzzle_solved": self.solved
+                "puzzle_solved": self.solved,
+                **self._scoring_state_locked(),
             }
             
     def handle_message(self, parts):
@@ -135,6 +172,7 @@ class Puzzle6(BasePuzzle):
                 return
                 
             # Trigger reset sequence
+            self.restart_count += 1
             self.active = False
             self.restart_pending = True
             self.last_reset_box = box

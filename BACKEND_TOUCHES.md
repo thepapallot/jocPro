@@ -14,6 +14,27 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-27 — Càrrega Final: puntuació per reinici
+
+Tipus: `pendent de revisar`. Canvi de backend autoritzat explícitament per Olalla.
+
+- `scoring_config.py`: afegeix puzzle 6 amb un màxim de 100 punts i una
+  penalització de 10 per reinici.
+- `mqtt/puzzles/puzzle6.py`: compta una sola penalització quan comença cada
+  seqüència de reinici, exposa `restart_count`, `available_points` i
+  `total_points`, i calcula els punts en completar-se. El reinici de partida
+  restaura la puntuació. La resolució del GM conserva la mateixa regla.
+- `app.py`: deriva la resolució forçada del puzzle 6 a la seva classe perquè
+  també es desi la puntuació final.
+- `tests/test_scoring.py` i `tests/test_puzzle6_scoring.py`: cobreixen el màxim,
+  les penalitzacions, duplicats durant l'espera, el sòl de zero i el tancament
+  natural/del GM.
+- `README.md`: documenta la regla.
+
+Validació: 19 tests de puntuació compartida, 4 tests nous del puzzle 6,
+40 regressions de puntuació d'altres puzzles, i 44 tests dels puzzles 5 i 8
+aprovats. `py_compile` aprovat. Sense broker ni hardware.
+
 ## 2026-10-27 — Partidas independientes: crear, preparar, iniciar, retomar y archivar
 
 Tipo: `pendiente de revisar`. Olalla autoriza la propuesta completa, incluidas

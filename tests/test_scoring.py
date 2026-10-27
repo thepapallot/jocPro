@@ -14,7 +14,7 @@ from scoring_config import SCORING_CONFIG
 class ScoringTests(unittest.TestCase):
     def test_config_contains_only_agreed_puzzles(self):
         self.assertEqual(set(SCORING_CONFIG),
-                         {"puzzle1", "puzzle2", "puzzle3", "puzzle4", "puzzle5", "puzzle8", "puzzle12"})
+                         {"puzzle1", "puzzle2", "puzzle3", "puzzle4", "puzzle5", "puzzle6", "puzzle8", "puzzle12"})
 
     def test_maze_uses_the_agreed_music_time_bands_without_error_penalties(self):
         self.assertEqual(SCORING_CONFIG["puzzle2"], SCORING_CONFIG["puzzle4"])
@@ -130,6 +130,16 @@ class ScoringTests(unittest.TestCase):
                                      max(0, 100 - penalty * errors))
             self.assertEqual(calculate_points(puzzle_id, 1000000), 0)
             self.assertEqual(get_max_attempts(puzzle_id), max_attempts)
+
+    def test_puzzle6_scores_one_hundred_minus_ten_per_restart(self):
+        self.assertEqual(SCORING_CONFIG["puzzle6"], {
+            "max_points": 100,
+            "penalty_per_error": 10,
+        })
+        for restart_count in range(13):
+            with self.subTest(restart_count=restart_count):
+                self.assertEqual(calculate_points("puzzle6", restart_count),
+                                 max(0, 100 - 10 * restart_count))
 
     def test_unknown_puzzles_do_not_get_invented_scores(self):
         for function, args in ((calculate_points, ("undefined", 0)),

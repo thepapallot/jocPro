@@ -84,11 +84,11 @@ claves como `puzzle5` y `puzzle8`. Las entradas por intentos definen `max_points
 definir; no reciben valores por defecto ni las cifras de ejemplos anteriores.
 
 Los puzzles usan `calculate_points(puzzle_id, errors)` de `scoring.py`.
-`errors` es el número de intentos fallidos: cero antes del primer intento,
-uno al empezar el segundo. El cálculo resta la penalización por cada fallo y
-nunca devuelve menos de cero. No cuenta fallos individuales de terminales ni
-guarda puntos en la base de datos: cada puzzle decide cuándo finalizar y
-publica `total_points` por el flujo existente de telemetría.
+`errors` es el número de eventos que aplican una penalización: intentos fallidos,
+reinicios o timeouts, según la mecánica. El cálculo resta la penalización por
+cada evento y nunca devuelve menos de cero. No cuenta fallos individuales de
+terminales ni guarda puntos en la base de datos: cada puzzle decide cuándo
+finalizar y publica `total_points` por el flujo existente de telemetría.
 
 Memory y Cronómetro permiten actualmente diez intentos: 100 puntos en el
 primero, 90 en el segundo y 10 si se acierta en el décimo. Diez intentos
@@ -107,6 +107,10 @@ contándose, pero todavía no descuentan puntos. El botón del GM para resolver
 la prueba aplica la misma puntuación por tiempo; no permite superar el límite.
 Los tramos y el límite están en `SCORING_CONFIG["puzzle2"]`; el cálculo usa
 `calculate_time_points` y el cierre publica `total_points` por el flujo habitual.
+
+Carga Final (puzzle 6) empieza con 100 puntos y resta 10 por cada reinicio
+provocado por una pérdida de energía, hasta un mínimo de cero. El resultado se
+guarda al completar la cuenta atrás; la finalización del GM aplica la misma regla.
 
 ## Antes de editar
 
