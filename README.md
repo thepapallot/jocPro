@@ -41,8 +41,8 @@ El orden se configura en `config.py`.
 ## Puntuaciones
 
 `scoring_config.py` centraliza las reglas acordadas en `SCORING_CONFIG`, con
-claves como `puzzle5` y `puzzle8`. Cada entrada define `max_points`,
-`penalty_per_error` y `max_attempts`. Los demás puzzles quedan pendientes de
+claves como `puzzle5` y `puzzle8`. Las entradas por intentos definen `max_points`,
+`penalty_per_error` y, cuando corresponde, `max_attempts`. Los puzzles sin reglas quedan pendientes de
 definir; no reciben valores por defecto ni las cifras de ejemplos anteriores.
 
 Los puzzles usan `calculate_points(puzzle_id, errors)` de `scoring.py`.
@@ -57,6 +57,18 @@ primero, 90 en el segundo y 10 si se acierta en el décimo. Diez intentos
 fallidos terminan con cero puntos, sin marcar el puzzle como superado.
 El margen del Cronómetro empieza en 10 segundos y aumenta 4 por intento fallido;
 es una regla de juego y permanece en su clase, no en el cálculo de puntos.
+
+Tras la Serpiente (puzzle 2) puntúa por tiempo, con los mismos tramos que
+Código Sonoro: 100 puntos antes de 3:00; 90 desde 3:00, 80 desde 4:00,
+70 desde 5:00, 60 desde 6:00, 50 desde 7:00 y 40 desde 8:00 hasta antes
+de 10:00. El reloj comienza al iniciar la prueba y cuenta también alarmas,
+transiciones y errores. Se congela al aceptar el último símbolo correcto.
+A los 10:00 sin resolver, termina con cero puntos y pasa a la presentación
+siguiente sin celebración ni progreso de victoria. Los errores siguen
+contándose, pero todavía no descuentan puntos. El botón del GM para resolver
+la prueba aplica la misma puntuación por tiempo; no permite superar el límite.
+Los tramos y el límite están en `SCORING_CONFIG["puzzle2"]`; el cálculo usa
+`calculate_time_points` y el cierre publica `total_points` por el flujo habitual.
 
 ## Antes de editar
 
