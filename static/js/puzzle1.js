@@ -42,6 +42,7 @@
     const formulaRightValue = document.getElementById('formula-right-value');
     const formulaResultValue = document.getElementById('formula-result-value');
     const objectiveMessage = document.getElementById('objective-message');
+    const pointsValueElement = document.getElementById('p1-points-value');
     let formulaResetTimeout = null;
 
     let timer = 120;
@@ -344,12 +345,21 @@
         pendingSolvedResult = null;
     }
 
+    function updatePoints(value) {
+        const points = Number(value);
+        if (pointsValueElement && Number.isFinite(points)) {
+            pointsValueElement.textContent = String(points);
+        }
+    }
+
     function loadCurrentState() {
         fetch('/current_state')
             .then(r => r.json())
             .then(data => {
                 if (!data) return;
                 if (data.puzzle_id && data.puzzle_id !== 1) return;
+
+                updatePoints(data.available_points);
 
                 if (data.round !== undefined) {
                     currentRound = data.round;
@@ -381,6 +391,7 @@
             if (data.puzzle_id && data.puzzle_id !== 1) return;
 
             console.log('Received data from state_queue:', data);
+            updatePoints(data.available_points);
 
             if (data.puzzle_solved) {
                 clearIncorrectFeedback();

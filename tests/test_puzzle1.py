@@ -169,6 +169,17 @@ class Puzzle1Tests(unittest.TestCase):
                     self.assertEqual(len(self.updates), count)
                     self.assertEqual(self.puzzle.operations_with_metadata, before)
 
+    def test_available_points_follow_errors_in_updates_and_state(self):
+        self.assertEqual(self.puzzle.get_state()['available_points'], 100)
+        self.repeat()
+        self.assertEqual(self.updates[-1]['available_points'], 97)
+        self.finish_worker()
+        self.puzzle.timer_expired()
+        self.assertEqual(self.updates[-1]['available_points'], 94)
+        self.assertEqual(self.puzzle.get_state()['available_points'], 94)
+        self.puzzle.reset()
+        self.assertEqual(self.updates[-1]['available_points'], 100)
+
 
 if __name__ == '__main__':
     unittest.main()

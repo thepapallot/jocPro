@@ -14,6 +14,19 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-28 — Sumas: puntos disponibles visibles
+
+Tipo: `pendiente de revisar`. Cambio de backend autorizado por Olalla.
+
+- `mqtt/puzzles/puzzle1.py`: `get_state()` y cada actualización SSE incluyen
+  `available_points` (100 − 3 por error, con la regla ya existente de
+  `scoring.py`). `timer_expired()` publica una actualización inmediata al
+  contar el error por tiempo. No cambia la puntuación final ni MQTT.
+- `tests/test_puzzle1.py`: comprueba estado, error, tiempo agotado y reinicio.
+
+Revisión Pep: comprobar que la actualización extra al agotarse el tiempo no
+afecta a la lógica del frontend (solo actualiza el contador de puntos).
+
 ## 2026-10-27 — Càrrega Final: puntuació per reinici
 
 Tipus: `pendent de revisar`. Canvi de backend autoritzat explícitament per Olalla.
