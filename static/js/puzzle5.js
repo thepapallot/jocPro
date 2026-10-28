@@ -9,7 +9,8 @@
     const objectiveSubtextEl = document.getElementById('objective-subtext');
     const errorEl = document.getElementById('error-text');
     const errorLimitTextEl = document.getElementById('error-limit-text');
-    const streakEl = document.getElementById('streak');
+    const streakAttemptEl = document.getElementById('streak-attempt');
+    const pointsValueEl = document.getElementById('p5-points-value');
     const preparationLimitEl = document.getElementById('p5-preparation-limit');
     const exhaustedScreen = document.getElementById('p5-exhausted-screen');
     let attempt = 1;
@@ -132,11 +133,11 @@
     }
 
     function updateStreak(round) {
-        if (streakEl) {
-            streakEl.textContent = tr('chronoAttemptPoints',
-                `INTENTO ${attempt}/${maxAttempts} · ${availablePoints} PUNTOS EN JUEGO`,
-                {attempt, limit: maxAttempts, points: availablePoints});
+        if (streakAttemptEl) {
+            streakAttemptEl.textContent = tr('memoryAttempt',
+                `INTENTO ${attempt}/${maxAttempts}`, {attempt, limit: maxAttempts});
         }
+        if (pointsValueEl) pointsValueEl.textContent = String(availablePoints);
         roundSteps.forEach(step => {
             const stepRound = Number(step.dataset.roundStep);
             step.classList.remove('is-current', 'is-complete');
