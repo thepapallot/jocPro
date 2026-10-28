@@ -14,6 +14,25 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-28 — Recuento final de puntos de la sesión
+
+Tipo: `pendiente de revisar`. Ajuste de backend autorizado por Olalla.
+
+- `app.py`: `/final` conserva el ID de la sesión que acaba de archivar y lo
+  entrega a la presentación como `sessionId`. La recarga puede recuperarlo
+  del parámetro `session_id` que ya conserva la pantalla de jugadores.
+  `/final-loop` abre el paso 2 (foto), después del nuevo paso 1 (puntuación).
+- El frontend consulta el endpoint existente `/test/session/ID` y suma
+  `total_points` registrados, sin la práctica ni filas sin puntuación.
+  No escribe resultados ni cambia las reglas, MQTT o el cierre de sesión.
+- `tests/test_sessions.py`: comprueba que el ID llega a la presentación
+  después del archivo y que sus puntos no se mezclan con otra sesión.
+- `tests/presentation_fixture.py`: datos sintéticos de puntuación para la
+  previsualización aislada, sin broker ni hardware.
+
+Revisión Pep: verificar el ID de la sesión al cerrar y recargar, y la
+correspondencia del total con los resultados guardados en la base de datos.
+
 ## 2026-10-28 — Música: reloj y puntos visibles
 
 Tipo: `pendiente de revisar`. Cambio de backend para el mismo HUD que en Laberinto.

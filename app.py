@@ -124,7 +124,7 @@ def inject_player_defaults():
     }
 
 
-def presentation_page_data(scene_id, next_url="", puzzle_id=None, initial_step=0):
+def presentation_page_data(scene_id, next_url="", puzzle_id=None, initial_step=0, session_id=None):
     # These pages are visual only: opening one never starts hardware.
     language = request.args.get("lang") or mqtt_client.get_active_session_language() or SUBTITLE_LANG
     language = "eng" if language in ("en", "eng") else "ca" if language in ("ca", "cat") else "es"
@@ -136,12 +136,13 @@ def presentation_page_data(scene_id, next_url="", puzzle_id=None, initial_step=0
             routes[f"success-{pid}"] = url_for('play_video_puzzles', puzzle_id=sequence[index + 1])
     return {"routes": routes, "sceneId": scene_id, "nextUrl": next_url, "puzzleId": puzzle_id,
             "initialStep": initial_step, "language": language, "order": PUZZLE_ORDER,
-            "tutorialId": PUZZLE_TUTORIAL, "finalId": PUZZLE_FINAL, "mode": "live"}
+            "tutorialId": PUZZLE_TUTORIAL, "finalId": PUZZLE_FINAL, "mode": "live",
+            "sessionId": session_id if session_id is not None else request.args.get("session_id", type=int)}
 
 
-def render_presentation(scene_id, next_url="", puzzle_id=None, initial_step=0):
+def render_presentation(scene_id, next_url="", puzzle_id=None, initial_step=0, session_id=None):
     return render_template("presentation.html", presentation_page=presentation_page_data(
-        scene_id, next_url, puzzle_id, initial_step))
+        scene_id, next_url, puzzle_id, initial_step, session_id))
 
 
 # Routes
@@ -240,11 +241,11 @@ def final():
         result = test_session_close(_sid)
         if result[1] != 200:
             return result
-    return render_presentation('closing')
+    return render_presentation('closing', session_id=_sid)
 
 @app.route('/final-loop', methods=['GET'])
 def final_loop():
-    return render_presentation('closing', initial_step=1)
+    return render_presentation('closing', initial_step=2)
 
 
 @app.route('/puzzle/final', methods=['GET', 'POST'])

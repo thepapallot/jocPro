@@ -47,4 +47,27 @@
 .f-subtitle-zone{position:absolute;top:880px;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;padding:20px 215px 34px}
 .f-subtitle{width:100%;margin:0;font:40px/1.35 Arial,sans-serif;white-space:pre-line;text-align:center;text-wrap:balance;color:#f3eee4}
 .f-photo .f-mote,.f-photo .f-pulse{display:none}
+.f-score{position:absolute;inset:0;isolation:isolate;overflow:hidden;background:#0a1016;color:#f3eee4}
+.f-score-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.f-score-team{font:900 32px/1.2 var(--p-display);letter-spacing:.22em;color:#39d6e5;margin:0 0 24px}
+.f-score h1{font:900 92px/1 var(--p-display);margin:0}
+.f-score-tally{display:flex;align-items:center;justify-content:center;gap:36px;margin-top:28px;max-width:1740px}
+.f-score-coin{width:210px;height:210px;flex-shrink:0;object-fit:contain}
+.f-score-value{font:900 290px/1.2 Arial,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.05em;margin:0;max-width:1470px}
+.f-score-unit{font:900 40px/1 var(--p-display);letter-spacing:.24em;margin:0;color:#a8bbc5}
+.f-score-status{min-height:54px;font:36px/1.5 Arial,sans-serif;margin:52px 0 0}
+.f-score-aura{position:absolute;inset:0;background:radial-gradient(ellipse at center,#39d6e51c,transparent 58%),radial-gradient(ellipse at 75% 65%,#dc68a71a,transparent 55%)}
+.f-score-ring{position:absolute;left:460px;top:40px;width:1000px;height:1000px;border:3px solid #71e7db;border-radius:50%;opacity:0}
+.f-score-particles{position:absolute;left:50%;top:50%}
+.f-score-particles i{position:absolute;width:9px;height:18px;background:#39d6e5;opacity:0;transform:rotate(var(--angle))}
+.f-score-particles i:nth-child(3n){background:#dc68a7}
+.f-score-particles i:nth-child(3n+1){background:#71e7db}
+.f-score[data-state=complete] .f-score-value{color:#71e7db;animation:score-land 800ms ease-out both}
+.f-score[data-state=complete] .f-score-ring{animation:score-wave 1600ms ease-out both}
+.f-score[data-state=complete] .f-score-particles i{animation:score-particle 1800ms var(--delay) ease-out both}
+.f-score.is-paused *{animation-play-state:paused!important}
+@keyframes score-land{0%{transform:scale(1);text-shadow:none}35%{transform:scale(1.09);text-shadow:0 0 60px #71e7db88}100%{transform:scale(1);text-shadow:0 0 35px #71e7db30}}
+@keyframes score-wave{0%{transform:scale(.3);opacity:0}20%{opacity:.55}100%{transform:scale(1.8);opacity:0}}
+@keyframes score-particle{0%{opacity:0;transform:rotate(var(--angle)) translateY(-180px)}15%{opacity:.9}100%{opacity:0;transform:rotate(var(--angle)) translateY(calc(-1 * var(--distance))) rotate(90deg)}}
+@media(prefers-reduced-motion:reduce){.f-score *{animation:none!important}.f-score-ring,.f-score-particles{display:none}}
 @media(prefers-reduced-motion:reduce){.f-cinema *{animation:none!important;transition:none!important}.f-mote,.f-pulse,.f-charge-flash{display:none}.f-monument{will-change:auto}}

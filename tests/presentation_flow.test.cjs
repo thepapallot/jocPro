@@ -16,7 +16,7 @@ test('the journey has a manual lobby, compact briefings and a final earned summi
   assert.deepEqual(games.map(g=>g.puzzleId),[11,2,1,8,3,5,12,4,6]);
   assert.equal(games.reduce((n,g)=>n+g.steps.length,0),46);
   assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>!['title','equipment-title','journey','elements','attention'].includes(s)).join(',')==='objective,tools,interaction'));
-  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),74);
+  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),75);
   assert.ok(games.every(g=>!g.steps.includes('example')));
   assert.ok(games.every(g=>!g.previewPath), 'rehearsal uses current diagrams, never the retired pilot');
   assert.equal(scenes[0].autoAdvanceMs,null);
@@ -31,7 +31,8 @@ test('the journey has a manual lobby, compact briefings and a final earned summi
   assert.equal(scenes.find(s=>s.id==='success-11').completed,0);
   assert.equal(games.at(-1).completed,7);
   assert.equal(scenes.at(-1).completed,8);
-  assert.deepEqual(scenes.at(-1).autoAdvanceMs,[11000,0]);
+  assert.deepEqual(scenes.at(-1).steps,['cover','score','thanks']);
+  assert.deepEqual(scenes.at(-1).autoAdvanceMs,[11000,0,0]);
   for(const game of games)for(const lang of ['ca','es','eng']){
     assert.equal(game.copy[lang].stepLabels.length,game.steps.length);
     assert.equal(game.copy[lang].notes.length,game.steps.length);

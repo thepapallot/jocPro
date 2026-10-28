@@ -1,6 +1,6 @@
 # Guía de marca diseño y estilo de La Piràmide
 
-Referencia editorial vigente del proyecto. Última actualización: **27 octubre
+Referencia editorial vigente del proyecto. Última actualización: **28 octubre
 2026**. Recoge las decisiones del equipo, la información publicada y la revisión
 de recursos gráficos. Leer antes de editar, como establece [AGENTS.md](../AGENTS.md).
 
@@ -521,8 +521,9 @@ con simulación aislada, voz catalana y foto a 1920 × 1080 y 1280 × 720:
 Tras los diez segundos de carga se reproducen 50,4 segundos de voz con el guion
 aprobado: «Ho heu aconseguit!» hasta «Aquest moment és vostre». Los titulares y
 subtítulos siguen esa versión y la foto conserva «AQUEST MOMENT ÉS VOSTRE»,
-La Piràmide y ADN Games. La voz gobierna el avance durante la narración; la foto
-entra al terminar el MP3, sin cortar la última frase. Pausar detiene voz, imagen
+La Piràmide y ADN Games. La voz gobierna el avance durante la narración; el recuento final
+entra al terminar el MP3, sin cortar la última frase. La foto espera después
+la orden del GM. Pausar detiene voz, imagen
 y música; repetir reinicia el montaje sin sumar progreso. La música se mantiene
 baja bajo la voz. Si se bloquea el audio, el montaje espera y ofrece «Activar so».
 Guion: `docs/audio/cierre-final-ca.txt`. Subtítulos exportados: `static/audios/intro/final-ca.vtt`.
@@ -545,6 +546,31 @@ Versión catalana verificada a ambas resoluciones con simulación aislada:
 subtítulos, pausa de carga y voz, repetición, recuperación de audio bloqueado,
 final natural de la locución y foto estable. Evidencias: `output/cierre-catala/`.
 Sin MQTT ni hardware; pendiente escucharla con los altavoces de la sala.
+
+### Puntuación colectiva después del desenlace
+
+**Acordado e implementado el 28 octubre 2026:** después del montaje final y
+antes de la foto se presenta la puntuación del equipo. Una cifra grande sube
+rápidamente desde cero y desacelera hasta el total en 4,2 segundos. Al llegar,
+un golpe suave de escala, una onda de luz y partículas cian, magenta y menta
+celebran el resultado, sin destellos rápidos. El número queda estable en menta,
+con «PUNTUACIÓN FINAL» y «Lo habéis conseguido juntos», y sus equivalentes en
+catalán e inglés. La música de victoria continúa en catalán y castellano.
+Por petición expresa del usuario, la cifra va acompañada de la misma moneda
+«P» de los puntos en juego, `points-medallion.svg`, grande, estática y sin
+recolorear. Vincula los puntos ganados durante el recorrido con el total final.
+
+El total corresponde a los puntos registrados de los niveles jugados en esa
+sesión, sin la práctica; no representa bloques de progreso ni puntos todavía
+disponibles. Repetir el recuento no concede puntos. Si no se puede recuperar el
+resultado, se muestra un aviso y se informa al GM, nunca un cero ficticio.
+
+El GM puede pausar el recuento, repetirlo seleccionando de nuevo el paso y
+avanzar a la foto cuando termine el aplauso. La foto conserva su composición
+y su acceso directo. Con movimiento reducido aparece el total exacto sin
+recuento ni partículas. La distribución se comprueba mediante simulación
+aislada a 1920 × 1080 y 1280 × 720; la lectura y el efecto en sala requieren
+validación con el grupo.
 
 ### Edición de las explicaciones de puzzles
 
@@ -951,8 +977,9 @@ a sumar. El simulacro se celebra sin añadir bloques puntuables y las pruebas
 fuera del recorrido conservan el progreso existente. El GM abre la siguiente
 presentación al acabar la celebración, cuando el equipo esté preparado. En
 castellano y catalán, Carga Final utiliza directamente su carga cinematográfica y el
-desenlace «Este momento es vuestro» / «Aquest moment és vostre», seguido de la foto.
-En inglés pasa directamente a la composición de foto, sin otra pantalla de victoria,
+desenlace «Este momento es vuestro» / «Aquest moment és vostre», seguido del
+recuento de puntos y la foto.
+En inglés pasa al recuento y después a la composición de foto, sin otra pantalla de victoria,
 hasta traducir el desenlace nuevo.
 Los avisos de fases intermedias mantienen su función y sus sonidos propios.
 

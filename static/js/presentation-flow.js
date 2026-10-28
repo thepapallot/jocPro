@@ -339,20 +339,30 @@
   }
   const closing=scene('closing','closing',local('LA PIRÀMIDE<br>ÉS VOSTRA.','LA PIRÁMIDE<br>ES VUESTRA.','THE PYRAMID<br>IS YOURS.'),local('Ho heu aconseguit junts.','Lo habéis conseguido juntos.','You achieved it together.'),['cover','thanks']);
   closing.completed=total;closing.previous=total-1;closing.total=total;closing.act=acts[2];closing.autoAdvanceMs=[11000,0];
-  for(const lang of ['ca','es','eng'])closing.copy[lang].notes=[local('Celebreu-ho amb el grup. El tancament passa sol a la pantalla de foto.','Celebradlo con el grupo. El cierre pasa solo a la pantalla de foto.','Celebrate with the group. The finale continues automatically to the photo screen.')[lang],local('Pantalla de foto. Pregunteu: què heu aconseguit perquè heu treballat junts?','Pantalla de foto. Preguntad: ¿qué habéis conseguido porque habéis trabajado juntos?','Photo screen. Ask: what did working together make possible?')[lang]];
+  for(const lang of ['ca','es','eng'])closing.copy[lang].notes=[local('Celebreu-ho amb el grup. El tancament passa sol a la puntuació final.','Celebradlo con el grupo. El cierre pasa solo a la puntuación final.','Celebrate with the group. The finale continues automatically to the final score.')[lang],local('Pantalla de foto. Pregunteu: què heu aconseguit perquè heu treballat junts?','Pantalla de foto. Preguntad: ¿qué habéis conseguido porque habéis trabajado juntos?','Photo screen. Ask: what did working together make possible?')[lang]];
   if(window.PyramidClosing){
     closing.copy.ca.name='Tancament · La Piràmide';
     closing.copy.ca.stepLabels=['Aquest moment és vostre','Foto d’equip'];
     closing.copy.ca.notes=[
-      'Tancament automàtic: 10 s de càrrega i 50,4 s de locució catalana. La veu governa els subtítols i el pas a la foto. Música orquestral de victòria, més baixa sota la veu i amb més presència a la foto. Deixa gaudir el grup; pots pausar, repetir o avançar a la foto. Guió: '+PyramidClosing.recording('ca').cues.map(c=>c.text.replaceAll('\n',' ')).join(' '),
+      'Tancament automàtic: 10 s de càrrega i 50,4 s de locució catalana. La veu governa els subtítols i el pas a la puntuació final. Música orquestral de victòria, més baixa sota la veu i amb més presència després. Deixa gaudir el grup; pots pausar, repetir o avançar al recompte. Guió: '+PyramidClosing.recording('ca').cues.map(c=>c.text.replaceAll('\n',' ')).join(' '),
       'Composició estable per a la foto. Recull l’aplaudiment: «Missió complerta, equip! Acosteu-vos, que aquesta foto és vostra». Repetir torna a iniciar el tancament sense sumar progrés.'
     ];
     closing.copy.es.name='Cierre · La Pirámide';
     closing.copy.es.stepLabels=['Este momento es vuestro','Foto de equipo'];
     closing.copy.es.notes=[
-      'Cierre automático en castellano · 78 s provisionales: 10 s de carga y 68 s de mensaje, con música orquestal de victoria y subtítulos. La música continúa en la foto. Locución pendiente de ElevenLabs. Deja que el grupo disfrute del final; puedes pausar, repetir o avanzar a la foto. Guion: '+PyramidClosing.narration,
+      'Cierre automático en castellano · 78 s provisionales: 10 s de carga y 68 s de mensaje, con música orquestal de victoria y subtítulos. Después aparece el recuento final y la música continúa. Locución pendiente de ElevenLabs. Deja que el grupo disfrute del final; puedes pausar, repetir o avanzar al recuento. Guion: '+PyramidClosing.narration,
       'Composición estable para la foto. Recoge el aplauso: «¡Misión cumplida, equipo! Acercaos, que esta foto es vuestra». Repetir vuelve a iniciar el cierre sin sumar progreso.'
     ];
+  }
+  closing.steps.splice(1,0,'score');
+  closing.autoAdvanceMs.splice(1,0,0);
+  for(const lang of ['ca','es','eng']){
+    closing.copy[lang].stepLabels.splice(1,0,local('Puntuació final','Puntuación final','Final score')[lang]);
+    closing.copy[lang].notes.splice(1,0,local(
+      'Recompte dels punts registrats en aquesta sessió, sense la pràctica. Espera el total i l’aplaudiment. Siguiente obre la foto; torna a seleccionar aquest pas per repetir el recompte sense sumar punts.',
+      'Recuento de los puntos registrados en esta sesión, sin la práctica. Espera al total y al aplauso. Siguiente abre la foto; vuelve a seleccionar este paso para repetir el recuento sin sumar puntos.',
+      'Counts the recorded points for this session, excluding practice. Wait for the total and applause. Next opens the photo; select this step again to replay without adding points.')[lang]);
+    closing.copy[lang].footers.splice(1,0,closing.copy[lang].slogan);
   }
   flow.push(closing);
   for(const lang of ['ca','es','eng']) {

@@ -66,7 +66,7 @@ async function screenshot(name){const shot=await cmd('Page.captureScreenshot',{f
     for(const ms of [0,3000,5800,6200,6900,8000,17000,26000,35000,44000,55000,59500,68000,72600,76500]){
       await inner(`w.PyramidClosing.update(${ms})`);await screenshot(`${width}-${ms}`);
     }
-    await gm('step',1);await until('states.at(-1)?.step===1');await delay(850);await screenshot(`${width}-foto`);
+    await gm('step',2);await until('states.at(-1)?.step===2');await delay(850);await screenshot(`${width}-foto`);
     assert.equal(await inner(`w.document.querySelector('.f-subtitle').textContent`),'');
     assert.equal(await evaluate('states.at(-1).automatic'),false);
     assert.equal(await inner('w.document.querySelector(".f-adn").naturalWidth>0'),true);
@@ -83,15 +83,18 @@ async function screenshot(name){const shot=await cmd('Page.captureScreenshot',{f
   for(const lang of ['ca','eng']){
     await gm('language',lang);await until(`states.at(-1)?.language==='${lang}'`);
     assert.equal(await inner(`!!w.document.querySelector('.p-screen:not(.j-leaving) .f-cinema')`),lang==='ca');
-    await gm('step',1);await until('states.at(-1)?.step===1');
+    await gm('step',2);await until('states.at(-1)?.step===2');
     assert.equal(await inner(`!!w.document.querySelector('.p-screen:not(.j-leaving) ${lang==='ca'?'.f-photo':'.j-achievement.photo'}')`),true);
   }
   await gm('language','es');await until('states.at(-1)?.language==="es"');await gm('restart');await until('states.at(-1)?.step===0');
   await cmd('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'no-preference'}]});
-  // Verify the real clock reaches the stable photo unaided, at its real duration.
+  // Verify the real film clock reaches the score, then the GM opens the photo.
   console.log('Composition, cues, pause, music, replay and language checks passed. Watching the full 78 s sequence.');
   for(let i=0;i<83;i++){if(await evaluate('states.at(-1)?.step===1'))break;await delay(1000);}
   assert.equal(await evaluate('states.at(-1)?.step'),1);
+  await until('document.getElementById("game-shell-frame").contentWindow.document.querySelector(".f-score")?.dataset.state==="complete"');
+  assert.equal(await inner('w.document.querySelector(".f-score-value").textContent'),'749');
+  await gm('next');await until('states.at(-1)?.step===2');
   await delay(850);
   const held=await inner(`w.document.querySelector('.p-screen:not(.j-leaving) .f-cinema').outerHTML`);await delay(500);
   assert.equal(await inner(`w.document.querySelector('.p-screen:not(.j-leaving) .f-cinema').outerHTML`),held);

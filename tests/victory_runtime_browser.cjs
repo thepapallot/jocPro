@@ -47,7 +47,10 @@ async function screenshot(name){const shot=await cmd('Page.captureScreenshot',{f
    assert.equal(Number(await inner('w.document.querySelector(".f-pyramid").dataset.progress')),100);
    assert.equal(await inner('w.document.querySelector(".f-subtitle").textContent'),'');
    await screenshot('final-charge-complete');
-   await gm('next');await until('auditStates.at(-1)?.step===1');await delay(850);await screenshot('final-photo');
+   await gm('next');await until('auditStates.at(-1)?.step===1');
+   await until('document.getElementById("game-shell-frame").contentWindow.document.querySelector(".f-score")?.dataset.state==="complete"');
+   assert.equal(await inner('w.document.querySelector(".f-score-value").textContent'),'749');
+   await gm('next');await until('auditStates.at(-1)?.step===2');await delay(850);await screenshot('final-photo');
    console.log('Verified final charge and earned 100%');continue;
   }
   await until('auditStates.at(-1)?.screen==="victory"');
