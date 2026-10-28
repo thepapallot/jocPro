@@ -13,9 +13,24 @@
         <span class="hud-label" data-i18n="game.timeLabel">Tiempo restante</span>
         <span id="timer" role="timer">05:00</span>
     </div>
-    <div class="quiz-hud-stat">
-        <span class="hud-label" data-i18n="game.quizPoints">Puntos</span>
-        <span id="streak">0</span>
+    <div id="p3-points" class="quiz-hud-stat points-hud" role="status" aria-live="polite" aria-atomic="true">
+        <span class="points-coin" aria-hidden="true">
+            <span class="points-coin-body">
+                <span class="points-coin-edge" style="--coin-depth: -3px"></span>
+                <span class="points-coin-edge" style="--coin-depth: -2px"></span>
+                <span class="points-coin-edge" style="--coin-depth: -1px"></span>
+                <span class="points-coin-edge" style="--coin-depth: 0px"></span>
+                <span class="points-coin-edge" style="--coin-depth: 1px"></span>
+                <span class="points-coin-edge" style="--coin-depth: 2px"></span>
+                <span class="points-coin-edge" style="--coin-depth: 3px"></span>
+                <img class="points-coin-face points-coin-front" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+                <img class="points-coin-face points-coin-back" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+            </span>
+        </span>
+        <span class="points-hud-value">
+            <strong id="streak">0</strong>
+            <span class="points-hud-label" data-i18n="game.quizPoints">Puntos</span>
+        </span>
     </div>
 </div>
 {% endblock %}
