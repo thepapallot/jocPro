@@ -94,9 +94,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     start(1);
     test('initial round starts without countdown', !shown(wait) && !shown(good) && !shown(wrong));
     test('initial timer starts immediately', shown(document.getElementById('timer-overlay')) &&
-        document.getElementById('timer-overlay').textContent === '01:30');
+        document.getElementById('timer-text').textContent === '01:30');
     test('no extra initial countdown beep', window.previewSounds.filter(url =>
         url.endsWith('beep_countdown.wav')).length === 1);
+    window.puzzle12Debug.push({available_points: 80});
+    test('available points shown in the timer box', document.getElementById('p12-points-value').textContent === '80' &&
+        document.getElementById('timer-overlay').contains(document.getElementById('p12-points-value')));
     test('full target has all 34 balls', shown(pattern) && pattern.children.length === 34);
     test('full target fits viewport', [...pattern.children].every(fits));
     window.puzzle12Debug.success();
@@ -129,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     test('retry waits until countdown ends', document.getElementById('countdown-number').textContent === '1' && !shown(pattern));
     window.advancePreview(1000);
     test('retry starts pattern and full timer', shown(pattern) && !shown(wait) &&
-        document.getElementById('timer-overlay').textContent === '00:02');
+        document.getElementById('timer-text').textContent === '00:02');
     test('help renders the reduced target', pattern.children.length === 29);
     test('help keeps ten black balls', pattern.querySelectorAll('.button-ball--black').length === 10);
     test('help target fits viewport', [...pattern.children].every(fits));

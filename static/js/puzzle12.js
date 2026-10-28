@@ -25,6 +25,8 @@
 
     const patternEl = document.getElementById('button-pattern');
     const timerEl = document.getElementById('timer-overlay');
+    const timerTextEl = document.getElementById('timer-text');
+    const pointsValueEl = document.getElementById('p12-points-value');
     const wrongEl = document.getElementById('wrong-img');
     const goodEl = document.getElementById('good-img');
     const waitScreen = document.getElementById('wait-screen');
@@ -118,6 +120,10 @@
         goodEl.style.display = 'none';
         waitScreen.style.display = 'none';
         countdownEl.textContent = '';
+    }
+
+    function updatePoints(data) {
+        if (Number.isFinite(data.available_points)) setText(pointsValueEl, String(data.available_points));
     }
 
     function showSuccessFeedback() {
@@ -276,7 +282,7 @@
             patternEl.appendChild(ball);
         });
         patternEl.style.display = 'block';
-        timerEl.style.display = 'block';
+        timerEl.style.display = 'flex';
         startTimer(duration);
         startBallMotion();
     }
@@ -308,7 +314,7 @@
     function updateTimerDisplay() {
         const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
         const s = (timeLeft % 60).toString().padStart(2, '0');
-        timerEl.textContent = `${m}:${s}`;
+        setText(timerTextEl, `${m}:${s}`);
         window.PyramidCountdownAudio?.tick('p12-round', timeLeft);
     }
 
@@ -367,6 +373,7 @@
         }
 
         console.log("Received update:", d);
+        updatePoints(d);
 
         if (d.streak_solved) {
             clearInterval(countdownInterval);

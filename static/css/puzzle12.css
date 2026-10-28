@@ -217,6 +217,99 @@ body.p12-danger-state #final-viewport {
         0 0 22px rgba(69, 230, 255, 0.12);
 }
 
+#timer-overlay {
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(8px, 1.6vh, 18px);
+}
+
+#p12-points {
+    display: grid;
+    --p12-coin: clamp(48px, 8cqh, 84px);
+    grid-template-columns: var(--p12-coin) auto;
+    align-items: center;
+    column-gap: 14px;
+}
+
+#p12-points .points-hud-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#p12-points-value {
+    color: #f3eee4;
+    font: 900 clamp(40px, 7cqh, 72px)/1.05 PiramideDisplay, Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
+}
+
+#p12-points .points-hud-label {
+    color: #BBCCD4;
+    font-size: clamp(13px, 1.9cqh, 19px);
+    line-height: 1.2;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+#p12-points .points-coin {
+    width: var(--p12-coin);
+    height: var(--p12-coin);
+    perspective: 400px;
+}
+
+#p12-points .points-coin-body {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: p12-points-coin-turn 8s linear infinite;
+}
+
+#p12-points .points-coin-face,
+#p12-points .points-coin-edge {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+#p12-points .points-coin-edge {
+    inset: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    background: linear-gradient(135deg, #D0E8EB, #426C7C 30%, #14232C 55%, #39D6E5 78%, #8FAFBD);
+    border: 1px solid #668691;
+    transform: translateZ(var(--coin-depth));
+}
+
+#p12-points .points-coin-face {
+    backface-visibility: hidden;
+}
+
+#p12-points .points-coin-front {
+    transform: translateZ(3px);
+}
+
+#p12-points .points-coin-back {
+    transform: rotateY(180deg) translateZ(3px);
+}
+
+@keyframes p12-points-coin-turn {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #p12-points .points-coin-body {
+        animation: none;
+        transform: rotateY(-12deg);
+    }
+}
+
 #final-shell {
     position: relative;
     z-index: 1;
