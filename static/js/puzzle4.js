@@ -37,6 +37,14 @@
 
     let statusEl = null;
     let statusSectionEl = null;
+    let timerEl = null;
+    let pointsValueEl = null;
+    let scoring = null;
+    let elapsedAnchor = 0;
+    let anchoredAt = Date.now();
+    let hudFrozen = false;
+    let shownClock = '';
+    let shownPoints = '';
     let progressSectionEl = null;
     let solved = false;
     let exhausted = false;
@@ -408,10 +416,61 @@
         window.location.assign(url);
     }
 
+    function updateScoring(d) {
+        if (Array.isArray(d.penalty_thresholds_seconds)) {
+            scoring = {
+                maxPoints: d.max_points,
+                penalty: d.penalty_per_time_band,
+                thresholds: d.penalty_thresholds_seconds,
+                maxTime: d.max_time_seconds,
+            };
+        }
+        if (Number.isFinite(d.elapsed_seconds)) {
+            elapsedAnchor = d.elapsed_seconds;
+            anchoredAt = Date.now();
+        }
+        // Terminal events carry the final figures; stop the live clock there.
+        if (d.puzzle_solved !== undefined || d.puzzle_exhausted) {
+            hudFrozen = Boolean(d.puzzle_solved || d.puzzle_exhausted);
+        }
+    }
+
+    function showHud(remaining, points) {
+        if (!timerEl || !pointsValueEl) return;
+        const clock = `${String(Math.floor(remaining / 60)).padStart(2, '0')}:${String(remaining % 60).padStart(2, '0')}`;
+        if (clock !== shownClock) {
+            shownClock = clock;
+            timerEl.textContent = clock;
+            timerEl.classList.toggle('is-low', remaining <= 60);
+        }
+        if (String(points) !== shownPoints) {
+            shownPoints = String(points);
+            pointsValueEl.textContent = shownPoints;
+        }
+    }
+
+    // The server owns elapsed time and the score rules; this only keeps the
+    // display moving between events.
+    function renderClock() {
+        if (!scoring || hudFrozen) return;
+        const elapsed = elapsedAnchor + (Date.now() - anchoredAt) / 1000;
+        const bands = scoring.thresholds.filter((threshold) => elapsed >= threshold).length;
+        showHud(Math.max(0, Math.ceil(scoring.maxTime - elapsed)),
+            Math.max(0, scoring.maxPoints - scoring.penalty * bands));
+    }
+
     function handleUpdate(d) {
         if (window.PyramidLevelVictory?.active) return;
         console.log('[P4] handleUpdate called with:', d);
         if (!d || d.puzzle_id !== 4) return;
+        if (!solved && !exhausted) {
+            updateScoring(d);
+            if (hudFrozen && Number.isFinite(d.available_points)) {
+                showHud(Math.max(0, Math.ceil(d.time_remaining_seconds || 0)), d.available_points);
+            } else {
+                renderClock();
+            }
+        }
         if (solved || exhausted) return;
         // Terminal state must bypass the inter-round queue and cancel all audio/UI work.
         if (d.puzzle_exhausted) {
@@ -692,6 +751,9 @@
     document.addEventListener('DOMContentLoaded', () => {
         statusEl = document.getElementById('status-text');
         statusSectionEl = document.getElementById('status-section');
+        timerEl = document.getElementById('p4-timer');
+        pointsValueEl = document.getElementById('p4-points-value');
+        setInterval(renderClock, 250);
         progressSectionEl = document.getElementById('progress-section');
         phasePopupEl = document.getElementById('p4-phase-popup');
         const popupMessages = {

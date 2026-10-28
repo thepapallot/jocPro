@@ -149,6 +149,11 @@ class Puzzle4(BasePuzzle):
             "time_remaining_seconds": max(0.0, self.max_time_seconds - elapsed),
             "available_points": (self.total_points if self.total_points is not None
                                  else calculate_time_points("puzzle4", elapsed)),
+            # Lets the screen keep its HUD live between events.
+            "max_points": SCORING_CONFIG["puzzle4"]["max_points"],
+            "penalty_per_time_band": SCORING_CONFIG["puzzle4"]["penalty_per_time_band"],
+            "penalty_thresholds_seconds": list(SCORING_CONFIG["puzzle4"]["penalty_thresholds_seconds"]),
+            "max_time_seconds": self.max_time_seconds,
         }
         # Only terminal events may carry earned points to the app callback.
         if self.solved or self.exhausted:

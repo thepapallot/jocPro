@@ -55,6 +55,31 @@
     <section id="console-panel" class="music-panel">
         <div id="status-section">
             <span id="status-text"></span>
+            <div id="p4-hud">
+                <div class="p4-hud-time">
+                    <strong id="p4-timer" role="timer" aria-live="off">10:00</strong>
+                    <span class="p4-hud-label" data-i18n="game.timeLabel">Tiempo restante</span>
+                </div>
+                <div id="p4-points" class="points-hud" role="status" aria-live="polite" aria-atomic="true">
+                    <span class="points-coin" aria-hidden="true">
+                        <span class="points-coin-body">
+                                    <span class="points-coin-edge" style="--coin-depth: -3px"></span>
+                                    <span class="points-coin-edge" style="--coin-depth: -2px"></span>
+                                    <span class="points-coin-edge" style="--coin-depth: -1px"></span>
+                                    <span class="points-coin-edge" style="--coin-depth: 0px"></span>
+                                    <span class="points-coin-edge" style="--coin-depth: 1px"></span>
+                                    <span class="points-coin-edge" style="--coin-depth: 2px"></span>
+                                    <span class="points-coin-edge" style="--coin-depth: 3px"></span>
+                            <img class="points-coin-face points-coin-front" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+                            <img class="points-coin-face points-coin-back" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+                        </span>
+                    </span>
+                    <span class="points-hud-value">
+                        <strong id="p4-points-value">100</strong>
+                        <span class="points-hud-label" data-i18n="game.memoryPointsAtStake">PUNTOS EN JUEGO</span>
+                    </span>
+                </div>
+            </div>
         </div>
 
         <div id="progress-section">
