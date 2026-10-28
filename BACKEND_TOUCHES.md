@@ -14,6 +14,17 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-10-28 — Música: reloj y puntos visibles
+
+Tipo: `pendiente de revisar`. Cambio de backend para el mismo HUD que en Laberinto.
+
+- `mqtt/puzzles/puzzle4.py`: el estado de puntuación (`_scoring_state_locked()`)
+  añade `max_points`, `penalty_per_time_band`, `penalty_thresholds_seconds` y
+  `max_time_seconds`, leídos de `scoring_config.py`. El frontend calcula con
+  ellos cuenta atrás y puntos en vivo a partir de `elapsed_seconds`. No cambia
+  la puntuación final ni MQTT.
+- `tests/test_puzzle4_scoring.py`: comprueba que el estado expone esos campos.
+
 ## 2026-10-28 — Laberinto: reloj y puntos visibles
 
 Tipo: `pendiente de revisar`. Cambio de backend autorizado por Olalla.

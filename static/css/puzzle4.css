@@ -890,3 +890,118 @@ body::after {
         background-color: #0a1016;
     }
 }
+
+/* Time and points sit at the right of the status bar. */
+#status-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+}
+
+#status-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#p4-hud {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding-left: 28px;
+    border-left: 1px solid rgba(69, 230, 255, 0.18);
+    pointer-events: none;
+}
+
+#p4-hud .p4-hud-time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+#p4-hud .p4-hud-label,
+#p4-hud .points-hud-label {
+    color: #BBCCD4;
+    font-size: 14px;
+    line-height: 1.2;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+#p4-timer,
+#p4-points-value {
+    color: #f3eee4;
+    font: 900 54px/1.05 PiramideDisplay, Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
+}
+
+#p4-timer.is-low {
+    color: #ff6b5e;
+}
+
+#p4-points {
+    display: grid;
+    grid-template-columns: 64px auto;
+    align-items: center;
+    column-gap: 12px;
+}
+
+#p4-points .points-hud-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#p4-points .points-coin {
+    width: 64px;
+    height: 64px;
+    perspective: 400px;
+}
+
+#p4-points .points-coin-body {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: p4-points-coin-turn 8s linear infinite;
+}
+
+#p4-points .points-coin-face,
+#p4-points .points-coin-edge {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+#p4-points .points-coin-edge {
+    inset: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    background: linear-gradient(135deg, #D0E8EB, #426C7C 30%, #14232C 55%, #39D6E5 78%, #8FAFBD);
+    border: 1px solid #668691;
+    transform: translateZ(var(--coin-depth));
+}
+
+#p4-points .points-coin-face {
+    backface-visibility: hidden;
+}
+
+#p4-points .points-coin-front {
+    transform: translateZ(3px);
+}
+
+#p4-points .points-coin-back {
+    transform: rotateY(180deg) translateZ(3px);
+}
+
+@keyframes p4-points-coin-turn {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}

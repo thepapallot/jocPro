@@ -334,6 +334,14 @@ class Puzzle4ScoringTests(unittest.TestCase):
         runtime.at(252)
         self.assertEqual(runtime.puzzle.total_points, 80)
 
+    def test_state_exposes_score_bands_for_the_live_hud(self):
+        state = self.runtime().puzzle.get_state()
+        config = SCORING_CONFIG['puzzle4']
+        self.assertEqual(state['max_points'], config['max_points'])
+        self.assertEqual(state['penalty_per_time_band'], config['penalty_per_time_band'])
+        self.assertEqual(state['penalty_thresholds_seconds'], config['penalty_thresholds_seconds'])
+        self.assertEqual(state['max_time_seconds'], config['max_time_seconds'])
+
     def test_maximum_time_is_read_from_configuration_and_must_be_finite(self):
         for invalid in [None, True, 0, -1, float('inf'), float('nan')]:
             with self.subTest(invalid=invalid):
