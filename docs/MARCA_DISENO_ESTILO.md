@@ -857,6 +857,8 @@ su superficie piloto. La revisión individual de cada tablero sigue pendiente.
 - Esquina superior izquierda: solo el nombre editorial del puzzle.
 - Esquina superior derecha: solo la pirámide compacta, con los bloques de los
   retos realmente superados pintados; sin contador numérico ni texto de progreso.
+  Excepción aprobada el 27 octubre para Memory: marcador de puntos disponibles
+  antes de la pirámide, según el apartado siguiente.
 - Centro superior: solo información funcional que el puzzle requiera.
 - Tablero: ocupar casi toda la pantalla. No recuperar la gran cabecera anterior.
 - Mantener disposición y señales particulares de cada mecánica.
@@ -870,6 +872,35 @@ sirven para resolver las pruebas. El GM conserva sus datos de conducción.
 Memory conserva su cuadrícula de diez fichas y su jerarquía de fase e instrucción.
 Laberinto usa el tablero actual de secuencias móviles; no recuperar automáticamente
 los antiguos mapas fijos. Los colores de alarma mantienen su función.
+
+### Puntos en juego y moneda de Memory
+
+**Aprobado e integrado el 27 octubre 2026**, por petición de Olalla, solo en
+Memoria Extrema. Demostración aislada:
+[`static/previews/memory-punts.html`](../static/previews/memory-punts.html).
+
+- Cifra destacada y etiqueta «PUNTS EN JOC» / «PUNTOS EN JUEGO» /
+  «POINTS AT STAKE» en la esquina superior derecha, antes de la pirámide.
+  Representa los puntos disponibles en ese reto, no un total acumulado.
+- Moneda vectorial autorizada:
+  [`points-medallion.svg`](../static/images/shared/gameplay/points-medallion.svg).
+  Metal biselado, grabado «P», circuitos cian y acentos magenta, con dos caras
+  y canto visible. Giro continuo de ocho segundos, sin destellos ni pulsaciones.
+  Excepción de movimiento aprobada expresamente para esta moneda; con
+  movimiento reducido permanece estática. No sustituye al token, las pistas
+  ni el logo. No extenderla a otros puzzles sin revisar sus cabeceras.
+- El número de intento permanece bajo el nombre, sin duplicar la puntuación.
+  La instrucción central y el tablero conservan su espacio. El ámbar sigue
+  reservado para el tiempo.
+- La cifra sigue el estado real de puntos disponibles, incluida su recuperación
+  tras una recarga. Durante la espera de reintento conserva el valor actual;
+  cambia cuando el juego confirma el nuevo intento. Se retira la anticipación
+  numérica de la primera maqueta para no presentar un descuento aún no aplicado.
+
+No cambian las reglas de puntuación, las pistas ni la explicación del GM.
+Pantalla real comprobada con estados simulados en navegador a 1920 × 1080 y
+1280 × 720, con etiqueta de puntos en los tres idiomas, giro y movimiento
+reducido. Sin conexión al broker ni al hardware; validación en sala pendiente.
 
 ### Cierre final común de los niveles
 

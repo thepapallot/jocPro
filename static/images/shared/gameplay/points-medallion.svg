@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Futuristic points coin</title>
+  <defs>
+    <linearGradient id="rim" x1="20" y1="8" x2="105" y2="122" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F3EEE4"/><stop offset=".18" stop-color="#8FAFBD"/>
+      <stop offset=".4" stop-color="#263D4C"/><stop offset=".62" stop-color="#B3D4DB"/>
+      <stop offset=".81" stop-color="#486574"/><stop offset="1" stop-color="#101F2A"/>
+    </linearGradient>
+    <radialGradient id="face" cx=".35" cy=".2" r=".9">
+      <stop stop-color="#355565"/><stop offset=".5" stop-color="#142C3B"/><stop offset="1" stop-color="#09141D"/>
+    </radialGradient>
+    <linearGradient id="engraving" x1="46" y1="36" x2="80" y2="91" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/><stop offset=".48" stop-color="#C8F6F4"/>
+      <stop offset=".5" stop-color="#71C9CF"/><stop offset="1" stop-color="#39D6E5"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="34" y1="18" x2="93" y2="108" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity=".2"/><stop offset=".48" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset=".51" stop-color="#FFFFFF" stop-opacity=".08"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="61" fill="#08131C" stroke="#051018" stroke-width="2"/>
+  <circle cx="64" cy="64" r="58" fill="url(#rim)" stroke="#B2D3DC" stroke-width="1.5"/>
+  <circle cx="64" cy="64" r="53" fill="#0A1B27" stroke="#253D4B" stroke-width="2"/>
+  <circle cx="64" cy="64" r="55" stroke="#142B37" stroke-width="3" stroke-dasharray="2 5"/>
+  <circle cx="64" cy="64" r="49" fill="url(#face)" stroke="#668691" stroke-width="1"/>
+  <path d="M26 40a45 45 0 0 1 63-14M102 88a45 45 0 0 1-63 14" stroke="#39D6E5" stroke-width="3" stroke-linecap="round"/>
+  <path d="M101 42a43 43 0 0 1 0 43M27 86a43 43 0 0 1 0-43" stroke="#DC68A7" stroke-width="2"/>
+  <path d="m64 27 32 18v38l-32 18-32-18V45Z" fill="#0A1924" stroke="#638C99" stroke-width="1.5"/>
+  <path d="m64 32 27 16v32L64 96 37 80V48Z" stroke="#39D6E5" stroke-opacity=".3"/>
+  <path d="M48 43h22l12 10v17L70 80H59v12H48V43Zm11 12v13h9l3-3v-7l-3-3h-9Z" fill="#030B12" transform="translate(0 3)"/>
+  <path d="M48 40h22l12 10v17L70 77H59v12H48V40Zm11 12v13h9l3-3v-7l-3-3h-9Z" fill="url(#engraving)" fill-rule="evenodd"/>
+  <path d="M49 41h20l11 9M49 41v47" stroke="#F3EEE4" stroke-opacity=".8"/>
+  <path d="M44 21h10m20 86h10M21 57v14m86-14v14" stroke="#C1E7E9" stroke-width="2"/>
+  <path d="m25 33 5 5m68 52 5 5M33 103l5-5m52-68 5-5" stroke="#39D6E5" stroke-width="2"/>
+  <circle cx="64" cy="64" r="48" fill="url(#shine)"/>
+</svg>

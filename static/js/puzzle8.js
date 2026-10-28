@@ -16,6 +16,7 @@
     const gridWrap = document.getElementById('p8-grid-wrap');
     const retryCountdownValue = document.getElementById('p8-retry-countdown-value');
     const exhaustedScreen = document.getElementById('p8-exhausted-screen');
+    const pointsValue = document.getElementById('p8-points-value');
     let symbolsOrder = [];
     let solved = false;
     let countdownFrame = null;
@@ -25,7 +26,7 @@
     let leaving = false;
     let attempt = 1;
     let maxAttempts = 10;
-    let availablePoints = 100;
+    let availablePoints = null;
 
     const instructions = {
         idle: ['', '', ''],
@@ -87,8 +88,8 @@
         gridWrap.hidden = ['retry', 'exhausted'].includes(phase);
         const [title, detail, step] = instructions[phase] || instructions.idle;
         instructionStep.textContent = ['numbers', 'tokens', 'input'].includes(phase)
-            ? tr('memoryAttempt', `INTENTO ${attempt}/${maxAttempts} · ${availablePoints} PUNTOS EN JUEGO`,
-                {attempt, limit: maxAttempts, points: availablePoints})
+            ? tr('memoryAttempt', `INTENTO ${attempt}/${maxAttempts}`,
+                {attempt, limit: maxAttempts})
             : step;
         instructionTitle.textContent = title;
         instructionDetail.textContent = detail;
@@ -203,6 +204,7 @@
         if (Number.isInteger(data.attempt)) attempt = data.attempt;
         if (Number.isInteger(data.max_attempts)) maxAttempts = data.max_attempts;
         if (Number.isInteger(data.available_points)) availablePoints = data.available_points;
+        pointsValue.textContent = availablePoints === null ? '—' : String(availablePoints);
         if (Array.isArray(data.confirmed_boxes)) {
             confirmedBoxes = new Set(data.confirmed_boxes.map(Number));
             confirmedEntries = data.confirmed_entries || {};

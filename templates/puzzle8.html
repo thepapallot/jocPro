@@ -22,6 +22,25 @@
 
 {% block puzzle_content %}
 <div id="p8-shell">
+    <div id="p8-points" class="points-hud" role="status" aria-live="polite" aria-atomic="true">
+        <span class="points-coin" aria-hidden="true">
+            <span class="points-coin-body">
+                <span class="points-coin-edge" style="--coin-depth: -3px"></span>
+                <span class="points-coin-edge" style="--coin-depth: -2px"></span>
+                <span class="points-coin-edge" style="--coin-depth: -1px"></span>
+                <span class="points-coin-edge" style="--coin-depth: 0px"></span>
+                <span class="points-coin-edge" style="--coin-depth: 1px"></span>
+                <span class="points-coin-edge" style="--coin-depth: 2px"></span>
+                <span class="points-coin-edge" style="--coin-depth: 3px"></span>
+                <img class="points-coin-face points-coin-front" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+                <img class="points-coin-face points-coin-back" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+            </span>
+        </span>
+        <div class="points-hud-value">
+            <strong id="p8-points-value">—</strong>
+            <span class="points-hud-label" data-i18n="game.memoryPointsAtStake">PUNTOS EN JUEGO</span>
+        </div>
+    </div>
     <section id="p8-stage" class="p8-panel">
         <section id="p8-exhausted-screen" role="status" aria-labelledby="p8-exhausted-title" hidden>
             <span class="p8-exhausted-mark" aria-hidden="true">×</span>
