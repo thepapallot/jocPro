@@ -32,6 +32,8 @@ class PresentationRoutesTests(unittest.TestCase):
             self.assertEqual(data['sceneId'], f'success-{previous}')
             self.assertEqual(data['nextUrl'], f'/presentacio/{following}')
         self.assertEqual(self.page('/final')['sceneId'], 'closing')
+        self.assertEqual(self.page('/final?session_id=37')['sessionId'], 37)
+        self.assertEqual(self.page('/final-loop?session_id=37')['initialStep'], 2)
 
     def test_order_and_three_languages_come_from_page_context(self):
         for language in ['ca', 'es', 'eng']:

@@ -29,3 +29,12 @@ test('narration stays above the score and a missing music file is reported to th
  const score=audios.find(a=>a.src.endsWith('final-victoria.mp3'));
  score.events.error();assert.match(api.issue,/final-victoria.mp3/);
 });
+test('score reveal continues victory music without replaying the charge',()=>{
+ const {api,config,audios}=setup();config.steps=['cover','score','thanks'];
+ api.sound(config,0,false,true,'ca');
+ const music=audios.find(a=>a.src.endsWith('final-victoria.mp3'));
+ music.currentTime=63;
+ api.sound(config,1,false,true,'ca');
+ assert.equal(music.currentTime,63);assert.equal(music.volume,.22);
+ assert.equal(audios.find(a=>a.src.endsWith('final-charge.wav')).paused,true);
+});

@@ -15,7 +15,7 @@
   <h1>Este momento<br>es vuestro.</h1>
   <p>Primero la carga con luces y sonido, después el mensaje con subtítulos. Catalán: 60,4 segundos con locución. Castellano: 78 segundos provisionales, con locución pendiente.</p>
   <p><label>Idioma <select id="language"><option value="es">Castellano</option><option value="ca">Català</option></select></label></p>
-  <p>La secuencia termina en una composición estable para la foto. Pulsa <strong>Esc</strong> para mostrar los controles.</p>
+  <p>Después del mensaje aparece el recuento final; Foto abre la composición estable. Sin una sesión identificada, esta previsualización no inventa una puntuación. Pulsa <strong>Esc</strong> para mostrar los controles.</p>
   <button id="play">Ver el cierre</button><button id="photo" class="secondary">Ver la foto final</button>
   <p>Previsualización aislada. No inicia partidas ni modifica sesiones.</p>
 </main>
@@ -32,14 +32,14 @@ async function start(photo){
 addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==frame.contentWindow||e.data?.type!=='pyramid-presentation-state')return;
   state=e.data;document.getElementById('pause').textContent=state.autoPaused?'Reanudar':'Pausar';document.getElementById('pause').disabled=!state.automatic;
-  if(opening){opening=false;if(wantPhoto)send('step',1);}
+  if(opening){opening=false;if(wantPhoto)send('step',2);}
 });
 frame.addEventListener('load',()=>{try{frame.contentDocument.addEventListener('keydown',e=>{if(e.key==='Escape')bar.hidden=false;});}catch{}});
 document.getElementById('play').onclick=()=>start(false);
 document.getElementById('photo').onclick=()=>start(true);
 document.getElementById('pause').onclick=()=>send('pause');
 document.getElementById('restart').onclick=()=>send('restart');
-document.getElementById('show-photo').onclick=()=>send('step',1);
+document.getElementById('show-photo').onclick=()=>send('step',2);
 document.getElementById('hide').onclick=()=>{bar.hidden=true;frame.contentWindow.focus();};
 document.getElementById('back').onclick=()=>{frame.src='about:blank';screen.classList.remove('playing');if(document.fullscreenElement)document.exitFullscreen();};
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&screen.classList.contains('playing'))bar.hidden=false;});

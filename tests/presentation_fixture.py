@@ -33,6 +33,13 @@ def create_runtime():
     @app.get('/test/session/active')
     def preview_session():
         return jsonify(active=True, session={'session_id': 1, 'language': mqtt.get_active_session_language()})
+    @app.get('/test/session/<int:session_id>')
+    def preview_results(session_id):
+        return jsonify(session={'session_id': session_id}, puzzles=[
+            {'session_id': session_id, 'puzzle_num': num, 'total_points': points}
+            for num, points in [(11, 999), (2, 80), (1, 94), (8, 90), (3, 140),
+                                (5, 70), (12, 100), (4, None), (4, 85), (6, 90)]
+        ])
     # Visual previews deliberately bypass the live session gate; lifecycle tests
     # exercise it with a real temporary database in test_sessions.py.
     namespace = dict(globals(), app=app, mqtt_client=mqtt, BASE_DIR=ROOT,

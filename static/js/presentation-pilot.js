@@ -6,7 +6,7 @@
   if(sceneIndex<0)throw new Error('Presentation not configured: '+page.sceneId);
   let config = flow[sceneIndex];
   const run=page&&window.parent!==window?window.parent.PyramidRun:null;
-  const sessionId=run?.snapshot().sessionId;
+  const sessionId=page?.sessionId??run?.snapshot().sessionId;
   if(run&&config.kind==='opening')run.reset(window);
   function restoreProgress(){
     if(!run||['welcome','opening'].includes(config.kind))return;
@@ -31,6 +31,7 @@
   let closingChargeDone=false;
   const text = () => config.copy[language];
   const cinematicClosing=()=>window.PyramidClosing?.active(config,language);
+  const scoreScreen=()=>config.kind==='closing'&&config.steps[step]==='score';
   function soundtrack(reset=false){
     if(cinematicClosing()){
       window.PyramidOpening?.stop();
@@ -57,7 +58,7 @@
       }else narration=null;
     }
     if(!recording){stage.dataset.narrationWaiting='false';return;}
-    if(['hold','thanks'].includes(config.steps[step])){pauseNarration();return;}
+    if(['hold','score','thanks'].includes(config.steps[step])){pauseNarration();return;}
     if(!preserve){
       pauseNarration();
       closingChargeDone=false;
@@ -66,7 +67,7 @@
     stage.dataset.narrationWaiting=String(!autoPaused&&narration.paused);
   }
   function audioFailure(blocked){
-    if(leaving||!recording||['hold','thanks'].includes(config.steps[step]))return;
+    if(leaving||!recording||['hold','score','thanks'].includes(config.steps[step]))return;
     if(cinematicClosing()&&!closingChargeDone&&!autoPaused)autoRemaining=Math.max(1,autoDeadline-performance.now());
     autoPaused=true;narrationBlocked=true;pauseNarration();stopOpening();
     stage.dataset.autoPaused='true';soundtrack();
@@ -76,12 +77,12 @@
     button.textContent=blocked?'Activar so':'Reintentar àudio';updateControls();
   }
   function playNarration(){
-    if(!recording||autoPaused||['hold','thanks'].includes(config.steps[step]))return;
+    if(!recording||autoPaused||['hold','score','thanks'].includes(config.steps[step]))return;
     const request=++playRequest;
     narration.play().catch(error=>{if(request===playRequest)audioFailure(error.name==='NotAllowedError');});
   }
   function tickNarration(){
-    if(!recording||autoPaused||leaving||['hold','thanks'].includes(config.steps[step]))return;
+    if(!recording||autoPaused||leaving||['hold','score','thanks'].includes(config.steps[step]))return;
     if(cinematicClosing()){
       if(narration.ended){choose(step+1);return;}
       updateOpeningSubtitle();return;
@@ -105,6 +106,7 @@
     if(subtitleTimer!==null)clearInterval(subtitleTimer);subtitleTimer=null;
   }
   function updateOpeningSubtitle(){
+    if(scoreScreen())return;
     if(cinematicClosing()){
       if(recording&&config.steps[step]!=='thanks'){
         const remaining=autoPaused?(autoRemaining??PyramidClosing.chargeMs):Math.max(0,autoDeadline-performance.now());
@@ -135,6 +137,7 @@
   }
   function scheduleOpening(){
     stopOpening();
+    if(scoreScreen())return;
     if(cinematicClosing()&&recording){
       if(config.steps[step]!=='thanks'&&!autoPaused){
         if(closingChargeDone){subtitleTimer=setInterval(tickNarration,1000/60);playNarration();}
@@ -169,6 +172,10 @@
     updateOpeningSubtitle();
   }
   function toggleAutoplay(){
+    if(scoreScreen()){
+      autoPaused=!autoPaused;PyramidScore.pause(autoPaused);
+      stage.dataset.autoPaused=String(autoPaused);soundtrack();updateControls();return;
+    }
     if(phase!=='slides'||!config.autoAdvanceMs?.[step])return;
     if(autoPaused){autoPaused=false;narrationBlocked=false;narrationIssue='';stage.querySelector('.o-audio-retry')?.remove();scheduleOpening();}else{autoRemaining=Math.max(1,autoDeadline-performance.now());autoPaused=true;pauseNarration();stopOpening();}
     stage.dataset.autoPaused=String(autoPaused);
@@ -203,18 +210,19 @@
     $('p-announcement').textContent = phase === 'game' ? text().name : `${text().name}. ${text().stepLabels[step]}`;
     const host=page&&window.parent!==window?window.parent:window.opener;
     if (host && !host.closed) host.postMessage({
-      type: 'pyramid-presentation-state', sessionId, realPage:!!page, step, revealed, phase, language, mode, automatic:!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
+      type: 'pyramid-presentation-state', sessionId, realPage:!!page, step, revealed, phase, language, mode, automatic:scoreScreen()||!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
       incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el funcionament →',es:'Tokens repartidos · explicar el funcionamiento →',eng:'Tokens handed out · explain the equipment →'}[language]:config.incremental?({'equipment-title':{ca:'Com funciona el joc →',es:'Cómo funciona el juego →',eng:'How the game works →'}[language],title:text().name+' →',elements:language==='ca'?'La missió és a les vostres mans →':'La misión está en vuestras manos →',objective:language==='ca'?'Mostrar objectiu →':'Mostrar objetivo →',tools:language==='ca'?'Mostrar eines →':'Mostrar herramientas →',interaction:language==='ca'?'Mostrar interacció →':'Mostrar interacción →',attention:language==='ca'?'Mostrar atenció →':'Mostrar atención →'}[config.steps[step+1]]||null):null,
       name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
       labels: text().stepLabels, kind: config.kind || 'puzzle',
       sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
       canNext: flow ? (phase==='game' ? mode==='preview' : phase==='slides' && (step<config.steps.length-1 || (config.kind!=='puzzle' && (page ? !!page.nextUrl : sceneIndex<flow.length-1)))) : phase==='slides' && step<config.steps.length-1,
-      note: phase === 'game' ? (mode === 'live' ? 'Partida real abierta. Al completar la prueba se muestra la transición; el GM avanza a la siguiente presentación.' : 'Ensayo del recorrido: esta vista no reproduce la lógica del juego. Pulsa Siguiente para simular la prueba superada.') : config.kind==='welcome' ? 'Pantalla de espera. Cuando todo el grupo esté en su sitio, pulsa Comenzar presentación inicial.' : narrationIssue||(cinematicClosing()&&PyramidClosing.issue)||(ending?'Cierre musical. La Pirámide permanece 2,6 segundos antes del reparto de tokens.':text().notes[step])
+      note: phase === 'game' ? (mode === 'live' ? 'Partida real abierta. Al completar la prueba se muestra la transición; el GM avanza a la siguiente presentación.' : 'Ensayo del recorrido: esta vista no reproduce la lógica del juego. Pulsa Siguiente para simular la prueba superada.') : config.kind==='welcome' ? 'Pantalla de espera. Cuando todo el grupo esté en su sitio, pulsa Comenzar presentación inicial.' : (scoreScreen()&&PyramidScore.issue)||narrationIssue||(cinematicClosing()&&PyramidClosing.issue)||(ending?'Cierre musical. La Pirámide permanece 2,6 segundos antes del reparto de tokens.':text().notes[step])
     }, location.origin);
   }
   function render(preserveNarration=false) {
+    window.PyramidScore?.stop();
     restoreProgress();
-    if(config.kind==='closing')config.autoAdvanceMs=[cinematicClosing()?PyramidClosing.durationFor(language):11000,0];
+    if(config.kind==='closing')config.autoAdvanceMs=[cinematicClosing()?PyramidClosing.durationFor(language):11000,0,0];
     document.title=text().name;
     document.getElementById('p-viewport')?.setAttribute('aria-label', {ca:'Pantalla compartida dels jugadors',es:'Pantalla compartida de los jugadores',eng:'Shared player screen'}[language]);
     stage.hidden = false;
@@ -248,6 +256,7 @@
     stage.querySelectorAll('.j-leaving').forEach(node=>node.remove());
     if(old){const subtitle=old.querySelector('.o-subtitle,.f-subtitle');if(subtitle)subtitle.textContent='';old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
     stage.append(section);
+    if(scoreScreen())PyramidScore.mount(section.querySelector('.f-score'),sessionId,page?.tutorialId||11,language,updateControls);
     if(config.kind==='success'&&section.querySelector('.v-stage')){
       // Opening a progress page never awards a challenge or replays an earned win.
       PyramidVictory.create(section.querySelector('.v-stage'),{previous:config.completed,completed:config.completed,total:config.total,language,practice:config.afterPuzzle===11,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches}).render(8.4);
@@ -399,7 +408,7 @@
   });
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&phase==='countdown')choose(config.steps.length-1);size();});
   addEventListener('resize',size);
-  addEventListener('pagehide',()=>{pauseNarration();stopCountdown();stopOpening();window.PyramidOpening?.stop();window.PyramidClosing?.stop();});
+  addEventListener('pagehide',()=>{pauseNarration();stopCountdown();stopOpening();window.PyramidScore?.stop();window.PyramidOpening?.stop();window.PyramidClosing?.stop();});
   render();
   document.fonts.ready.then(size);
 })();

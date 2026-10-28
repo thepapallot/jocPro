@@ -261,6 +261,7 @@ class SessionTests(unittest.TestCase):
         self.assertIsNotNone(self.queries.get_session_stats(sid)['ended_at'])
         self.assertFalse(self.client.get('/test/session/active').json['active'])
         self.namespace['mqtt_client'].stop_current_puzzle.assert_called_once()
+        self.namespace['render_presentation'].assert_called_once_with('closing', session_id=sid)
 
     def test_closing_presentation_does_not_hide_storage_failure(self):
         sid = self.create()
@@ -269,6 +270,23 @@ class SessionTests(unittest.TestCase):
             self.assertEqual(self.client.get('/final').status_code, 500)
         self.assertTrue(self.client.get('/test/session/active').json['active'])
         self.namespace['mqtt_client'].stop_current_puzzle.assert_not_called()
+
+    def test_final_score_source_stays_scoped_after_archiving(self):
+        sid = self.create()
+        other = self.create()
+        self.client.post('/test/session/confirm', json={'session_id': sid})
+        self.writer.start_session(sid)
+        for session_id, num, points in [(sid, 2, 80), (sid, 4, None),
+                                        (sid, 4, 85), (sid, 6, 90), (other, 2, 100)]:
+            row = self.writer.record_puzzle_start(session_id, num, 1, 1)
+            self.writer.end_puzzle(row, total_points=points)
+        self.assertEqual(self.client.get('/final').status_code, 200)
+        self.namespace['render_presentation'].assert_called_once_with('closing', session_id=sid)
+        detail = self.client.get(f'/test/session/{sid}').json
+        self.assertEqual(detail['session']['session_id'], sid)
+        self.assertEqual([p['total_points'] for p in detail['puzzles']], [80, 0, 85, 90])
+        self.assertEqual(sum(p['total_points'] or 0 for p in detail['puzzles']), 255)
+        self.assertIsNotNone(detail['session']['ended_at'])
 
     def mqtt_runtime(self, sid):
         client = MQTTClient.__new__(MQTTClient)

@@ -39,6 +39,28 @@ Rutes: `/videoIntro`, `/videoTutorial`, `/presentacio/ID`, `/puzzle/ID`, `/video
 
 ## Assaig sense terminals
 
+### Puntuació final
+
+Després del muntatge de tancament, el pas **Puntuació final** compta des de zero
+fins al total registrat en 4,2 segons i culmina amb una ona de llum i partícules.
+La xifra queda fixa fins que el GM prem **Siguiente** per obrir la foto.
+El recompte es pot pausar i repetir seleccionant de nou el pas; no escriu punts.
+Amb moviment reduït es mostra directament el resultat estable.
+
+La presentació conserva el `sessionId` de la partida acabada i consulta
+`/test/session/ID`: suma els `total_points` de les files d’aquella sessió,
+incloent-hi el QUIZ i Càrrega Final, però excloent-ne la pràctica i les files
+sense punts registrats. No suma punts disponibles ni dades d’altres sessions.
+Els errors s’indiquen al GM i no es converteixen en zero.
+`/final-loop` continua obrint directament la foto.
+
+Implementació: [presentation-score.js](../static/js/presentation-score.js).
+Comprovacions: [presentation_score.test.cjs](../tests/presentation_score.test.cjs),
+les proves de sessions i el fixture aïllat de presentacions.
+Només simulació, sense MQTT ni hardware.
+
+### Visors aïllats
+
 `player/presentation.html?flow=game&lang=ca` és un visor de revisió. `/player/briefings.html` permet revisar les presentacions gràfiques.
 
 El recorregut nou no carrega Cero ni les locucions antigues. L’obertura narrativa incorpora subtítols temporitzats propis. Els sons que formen part dels puzzles es mantenen. El sistema antic de `scenes/`, el generador d’intros, els vídeos de Cero i les locucions antigues es van retirar el 5 d’octubre de 2026. Les presentacions actuals es mantenen en HTML i JavaScript; no depenen d’aquells fitxers.

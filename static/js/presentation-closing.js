@@ -86,7 +86,7 @@
   }
   function sound(c,step,isPaused,reset=false,lang='es'){
     setLanguage(lang);
-    paused=isPaused;const photo=c.steps[step]==='thanks';
+    paused=isPaused;const photo=['score','thanks'].includes(c.steps[step]);
     if(!effect){effect=new Audio('/static/audios/effects/final-charge.wav');effect.preload='auto';effect.volume=1;}
     if(reset){effect.pause();effect.currentTime=0;lastMs=0;effectStarted=false;effectFailed=false;audioIssue='';}
     if(paused||photo)effect.pause();
