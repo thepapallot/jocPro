@@ -31,6 +31,14 @@
     let movementProgress = 1;
 
     const snakeStageEl = document.getElementById('p2-snake-stage');
+    const hudEl = document.getElementById('p2-hud');
+    const timerEl = document.getElementById('p2-timer');
+    const pointsValueEl = document.getElementById('p2-points-value');
+    let scoring = null;
+    let elapsedAnchor = 0;
+    let anchoredAt = Date.now();
+    let shownClock = '';
+    let shownPoints = '';
 
     function getSequence(player) {
         return DEFAULT_SEQUENCES[player] || [];
@@ -137,6 +145,64 @@
         renderSnakePositions();
     }
 
+    function updateScoring(data) {
+        if (Array.isArray(data.penalty_thresholds_seconds)) {
+            scoring = {
+                maxPoints: data.max_points,
+                penalty: data.penalty_per_time_band,
+                thresholds: data.penalty_thresholds_seconds,
+                maxTime: data.max_time_seconds,
+            };
+        }
+        if (Number.isFinite(data.elapsed_seconds)) {
+            elapsedAnchor = data.elapsed_seconds;
+            anchoredAt = Date.now();
+        }
+    }
+
+    // The server owns elapsed time and the score rules; this only keeps the
+    // display moving between events.
+    function renderClock() {
+        if (!scoring || !timerEl || !pointsValueEl) return;
+        const elapsed = elapsedAnchor + (Date.now() - anchoredAt) / 1000;
+        const remaining = Math.max(0, Math.ceil(scoring.maxTime - elapsed));
+        const clock = `${String(Math.floor(remaining / 60)).padStart(2, '0')}:${String(remaining % 60).padStart(2, '0')}`;
+        const bands = scoring.thresholds.filter((threshold) => elapsed >= threshold).length;
+        const points = String(Math.max(0, scoring.maxPoints - scoring.penalty * bands));
+        if (clock !== shownClock) {
+            shownClock = clock;
+            timerEl.textContent = clock;
+            timerEl.classList.toggle('is-low', remaining <= 60);
+        }
+        if (points !== shownPoints) {
+            shownPoints = points;
+            pointsValueEl.textContent = points;
+        }
+    }
+
+    // Cells under the HUD are closed to the snakes so they never cross it.
+    function isBlockedCell(x, y) {
+        if (!hudEl) return false;
+        // offsetLeft/Top ignore the centring transform, so measure the real box.
+        const box = hudEl.getBoundingClientRect();
+        const stage = snakeStageEl.getBoundingClientRect();
+        // The board may be scaled by CSS; cells use unscaled board pixels.
+        const scale = snakeStageEl.offsetWidth ? stage.width / snakeStageEl.offsetWidth : 1;
+        const left = (box.left - stage.left) / scale;
+        const top = (box.top - stage.top) / scale;
+        return x * CELL_SIZE < left + box.width / scale
+            && (x + 1) * CELL_SIZE > left
+            && y * CELL_SIZE < top + box.height / scale
+            && (y + 1) * CELL_SIZE > top;
+    }
+
+    function isTrailClear(trail, columns, rows) {
+        return trail.every((point) => (
+            point.x >= 0 && point.x < columns && point.y >= 0 && point.y < rows
+            && !isBlockedCell(point.x, point.y)
+        ));
+    }
+
     function getGridBounds() {
         return {
             columns: Math.max(3, Math.floor(snakeStageEl.clientWidth / CELL_SIZE)),
@@ -153,17 +219,21 @@
             { x: 0, y: -1 },
         ];
         const direction = directions[(player - 1) % directions.length];
-        const head = {
-            x: 1 + ((player * 3) % Math.max(1, columns - 2)),
-            y: 1 + ((player * 5) % Math.max(1, rows - 2)),
+        const startX = 1 + ((player * 3) % Math.max(1, columns - 2));
+        const startY = 1 + ((player * 5) % Math.max(1, rows - 2));
+        const buildTrail = (headX, headY) => {
+            const trail = [{x: headX, y: headY}];
+            for (let index = 1; index <= TOTAL; index++) {
+                trail.push({x: headX - direction.x * index, y: headY - direction.y * index});
+            }
+            return trail;
         };
-        const trail = [head];
 
-        for (let index = 1; index <= TOTAL; index++) {
-            trail.push({
-                x: Math.max(0, Math.min(columns - 1, head.x - direction.x * index)),
-                y: Math.max(0, Math.min(rows - 1, head.y - direction.y * index)),
-            });
+        // Scan from the intended start for the first spot clear of the HUD.
+        let trail = buildTrail(startX, startY);
+        for (let offset = 1; offset < columns * rows && !isTrailClear(trail, columns, rows); offset++) {
+            const index = (startY * columns + startX + offset) % (columns * rows);
+            trail = buildTrail(index % columns, Math.floor(index / columns));
         }
 
         return { trail, previousTrail: trail.slice(), direction, ticks: 0 };
@@ -238,14 +308,19 @@
         ];
 
         for (let player = 1; player <= PLAYER_COUNT; player++) {
-            const state = snakePositions.get(player);
+            let state = snakePositions.get(player);
             if (!state) continue;
+            // Layout can change without a resize (fonts, HUD size): self-heal.
+            if (!isTrailClear(state.trail, columns, rows)) {
+                state = createSnakeState(player);
+                snakePositions.set(player, state);
+            }
 
             const head = state.trail[0];
             const canMove = (direction) => {
                 const x = head.x + direction.x;
                 const y = head.y + direction.y;
-                return x >= 0 && x < columns && y >= 0 && y < rows;
+                return x >= 0 && x < columns && y >= 0 && y < rows && !isBlockedCell(x, y);
             };
             const isReverse = (direction) => (
                 direction.x === -state.direction.x && direction.y === -state.direction.y
@@ -272,6 +347,13 @@
                 if (alternatives.length) {
                     nextDirection = alternatives[Math.floor(Math.random() * alternatives.length)];
                 } else {
+                    // Boxed in: back out by swapping head and tail.
+                    state.trail.reverse();
+                    state.previousTrail = state.trail.slice();
+                    const [first, second] = state.trail;
+                    if (second && (first.x !== second.x || first.y !== second.y)) {
+                        state.direction = {x: first.x - second.x, y: first.y - second.y};
+                    }
                     continue;
                 }
             }
@@ -290,6 +372,7 @@
     }
 
     function animateSnakes(timestamp) {
+        renderClock();
         // Resume where drawing stopped, never race through missed steps after
         // a hidden tab or a slow frame. Timing uses the same logical board at
         // every resolution; interpolation does not depend on monitor refresh.
@@ -322,6 +405,11 @@
                 });
             }
         });
+        snakePositions.forEach((state, player) => {
+            if (!isTrailClear(state.trail, columns, rows)) {
+                snakePositions.set(player, createSnakeState(player));
+            }
+        });
         renderSnakePositions();
     }
 
@@ -343,6 +431,8 @@
         if (window.PyramidLevelVictory?.active) return;
         if (data.puzzle_id !== 2) return;
         if (exhausted || redirected) return;
+        updateScoring(data);
+        renderClock();
         if (data.puzzle_exhausted) {
             exhausted = true;
             stopAlarmAudio();
