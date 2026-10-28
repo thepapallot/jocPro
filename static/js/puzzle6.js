@@ -2,6 +2,7 @@
     const tr = (key, fallback, values = {}) => window.PyramidLanguage?.t?.('game.' + key, fallback, values) ?? fallback;
 
     const countdownEl = document.getElementById('countdown');
+    const pointsValueEl = document.getElementById('p6-points-value');
     const messageEl = document.getElementById('message');
     const statusBadgeEl = document.getElementById('status-badge');
     const trackerPanelEl = document.getElementById('tracker-panel');
@@ -230,7 +231,14 @@
         shellEl.style.opacity = '';
     }
 
+    function updatePoints(d) {
+        if (pointsValueEl && Number.isFinite(d.available_points)) {
+            pointsValueEl.textContent = String(d.available_points);
+        }
+    }
+
     function applySnapshot(d) {
+        updatePoints(d);
         if (d.puzzle_solved) {
             applySolvedState();
             return;
@@ -265,6 +273,7 @@
         if (d.puzzle_id !== 6) return;
 
         console.log('[P6] handleUpdate received:', d);
+        updatePoints(d);
 
         if (d.countdown_start) {
             const info = d.countdown_start;
