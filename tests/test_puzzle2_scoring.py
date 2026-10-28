@@ -86,6 +86,14 @@ class Puzzle2ScoringTests(unittest.TestCase):
         for call in runtime.client.push_update.call_args_list:
             self.assertNotIn('total_points', call.args[0])
 
+    def test_state_exposes_score_bands_for_the_live_hud(self):
+        state = self.runtime().puzzle.get_state()
+        rules = SCORING_CONFIG['puzzle2']
+        self.assertEqual(state['max_points'], rules['max_points'])
+        self.assertEqual(state['penalty_per_time_band'], rules['penalty_per_time_band'])
+        self.assertEqual(state['penalty_thresholds_seconds'], rules['penalty_thresholds_seconds'])
+        self.assertEqual(state['max_time_seconds'], rules['max_time_seconds'])
+
     def test_errors_are_counted_without_reset_or_points_penalty(self):
         runtime = self.runtime()
         runtime.puzzle.handle_message(['P2', '1', '5'])
