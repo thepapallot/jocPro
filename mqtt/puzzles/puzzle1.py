@@ -84,8 +84,16 @@ class Puzzle1(BasePuzzle):
                 "operations": self.operations_with_metadata.copy(),
                 "round": self.round,
                 "round_size": self.round_sizes[self.round],
-                "total_points": self.total_points
+                "total_points": self.total_points,
+                "available_points": self._available_points()
             }
+
+    def _available_points(self):
+        return calculate_points("puzzle1", self.scoring_errors)
+
+    def _push(self, data):
+        """Every update carries the points still available for the HUD."""
+        super()._push({"available_points": self._available_points(), **data})
             
     def handle_message(self, parts):
         """Handle MQTT message: P1,a,b"""
@@ -236,6 +244,7 @@ class Puzzle1(BasePuzzle):
             self.round_errors += 1
             self.scoring_errors += 1
             run_serial = self._run_serial
+            self._push({})
             
         def _later():
             time.sleep(5)  # Show timeout message

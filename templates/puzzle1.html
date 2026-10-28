@@ -21,6 +21,26 @@
         <div class="p1-timer-caption" data-i18n="game.timeRemaining">TIEMPO RESTANTE</div>
         <div id="timer" role="timer" aria-live="off">00:45</div>
 
+        <div id="p1-points" class="points-hud" role="status" aria-live="polite" aria-atomic="true">
+            <span class="points-coin" aria-hidden="true">
+                <span class="points-coin-body">
+                    <span class="points-coin-edge" style="--coin-depth: -3px"></span>
+                    <span class="points-coin-edge" style="--coin-depth: -2px"></span>
+                    <span class="points-coin-edge" style="--coin-depth: -1px"></span>
+                    <span class="points-coin-edge" style="--coin-depth: 0px"></span>
+                    <span class="points-coin-edge" style="--coin-depth: 1px"></span>
+                    <span class="points-coin-edge" style="--coin-depth: 2px"></span>
+                    <span class="points-coin-edge" style="--coin-depth: 3px"></span>
+                    <img class="points-coin-face points-coin-front" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+                    <img class="points-coin-face points-coin-back" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+                </span>
+            </span>
+            <span class="points-hud-value">
+                <strong id="p1-points-value">100</strong>
+                <span class="points-hud-label" data-i18n="game.memoryPointsAtStake">PUNTOS EN JUEGO</span>
+            </span>
+        </div>
+
         <div id="objective-formula">
             <div class="formula-item" id="formula-left">
                 <img
