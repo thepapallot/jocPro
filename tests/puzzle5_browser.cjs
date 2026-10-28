@@ -40,6 +40,7 @@ const push = data => inner(`w.auditPush(${JSON.stringify({puzzle_id: 5, round: 1
     objective: 30, attempt: 1, max_attempts: 10, available_points: 100,
     limit: 10, total_points: 0, auto_advance: false, ...data})})`);
 const names = {ca: 'Pols del Temps', es: 'Pulso de Tiempo', eng: 'Pulse of Time'};
+const attempts = {ca: 'INTENT 2/10', es: 'INTENTO 2/10', eng: 'ATTEMPT 2/10'};
 const exhaustedCopy = {
     ca: ['INTENTS ESGOTATS', '10 intents · 0 punts', 'Continuem amb el següent nivell'],
     es: ['INTENTOS AGOTADOS', '10 intentos · 0 puntos', 'Continuamos con el siguiente nivel'],
@@ -103,8 +104,8 @@ async function inspect(lang, width, height, phase, selectors) {
     fs.writeFileSync(`${out}/${lang}-${width}-${phase}.png`, Buffer.from(shot.data, 'base64'));
     reports.push({lang, width, height, phase, ...layout});
 }
-const header = ['.game-corner-identity h1', '#streak'];
-const countdown = [...header, '#objective-card', '#p5-preparation-title', '#objective-text',
+const header = ['.game-corner-identity h1', '#streak', '#streak-attempt', '#p5-points', '#p5-points-value'];
+const countdown = ['.game-corner-identity h1', '#objective-card', '#p5-preparation-title', '#objective-text',
     '#objective-subtext', '#p5-preparation-countdown', '#p5-countdown-value',
     '#p5-preparation-hint', '#p5-preparation-margin', '#p5-preparation-limit'];
 const board = [...header, '#brief-objective', '#players-section', '.player-box', '.box-label',
@@ -138,7 +139,7 @@ const board = [...header, '#brief-objective', '#players-section', '.player-box',
         await command('Network.enable');
         for (const lang of ['ca', 'es', 'eng']) for (const [width, height] of [[1920, 1080], [1280, 720]]) {
             await command('Emulation.setDeviceMetricsOverride', {width, height, deviceScaleFactor: 1, mobile: false});
-            await command('Page.navigate', {url: base + '/?shell_target=/puzzle/5&lang=' + lang});
+            await command('Page.navigate', {url: base + '/?shell_target=%2Fpuzzle%2F5%3Fsession_id%3D1&lang=' + lang});
             await until('!!document.getElementById("game-shell-frame")?.contentWindow.auditStreams?.length');
             await inner('w.document.fonts.ready');
             assert.equal(await inner("w.document.querySelector('.game-corner-identity h1').textContent"), names[lang]);
@@ -168,7 +169,8 @@ const board = [...header, '#brief-objective', '#players-section', '.player-box',
             await push({attempt: 2, available_points: 90, limit: 14, countdown_message: 'retry', waiting_seconds: 9});
             assert.equal(await inner("w.document.getElementById('p5-countdown-value').textContent"), '9 s');
             assert.equal(await inner("w.document.getElementById('p5-preparation-limit').textContent"), '14 S');
-            assert.match(await inner("w.document.getElementById('streak').textContent"), /2\/10.*90/);
+            assert.equal(await inner("w.document.getElementById('streak-attempt').textContent"), attempts[lang]);
+            assert.equal(await inner("w.document.getElementById('p5-points-value').textContent"), '90');
             await inspect(lang, width, height, 'retry', countdown);
             await until("document.getElementById('game-shell-frame').contentWindow.document.getElementById('p5-countdown-value').textContent==='8 s'");
             // Deadline recovery takes priority over a stale waiting_seconds value.
@@ -194,7 +196,7 @@ const board = [...header, '#brief-objective', '#players-section', '.player-box',
             assert.equal(await inner('w.PyramidLevelVictory.active'), false);
             assert.equal(await inner("w.getComputedStyle(w.document.getElementById('puzzle5-shell')).display"), 'none');
             assert.deepEqual(await inner("[...w.document.querySelectorAll('#p5-exhausted-screen h2,#p5-exhausted-screen p')].map(n=>n.textContent)"), exhaustedCopy[lang]);
-            await inspect(lang, width, height, 'exhausted', [...header, '#p5-exhausted-screen',
+            await inspect(lang, width, height, 'exhausted', ['.game-corner-identity h1', '#p5-exhausted-screen',
                 '#p5-exhausted-screen h2', '#p5-exhausted-screen p']);
             assert.deepEqual(await evaluate('PyramidRun.snapshot().completedIds'), earned);
             const nextId = await inner('w.NEXT_PUZZLE_ID ?? w.PYRAMID_GAME.finalId');
@@ -203,7 +205,7 @@ const board = [...header, '#brief-objective', '#players-section', '.player-box',
             assert.equal(await inner('w.location.search'), '?lang=' + lang);
             assert.deepEqual(await evaluate('PyramidRun.snapshot().completedIds'), earned);
             // Successful result board without publishing puzzle_solved (no celebration).
-            await command('Page.navigate', {url: base + '/?shell_target=/puzzle/5&lang=' + lang});
+            await command('Page.navigate', {url: base + '/?shell_target=%2Fpuzzle%2F5%3Fsession_id%3D1&lang=' + lang});
             await until('!!document.getElementById("game-shell-frame")?.contentWindow.auditStreams?.length');
             await inner('w.document.fonts.ready');
             await push({times: times.map(t => ({...t, time: t.time / 10})),
@@ -229,7 +231,12 @@ const board = [...header, '#brief-objective', '#players-section', '.player-box',
         fs.writeFileSync(out + '/verification.json', JSON.stringify({allowMissingLocalAudio,
             reports, defects, errors, localizationIssues, networkFailures}, null, 2));
         ws?.close();
-        chrome.kill('SIGTERM');
-        chrome.once('exit', () => fs.rmSync(profile, {recursive: true, force: true}));
+        const chromeClosed = new Promise(resolve => {
+            if (chrome.exitCode !== null) resolve();
+            else chrome.once('close', resolve);
+        });
+        if (chrome.exitCode === null) chrome.kill('SIGTERM');
+        await chromeClosed;
+        fs.rmSync(profile, {recursive: true, force: true, maxRetries: 30, retryDelay: 200});
     }
 })().catch(error => {console.error(error.message); process.exitCode = 1;});

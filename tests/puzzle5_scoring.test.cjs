@@ -60,7 +60,8 @@ test('every event updates authoritative attempt/points and margin, including pre
         waiting_seconds: 9, attempt: 4, max_attempts: 10, available_points: 70, limit: 22};
     game.push(state);
     game.sse(state);
-    assert.equal(game.element('streak').textContent, 'INTENTO 4/10 · 70 PUNTOS EN JUEGO');
+    assert.equal(game.element('streak-attempt').textContent, 'INTENTO 4/10');
+    assert.equal(game.element('p5-points-value').textContent, '70');
     assert.equal(game.element('p5-preparation-limit').textContent, '22 S');
     assert.equal(game.element('error-limit-text').textContent, '22 S');
     assert.equal(game.element('objective-text').textContent, '30');
@@ -81,7 +82,8 @@ test('initial five-second preparation and nine-second retry remain distinct', ()
     game.window.puzzle5Debug.countdown(9, null, 2);
     assert.equal(game.element('p5-countdown-value').textContent, '9 s');
     assert.equal(game.element('p5-preparation-limit').textContent, '14 S');
-    assert.match(game.element('streak').textContent, /2\/10 · 90/);
+    assert.equal(game.element('streak-attempt').textContent, 'INTENTO 2/10');
+    assert.equal(game.element('p5-points-value').textContent, '90');
     game.push({waiting: true, round: 1, countdown_deadline: (Date.now() + 3200) / 1000});
     assert.equal(game.element('p5-countdown-value').textContent, '4 s');
 });
@@ -101,7 +103,8 @@ test('tenth failure retains results until exhaustion, then waits for authorized 
     assert.equal(game.element('p5-exhausted-screen').hidden, false);
     assert.equal(game.element('puzzle5-shell').style.display, 'none');
     assert.equal(game.element('p5-exhausted-score').textContent, '10 intentos · 0 puntos');
-    assert.match(game.element('streak').textContent, /10\/10 · 0/);
+    assert.equal(game.element('streak-attempt').textContent, 'INTENTO 10/10');
+    assert.equal(game.element('p5-points-value').textContent, '0');
     assert.deepEqual(game.navigations, []);
     assert.deepEqual(game.victories, []);
     game.push({...exhausted, auto_advance: true});
@@ -140,7 +143,8 @@ test('successful result is not victory; puzzle_solved starts shared celebration 
     const game = chrono();
     game.window.puzzle5Debug.success(10, 40);
     assert.equal(game.element('error-text').textContent, '40.0 / 46');
-    assert.match(game.element('streak').textContent, /10\/10 · 10/);
+    assert.equal(game.element('streak-attempt').textContent, 'INTENTO 10/10');
+    assert.equal(game.element('p5-points-value').textContent, '10');
     assert.deepEqual(game.victories, []);
     game.push({round_result: {success: true, total: 40, limit: 46}, puzzle_solved: true});
     game.push({puzzle_solved: true});
@@ -151,7 +155,8 @@ test('successful result is not victory; puzzle_solved starts shared celebration 
 test('other puzzle payloads do not alter chrono state', () => {
     const game = chrono();
     game.push({puzzle_id: 8, attempt: 10, available_points: 0, puzzle_exhausted: true, auto_advance: true});
-    assert.match(game.element('streak').textContent, /1\/10 · 100/);
+    assert.equal(game.element('streak-attempt').textContent, 'INTENTO 1/10');
+    assert.equal(game.element('p5-points-value').textContent, '100');
     assert.deepEqual(game.navigations, []);
 });
 
@@ -161,11 +166,13 @@ test('reconnection reloads current scoring after the idempotent start request', 
     const game = chrono(12, state);
     game.open();
     await new Promise(resolve => setImmediate(resolve));
-    assert.match(game.element('streak').textContent, /2\/10 · 90/);
+    assert.equal(game.element('streak-attempt').textContent, 'INTENTO 2/10');
+    assert.equal(game.element('p5-points-value').textContent, '90');
     Object.assign(state, {attempt: 4, available_points: 70, limit: 22});
     game.open();
     await new Promise(resolve => setImmediate(resolve));
-    assert.match(game.element('streak').textContent, /4\/10 · 70/);
+    assert.equal(game.element('streak-attempt').textContent, 'INTENTO 4/10');
+    assert.equal(game.element('p5-points-value').textContent, '70');
     assert.equal(game.element('error-limit-text').textContent, '22 S');
     assert.deepEqual(game.requests, ['/start_puzzle/5', '/current_state',
         '/start_puzzle/5', '/current_state']);
