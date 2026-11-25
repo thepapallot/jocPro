@@ -311,6 +311,8 @@ class Puzzle8(BasePuzzle):
             self.target_symbols_order = []
             self.target_colors_per_symbol = {}
             self.target_sets = []
+        else:
+            self._reroll_unconfirmed_targets_locked()
         self._tokens_part = 0
         self._clear_unconfirmed_inputs_locked()
         self._set_phase_timing_locked(self.NUMBERS_DURATION_SECONDS)
@@ -327,6 +329,95 @@ class Puzzle8(BasePuzzle):
                               if box in self.confirmed_boxes}
         self.player_symbols = {box: symbols for box, symbols in self.player_symbols.items()
                                if box in self.confirmed_boxes}
+
+    def _reroll_unconfirmed_targets_locked(self):
+        """Change the letters shown on containers that are still unresolved.
+
+        Confirmed containers keep the exact symbol/color pairs and player
+        entries. The remaining containers receive a different letter from the
+        previous attempt. If only one container is pending, the replacement
+        must reuse a letter already confirmed in that set because the other
+        nine letters are retained.
+        """
+        if not self.target_sets:
+            return
+        pending = [
+            box for box in range(len(self.token_numbers))
+            if box not in self.confirmed_boxes
+        ]
+        if not pending:
+            return
+        if any(len(target.get("symbols", [])) < len(self.token_numbers)
+               for target in self.target_sets):
+            return
+
+        previous = [target["symbols"][:] for target in self.target_sets]
+        assigned = [{} for _ in self.target_sets]
+
+        for set_index, target in enumerate(self.target_sets):
+            old_symbols = [previous[set_index][box] for box in pending]
+            forbidden = []
+            for offset, box in enumerate(pending):
+                banned = {old_symbols[offset]}
+                banned.update(
+                    assigned[earlier][box]
+                    for earlier in range(set_index)
+                    if box in assigned[earlier]
+                )
+                forbidden.append(banned)
+
+            if len(pending) > 1:
+                replacements = self._matching_replacements(old_symbols, forbidden)
+                if replacements is None:
+                    replacements = old_symbols[1:] + old_symbols[:1]
+            else:
+                choices = [symbol for symbol in self.symbols
+                           if symbol not in forbidden[0]]
+                replacements = [random.choice(choices) if choices else old_symbols[0]]
+
+            updated = target["symbols"][:]
+            for box, symbol in zip(pending, replacements):
+                updated[box] = symbol
+                assigned[set_index][box] = symbol
+            target["symbols"] = updated
+
+    @staticmethod
+    def _matching_replacements(symbols, forbidden):
+        """Return a permutation where position ``i`` avoids ``forbidden[i]``.
+
+        The caller uses a cyclic shift when no valid permutation exists. That
+        fallback still changes every position and keeps the set's ten letters
+        unique, but cross-set repeats can remain.
+        """
+        allowed = [
+            [symbol for symbol in symbols if symbol not in banned]
+            for banned in forbidden
+        ]
+        for options in allowed:
+            random.shuffle(options)
+        positions = list(range(len(symbols)))
+        random.shuffle(positions)
+        assigned_to = {}
+
+        def assign(position, seen):
+            for symbol in allowed[position]:
+                if symbol in seen:
+                    continue
+                seen.add(symbol)
+                previous = assigned_to.get(symbol)
+                if previous is None or assign(previous, seen):
+                    assigned_to[symbol] = position
+                    return True
+            return False
+
+        for position in sorted(positions, key=lambda index: len(allowed[index])):
+            if not assign(position, set()):
+                return None
+        replacements = [None] * len(symbols)
+        for symbol, position in assigned_to.items():
+            replacements[position] = symbol
+        return replacements
+
             
     def _show_tokens(self):
         """Phase 2: Show both symbol/color combinations at the same time."""
