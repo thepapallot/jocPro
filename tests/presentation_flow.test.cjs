@@ -14,9 +14,9 @@ function flow(order){
 test('the journey has a manual lobby, compact briefings and a final earned summit',()=>{
   const scenes=flow(),games=scenes.filter(s=>s.kind==='puzzle');
   assert.deepEqual(games.map(g=>g.puzzleId),[11,2,1,8,3,5,12,4,6]);
-  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),46);
-  assert.ok(games.every(g=>g.incremental&&g.steps.filter(s=>!['title','equipment-title','journey','elements','attention'].includes(s)).join(',')==='objective,tools,interaction'));
-  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),75);
+  assert.equal(games.reduce((n,g)=>n+g.steps.length,0),64);
+  assert.ok(games.every(g=>g.incremental&&g.steps.includes('objective')&&g.steps.filter(s=>s.startsWith('card-')).length===g.copy.ca.cardActions.length));
+  assert.equal(scenes.reduce((n,s)=>n+s.steps.length,0),93);
   assert.ok(games.every(g=>!g.steps.includes('example')));
   assert.ok(games.every(g=>!g.previewPath), 'rehearsal uses current diagrams, never the retired pilot');
   assert.equal(scenes[0].autoAdvanceMs,null);
@@ -34,9 +34,9 @@ test('the journey has a manual lobby, compact briefings and a final earned summi
   assert.deepEqual(scenes.at(-1).steps,['cover','score','thanks']);
   assert.deepEqual(scenes.at(-1).autoAdvanceMs,[11000,0,0]);
   for(const game of games)for(const lang of ['ca','es','eng']){
-    assert.equal(game.copy[lang].stepLabels.length,game.steps.length);
-    assert.equal(game.copy[lang].notes.length,game.steps.length);
-    assert.equal(game.copy[lang].footers.length,game.steps.length);
+    assert.equal(game.copy[lang].stepLabels.length,game.localizedSteps[lang].length);
+    assert.equal(game.copy[lang].notes.length,game.localizedSteps[lang].length);
+    assert.equal(game.copy[lang].footers.length,game.localizedSteps[lang].length);
     assert.equal(game.copy[lang].guidance.hints.length,3);
     assert.ok(game.copy[lang].guidance.role);
   }
@@ -136,9 +136,9 @@ test('journey blocks follow the configured order, including empty and unequal bl
     const scenes=flow(order),quiz=scenes.find(s=>s.puzzleId===3);
     assert.deepEqual(quiz.journey.pre,pre);
     assert.deepEqual(quiz.journey.post,post);
-    assert.deepEqual(quiz.steps,['title','journey','objective','tools','interaction','attention']);
+    assert.deepEqual(quiz.steps.filter(step=>!step.startsWith('scoring-guide-')),['title','journey','objective','card-1','card-2','card-3','attention']);
     assert.deepEqual(scenes[1].journey,quiz.journey);
-    assert.equal(quiz.autoAdvanceMs.slice(1).every(ms=>ms===0),true);
+    assert.equal(quiz.autoAdvanceMs.every((ms,i)=>quiz.steps[i]==='title'?ms===4200:ms===0),true);
   }
   const noQuiz=flow('2,8');
   assert.equal(noQuiz[1].journey.trivialId,null);
@@ -210,25 +210,25 @@ test('opening subtitles preserve the narration and cover each beat without gaps'
   }
 });
 
-test('practice starts with equipment and teamwork before the normal three reveals',()=>{
+test('practice starts with equipment and teamwork before the action cards',()=>{
  const practice=flow().find(s=>s.puzzleId===11);
- assert.deepEqual(practice.steps,['equipment-title','elements','title','objective','tools','interaction']);
+ assert.deepEqual(practice.steps,['equipment-title','elements-1','elements-2','elements-3','title','objective','card-1','card-2','card-3']);
  assert.equal(practice.autoAdvanceMs[1],0,'the GM advances equipment manually');
  assert.ok(practice.elementsCopy.es.tokenTitle.includes('PERSONAL'));
  assert.ok(practice.elementsCopy.es.action.includes('lector del terminal'));
  assert.ok(practice.elementsCopy.es.team.includes('coordinaos'));
- assert.equal(practice.autoAdvanceMs[2],4200,'the practice title follows the manual equipment briefing');
- assert.equal(practice.copy.ca.notes[1],practice.elementsCopy.ca.notes);
- assert.equal(practice.copy.eng.notes[1],practice.elementsCopy.eng.notes);
+ assert.equal(practice.autoAdvanceMs[4],4200,'the practice title follows the manual equipment briefing');
+ assert.ok(practice.copy.ca.notes[1].includes(practice.elementsCopy.ca.notes));
+ assert.ok(practice.copy.eng.notes[1].includes(practice.elementsCopy.eng.notes));
  assert.equal(practice.completed,0);
  assert.match(practice.elementsCopy.ca.tokenTitle,/PERSONAL/);
  assert.match(practice.elementsCopy.ca.action,/lector del terminal/);
- assert.equal(practice.copy.ca.stepLabels[1],'La missió és a les vostres mans');
+ assert.equal(practice.copy.ca.stepLabels[1],practice.elementsCopy.ca.screenTitle);
 });
 
 test('snake briefing always includes the alarm warning before its final start step',()=>{
   const snake=flow().find(s=>s.puzzleId===2&&s.kind==='puzzle');
-  assert.deepEqual(snake.steps,['title','objective','tools','interaction','attention']);
+  assert.deepEqual(snake.steps,['scoring-guide-1','scoring-guide-2','title','objective','card-1','card-2','card-3','attention']);
   assert.equal(snake.copy.es.stepLabels.at(-1),'Atención');
   assert.match(snake.copy.es.notes.at(-1),/pantalla no cambian/);
   assert.match(snake.copy.es.notes.at(-1),/colores invertidos/);
@@ -240,14 +240,14 @@ test('snake briefing always includes the alarm warning before its final start st
   const context=vm.createContext({window:{},PyramidLogo:{markup:()=>'<svg></svg>'}});
   vm.runInContext(script('presentation-briefing.js'),context);
   const markup=context.window.PyramidBriefing.markup(snake,snake.copy.ca,'ca');
-  assert.match(markup,/symbol_4\.png/);
-  assert.match(markup,/symbol_5\.png/);
-  assert.doesNotMatch(markup,/symbol_3\.png/);
+  assert.match(markup,/symbol_4\.svg/);
+  assert.match(markup,/symbol_5\.svg/);
+  assert.doesNotMatch(markup,/symbol_3\.svg/);
 });
 
 test('QUIZ keeps its journey and requires the answer-change warning before starting',()=>{
   const quiz=flow().find(s=>s.puzzleId===3&&s.kind==='puzzle');
-  assert.deepEqual(quiz.steps,['title','journey','objective','tools','interaction','attention']);
+  assert.deepEqual(quiz.steps.filter(step=>!step.startsWith('scoring-guide-')),['title','journey','objective','card-1','card-2','card-3','attention']);
   for(const lang of ['ca','es','eng']){
     assert.equal(quiz.copy[lang].stepLabels.at(-1),{ca:'Atenció',es:'Atención',eng:'Attention'}[lang]);
     const attention=quiz.attentionCopy[lang].text;
@@ -279,17 +279,21 @@ test('QUIZ explains every sixth double-points question and both server pauses in
   }
 });
 
-test('reviewed Spanish briefings require their warnings; the final has only three reveals',()=>{
+test('reviewed Spanish briefings require their warnings; the final stops after its last card',()=>{
   const scenes=flow();
   const context=vm.createContext({window:{},PyramidLogo:{markup:()=>'<svg></svg>'}});
   vm.runInContext(script('presentation-briefing.js'),context);
   for(const id of [8,1,5,12,4,6]){
     const scene=scenes.find(s=>s.puzzleId===id&&s.kind==='puzzle');
-    assert.deepEqual(scene.steps,id===6?['title','objective','tools','interaction']:['title','objective','tools','interaction','attention']);
-    assert.equal(scene.copy.es.stepLabels[3],'Acción');
+    assert.deepEqual(scene.steps,['title','objective',...Array.from({length:scene.copy.es.cardActions.length},(_,i)=>'card-'+(i+1)),...(id===6?[]:['attention'])]);
+    assert.ok(scene.copy.es.stepLabels[3].startsWith('Tarjeta 2'));
     const markup=context.window.PyramidBriefing.markup(scene,scene.copy.es,'es');
-    assert.ok(markup.includes('b-practice-layout'));
-    assert.equal((markup.match(/class="b-action"/g)||[]).length,id===1?3:4);
+    assert.ok(markup.includes('c-briefing'));
+    assert.equal((markup.match(/class="c-card"/g)||[]).length,id===1?3:4);
+    for(const action of scene.copy.es.coordinateLead.split(' → '))assert.ok(markup.replace(/<[^>]*>/g,'').includes((action.charAt(0).toUpperCase()+action.slice(1)).replace(/\.$/,'')));
+    assert.ok(markup.includes(scene.copy.es.objectiveTitle));
+    assert.ok(markup.includes(scene.copy.es.scoringRule));
+    if(id===8)assert.equal((markup.match(/alpha-red-pedestal\.png/g)||[]).length,1);
     if(id===6)assert.ok(!markup.includes('role="dialog"'));
     else{
       if(id===5) {
@@ -309,9 +313,23 @@ test('reviewed Spanish briefings require their warnings; the final has only thre
 
 test('each title advances only into its manual briefing, including custom routes',()=>{
  for(const scene of [...flow(),...flow('8,1')].filter(s=>s.kind==='puzzle')){
-  const titleIndex=scene.puzzleId===11?2:0;
+  const titleIndex=scene.steps.indexOf('title');
   assert.equal(scene.steps[titleIndex],'title');assert.equal(scene.autoAdvanceMs[titleIndex],4200);
   assert.ok(scene.autoAdvanceMs.every((ms,index)=>['title','equipment-title'].includes(scene.steps[index])?ms===4200:ms===0));
   assert.equal(scene.autoAdvanceMs.length,scene.steps.length);
+ }
+});
+test('score explanation follows practice even when the first scored challenge changes',()=>{
+ for(const order of [undefined,'8,1','3,2','6']){
+  const games=flow(order).filter(s=>s.kind==='puzzle'),first=games.find(s=>s.puzzleId!==11);
+  assert.equal(games.filter(s=>s.steps.includes('scoring-guide-1')).length,1);
+  assert.equal(first.steps[0],'scoring-guide-1');assert.equal(first.autoAdvanceMs[0],0);
+  for(const game of games)for(const lang of ['ca','es','eng']){
+   assert.equal(game.copy[lang].notes.length,game.localizedSteps[lang].length);
+   if(game.puzzleId!==11){
+    assert.ok(game.copy[lang].scoringRule);
+    assert.ok(game.copy[lang].notes[game.localizedSteps[lang].indexOf('objective')].includes(game.copy[lang].scoringRule));
+   }
+  }
  }
 });

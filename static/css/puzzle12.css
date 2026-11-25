@@ -48,7 +48,7 @@
     padding-inline: 0;
     box-sizing: border-box;
     color: #ffffff;
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-size: clamp(1.98rem, 5.45vw, 5.25rem);
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -80,7 +80,7 @@
     border-radius: 24px;
     box-shadow: 0 0 60px rgba(45,255,155,0.2);
     text-shadow: 0 0 24px rgba(45,255,155,0.6);
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-align: center;
@@ -94,7 +94,7 @@
     color: #fff;
     font-size: clamp(3rem, 5.2vw, 5.4rem);
     line-height: 1.05;
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-weight: 700;
     text-shadow: 0 2px 24px #1a7f4f, 0 0 32px #2dff9b, 0 0 8px #000;
     letter-spacing: 0.04em;
@@ -239,7 +239,7 @@ body.p12-danger-state #final-viewport {
 
 #p12-points-value {
     color: #f3eee4;
-    font: 900 clamp(40px, 7cqh, 72px)/1.05 PiramideDisplay, Arial, sans-serif;
+    font: 900 clamp(40px, 7cqh, 72px)/1.05 ArchitectureDisplay, ArchitectureText, Arial, sans-serif;
     font-variant-numeric: tabular-nums;
 }
 
@@ -530,7 +530,7 @@ body.pyramid-game.game-surface[data-puzzle="12"] :is(#good-img, #wrong-img) {
 body.pyramid-game.game-surface[data-puzzle="12"] .p12-feedback-text {
     max-width: 92%;
     color: #f3eee4;
-    font-family: PiramideDisplay, 'Arial Narrow', Arial, sans-serif;
+    font-family: ArchitectureDisplay, 'Arial Narrow', ArchitectureText, Arial, sans-serif;
     font-size: clamp(3rem, 6cqw, 8rem);
     font-weight: 900;
     line-height: 1.1;

@@ -128,7 +128,7 @@
 
             sequence.forEach((symbol, index) => {
                 const segment = segments[index];
-                segment.src = `/static/images/puzzle2/symbols/symbol_${symbol}.png`;
+                segment.src = `/static/images/redesign-v2/snakes/symbol_${symbol}.svg`;
                 segment.alt = `Símbolo ${symbol}`;
                 segment.classList.remove('complete', 'active', 'pending');
 
@@ -498,7 +498,7 @@
         if (data.puzzle_solved && !redirected) {
             redirected = true;
             stopAlarmAudio();
-            window.PyramidLevelVictory.complete(2);
+            window.PyramidLevelVictory.complete(2, data);
         }
     }
 

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La Pirámide · Presentaciones en tarjetas</title>
+<link rel="stylesheet" href="../css/presentation.css">
+<link rel="stylesheet" href="../css/presentation-briefing.css">
+<link rel="stylesheet" href="../css/architecture-pilot.css">
+<link rel="stylesheet" href="../css/architecture-system.css">
+<link rel="stylesheet" href="../css/presentation-cards.css">
+<style>
+body{overflow:hidden;background:#0c0c10}.review-controls{position:fixed;bottom:0;left:0;right:0;z-index:5;display:flex;align-items:center;justify-content:center;gap:12px;min-height:72px;padding:12px;background:#efeeea;color:#28242c;font:13px/1.3 ArchitectureText,Arial,sans-serif;flex-wrap:wrap}.review-controls button,.review-controls select{border:1px solid #bbb6c0;border-radius:5px;background:#fff;color:#28242c;padding:10px 12px;font:inherit}.review-controls button[aria-pressed=true]{background:#28232f;color:#fff;border-color:#28232f}.review-controls label{display:flex;align-items:center;gap:8px}.review-controls strong{margin-right:10px}.review-controls button:disabled{opacity:.35}.review-controls small{color:#625a68}.review-controls select{max-width:230px}#review-steps{display:flex;gap:8px}
+</style>
+</head>
+<body>
+<main id="review-stage" class="p-stage" data-kind="puzzle" aria-label="Vista previa de las instrucciones"></main>
+<nav class="review-controls" aria-label="Revisar presentaciones">
+<strong>Presentaciones · vista de revisión</strong>
+<label>Prueba <select id="review-puzzle"></select></label>
+<label>Idioma <select id="review-language"><option value="es">Castellano</option><option value="ca">Català</option><option value="eng">English</option></select></label>
+<button id="review-previous">← Anterior</button><span id="review-steps"></span><button id="review-next">Siguiente →</button>
+<small>Sin partida · ejemplos ilustrativos</small>
+</nav>
+<script src="../js/pyramid-logo.js"></script>
+<script src="../js/puzzle-names.js"></script>
+<script src="../js/presentation-story.js"></script>
+<script src="../js/presentation-flow.js"></script>
+<script src="../js/presentation-briefing.js"></script>
+<script>
+'use strict';
+const games=PyramidFlow.filter(c=>c.kind==='puzzle'),stage=document.getElementById('review-stage'),puzzle=document.getElementById('review-puzzle'),language=document.getElementById('review-language');
+const params=new URLSearchParams(location.search);let phase=0;
+for(const [value,label] of [['elements','Funcionamiento del juego'],['scoring-guide','Puntos del equipo'],...games.map(c=>[String(c.puzzleId),c.copy.es.name])]){const option=document.createElement('option');option.value=value;option.textContent=label;puzzle.append(option);}
+puzzle.value=[...puzzle.options].some(o=>o.value===params.get('puzzle'))?params.get('puzzle'):'8';
+if(['ca','es','eng'].includes(params.get('lang')))language.value=params.get('lang');
+function context(){return puzzle.value==='elements'?games.find(c=>c.elementsCopy):puzzle.value==='scoring-guide'?games.find(c=>c.scoringGuide):games.find(c=>c.puzzleId===Number(puzzle.value));}
+function sequence(){return ['elements','scoring-guide'].includes(puzzle.value)?puzzle.value:'cards';}
+function bounds(){const c=context(),kind=sequence();return kind==='elements'?[1,3]:kind==='scoring-guide'?[1,2]:[0,c.copy[language.value].cardActions.length+(c.attentionCopy?1:0)];}
+function resize(){const h=innerHeight-document.querySelector('.review-controls').offsetHeight;stage.style.top=h/2+'px';stage.style.transform=`translate(-50%,-50%) scale(${Math.min(innerWidth/1920,h/1080)})`;}
+function setPhase(index){const [min,max]=bounds();phase=Math.max(min,Math.min(index,max));const root=stage.querySelector('[data-sequence]');PyramidBriefing.reveal(root,phase);for(const button of document.querySelectorAll('[data-phase]'))button.setAttribute('aria-pressed',String(Number(button.dataset.phase)===phase));document.getElementById('review-previous').disabled=phase===min;document.getElementById('review-next').disabled=phase===max;stage.dataset.step=sequence()==='cards'?(phase===0?'objective':phase>context().copy[language.value].cardActions.length?'attention':'card-'+phase):sequence()+'-'+phase;}
+function render(){const c=context(),lang=language.value,kind=sequence();document.documentElement.lang=lang==='eng'?'en':lang;stage.dataset.language=lang;stage.dataset.puzzle=c.puzzleId;stage.style.setProperty('--act-colour',c.accent||c.act?.colour||'#39d6e5');stage.innerHTML='<section class="p-screen">'+(kind==='elements'?PyramidBriefing.elements(c,lang):kind==='scoring-guide'?PyramidBriefing.scoringGuide(c,lang):PyramidBriefing.markup(c,c.copy[lang],lang))+'</section>';
+ // Resolve the real renderer assets for this file:// rehearsal only.
+ for(const img of stage.querySelectorAll('img[src^="/static/"]'))img.setAttribute('src','../'+img.getAttribute('src').slice('/static/'.length));
+ const buttons=document.getElementById('review-steps');buttons.replaceChildren();const [min,max]=bounds();
+ for(let n=min;n<=max;n++){const button=document.createElement('button');button.dataset.phase=n;button.textContent=n===0?'Objetivo':kind==='cards'&&n>c.copy[lang].cardActions.length?'Atención':'Tarjeta '+n;button.addEventListener('click',()=>setPhase(n));buttons.append(button);}
+ setPhase(phase);resize();}
+puzzle.addEventListener('change',()=>{phase=0;render();});language.addEventListener('change',()=>{phase=0;render();});
+document.getElementById('review-previous').addEventListener('click',()=>setPhase(phase-1));document.getElementById('review-next').addEventListener('click',()=>setPhase(phase+1));
+addEventListener('keydown',e=>{if(['SELECT','INPUT'].includes(e.target.tagName))return;if(e.key==='ArrowRight')setPhase(phase+1);if(e.key==='ArrowLeft')setPhase(phase-1);});
+addEventListener('resize',resize);render();document.fonts.ready.then(resize);
+</script>
+</body></html>

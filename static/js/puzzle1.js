@@ -401,7 +401,7 @@
                 updateProgress();
                 clearInterval(timerInterval);
                 timerRunning = false;
-                window.PyramidLevelVictory.complete(1);
+                window.PyramidLevelVictory.complete(1, data);
                 return;
             }
 

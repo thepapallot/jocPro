@@ -1,0 +1,15 @@
+{
+  "method": "Built-in image_gen",
+  "assets": [
+    {
+      "file": "alpha-red.png",
+      "purpose": "Alfa roja aislada, con volumen, candidata para el tablero; no reemplaza otros colores.",
+      "prompt": "Use case: style-transfer. Create a production transparent PNG game sprite: ONE isolated lowercase Greek alpha α. Image 1 is the exact identity/silhouette reference: retain its bold rounded asymmetric alpha shape, single teardrop-shaped counter/hole, thick left loop, upper-right spur and curved lower-right foot. Do not replace it with a Latin a or another Greek typeface. Image 2 is the material/style reference ONLY: the red alpha object in the lower center. Render the reference glyph as a solid finely manufactured red object with a shallow 3D extrusion, very narrow precise bevels, satin enamel front and darker red sides. Front face clearly saturated RED, approximately #ff0000, not pink, orange or magenta. Subtle slight three-quarter yaw (about 8 degrees) so the right-hand thickness is visible, but keep the front silhouette dominant and recognizable. Soft broad studio key light, controlled edge highlight, clear even red face, no blown white highlights. Centered on a square canvas with 12% margin, full object visible, clean alpha-transparent background including the hole. No plaque, no pedestal, no frame, no floor, no external shadow or halo, no other symbols, no text. Crisp high-quality large sprite suitable for reading at 100px on a dark game board. This must be an individual usable asset, NOT a screenshot or a UI mockup."
+    },
+    {
+      "file": "alpha-red-pedestal.png",
+      "purpose": "Ejemplo de alfa roja en la explicación previa al juego.",
+      "prompt": "Use case: compositing. Create an individual transparent PNG illustration for the pre-game explanation of La Piràmide. Image 1 is the subject to preserve: the red 3D lowercase Greek alpha, retain its exact recognizable rounded shape, single hole, lower-right foot, saturated red enamel and fine bevels. Image 2 is the composition reference: ONLY the alpha display on its black pedestal in the lower central area. Mount the red alpha from image 1 in raised relief on a thin upright graphite rectangular plaque with very slightly rounded corners and a precise subtle metallic rim, standing on a low wide rectangular satin graphite pedestal. Small magenta line of light recessed at the top front of the pedestal, controlled and tasteful with NO external glow. Near-frontal view with a slight 8 degree yaw showing the right side thickness; mild elevated camera lets us see the top surface of the base. The alpha is the dominant element, large on plaque, beautifully lit, shallow raised red enamel with realistic contact shading. One unified display object centered and fully visible with 10% margins. True alpha-transparent background: no floor, no surrounding scene or UI, no token, no buttons, no other graphics, no captions, no letters other than alpha. No floating contact shadow outside the pedestal. Match the refined physical appearance of the reference display, not a plastic toy. This is a usable isolated game illustration, not a mockup sheet."
+    }
+  ]
+}

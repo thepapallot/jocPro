@@ -1,0 +1,86 @@
+{
+  "method": "image_gen red masters; user-authorized programmatic cleanup and color variants. Only alpha pedestal retained.",
+  "redMasters": [
+    {
+      "file": "beta-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-e0cb961b-33cb-4b90-af9a-ac092e58062d.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: tall lowercase beta β, two enclosed holes, long straight left stem descending beneath its lower rounded bowl.",
+      "refs": [
+        "/tmp/piramide-assets-v2/beta.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    },
+    {
+      "file": "gamma-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-2e1591da-bd78-437e-9cbf-903899f1cab6.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: lowercase gamma γ with two broad curved upper arms and a single thick descending stem, NO enclosed holes.",
+      "refs": [
+        "/tmp/piramide-assets-v2/gamma.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    },
+    {
+      "file": "delta-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-30e7556c-1e3c-404c-ae25-de083f8d5da8.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: lowercase delta δ with one rounded lower loop/hole and a curling diagonal upper hook, NOT an uppercase triangle.",
+      "refs": [
+        "/tmp/piramide-assets-v2/delta.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    },
+    {
+      "file": "epsilon-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-9dfc0b96-573e-48b5-9631-1d689aec6f05.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: rounded lowercase epsilon ε, open towards the right with three rounded lobes, NO enclosed holes.",
+      "refs": [
+        "/tmp/piramide-assets-v2/epsilon.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    },
+    {
+      "file": "lambda-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-8ae50943-d126-4f3e-863e-8d1b72d72f79.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: lowercase lambda λ with rounded upper-left hook and two unequal diverging legs, NO enclosed holes.",
+      "refs": [
+        "/tmp/piramide-assets-v2/lambda.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    },
+    {
+      "file": "mu-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-cac31b0e-9245-4a99-bac2-69c2bfa6c219.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: lowercase mu μ with a descending left stem curving right at the bottom, a U-shaped upper opening and right-hand hook.",
+      "refs": [
+        "/tmp/piramide-assets-v2/mu.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    },
+    {
+      "file": "omega-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-664900cb-7a62-49e2-8168-debc415a2ffe.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: lowercase omega ω, three upright curved strokes with two deep open notches at the top, NOT uppercase Ω.",
+      "refs": [
+        "/tmp/piramide-assets-v2/omega.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    },
+    {
+      "file": "pi-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-4a5bdcb9-324b-4d37-aef8-7f4a052670ed.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: lowercase pi π, broad rounded top bar, two legs, left foot curving left and right foot curving right.",
+      "refs": [
+        "/tmp/piramide-assets-v2/pi.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    },
+    {
+      "file": "sigma-red.png",
+      "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-8a29097b-5012-416f-809a-71e120b0a677.png",
+      "prompt": "Use case: style-transfer. Make ONE production transparent PNG game sprite. Image 1 is the exact silhouette/identity target, NOT a font suggestion. Image 2 is the approved RED ALPHA material/camera style reference; DO NOT render alpha, replace the subject with the silhouette in image 1. Preserve the target's distinctive thick rounded stroke proportions, holes, hooks and terminals; no invented strokes. Render as solid red satin enamel with shallow 3D extrusion and precise narrow bevels, same restrained soft studio key light as approved alpha. Front is unequivocal saturated RED approximately #ff0000 with darker red side walls. Very slight three-quarter yaw about 8 degrees shows right thickness; frontal silhouette dominates. Square canvas, object about 80% of canvas in its longest dimension, centered, keep proportions. True transparent alpha background INCLUDING all holes/openings. No plaque, pedestal, floor, background, glow, outside shadows, text or other symbols. Clean smooth antialiased contours, no stray edge pixels. Suitable at 100px on dark game board. Target subject: lowercase sigma σ, one oval enclosed hole, rounded body and broad upper bar extending right, NOT uppercase Σ.",
+      "refs": [
+        "/tmp/piramide-assets-v2/sigma.png",
+        "/home/agusti/Documentos/repositori/jocPro/static/images/redesign-v2/memory-3d/alpha-red.png"
+      ]
+    }
+  ]
+}

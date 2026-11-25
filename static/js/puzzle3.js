@@ -225,12 +225,12 @@
         if (feedbackEl) { feedbackEl.className = ''; feedbackEl.textContent = ''; }
     }
 
-    function showSolved() {
+    function showSolved(data) {
         if (solvedSequenceStarted) return;
         updateGoldenState({ puzzle_solved: true });
         solvedSequenceStarted = true;
         window.PyramidCountdownAudio?.reset('p3-clock');
-        window.PyramidLevelVictory.complete(3);
+        window.PyramidLevelVictory.complete(3, data);
     }
 
     function normalizeAnswerValue(value) {
@@ -337,7 +337,7 @@
         updateGoldenState(data);
         updateHud(data, silent);
         if (data.puzzle_solved) {
-            showSolved();
+            showSolved(data);
             return;
         }
         if (goldenAnnouncement) return;
@@ -364,7 +364,7 @@
             showResult(data.question_result, silent);
         }
         if (data.puzzle_solved) {
-            showSolved();
+            showSolved(data);
         }
     }
 

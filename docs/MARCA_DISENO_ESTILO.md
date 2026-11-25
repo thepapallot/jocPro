@@ -1,6 +1,6 @@
 # Guía de marca diseño y estilo de La Piràmide
 
-Referencia editorial vigente del proyecto. Última actualización: **28 octubre
+Referencia editorial vigente del proyecto. Última actualización: **25 noviembre
 2026**. Recoge las decisiones del equipo, la información publicada y la revisión
 de recursos gráficos. Leer antes de editar, como establece [AGENTS.md](../AGENTS.md).
 
@@ -243,6 +243,165 @@ ajustándose al espacio disponible. Verificado en simulación a 1920 × 1080 y
 - Reservar mayúsculas y tipografía condensada para textos breves.
 - Temporizadores con cifras de anchura estable.
 
+### Acabado común inspirado en HAE
+
+**Acordado el 24 noviembre 2026:** adoptar la precisión de las superficies,
+la jerarquía tipográfica y las transiciones breves de HAE, conservando la
+identidad de La Pirámide. El motivo propio son los bloques; no se incorporan
+los circuitos, objetos ni colores de la otra experiencia.
+
+- PiramideDisplay se reserva para titulares e identidad. Las etiquetas y las
+  acciones de las explicaciones usan Arial, con peso y tamaño diferenciados;
+  las instrucciones conservan la caja natural del texto. Los datos numéricos
+  emplean cifras tabulares. Se mantienen las fuentes locales, sin servicios externos.
+- Superficies neutras grafito con volumen discreto, borde fino, radio de 6 px
+  y una luz de arista. Los colores funcionales y los estados confirmados de cada
+  juego conservan su tratamiento propio. No añadir halos a las ilustraciones.
+- Bienvenida con título y pirámide equilibrados, más espacio libre, separadores
+  finos y bloques decorativos estáticos. El nombre sigue el idioma de la sesión.
+  Los bloques de fondo no representan participantes ni progreso.
+- Las explicaciones conservan las posiciones y los revelados del GM. Objetivo
+  y herramientas comparten una base visual; Acción se separa mediante una línea
+  y espacio, sin otro panel cerrado. Se conservan todos los textos y recursos.
+- Revelados de 280 ms con desplazamiento corto; la salida de las composiciones
+  de explicación dura 180 ms. Las secuencias narradas, títulos automáticos,
+  cuentas atrás y celebraciones conservan su duración y control actuales.
+  Movimiento reducido elimina estas transiciones. No añadir bucles al tablero.
+- La cabecera del juego permanece compacta. El acabado no reduce el área de los
+  diez terminales ni añade indicadores de ronda o progreso.
+
+**Implementación:** capa compartida `static/css/player-finish.css` en las
+plantillas de jugadores y el visor de presentaciones; bienvenida localizada y
+transiciones de explicación ajustadas en frontend. Validado mediante simulación
+aislada a 1920 × 1080 y 1280 × 720 en los tres idiomas, incluidos los estados
+funcionales y el movimiento reducido. Pendiente de lectura en sala; no implica
+despliegue ni cambios de hardware.
+
+### Sistema «Arquitectura de luz»
+
+**Acordado el 25 noviembre 2026:** el acabado anterior resulta demasiado
+superficial. Se aprueba un cambio de composición, tipografía y puesta en escena
+inspirado en AEHVALL. El primer alcance comprende **bienvenida, explicación de
+Memoria Extrema y su tablero**, antes de extenderlo al resto de la experiencia.
+Este fue el alcance inicial; la ampliación aprobada e implementada a continuación
+sustituye el acabado anterior en la experiencia de jugadores.
+
+- Identidad central: pirámide maestra completa sobre el nombre localizado,
+  lema y bienvenida. Geometría de bloques discreta en los márgenes, sin
+  indicadores decorativos que parezcan datos de la partida.
+- Fondo grafito neutro `#101012`, superficies `#17171C`, blanco cálido y apoyos
+  grises; cian y magenta concentrados en la identidad y las aristas. No cambia
+  la paleta funcional de símbolos, botones, tiempo, acierto o error.
+- Rajdhani Bold para los titulares, Inter para instrucciones e IBM Plex Mono
+  Medium para datos. Archivos locales y licencias SIL OFL en `static/fonts/`.
+  Aplicadas a presentaciones, tableros, apertura y cierre. El control del GM
+  conserva su tipografía; PiramideDisplay permanece como recurso histórico.
+- Explicación: objetos autorizados grandes sobre una superficie común a la
+  izquierda; objetivo y acciones en columna a la derecha; regla de puntuación
+  en la franja inferior. El orden objetivo → herramientas → acción → atención,
+  los textos del GM y la permanencia de cada elemento se conservan. Los tres
+  idiomas usan su contenido vigente, sin anticipar traducciones pendientes.
+- Tablero: diez espacios en cinco columnas y dos filas, número y token en su
+  cabecera y dos formas debajo. Material neutro oscuro y mayor presencia de
+  los números; símbolos, orden de llegada y resultados confirmados intactos.
+  Cabecera compacta con intento, instrucciones, tiempo, moneda y puntos en juego.
+- Revelados suaves de 400 ms en la explicación; entrada escalonada de símbolo,
+  nombre y textos de bienvenida, que queda estable al cabo de un segundo.
+  Sin bucles nuevos. Movimiento reducido presenta el estado estable. La moneda
+  conserva su giro autorizado.
+
+**Ampliación aprobada e implementada el 25 noviembre 2026:** el usuario pide
+extender el estilo de las letras tridimensionales a los recursos existentes,
+las pantallas y la propia pirámide. `architecture-pilot.css` y
+`architecture-system.css` forman la capa común del frontend.
+
+- Nueve presentaciones y tableros del recorrido: práctica, Tras la Serpiente,
+  Sumas, Memoria Extrema, QUIZ, Cronómetro, Conexión Simultánea, Música y Carga
+  Final. También bienvenida, apertura, puntuación, celebraciones y cierre.
+- Herramientas grandes a la izquierda; objetivo, puntuación y acciones a la
+  derecha. Memoria conserva su franja inferior de puntuación. Sin alterar orden
+  de revelado, textos del GM, instrucciones, reglas ni duración de los estados.
+- Grafito satinado, luces suaves, biseles finos y tipografía compartida. Las
+  formas funcionales de cada tablero conservan sus posiciones, cantidades,
+  códigos de color y movimientos. No se añaden iconos procedentes de la reserva.
+- Se integran los objetos refinados, las 60 letras 3D y los diez patrones con
+  bisel interior. Solo el ejemplo de alfa en la presentación tiene pedestal.
+- La pirámide maestra adopta grafito y plata satinados, bisel y un canto lateral
+  discreto. Conserva los 42 bloques, identificadores, geometría y asignación de
+  progreso, además de los acentos cian y magenta. ADN Games no cambia.
+- El simulador del GM muestra las mismas letras y patrones que los jugadores;
+  su funcionamiento y distribución se conservan.
+
+Verificado en **simulación aislada** a 1920 × 1080 y 1280 × 720, en castellano,
+catalán e inglés: 312 comprobaciones de presentaciones y tableros, reintentos de
+Memoria, ajuste de texto del QUIZ, explicaciones de puntos y resultados finales.
+No desplegado ni probado con hardware. La lectura real en sala sigue pendiente.
+Detalles y evidencias: [rediseño unificado](REDISENO_UNIFICADO.md).
+
+### Presentaciones con tarjetas
+
+**Aprobado el 25 noviembre 2026:** el usuario confirma las nuevas formas y
+aprueba la maqueta de tarjetas de Memoria. Esta composición sustituye la
+organización anterior de herramientas a la izquierda y acciones a la derecha.
+
+- Objetivo superior, en una frase; nombre de la prueba y marca en cabecera.
+- Una tarjeta por acción, leídas de izquierda a derecha: número, imagen y
+  verbo destacado con el resto de la instrucción debajo. Tres o cuatro tarjetas
+  según las acciones aprobadas en castellano y catalán.
+- Grafito satinado, bordes suaves de 18 px en el canvas 1080p, bisel fino y una
+  arista con el acento de la etapa. Las imágenes usan los recursos ya aprobados;
+  no se incorporan los iconos de la reserva.
+- Puntuación en una franja inferior, visible desde el objetivo. Atención conserva
+  su paso separado y obligatorio donde ya existía, con los mismos avisos.
+- **Actualizado por indicación del usuario:** objetivo → tarjeta 1 → tarjeta 2
+  → siguientes tarjetas → Atención, cuando corresponde. Cada avance del GM
+  revela una tarjeta completa, con número, imagen e instrucción juntos, de
+  izquierda a derecha. Las anteriores permanecen visibles y en su posición;
+  las posteriores quedan totalmente ocultas. No se muestran primero todas las
+  imágenes ni se separa su texto en otro paso. Retroceder oculta las tarjetas
+  posteriores; repetir vuelve al inicio. Movimiento reducido elimina el fundido.
+- El mismo criterio se aplica a los tres bloques de funcionamiento del juego
+  (pantalla, token, terminal) y a las dos tarjetas de explicación de puntos.
+  Los controles y las notas del GM siguen cada tarjeta; el inicio del juego
+  solo está disponible al completar la explicación y su Atención, si existe.
+- Se conserva un solo ejemplo de alfa con pedestal, en la presentación de
+  Memoria. Las letras del tablero siguen sin pedestal.
+- El inglés adopta los materiales y las tarjetas con sus instrucciones vigentes,
+  incluidas sus aclaraciones; no se anticipa la revisión editorial pendiente.
+
+**Integrado en las nueve presentaciones del recorrido**, mediante
+`static/css/presentation-cards.css` y `static/js/presentation-briefing.js`, tanto
+en el visor estático como en las plantillas del juego. Conserva las reglas,
+los tableros y las secuencias narradas; las notas del GM se distribuyen entre
+los nuevos pasos conservando sus aclaraciones. La maqueta aprobada
+se conserva como referencia en `output/propuesta-tarjetas/`.
+
+Verificación en simulación aislada a 1920 × 1080 y 1280 × 720, en los tres
+idiomas, con navegación de ida y vuelta. Sin MQTT, hardware ni despliegue;
+lectura real en sala pendiente. Capturas del frontend integrado:
+`output/presentaciones-tarjetas/` conserva el montaje anterior; el avance
+por tarjetas está verificado en `output/tarjetas-secuenciales/`. Visor local:
+[`presentaciones-tarjetas.html`](../static/previews/presentaciones-tarjetas.html).
+
+### Tablero de Memoria con tarjetas
+
+**Continuación autorizada e implementada el 25 noviembre 2026:** aplicar al
+tablero de Memoria el acabado de tarjetas aprobado para las explicaciones.
+Cabecera con nombre, intento, puntos y pirámide; una franja independiente
+destaca la instrucción vigente, su aclaración y el reloj en ámbar cuando existe.
+Las diez tarjetas conservan cinco columnas y dos filas, con el número del token
+arriba y sus dos formas debajo. Bordes de 18 px, grafito satinado y separadores
+finos. Los resultados de reintento se agrupan en dos tarjetas de errores y
+aciertos acumulados, seguidas por la cuenta atrás existente.
+
+Se mantienen las instrucciones en los tres idiomas, el orden de los símbolos,
+las seis variantes de color, las respuestas conservadas y las señales de acierto
+y error. No se añaden tiempos a la fase de respuesta ni pedestales al tablero.
+El cambio se limita a Memoria; las demás pruebas mantienen su distribución.
+Implementación en `static/css/memory-cards.css`. Verificado con simulación
+aislada a 1920 × 1080 y 1280 × 720; pendiente lectura en sala, sin despliegue.
+Vista local: [`memory-punts.html`](../static/previews/memory-punts.html).
+
 ## Pantalla compartida y composición
 
 Referencia **1920 × 1080, 16:9**, comprobada también a **1280 × 720**. Diseñar para
@@ -268,7 +427,7 @@ ornamentales, paneles redundantes y animaciones continuas sobre el tablero.
    vídeo. El GM no explica durante esta secuencia.
 3. **Práctica:** familiarización, sin sumar un reto a la pirámide.
 4. **Presentación del puzzle:** entrada automática del nombre y composición
-   persistente con tres revelados del GM.
+   persistente con una tarjeta completa por avance del GM.
 5. **Cuenta atrás e inicio:** orden explícita cuando se ha entendido el reto.
 6. **Juego:** máxima superficie útil y estado funcional visible.
 7. **Logro:** actualizar la pirámide por un reto realmente conseguido; el GM prepara
@@ -685,7 +844,7 @@ QUIZ, revisión en castellano implementada con el formato del Simulacro el
 
 - **Objetivo:** «Identificar las 4 respuestas correctas».
 - **Herramientas:** botones de los terminales. Mostrar el panel frontal completo
-  `static/images/shared/terminal_3d/buttons_panel_front.png`, sin token ni rótulo
+  `static/images/redesign-v2/objects/buttons_panel_front.png`, sin token ni rótulo
   inferior y conservando sus seis colores originales.
 - **Acción:** «Leed la pregunta → identificad las respuestas correctas → marcad
   cada respuesta en su terminal».
@@ -718,15 +877,16 @@ castellano para los avisos nuevos.
 - Objetivo: «Recordar las formas y sus colores».
 - Herramientas: tokens y botones de colores. Decisión actualizada e implementada
   el 7 octubre 2026: token y panel frontal completo
-  `static/images/shared/terminal_3d/buttons_panel_front.png`, con sus seis colores
+  `static/images/redesign-v2/objects/buttons_panel_front.png`, con sus seis colores
   originales, sustituyen el recorte del terminal. Uso conjunto aprobado para
   esta presentación. Verificación aislada a ambas resoluciones:
   `output/memoria-botones/`, sin MQTT ni hardware.
 - Decisión del 9 octubre 2026, implementada: Herramientas / Eines incorpora
   además una **alfa roja** como ejemplo, junto al token y al panel de botones,
   siguiendo la presentación de un símbolo independiente de Tras la Serpiente.
-  Usa la forma original `static/images/puzzle8/alpha.svg` y su representación
-  roja ya existente en la presentación. Se muestra en los tres idiomas y las
+  Actualizado el 25 noviembre: usa una única imagen
+  `static/images/redesign-v2/memory-3d/alpha-red-pedestal.png`.
+  Se muestra en los tres idiomas y las
   notas del GM aclaran que es un ejemplo de forma y color, no una pista de partida.
   Verificado en los tres idiomas a 1920 × 1080 y 1280 × 720 mediante
   simulación aislada, sin MQTT ni hardware: `output/memoria-letra/`.
@@ -746,7 +906,7 @@ castellano para los avisos nuevos.
   ilustrativos, sin mostrar una solución.
 - En el tablero, la operación muestra **token + número del terminal**. Decisión
   implementada el 7 octubre 2026: sustituir la pirámide SVG del primer operando
-  por `static/images/shared/gameplay/token_card.png`. La pirámide de la cabecera
+  por `static/images/redesign-v2/objects/token_card.png`. La pirámide de la cabecera
   conserva su función de progreso. Verificación visual aislada en ambas
   resoluciones: `output/sumas-token/`, sin MQTT ni hardware.
 - Acción: «Identificad el número de vuestro token → buscad el número que completa
@@ -807,11 +967,14 @@ símbolos o luces conservan su ilustración completa. Esta sustitución gráfica
 no anticipa traducciones de los textos pendientes. Verificación visual aislada
 a 1920 × 1080 y 1280 × 720: `output/paneles-botones/`, sin MQTT ni hardware.
 
-### Tres revelados dentro de una única composición
+### Revelado de tarjetas dentro de una única composición
 
-1. Objetivo y elementos de la pantalla compartida.
-2. Terminales, token y herramientas.
-3. Interacción y coordinación entre participantes.
+La decisión de tarjetas secuenciales sustituye el antiguo esquema de tres
+revelados (objetivo, herramientas, acción) descrito en las revisiones históricas.
+
+1. Objetivo del reto.
+2. Una tarjeta completa por avance del GM, de izquierda a derecha.
+3. Atención, si la prueba la incluye, después de la última tarjeta.
 
 Mantener en su sitio lo que ya apareció. El GM avanza, retrocede y repite. No poner
 toda la explicación de golpe ni añadir un tutorial de «ejemplo en acción».
@@ -877,8 +1040,9 @@ Los tiempos se validan con una sesión, no como una norma eterna de marca.
 ## Superficie común de los puzzles
 
 Cabecera compacta aprobada y aplicada a los doce HTML de puzzles, incluida la
-práctica y las pruebas fuera del recorrido. Memory y Laberinto conservan además
-su superficie piloto. La revisión individual de cada tablero sigue pendiente.
+práctica y las pruebas fuera del recorrido. La capa «Arquitectura de luz» unifica
+los materiales y las fuentes. Los nueve tableros del recorrido se han revisado
+en simulación; las pruebas fuera del recorrido solo heredan la capa compartida.
 
 - Esquina superior izquierda: solo el nombre editorial del puzzle.
 - Esquina superior derecha: solo la pirámide compacta, con los bloques de los
@@ -971,6 +1135,39 @@ jugadores recupera un bloqueo del navegador, y el GM puede repetir la secuencia
 sin sumar progreso otra vez. Comprobado en Chrome con carga lenta, interrupción,
 repetición y los tres idiomas a 1920 × 1080 y 1280 × 720, con eventos simulados:
 `output/victoria-so/`. La salida de sonido en sala requiere validación física.
+
+Decisión del 24 noviembre 2026, implementada en el frontend: explicar los
+puntos en tres momentos, con el mismo texto para jugadores y notas del GM.
+Después de la práctica, la primera presentación puntuable incluye «Los puntos
+son de todo el equipo», sin avance automático. Distingue los puntos en juego
+(posibles al superar el reto) de los ganados; recuerda que la práctica no
+puntúa y que los resultados se suman al total final. Esta pantalla sigue el
+primer reto del orden configurado, también si cambia el recorrido.
+
+Cada objetivo incorpora una regla breve de puntuación. Cálculo: 100 menos 3
+por respuesta incorrecta, repetida o fuera de tiempo, mínimo 0. Serpiente y
+Código Sonoro: 100, menos 10 cada minuto desde los 3 minutos transcurridos,
+hasta 40; sin resolver a los 10 minutos, 0. Memoria y Pulso de Tiempo: 100 en
+el primer intento, menos 10 por fallo; diez fallos, 0. Conexión Simultánea:
+100 menos 10 por cuenta atrás agotada, mínimo 0. Carga Final: 100 menos 10
+por reinicio de carga al apagarse los terminales, mínimo 0. QUIZ: 10 por
+pregunta correcta, 20 en cada sexta pregunta; los errores no restan. Su
+indicador se llama «Puntos ganados», para distinguirlo de «Puntos en juego».
+
+Las celebraciones muestran «Habéis ganado N puntos» con el valor confirmado
+por el resultado, incluido 0. No sustituyen un resultado ausente por los puntos
+en juego ni por un cero supuesto. La práctica y las previsualizaciones sin
+resultado no muestran un premio numérico. Repetir o cambiar de idioma conserva
+el resultado sin escribir puntuaciones. Carga Final mantiene su desenlace;
+el recuento final muestra además los puntos de su último registro en la sesión.
+Los cierres por tiempo o intentos agotados conservan su mensaje de 0 puntos.
+
+Incluye catalán, castellano e inglés. Se reutiliza la moneda autorizada de
+`static/images/shared/gameplay/points-medallion.svg`. Las reglas de backend
+no cambian. La verificación se realiza con las plantillas reales y eventos
+simulados, mediante `tests/scoring_explanation_browser.cjs`, a 1920 × 1080 y
+1280 × 720, con movimiento reducido. No equivale a una validación en sala ni
+a un despliegue.
 
 Solo la resolución confirmada suma progreso; repetir la celebración no vuelve
 a sumar. El simulacro se celebra sin añadir bloques puntuables y las pruebas
@@ -1092,17 +1289,56 @@ y con variante estática cuando se solicite movimiento reducido.
 
 ## Catálogo gráfico autorizado
 
+### Recursos «Arquitectura de luz»
+
+**Aprobado e integrado el 25 noviembre 2026:** versiones mejoradas de los
+recursos que aparecen en el proyecto. Se mantiene su identificación y función;
+los ocho iconos de ayuda de la reserva quedan fuera del alcance.
+
+La carpeta `static/images/redesign-v2/` contiene los recursos activos: token,
+terminal, botonera, marco de espera, moneda, diez patrones vectoriales con bisel
+y 60 letras tridimensionales con una sola alfa sobre pedestal. Sus rutas reales
+se utilizan en las pantallas y en las representaciones del GM.
+
+Las diez máscaras planas de `redesign-v2/memory/` son un estudio previo para
+comparar; el juego usa los PNG de `memory-3d/`. Los originales se conservan por
+sus referencias en las galerías comparativas, no como copias sincronizadas.
+La pirámide mantiene su identidad y geometría con el nuevo acabado satinado.
+
+Inventario, método y verificación en
+[`static/images/redesign-v2/README.md`](../static/images/redesign-v2/README.md).
+
 ### Objetos principales
+
+**Ampliación acordada el 25 noviembre 2026:** tras aprobar la alfa tridimensional,
+extender su acabado a las diez letras existentes, con ligera inclinación y sin
+pedestal para el tablero. Preparar cada letra en blanco, negro, rojo, amarillo,
+verde y azul. El usuario autoriza la edición programática para obtener los
+colores y limpiar los bordes, conservando exactamente la misma silueta entre
+las seis variantes de cada letra. El volumen toma las formas actuales como
+referencia; no es un trazado geométrico exacto de sus máscaras.
+
+**Integrado en el frontend:** 60 letras PNG transparentes de
+1024 × 1024 en `static/images/redesign-v2/memory-3d/`, más **una sola alfa roja
+con pedestal** para el ejemplo de la presentación. El pedestal pertenece a la
+puesta en escena explicativa; no se incorpora a las pistas ni se extiende a las
+demás letras. El negro conserva un fino borde interior para su lectura sobre
+grafito. Los materiales incluyen luces y sombras dentro de su color funcional.
+La galería `static/previews/memory-3d.html` permite revisar los seis colores sobre
+fondos claro y oscuro. El tablero y el simulador del GM usan imágenes por letra
+y color; las presentaciones usan las mismas piezas. La lectura en sala sigue
+pendiente. Sobre grafito, la versión negra recibe además un contorno neutro fino
+en CSS para mejorar su legibilidad, sin modificar el PNG ni su color funcional.
 
 | Recurso | Archivo | Aplicación |
 | --- | --- | --- |
-| Token | `static/images/shared/gameplay/token_card.png` | Presentaciones, práctica y ayudas |
-| Terminal | `static/images/shared/gameplay/terminal_box.png` | Misma familia que el token |
+| Token | `static/images/redesign-v2/objects/token_card.png` | Presentaciones, práctica y ayudas |
+| Terminal | `static/images/redesign-v2/objects/terminal_box.png` | Misma familia que el token |
 
-![Token](../static/images/shared/gameplay/token_card.png)
-![Terminal](../static/images/shared/gameplay/terminal_box.png)
+![Token](../static/images/redesign-v2/objects/token_card.png)
+![Terminal](../static/images/redesign-v2/objects/terminal_box.png)
 
-PNG transparentes: token 1024 × 1024; terminal 2000 × 2000. Mostrar una vista
+PNG transparentes: token, terminal y botonera de 1024 × 1024. Mostrar una vista
 principal por explicación y no añadir halos. Son ilustraciones de apoyo, no fotos
 del montaje que se ofrece al cliente.
 
@@ -1131,19 +1367,21 @@ SVG o CSS sencillo. No recuperar las ilustraciones descartadas desde copias anti
 
 ### Recursos funcionales que se preservan
 
-- Laberinto: diez patrones `static/images/puzzle2/symbols/symbol_0.png` a
-  `symbol_9.png`; mantener orientación, colores y distribución exactas.
+- Laberinto: diez patrones `static/images/redesign-v2/snakes/symbol_0.svg` a
+  `symbol_9.svg`. Conservan orientación, nueve casillas y colores centrales
+  #9811F2 / #1AE6EC. El bisel interior no modifica la distribución.
 - Memory: `alpha`, `beta`, `gamma`, `delta`, `epsilon`, `lambda`, `mu`, `omega`,
-  `pi`, `sigma` en `static/images/puzzle8/`. Los `.svg` contienen raster incrustado;
-  no asumir escalado vectorial infinito. Conservar siluetas y códigos.
+  `pi`, `sigma` en `static/images/redesign-v2/memory-3d/`, en los seis colores
+  funcionales. PNG con relieve y ligera perspectiva; renderizar como imágenes,
+  nunca como máscaras CSS. Conservar identificación y códigos.
 - Botones: el código vigente dibuja las bolas a partir de los patrones del juego
   y representa acierto y error con texto y CSS; conserva
-  `static/images/puzzle12/wait.png`. Los GIF y PNG antiguos sin uso quedan en
+  `static/images/redesign-v2/objects/wait.png`. Los GIF y PNG antiguos sin uso quedan en
   `static/images/no_usadas/puzzle12/`, como reserva local. Mantener patrones,
   cantidades, colores y tiempos al revisar el tablero.
 - Sumas, Trivial, Cronómetro, Música y Energía conservan números, preguntas,
   secuencias, tiempos y señales reales. Los iconos no sustituyen esos datos.
-- `static/images/shared/terminal_3d/buttons_panel_front.png` sigue activo.
+- `static/images/redesign-v2/objects/buttons_panel_front.png` sigue activo.
   Los demás renders quedan como referencia física en
   `static/images/no_usadas/shared/terminal_3d/`, incluido
   `terminal_box_buttons_numbers_front.png`. No mezclar

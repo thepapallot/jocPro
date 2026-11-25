@@ -1,0 +1,151 @@
+/* Shared satin material system. Layouts keep their game-specific states and data.
+   Fonts are local and declared in architecture-pilot.css, loaded immediately before. */
+:root {
+    --a-display: ArchitectureDisplay, 'Arial Narrow', sans-serif;
+    --a-text: ArchitectureText, Arial, sans-serif;
+    --a-data: ArchitectureData, monospace;
+    --a-graphite: #101012;
+    --a-paper: #f3eee4;
+    --a-muted: #bcbac3;
+    --a-seam: #62616b66;
+    --a-accent: #dc68a7;
+    --player-body: var(--a-text);
+    --player-muted: #bcbac3;
+    --player-line: #62616b66;
+    --player-surface: linear-gradient(145deg, #292930, #1b1b22 48%, #15151b);
+    --player-edge: inset 0 1px 0 #ffffff19, inset 0 -2px 0 #05050980;
+    --player-depth: 0 10px 24px #0003;
+    --player-radius: 7px;
+}
+.p-stage { --p-display: var(--a-display); font-family: var(--a-text); }
+.p-stage .p-screen { background-color: var(--a-graphite); }
+.p-stage .p-screen:has(.j-blueprint) { padding: 46px 64px 42px; background: radial-gradient(ellipse at 30% 65%, #bcbac309, transparent 55%), var(--a-graphite); }
+.p-stage:has(.j-blueprint)::before, .p-stage:has(.j-blueprint)::after { display: none; }
+.p-stage .p-screen:has(.j-blueprint) .p-head { display: none; }
+.p-stage .j-blueprint { padding: 0; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-heading {
+    height: 194px; flex: none; margin: 0 0 24px; padding-bottom: 20px;
+    border-bottom: 1px solid var(--a-seam);
+    display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr auto; gap: 8px 30px;
+}
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-heading h1 { font: 700 72px/1.4 var(--a-display); letter-spacing: .005em; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-heading p { font: 500 25px/1.3 var(--a-text); }
+.p-stage .b-practice-brand { font-family: var(--a-display); }
+.p-stage .j-blueprint .b-reveal-track { grid-column: 1 / -1; grid-row: 2; justify-self: start; justify-content: flex-start; gap: 28px; }
+.p-stage .b-reveal-track span { font: 500 17px/1.3 var(--a-data); min-width: 120px; padding-top: 8px; }
+.p-stage .b-reveal-track b { font: 500 19px/1.3 var(--a-data); }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-map {
+    flex: 1; min-height: 0; grid-template-columns: 960px minmax(0,1fr);
+    grid-template-rows: 350px minmax(0,1fr); gap: 26px 64px;
+}
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-intro-mark { display: none; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-screen-zone { grid-area: 1 / 2; padding: 0 0 0 30px; border-left: 2px solid var(--act-colour); }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-tools-zone { grid-area: 1 / 1 / 3 / 2; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-interaction-zone {
+    grid-area: 2 / 2; padding: 22px 0 0 30px; border: 0; border-top: 1px solid var(--a-seam);
+    border-radius: 0; background: none;
+}
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-monitor { height: 300px; background: none; border: 0; box-shadow: none; border-radius: 0; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-monitor-top { display: none; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-monitor-art { height: 100%; padding: 0 !important; align-items: stretch; justify-content: flex-start; gap: 20px; }
+.p-stage .b-practice-objective { font: 600 39px/1.25 var(--a-text); text-align: left; }
+.p-stage .b-monitor-art:has(.b-score-rule) .b-practice-objective { font: 600 35px/1.25 var(--a-text); }
+.p-stage .b-score-rule { font: 400 27px/1.35 var(--a-text); padding-top: 18px; margin: 0; }
+.p-stage .b-score-rule strong { font: 500 18px/1.4 var(--a-data); margin-bottom: 6px; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-tools-art {
+    height: 650px; border: 0; border-radius: 0; background: none; gap: 24px;
+}
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-tools-art::after {
+    content: ''; position: absolute; z-index: -1; bottom: 100px; left: 24px; right: 24px; height: 1px;
+    background: linear-gradient(90deg, transparent, #85828c80, transparent);
+}
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-art-row { gap: 12px; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-device { width: 390px; height: 430px; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-buttons-panel { width: 550px; height: 610px; max-width: 100%; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-art-row > .b-symbol { width: 120px; height: 120px; padding: 0; border: 0; background: none; box-shadow: none; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-art-label { font: 400 25px/1.4 var(--a-text); color: var(--a-muted); }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-action-route { flex-direction: column; gap: 0; align-items: stretch; counter-reset: action; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-action-route > .b-arrow { display: none; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-action {
+    counter-increment: action; display: grid; grid-template-columns: 42px 1fr; gap: 20px;
+    padding: 14px 0; border-top: 1px solid #62616b33; align-items: baseline; text-align: left;
+}
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-action:first-child { border-top: 0; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-action::before { content: counter(action, decimal-leading-zero); color: var(--act-colour); font: 500 23px/1.3 var(--a-data); }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-action > b { display: none; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-action > span { font: 500 29px/1.3 var(--a-text); text-transform: none; max-width: none; text-align: left; text-wrap: pretty; }
+.p-stage .j-blueprint:not(.a-memory-briefing) .b-rule { font: 400 23px/1.4 var(--a-text); margin: 18px 0 0; color: var(--a-muted); }
+.p-stage .b-layer h2 { font: 500 22px/1.4 var(--a-data); letter-spacing: .08em; }
+.p-stage .b-attention { background: #101012f2; backdrop-filter: none; }
+.p-stage .b-attention-card { background: var(--player-surface); border-color: #62616b; border-top-color: #edb970; }
+.p-stage .b-tools-art, .p-stage .b-interaction-zone { animation: none !important; }
+.p-stage .b-layer { transition-duration: 400ms; }
+
+/* One physical alpha display, with no second CSS plaque or pedestal behind it. */
+.a-memory-briefing .a-object-stage .a-plinth { display: none; }
+.a-memory-briefing .a-object-stage .a-alpha-pedestal { position: absolute; left: 290px; bottom: 40px; width: 440px; height: 530px; object-fit: contain; }
+.a-memory-briefing .a-object-stage .b-token { left: -25px; bottom: 32px; width: 360px; height: 430px; }
+.a-memory-briefing .a-object-stage .b-buttons-panel { right: -20px; bottom: 0; width: 380px; height: 560px; }
+.p-stage img:is(.b-greek,.j-shape) { display: block; object-fit: contain; background: none; mask: none; -webkit-mask: none; }
+.p-stage .b-greek { width: 150px; height: 150px; }
+.p-stage .b-dot, .p-stage .b-press { box-shadow: inset 1px 2px 2px #ffffff66, inset -1px -3px 3px #0007, 0 5px 8px #0004; }
+
+/* Shared cinematic lighting and type, retaining narration, subtitles and timings. */
+.p-stage :is(.o-cinema,.f-cinema,.j-achievement,.j-journey) { background-color: #101012; }
+.p-stage .o-cinema { background-image: radial-gradient(ellipse at 50% 40%, #bcbac311, transparent 65%); }
+.p-stage :is(.o-title,.f-title,.j-achievement h1,.j-journey h1,.b-title-copy h1,.b-elements h1) { font-family: var(--a-display); font-weight: 700; letter-spacing: .01em; }
+.p-stage :is(.o-subtitle,.f-subtitle) { font-family: var(--a-text); }
+.p-stage :is(.b-title-copy>p,.f-label,.j-eyebrow) { font-family: var(--a-data); font-weight: 500; }
+.p-stage .b-title-bands { opacity: .12; }
+.p-stage .b-title-line { height: 2px; }
+.p-stage :is(.j-journey-node,.j-rule-card,.b-elements-monitor>div,.b-scoring-columns section) { background: var(--player-surface); border-color: var(--a-seam); border-radius: 7px; box-shadow: var(--player-edge), var(--player-depth); }
+.p-stage .b-elements-items img { filter: none; }
+.p-stage .f-score-value { font-family: var(--a-data); font-weight: 500; }
+
+/* Neutral chassis and a consistent header. Functional answer colors stay local. */
+body.pyramid-game.game-surface { font-family: var(--a-text); background: #101012; }
+body.pyramid-game.game-surface #game-stage { background: radial-gradient(ellipse at 50% 0, #bcbac308, transparent 65%), #101012; }
+body.pyramid-game.game-surface .game-corner-hud { inset-inline: 36px; }
+body.pyramid-game.game-surface .game-corner-identity h1 { font-family: var(--a-display); font-weight: 700; letter-spacing: .01em; }
+body.pyramid-game.game-surface .game-corner-progress { font-family: var(--a-data); }
+body.pyramid-game.game-surface :is(.points-hud-label,.panel-kicker,.brief-label,.hud-label) { font-family: var(--a-text); letter-spacing: .03em; }
+body.pyramid-game.game-surface :is(#timer,#timer-text,#countdown,#p4-timer,.box-time,.points-hud-value>strong,.formula-value,.formula-result-value) { font-family: var(--a-data); font-weight: 500; font-variant-numeric: tabular-nums; }
+body.pyramid-game.game-surface :is(.quiz-panel,.music-panel,.time-panel,.p10-panel,.final-panel,#p11-current-card,#objective-panel,#p2-status-hud,#p6-arena) {
+    border-color: var(--a-seam); border-radius: 7px; background: var(--player-surface);
+    box-shadow: var(--player-edge), var(--player-depth);
+}
+body.pyramid-game.game-surface :is(.quiz-panel,.music-panel,.time-panel)::before { opacity: .15; }
+
+/* Memory: true PNG materials, without the old CSS color masks or outer halo. */
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-answer-content { filter: none; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-color-black { filter: drop-shadow(1px 0 0 #9898a3) drop-shadow(-1px 0 0 #9898a3) drop-shadow(0 1px 0 #9898a3) drop-shadow(0 -1px 0 #9898a3); }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-answer.is-filled::before { display: none; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-answer { padding: 5px 0; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-frame:not(.p8-correct):not(.p8-wrong) .p8-answer.is-filled { background: #28282f; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-grid[data-phase="tokens"] .p8-frame:not(.p8-correct):not(.p8-wrong) .p8-answer { background: #28282f; }
+
+/* Sums and time: legible engraved values on separate satin faces. */
+body.pyramid-game.game-surface[data-puzzle="1"] #puzzle-container .op:not(.correct) { background: var(--player-surface); border-color: var(--a-seam); box-shadow: var(--player-edge), var(--player-depth); }
+body.pyramid-game.game-surface[data-puzzle="1"] #puzzle-container .op .value { font-family: var(--a-data); }
+body.pyramid-game.game-surface[data-puzzle="5"] .player-box:not(.filled):not(.result-success):not(.result-failure) { background: var(--player-surface); border-color: var(--a-seam); box-shadow: var(--player-edge), var(--player-depth); }
+body.pyramid-game.game-surface[data-puzzle="5"] .player-box { border-radius: 7px; }
+body.pyramid-game.game-surface[data-puzzle="5"] .box-time { line-height: 1.4; }
+
+/* Snake patterns retain all nine cells and their direction; only inset bevels change. */
+body.pyramid-game.game-surface[data-puzzle="2"] .snake-segment { image-rendering: auto; }
+body.pyramid-game.game-surface[data-puzzle="2"] .snake-row { border-radius: 7px; }
+
+/* Quiz, music and practice share the material, with their own action layouts. */
+body.pyramid-game.game-surface[data-puzzle="3"] #quiz-stage { background: var(--player-surface); border-radius: 7px; }
+body.pyramid-game.game-surface[data-puzzle="3"] .game-corner-hud { height: 54px; }
+body.pyramid-game.game-surface[data-puzzle="4"] .legend-copy { font-family: var(--a-text); }
+body.pyramid-game.game-surface[data-puzzle="4"] .legend-row { background: var(--player-surface); border-color: var(--a-seam); box-shadow: var(--player-edge); border-radius: 6px; }
+body.pyramid-game.game-surface[data-puzzle="4"] .legend-pill { box-shadow: inset 1px 2px 2px #ffffff66, inset -2px -3px 4px #0008, 0 3px 8px #0004; }
+body.pyramid-game.game-surface[data-puzzle="11"] #p11-current-card { border: 0; border-top: 2px solid #62616b; background: radial-gradient(ellipse at 50% 48%, #303039, #1a1a21 65%, #141419); }
+body.pyramid-game.game-surface[data-puzzle="11"] #p11-step-main { font-family: var(--a-display); font-weight: 700; font-size: 86px; }
+body.pyramid-game.game-surface[data-puzzle="6"] .token-card { border-radius: 7px; box-shadow: inset 0 -4px 0 #0005, 0 8px 18px #0004; }
+body.pyramid-game.game-surface[data-puzzle="12"] #timer-overlay { background: #1b1b22; border-color: var(--a-seam); box-shadow: var(--player-edge), var(--player-depth); }
+
+@media (prefers-reduced-motion: reduce) {
+    .p-stage .b-layer { transition: none; transform: none; }
+}

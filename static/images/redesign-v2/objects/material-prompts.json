@@ -1,0 +1,20 @@
+[
+  {
+    "file": "token_card.png",
+    "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-f27986cb-f05b-4ca7-b683-f9327bce01b4.png",
+    "prompt": "Use case: style-transfer. Edit image 1, preserving the complete object and composition. Image 2 is the approved material and lighting reference ONLY, do not add its alpha letter. Keep exactly the pyramid-shaped token on its thin square base, current proportions and camera. Only refine its finish. Match the refined shallow bevels, smooth satin finish and soft upper-left studio light of the alpha. Graphite surfaces neutral charcoal rather than blue, smooth satin enamel rather than visibly brushed metal. Thin precise neutral highlights. Keep existing cyan accents but make them restrained recessed lines with no glow or halo outside the object. Colored buttons retain unambiguous functional hues with fine bevels like the reference letter. Transparent background including all surrounding space, no floor, no shadow outside the object, no text, no new features. One isolated production game illustration on square canvas, full object visible with 10% margins. Keep the subject recognizable and consistent with the reference equipment.",
+    "method": "Built-in image_gen; user-authorized alpha edge cleanup with Pillow"
+  },
+  {
+    "file": "terminal_box.png",
+    "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-0c2ff9d0-b540-4d14-8ba1-ac71fd8bc165.png",
+    "prompt": "Use case: style-transfer. Edit image 1, preserving the complete object and composition. Image 2 is the approved material and lighting reference ONLY, do not add its alpha letter. Keep exactly the box, reader recess, horizontal white light bar, front cyan hash and magenta triangle, and SIX buttons in their current positions and colors. Do not add or delete any controls or change the camera. Match the refined shallow bevels, smooth satin finish and soft upper-left studio light of the alpha. Graphite surfaces neutral charcoal rather than blue, smooth satin enamel rather than visibly brushed metal. Thin precise neutral highlights. Keep existing cyan accents but make them restrained recessed lines with no glow or halo outside the object. Colored buttons retain unambiguous functional hues with fine bevels like the reference letter. Transparent background including all surrounding space, no floor, no shadow outside the object, no text, no new features. One isolated production game illustration on square canvas, full object visible with 10% margins. Keep the subject recognizable and consistent with the reference equipment.",
+    "method": "Built-in image_gen; user-authorized alpha edge cleanup with Pillow"
+  },
+  {
+    "file": "buttons_panel_front.png",
+    "source": "/home/agusti/.codex/generated_images/01a20e83-d6e0-71d3-ad45-bbd70ab254bc/exec-dbe7815a-d3aa-4c8a-8e5e-94ba22dfcccc.png",
+    "prompt": "Use case: style-transfer. Edit image 1, preserving the complete object and composition. Image 2 is the approved material and lighting reference ONLY, do not add its alpha letter. Keep the FRONT VIEW and exactly SIX buttons in two columns: top red/white, middle green/blue, bottom black/yellow, and the four screws. No perspective rotation. Match the refined shallow bevels, smooth satin finish and soft upper-left studio light of the alpha. Graphite surfaces neutral charcoal rather than blue, smooth satin enamel rather than visibly brushed metal. Thin precise neutral highlights. Keep existing cyan accents but make them restrained recessed lines with no glow or halo outside the object. Colored buttons retain unambiguous functional hues with fine bevels like the reference letter. Transparent background including all surrounding space, no floor, no shadow outside the object, no text, no new features. One isolated production game illustration on square canvas, full object visible with 10% margins. Keep the subject recognizable and consistent with the reference equipment.",
+    "method": "Built-in image_gen; user-authorized alpha edge cleanup with Pillow"
+  }
+]

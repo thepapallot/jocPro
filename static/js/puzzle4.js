@@ -603,7 +603,7 @@
             clearTimeout(interRoundPauseTimer);
             clearTimeout(delayedPopupTimer);
             setStatus(tr('songCompleted', "Canción completada"), 'solved');
-            window.PyramidLevelVictory.complete(4);
+            window.PyramidLevelVictory.complete(4, d);
             return;
         }
 

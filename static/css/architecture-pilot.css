@@ -1,0 +1,348 @@
+/* Architecture of light — pilot: welcome, Memory briefing and Memory board only.
+   Fonts and artwork are local. Functional glyphs, colours and timing stay in the game. */
+@font-face {
+    font-family: ArchitectureDisplay;
+    src: url('../fonts/Rajdhani-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: ArchitectureText;
+    src: url('../fonts/Inter-Variable.ttf') format('truetype');
+    font-weight: 100 900;
+    font-display: swap;
+}
+@font-face {
+    font-family: ArchitectureData;
+    src: url('../fonts/IBMPlexMono-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-display: swap;
+}
+.a-welcome,
+.a-memory-briefing,
+body.pyramid-game.game-surface[data-puzzle="8"] {
+    --a-display: ArchitectureDisplay, 'Arial Narrow', sans-serif;
+    --a-text: ArchitectureText, Arial, sans-serif;
+    --a-data: ArchitectureData, monospace;
+    --a-paper: #f3eee4;
+    --a-muted: #bcbac3;
+    --a-seam: #62616b66;
+    --a-graphite: #101012;
+    --a-accent: #dc68a7;
+    font-family: var(--a-text);
+}
+
+/* A single central identity, held by quiet architectural courses at the edges. */
+.p-stage[data-kind="welcome"] .p-screen.j-immersive { background: #101012; }
+.a-welcome {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    color: var(--a-paper);
+    background: radial-gradient(ellipse at 50% 59%, #39263526, transparent 57%), #101012;
+}
+.a-welcome::after {
+    content: '';
+    position: absolute;
+    left: 64px;
+    right: 64px;
+    top: 52px;
+    height: 1px;
+    background: linear-gradient(90deg, #dc68a780, #62616b44 20%, #62616b44 80%, #dc68a780);
+}
+.a-welcome-identity {
+    position: absolute;
+    inset: 110px 260px 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.a-welcome .j-emblem { width: 680px; height: 470px; flex: none; }
+.a-welcome .j-emblem > .j-pyramid {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    margin: 0;
+    animation: none;
+    filter: none;
+}
+.a-welcome .j-floor {
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 42px;
+    background: radial-gradient(ellipse, #dc68a72b, transparent 68%);
+}
+.a-welcome h1 {
+    font: 700 152px/1.3 var(--a-display);
+    letter-spacing: .04em;
+    margin: 30px 0 0;
+    white-space: nowrap;
+}
+.a-welcome p { font: 400 36px/1.5 var(--a-text); letter-spacing: .06em; margin: 12px 0 0; }
+.a-welcome-footer {
+    position: absolute;
+    bottom: 106px;
+    left: 340px;
+    right: 340px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 38px;
+    font: 400 28px/1.5 var(--a-text);
+    color: var(--a-muted);
+    padding-top: 40px;
+}
+.a-welcome-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(50% - 48px);
+    width: 96px;
+    height: 2px;
+    background: var(--a-accent);
+    box-shadow: 0 0 15px #dc68a738;
+}
+.a-welcome-footer > span + span { border-left: 1px solid #dc68a7aa; padding-left: 38px; }
+.a-welcome .j-emblem { animation: architecture-enter 800ms cubic-bezier(.22,1,.36,1) both; }
+.a-welcome h1 { animation: architecture-enter 700ms 120ms cubic-bezier(.22,1,.36,1) both; }
+.a-welcome p { animation: architecture-enter 650ms 220ms cubic-bezier(.22,1,.36,1) both; }
+.a-welcome-footer { animation: architecture-enter 650ms 350ms cubic-bezier(.22,1,.36,1) both; }
+@keyframes architecture-enter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+}
+.a-masonry { position: absolute; inset: 120px 0 190px; z-index: -1; pointer-events: none; }
+.a-masonry i {
+    position: absolute;
+    top: calc(var(--course) * 170px);
+    left: -100px;
+    width: calc(440px - var(--course) * 28px);
+    height: 150px;
+    border-bottom: 1px solid #62616b55;
+    border-right: 1px solid #62616b44;
+    transform: skewX(35deg);
+    background: linear-gradient(180deg, transparent, #ffffff02);
+}
+.a-masonry i:nth-child(n+5) { left: auto; right: -100px; transform: skewX(-35deg); }
+.a-masonry i::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: 18px;
+    width: 55px;
+    height: 1px;
+    background: #d3a0b8;
+    box-shadow: 0 0 12px #dc68a7aa;
+}
+.a-masonry i:nth-child(even)::after { opacity: .2; right: 110px; }
+
+/* Memory explanation: object stage left, persistent instructions right. */
+.p-stage[data-puzzle="8"]:has(.a-memory-briefing) .p-screen {
+    background: radial-gradient(ellipse at 31% 66%, #39263520, transparent 50%), #101012;
+    padding: 46px 64px 42px;
+}
+.p-stage[data-puzzle="8"]:has(.a-memory-briefing)::before,
+.p-stage[data-puzzle="8"]:has(.a-memory-briefing)::after { display: none; }
+.p-screen:has(.a-memory-briefing) .p-head { display: none; }
+.p-stage .a-memory-briefing { padding: 0; color: var(--a-paper); }
+.p-stage .a-memory-briefing .b-heading {
+    height: 112px;
+    margin: 0 0 40px;
+    border-bottom: 1px solid var(--a-seam);
+    align-items: center;
+    position: relative;
+}
+.a-memory-briefing .b-heading::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 110px;
+    height: 2px;
+    background: var(--a-accent);
+}
+.p-stage .a-memory-briefing .b-heading h1 {
+    font: 700 76px/1.4 var(--a-display);
+    letter-spacing: .005em;
+    margin: 0;
+}
+.a-brief-brand { display: flex; align-items: center; gap: 18px; font: 700 29px/1 var(--a-display); text-transform: uppercase; }
+.a-brief-brand .pyramid-vector { width: 58px; height: 46px; }
+.p-stage .a-memory-briefing .b-map {
+    grid-template-columns: 1060px minmax(0, 1fr);
+    grid-template-rows: 218px minmax(0, 1fr) 108px;
+    gap: 0 54px;
+}
+.p-stage .a-memory-briefing .b-layer h2 {
+    font: 500 22px/1.4 var(--a-data);
+    letter-spacing: .12em;
+    color: var(--a-muted);
+    margin: 0 0 22px;
+}
+.a-memory-briefing .b-screen-zone { grid-area: 1 / 2; padding: 5px 0 0 32px; border-left: 2px solid #dc68a7b3; }
+.a-memory-briefing .a-objective { font: 600 40px/1.25 var(--a-text); margin: 0; text-wrap: pretty; }
+.a-memory-briefing .b-tools-zone { grid-area: 1 / 1 / 3 / 2; min-height: 0; position: relative; padding-top: 5px; }
+.a-memory-briefing .a-object-stage { position: absolute; inset: 72px 0 24px; }
+.a-object-stage .a-plinth {
+    position: absolute;
+    bottom: 46px;
+    left: 8px;
+    right: 0;
+    height: 48px;
+    border-top: 1px solid #82818b80;
+    background: linear-gradient(180deg, #24242a, #151519 8px, #0c0c0f);
+    box-shadow: 0 20px 26px #0004;
+    transform: skewX(-18deg);
+}
+.a-object-stage .a-plinth::before {
+    content: '';
+    position: absolute;
+    left: 36%;
+    width: 12%;
+    height: 2px;
+    top: 0;
+    background: #dc68a790;
+    box-shadow: 0 0 16px #dc68a750;
+}
+.a-memory-briefing .a-object-stage .b-token { position: absolute; left: -12px; bottom: 44px; width: 360px; height: 360px; z-index: 1; }
+.a-memory-briefing .a-object-stage .b-buttons-panel { position: absolute; right: -20px; bottom: -20px; width: 420px; height: 640px; object-fit: contain; max-width: none; max-height: none; }
+.a-memory-briefing .a-object-stage .b-memory-example {
+    position: absolute;
+    left: 400px;
+    bottom: 160px;
+    display: grid;
+    place-items: center;
+    width: 215px;
+    height: 250px;
+    border: 1px solid #85828c80;
+    border-radius: 3px;
+    background: linear-gradient(135deg, #2a272e, #111114);
+    box-shadow: inset 0 1px 0 #ffffff18, 0 14px 26px #0006;
+}
+.a-memory-briefing .a-object-stage .b-memory-example::after {
+    content: '';
+    position: absolute;
+    top: calc(100% + 1px);
+    left: -15px;
+    right: -15px;
+    height: 67px;
+    background: linear-gradient(#2d2a31, #121216 9px, #0e0e11);
+    border-top: 1px solid #88818d66;
+}
+.a-memory-briefing .a-object-stage .b-greek { width: 170px; height: 185px; }
+.p-stage .a-memory-briefing .b-interaction-zone {
+    grid-area: 2 / 2;
+    padding: 26px 0 10px 32px;
+    border: 0;
+    border-top: 1px solid var(--a-seam);
+    background: none;
+    border-radius: 0;
+}
+.a-actions { list-style: none; counter-reset: memory-action; padding: 0; margin: 0; }
+.a-actions li {
+    counter-increment: memory-action;
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    gap: 22px;
+    align-items: baseline;
+    border-top: 1px solid #62616b44;
+    padding: 18px 0;
+    font: 500 30px/1.3 var(--a-text);
+}
+.a-actions li:first-child { border-top: 0; padding-top: 0; }
+.a-actions li::before { content: counter(memory-action, decimal-leading-zero); color: #dc68a7; font: 500 25px/1.3 var(--a-data); }
+.a-actions li span::first-letter { text-transform: uppercase; }
+.a-memory-briefing .a-score {
+    grid-area: 3 / 1 / 4 / -1;
+    border-top: 1px solid var(--a-seam);
+    display: grid;
+    grid-template-columns: 232px 1fr;
+    gap: 32px;
+    align-items: center;
+    margin-top: 18px;
+}
+.a-score strong { font: 500 22px/1.4 var(--a-data); letter-spacing: .1em; color: var(--a-muted); }
+.a-score p { font: 400 29px/1.4 var(--a-text); margin: 0; padding-left: 30px; border-left: 2px solid #dc68a780; }
+.p-stage .a-memory-briefing .b-action-route { flex-direction: column; gap: 15px; align-items: stretch; }
+.p-stage .a-memory-briefing .b-action { justify-content: flex-start; gap: 16px; }
+.p-stage .a-memory-briefing .b-action > b { display: none; }
+.p-stage .a-memory-briefing .b-action > span { font: 500 30px/1.3 var(--a-text); text-transform: none; max-width: none; }
+.p-stage .a-memory-briefing .b-action-route > .b-arrow { display: none; }
+.a-memory-rule { font: 400 26px/1.4 var(--a-text); color: var(--a-muted); margin: 24px 0 0; }
+.p-stage .a-memory-briefing .b-attention-card { background: #1a191f; border-color: #62616b; border-top-color: #edb970; }
+.p-stage .a-memory-briefing .b-attention { background: #101012f2; backdrop-filter: none; }
+.p-stage .a-memory-briefing .b-attention-card h2 { font-family: var(--a-display); font-weight: 700; }
+.p-stage .a-memory-briefing .b-attention-card p { font-family: var(--a-text); }
+.p-stage .a-memory-briefing .b-tools-zone,
+.p-stage .a-memory-briefing .b-interaction-zone { transition-duration: 400ms; }
+.p-stage .a-memory-briefing .b-tools-art,
+.p-stage .a-memory-briefing .b-interaction-zone { animation: none; }
+
+/* Ten physical bays. Only the neutral material changes; confirmed states keep
+   their original colour rules. Number and token are grouped above the two shapes. */
+body.pyramid-game.game-surface[data-puzzle="8"] #game-stage { background: #101012; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-shell { padding: 120px 44px 36px; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-shell::before {
+    content: '';
+    position: absolute;
+    left: 44px;
+    right: 44px;
+    top: 102px;
+    height: 1px;
+    background: linear-gradient(90deg, #dc68a7a0, #62616b66 15%, #62616b66 85%, #dc68a7a0);
+}
+body.pyramid-game.game-surface[data-puzzle="8"] .game-corner-hud { inset: 18px 44px auto; height: 58px; }
+body.pyramid-game.game-surface[data-puzzle="8"] .game-corner-identity { max-width: 350px; }
+body.pyramid-game.game-surface[data-puzzle="8"] .game-corner-identity h1 { font: 700 36px/1.1 var(--a-display); letter-spacing: .01em; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-instruction-step { top: 66px; left: 44px; font: 500 18px/1.3 var(--a-data); letter-spacing: 0; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-instruction { left: 405px; right: 435px; top: 18px; grid-template-columns: 1fr; grid-template-areas: 'heading' 'detail' 'track'; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-instruction-title { font: 700 36px/1.15 var(--a-display); letter-spacing: .015em; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-instruction-detail { font: 400 22px/1.3 var(--a-text); }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-countdown { font-family: var(--a-data); font-weight: 500; }
+body.pyramid-game.game-surface[data-puzzle="8"] .points-hud { right: 144px; top: 8px; height: 80px; border-color: var(--a-seam); }
+body.pyramid-game.game-surface[data-puzzle="8"] .points-hud strong { font: 500 43px/1.2 var(--a-data); }
+body.pyramid-game.game-surface[data-puzzle="8"] .points-hud-label { font: 400 16px/1.3 var(--a-text); letter-spacing: 0; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-grid { gap: 24px 20px; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-frame { padding: 18px 18px 22px; border-radius: 3px; transition: none; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-frame:not(.p8-correct):not(.p8-wrong) {
+    background: linear-gradient(145deg, #24232a, #17171c 46%, #131317);
+    border-color: #62616b80;
+    box-shadow: inset 0 1px 0 #ffffff12, 0 8px 20px #0003;
+}
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-token {
+    flex: 0 0 90px;
+    justify-content: space-between;
+    padding: 0 8px 16px;
+    margin-bottom: 20px;
+    border-bottom-color: #8a879166;
+}
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-number { font: 500 68px/1.1 var(--a-data); letter-spacing: -.055em; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-token-icon { width: 88px; height: 88px; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-slot { gap: 12px; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-answer { padding: 18px 10px; border-radius: 3px; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-placeholder {
+    border-radius: 3px;
+    border-color: #63616c50;
+    background: #0c0c103b;
+    box-shadow: inset 0 3px 16px #0003;
+}
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-terminal-mark { color: #bcbac350; }
+body.pyramid-game.game-surface[data-puzzle="8"] .p8-frame:not(.p8-correct):not(.p8-wrong) .p8-answer.is-filled {
+    border-color: #63616c80;
+    background: radial-gradient(ellipse, #c9c7d124, transparent 80%);
+}
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-grid[data-phase="tokens"] .p8-frame:not(.p8-correct):not(.p8-wrong) .p8-answer { border-color: transparent; background: none; }
+body.pyramid-game.game-surface[data-puzzle="8"] #p8-grid[data-phase="tokens"] .p8-answer.is-filled::before { background: radial-gradient(ellipse, #d5d2de6b, #bcbac32e 48%, transparent 74%); }
+body.pyramid-game.game-surface[data-puzzle="8"] :is(#p8-exhausted-title,.p8-retry-timer h2) { font-family: var(--a-display); font-weight: 700; }
+body.pyramid-game.game-surface[data-puzzle="8"] :is(.p8-retry-countdown strong,.p8-retry-stat strong) { font-family: var(--a-data); font-weight: 500; line-height: 1.4; }
+
+@media (prefers-reduced-motion: reduce) {
+    .p-stage .a-memory-briefing .b-layer { transition: none; transform: none; }
+    .a-welcome :is(.j-emblem,h1,p), .a-welcome-footer { animation: none; }
+}

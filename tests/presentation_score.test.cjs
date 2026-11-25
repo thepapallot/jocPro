@@ -1,18 +1,18 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
 function setup(response,reduced=false){
  const callbacks=new Map(),errors=[];let serial=0;
- const value={textContent:'—',style:{}},status={textContent:''};
- const root={dataset:{},style:{},classList:{toggle(){}},querySelector:s=>s==='.f-score-value'?value:status};
+ const value={textContent:'—',style:{}},status={textContent:''},finalLine={textContent:'',hidden:true};
+ const root={dataset:{},style:{},classList:{toggle(){}},querySelector:s=>s==='.f-score-value'?value:s==='.f-score-final'?finalLine:status};
  const context={window:{},AbortController,Intl,console:{error:(...args)=>errors.push(args)},matchMedia:()=>({matches:reduced}),
    fetch:async()=>response,requestAnimationFrame:fn=>{callbacks.set(++serial,fn);return serial;},cancelAnimationFrame:id=>callbacks.delete(id)};
  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../static/js/presentation-score.js'),'utf8'),context);
- return {api:context.window.PyramidScore,root,value,status,errors,context,tick(ms){const work=[...callbacks.values()];callbacks.clear();work.forEach(fn=>fn(ms));}};
+ return {api:context.window.PyramidScore,root,value,status,finalLine,errors,context,tick(ms){const work=[...callbacks.values()];callbacks.clear();work.forEach(fn=>fn(ms));}};
 }
 const result=points=>({session:{session_id:7},puzzles:points.map(([puzzle_num,total_points])=>({session_id:7,puzzle_num,total_points}))});
 const ok=data=>({ok:true,json:async()=>data});
 test('final tally reuses the authorized points coin, without replacing the number',()=>{
  const {api}=setup();
- assert.match(api.markup('ca'),/images\/shared\/gameplay\/points-medallion\.svg/);
+ assert.match(api.markup('ca'),/images\/redesign-v2\/objects\/points-medallion\.svg/);
  assert.match(api.markup('ca'),/f-score-value/);
  assert.match(api.markup('ca'),/PUNTUACIÓ FINAL/);
 });
@@ -61,4 +61,16 @@ test('leaving during a pending load cannot start an obsolete animation',async()=
  const work=h.api.mount(h.root,7,11,'ca',()=>{throw Error('obsolete notification');});
  h.api.stop();finish(ok(result([[2,80]])));await work;
  h.tick(5000);assert.equal(h.value.textContent,'—');
+});
+
+test('final challenge points are shown separately without changing the team total',async()=>{
+ for(const language of ['ca','es','eng']){
+  const h=setup(ok(result([[2,80],[6,90],[6,0]])),true);
+  await h.api.mount(h.root,7,11,language,()=>{});h.tick(0);
+  assert.equal(h.value.textContent,'170');assert.equal(h.finalLine.hidden,false);
+  assert.match(h.finalLine.textContent,/0/);
+ }
+ const unknown=setup(ok(result([[2,80],[6,null]])),true);
+ await unknown.api.mount(unknown.root,7,11,'ca',()=>{});unknown.tick(0);
+ assert.equal(unknown.finalLine.hidden,true);
 });

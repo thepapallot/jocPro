@@ -393,7 +393,7 @@
         if (d.puzzle_solved && !solved) {
             solved = true;
             if (countdownInterval) clearCountdown();
-            window.PyramidLevelVictory.complete(5);
+            window.PyramidLevelVictory.complete(5, d);
         }
     }
 

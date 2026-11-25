@@ -444,7 +444,7 @@
             interRoundPauseTimer = null;
             interRoundPauseActive = false;
             queuedStartRoundUpdate = null;
-            window.PyramidLevelVictory.complete(12);
+            window.PyramidLevelVictory.complete(12, d);
             return;
         }
     }

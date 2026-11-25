@@ -2420,7 +2420,7 @@
         <div class="sim-p1-piece">
           <div class="field-label">Valor del token</div>
           <div class="sim-p1-card">
-            <img src="/static/images/shared/gameplay/token_card.png" alt="" aria-hidden="true">
+            <img src="/static/images/redesign-v2/objects/token_card.png" alt="" aria-hidden="true">
             <input id="sim-p1-a" class="sim-p1-input sim-p1-card-input" type="number" step="1" value="${simState.puzzle1A}" aria-label="Valor del token">
           </div>
         </div>
@@ -2430,7 +2430,7 @@
         <div class="sim-p1-piece">
           <div class="field-label">Terminal</div>
           <div class="sim-p1-card">
-            <img src="/static/images/shared/gameplay/terminal_box.png" alt="" aria-hidden="true">
+            <img src="/static/images/redesign-v2/objects/terminal_box.png" alt="" aria-hidden="true">
             <input id="sim-p1-b" class="sim-p1-input sim-p1-card-input" type="number" value="${simState.puzzle1B}" aria-label="Valor terminal">
           </div>
         </div>
@@ -2544,7 +2544,7 @@
     const renderP2Symbol = (index) => {
       return `
         <div class="sim-p2-shape-chip">
-          <img src="/static/images/puzzle2/symbols/symbol_${index}.png" alt="Simbolo ${index}">
+          <img src="/static/images/redesign-v2/snakes/symbol_${index}.svg" alt="Simbolo ${index}">
         </div>
       `;
     };
@@ -2945,7 +2945,7 @@
     const boxButtons = Array.from({ length: 10 }, (_, index) => {
       return `
         <button type="button" class="sim-box sim-p3-terminal" data-sim-p3-box="${index}">
-          <img src="/static/images/shared/gameplay/terminal_box.png" alt="" aria-hidden="true">
+          <img src="/static/images/redesign-v2/objects/terminal_box.png" alt="" aria-hidden="true">
           <span>${index}</span>
         </button>
       `;
@@ -3305,11 +3305,11 @@
     const inputStatus = state.input_status && typeof state.input_status === "object" ? state.input_status : {};
 
     const renderSymbolIcon = (symbol, color, compact = false) => {
-      const safeSymbol = symbol || "alpha";
-      const safeColor = color || "white";
+      const safeSymbol = symbolNames.includes(symbol) ? symbol : "alpha";
+      const safeColor = Object.values(colorNames).includes(color) ? color : "white";
       return `
         <span class="sim-p8-icon-wrap${compact ? " is-compact" : ""}">
-          <span class="sim-p8-icon" style="-webkit-mask-image:url('/static/images/puzzle8/${safeSymbol}.svg');mask-image:url('/static/images/puzzle8/${safeSymbol}.svg');background:${safeColor};"></span>
+          <img class="sim-p8-icon" src="/static/images/redesign-v2/memory-3d/${safeSymbol}-${safeColor}.png" alt="${safeSymbol} · ${safeColor}">
         </span>
       `;
     };
@@ -4523,7 +4523,7 @@
       return;
     }
 
-    const assets = ['css/presentation.css','css/presentation-opening.css','js/presentation-opening.js','js/presentation-recordings.js','js/presentation-story.js','audios/intro/intro-ca.mp3','css/game-theme.css','js/puzzle-names.js','js/presentation-flow.js','js/presentation-pilot.js','js/presentation-visuals.js','js/game-shell.js','js/bgm_layer.js','js/game-theme.js','js/pyramid-logo.js','fonts/PiramideDisplay-Black.ttf','images/shared/gameplay/token_card.png','images/shared/gameplay/terminal_box.png'];
+    const assets = ['css/presentation.css','css/presentation-opening.css','js/presentation-opening.js','js/presentation-recordings.js','js/presentation-story.js','audios/intro/intro-ca.mp3','css/game-theme.css','js/puzzle-names.js','js/presentation-flow.js','js/presentation-pilot.js','js/presentation-visuals.js','js/game-shell.js','js/bgm_layer.js','js/game-theme.js','js/pyramid-logo.js','fonts/PiramideDisplay-Black.ttf','images/redesign-v2/objects/token_card.png','images/redesign-v2/objects/terminal_box.png'];
     const checks=await Promise.all(assets.map(async path=>({path,ok:await resourceExists('/static/'+path)})));
     const missing=checks.filter(item=>!item.ok);
     els.sceneHealth.innerHTML=`<div class="state-empty">${missing.length ? 'Faltan recursos: '+missing.map(item=>escapeHtml(item.path)).join(', ') : 'Presentaciones y diseño común: todos los recursos disponibles.'}</div>`;

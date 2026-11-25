@@ -293,7 +293,7 @@
 
         if (d.puzzle_solved && !solved) {
             applySolvedState();
-            window.PyramidLevelVictory.complete(6);
+            window.PyramidLevelVictory.complete(6, d);
         }
     }
 

@@ -2,6 +2,10 @@
 
 {% block title %}Puzzle 8{% endblock %}
 
+{% block surface_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/memory-cards.css') }}">
+{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle8.css') }}">
 {% endblock %}
@@ -32,8 +36,8 @@
                 <span class="points-coin-edge" style="--coin-depth: 1px"></span>
                 <span class="points-coin-edge" style="--coin-depth: 2px"></span>
                 <span class="points-coin-edge" style="--coin-depth: 3px"></span>
-                <img class="points-coin-face points-coin-front" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
-                <img class="points-coin-face points-coin-back" src="{{ url_for('static', filename='images/shared/gameplay/points-medallion.svg') }}" alt="" width="64" height="64">
+                <img class="points-coin-face points-coin-front" src="{{ url_for('static', filename='images/redesign-v2/objects/points-medallion.svg') }}" alt="" width="64" height="64">
+                <img class="points-coin-face points-coin-back" src="{{ url_for('static', filename='images/redesign-v2/objects/points-medallion.svg') }}" alt="" width="64" height="64">
             </span>
         </span>
         <div class="points-hud-value">
@@ -74,7 +78,7 @@
                 <div class="p8-frame" data-token="{{ token_numbers[index] }}" aria-label="Token {{ token_numbers[index] }}">
                     <div class="p8-token">
                         <span class="p8-number">{{ token_numbers[index] }}</span>
-                        <img class="p8-token-icon" src="{{ url_for('static', filename='images/shared/gameplay/token_card.png') }}" alt="Token" width="108" height="108">
+                        <img class="p8-token-icon" src="{{ url_for('static', filename='images/redesign-v2/objects/token_card.png') }}" alt="Token" width="108" height="108">
                     </div>
                     <div class="p8-slot" data-index="{{ index }}">
                         {% for step in range(2) %}

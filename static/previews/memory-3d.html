@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La Piràmide · Letras con volumen</title>
+<style>
+@font-face{font-family:Inter;src:url('../fonts/Inter-Variable.ttf')}
+@font-face{font-family:Rajdhani;src:url('../fonts/Rajdhani-Bold.ttf');font-weight:700}
+:root{color-scheme:dark;--art:#18222a;--line:#35414a;--label:#f3eee4}
+*{box-sizing:border-box}body{margin:0;background:#0a1016;color:#f3eee4;font-family:Inter,Arial,sans-serif}header,main,footer{max-width:1600px;margin:auto;padding:24px 36px}header{display:flex;align-items:end;justify-content:space-between;gap:24px;padding-bottom:8px}.eyebrow{color:#dc68a7;font-size:11px;letter-spacing:3px;text-transform:uppercase}h1,h2{font-family:Rajdhani,Arial,sans-serif}h1{font-size:46px;line-height:1.05;margin:10px 0}h2{font-size:32px;margin:0 0 10px}p{font-size:14px;line-height:1.6;color:#b5c2cc;margin:8px 0}a{color:#91d6dd;text-underline-offset:4px}header>a{white-space:nowrap;font-size:13px;padding-bottom:10px}main{padding-top:14px}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px}.palette{display:flex;gap:8px;flex-wrap:wrap}button{font:inherit;font-size:13px;cursor:pointer;border:1px solid #3e4b55;border-radius:5px;color:#d9e3e9;background:#121c24;padding:9px 12px;display:inline-flex;align-items:center;gap:7px}button[aria-pressed=true]{border-color:#39d6e5;background:#1b353e;color:#fff}button:focus-visible,a:focus-visible{outline:2px solid #39d6e5;outline-offset:4px}.swatch{width:12px;height:12px;border-radius:50%;background:var(--color);box-shadow:0 0 0 1px #71818a}.toolbar>button{margin-left:auto}.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.card{background:var(--art);border:1px solid var(--line);border-radius:7px;overflow:hidden}.art{height:clamp(140px,13vw,194px);display:flex;justify-content:center;align-items:center;padding:8px}.art img{width:100%;height:100%;object-fit:contain}.meta{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:11px 14px;border-top:1px solid var(--line);color:var(--label)}.meta strong{font-size:14px;font-weight:500}.meta a{font-size:11px;color:var(--label);opacity:.8}section{margin-bottom:40px;scroll-margin-top:24px}.caption{font-size:12px;margin:13px 0;color:#9bb0bf}.pedestal{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px;border-top:1px solid #35414a;padding-top:30px}.pedestal .art{height:360px;background:var(--art);border:1px solid var(--line);border-radius:7px}.pedestal p{max-width:470px}.download{display:inline-block;padding:12px 0;font-size:14px}.all-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.all-grid .art{height:clamp(80px,10vw,140px)}.all-grid .meta{padding:8px 10px}.all-grid .meta strong{font-size:11px}.all-grid .meta a{font-size:10px}.color-headings{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));text-align:center;margin:20px 0 12px;color:#b5c2cc;font-size:12px}.light{--art:#eeefec;--line:#b7bfc3;--label:#15222c}footer{border-top:1px solid #35414a;font-size:12px;line-height:1.8;color:#9bb0bf;padding-top:18px;padding-bottom:30px}
+@media(max-width:700px){header,main,footer{padding-left:18px;padding-right:18px}header{display:block}h1{font-size:37px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.art{height:175px}.toolbar>button{margin-left:0}.pedestal{grid-template-columns:1fr;gap:14px}.pedestal .art{height:280px}.all-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.color-headings{display:none}.all-grid .meta{display:block}.all-grid .meta a{display:block;margin-top:5px}}
+</style>
+</head>
+<body>
+<header><div><div class="eyebrow">La Piràmide / Colección de Memoria</div><h1>Las diez formas, con volumen.</h1><p>60 letras transparentes · Seis colores · Una alfa con pedestal para la presentación.</p></div><a href="recursos-v2.html">Ver los demás recursos ↗</a></header>
+<main>
+<section id="letters" aria-label="Letras sin pedestal">
+<div class="toolbar"><div class="palette" role="group" aria-label="Color de las letras"></div><button id="background" aria-pressed="false">Fondo claro</button></div>
+<div class="grid" id="letters-grid"></div>
+<p class="caption" id="selection" role="status">Rojo · PNG de 1024 × 1024 con transparencia real. Sin pedestal.</p>
+</section>
+<section class="pedestal" id="pedestal"><div class="art"><img src="../images/redesign-v2/memory-3d/alpha-red-pedestal.png" alt="Alfa roja sobre placa grafito y un pedestal con línea magenta" width="1024" height="1024"></div><div><div class="eyebrow">Solo para la presentación</div><h2>Un único ejemplo con pedestal.</h2><p>La alfa roja conserva la placa y la base del ejemplo aprobado. Las letras del tablero se han preparado como piezas independientes.</p><a class="download" href="../images/redesign-v2/memory-3d/alpha-red-pedestal.png" download>Descargar alfa con pedestal ↗</a></div></section>
+<section id="all"><h2>La colección completa.</h2><p>Alfa, beta, gamma, delta, épsilon, lambda, mu, omega, pi y sigma. Descarga cada PNG desde su tarjeta.</p><div class="color-headings" aria-hidden="true"></div><div class="all-grid" id="all-grid"></div></section>
+</main>
+<footer>Colección integrada en el tablero, la presentación y el simulador del GM. Vista estática, sin conexión a la partida.<br><a href="../images/redesign-v2/memory-3d/README.md">Inventario y preparación</a> · <a href="../images/redesign-v2/memory-3d/generation-manifest.json">Referencias de generación</a></footer>
+<script>
+'use strict';
+const root='../images/redesign-v2/memory-3d/';
+const letters=[['alpha','Alfa'],['beta','Beta'],['gamma','Gamma'],['delta','Delta'],['epsilon','Épsilon'],['lambda','Lambda'],['mu','Mu'],['omega','Omega'],['pi','Pi'],['sigma','Sigma']];
+const colors=[['white','Blanco','#ffffff'],['black','Negro','#000000'],['red','Rojo','#ff0000'],['yellow','Amarillo','#ffff00'],['green','Verde','#00aa00'],['blue','Azul','#0066ff']];
+function card(name,label,color,colorLabel,full=false){const src=root+name+'-'+color+'.png';return `<article class="card"><div class="art"><img src="${src}" alt="${label}, color ${colorLabel.toLowerCase()}" width="1024" height="1024"></div><div class="meta"><strong>${label}${full?' · '+colorLabel.toLowerCase():''}</strong><a href="${src}" download aria-label="Descargar ${label}, ${colorLabel}">PNG ↗</a></div></article>`;}
+function select(color,label){document.getElementById('letters-grid').innerHTML=letters.map(([n,l])=>card(n,l,color,label)).join('');document.querySelectorAll('[data-color]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===color)));document.getElementById('selection').textContent=label+' · PNG de 1024 × 1024 con transparencia real. Sin pedestal.';}
+colors.forEach(([color,label,hex])=>{const b=document.createElement('button');b.dataset.color=color;b.innerHTML=`<span class="swatch" style="--color:${hex}" aria-hidden="true"></span>${label}`;b.onclick=()=>select(color,label);document.querySelector('.palette').append(b);});
+document.getElementById('background').onclick=function(){const light=document.body.classList.toggle('light');this.textContent=light?'Fondo oscuro':'Fondo claro';this.setAttribute('aria-pressed',String(light));};
+document.querySelector('.color-headings').innerHTML=colors.map(([,label])=>`<span>${label}</span>`).join('');
+document.getElementById('all-grid').innerHTML=letters.flatMap(([name,label])=>colors.map(([color,colorLabel])=>card(name,label,color,colorLabel,true))).join('');
+select('red','Rojo');
+</script>
+</body>
+</html>

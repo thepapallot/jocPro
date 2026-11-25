@@ -7,7 +7,7 @@
   const owner=host()||window;
   const effect=owner.PyramidVictoryEffect||(owner.PyramidVictoryEffect=new (owner.Audio||Audio)(new URL('../audios/effects/victory-celebration.wav',document.currentScript.src).href));
   effect.preload='auto';effect.volume=1;
-  let active=false,ready=false,leaving=false,frame=0,serial=0,stage,view,progress,elapsed=0,issue='',blocked=false;
+  let active=false,ready=false,leaving=false,frame=0,serial=0,stage,view,progress,elapsed=0,issue='',blocked=false,earnedPoints=null;
   const bgm=()=>host()?.BGM||window.BGM;
   const lang=()=>window.PyramidLanguage?.normalize(game.language)||game.language||'es';
   const practice=()=>game.puzzleId===game.tutorialId;
@@ -34,7 +34,7 @@
   }
   async function play(){
     stop();const token=serial;ready=false;elapsed=0;issue='';blocked=false;
-    view=PyramidVictory.create(stage,{...progress,puzzleId:game.puzzleId,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});
+    view=PyramidVictory.create(stage,{...progress,earnedPoints,puzzleId:game.puzzleId,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});
     stage.classList.add('v-awaiting-audio');
     report();if(effect.error)effect.load();effect.currentTime=0;
     const music=bgm();music?.setVolume(PyramidVictory.musicLevel(0),350);
@@ -61,7 +61,7 @@
       if(final())advance();
     };tick();
   }
-  function complete(id){
+  function complete(id,result){
     if(id!==game.puzzleId||active)return;
     const run=host()?.PyramidRun,ids=[...new Set([...game.order,game.finalId])].filter(n=>n!==game.tutorialId);
     const before=run?.snapshot().completedIds||[];
@@ -69,6 +69,7 @@
     const after=run?run.snapshot().completedIds:(ids.includes(id)?[id]:[]);
     progress={previous:before.filter(n=>ids.includes(n)).length,completed:after.filter(n=>ids.includes(n)).length,total:ids.length||1};
     if(!accepted)progress.previous=progress.completed;
+    earnedPoints=!practice()&&result?.puzzle_id===id&&Number.isSafeInteger(result.total_points)&&result.total_points>=0?result.total_points:null;
     active=true;
     // The Catalan and Spanish finales own the fill, effects and message as one film.
     // The earned snapshot is already saved; never play the generic win first.
@@ -86,7 +87,7 @@
     if(action==='restart')play();
     if(action==='language'){
       game.language=window.PyramidLanguage?.set(value)||value;
-      view=PyramidVictory.create(stage,{...progress,puzzleId:game.puzzleId,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});view.render(elapsed);report();
+      view=PyramidVictory.create(stage,{...progress,earnedPoints,puzzleId:game.puzzleId,language:lang(),practice:practice(),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});view.render(elapsed);report();
     }
   });
   const unlock=()=>{if(active&&blocked&&!leaving)play();};
