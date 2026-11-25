@@ -20,6 +20,7 @@
     $('gm-session-editor-title').textContent=selected?`Partida #${selected.session_id} · ${selected.name||'Sin nombre'}`:'Nueva partida · sin ID todavía';
     $('gm-session-type').disabled=Boolean(selected?.started_at||selected?.puzzle_count);
     $('gm-confirm-session-btn').disabled=Boolean(selected?.ended_at);
+    $('gm-reopen-session-btn').disabled=!selected?.ended_at||Boolean(callbacks.busy?.());
     actionLabels();
     $('gm-delete-session-btn').disabled=!selected?.session_id||selected.session_id===activeId;
     $('gm-session-save-state').textContent=message||'Guardada en el servidor.';
@@ -29,6 +30,7 @@
     const current=Boolean(selected?.session_id&&selected.session_id===activeId);
     const recorded=Boolean(selected?.started_at||selected?.puzzle_count);
     $('gm-confirm-session-btn').textContent=selected?.ended_at?'Partida finalizada':current?`${dirty?'Guardar y volver a':'Volver a'} la partida #${selected.session_id} →`:recorded?`Retomar la partida #${selected.session_id} →`:selected?`Preparar la partida #${selected.session_id} →`:'Crear y preparar esta partida →';
+    $('gm-reopen-session-btn').textContent=selected?.ended_at?`Reabrir la partida #${selected.session_id} y continuar`:'Reabrir la partida finalizada';
     $('gm-save-session-btn').textContent=selected?'Guardar cambios':'Guardar para más adelante';
     const canClose=Boolean(selected?.session_id&&!selected.ended_at&&(recorded||current));
     $('gm-close-session-btn').textContent=selected?`Finalizar y archivar #${selected.session_id}`:'Finalizar y archivar partida';

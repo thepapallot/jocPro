@@ -10,6 +10,7 @@
 .session-test { background:#fff1d8; color:#77500c; border-color:#dcb478; }
 .session-form-actions { grid-template-columns:repeat(3,minmax(0,1fr)); align-items:stretch; border-top:1px solid #cbd7df; padding-top:14px; }
 .session-form-actions #gm-confirm-session-btn { grid-column:1 / -1; }
+.session-form-actions #gm-start-new-session-btn, .session-form-actions #gm-reopen-session-btn { grid-column:1 / -1; min-height:50px; padding:12px 20px; font-size:16px; line-height:1.25; font-weight:700; letter-spacing:0; }
 .session-form-actions #gm-confirm-session-btn, #test-header :is(#gm-begin-session-btn,#gm-start-btn) { min-height:50px; padding:12px 20px; font-size:16px; line-height:1.25; font-weight:700; letter-spacing:0; }
 .session-form-actions #gm-confirm-session-btn:hover:not(:disabled), #test-header #gm-begin-session-btn:hover:not(:disabled) { background:#bdddeb; border-color:#438dab; }
 .session-form-actions #gm-delete-session-btn { margin-left:auto; }
