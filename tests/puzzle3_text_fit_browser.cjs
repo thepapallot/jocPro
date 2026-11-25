@@ -36,7 +36,7 @@ print(json.dumps(questions))
  let reference;
  for(const [width,height,dpr]of [[1920,1080,1],[1280,720,1],[3840,2160,2],[1024,768,1],[800,450,1]]){
   await cmd('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:dpr,mobile:false});
-  await cmd('Page.navigate',{url:base+'/?shell_target=/puzzle/3&lang=es'});
+  await cmd('Page.navigate',{url:base+'/?session_id=1&shell_target='+encodeURIComponent('/puzzle/3?session_id=1&lang=es')});
   await until('!!document.getElementById("game-shell-frame")?.contentWindow.auditStreams?.length');
   await inner('w.document.fonts.ready');
   await inner(`w.auditLayout=()=>{const boxes=[w.document.getElementById('question-text'),...w.document.querySelectorAll('.answer-text')];return boxes.map(box=>{const text=box.firstElementChild,style=w.getComputedStyle(box),height=box.clientHeight-parseFloat(style.paddingTop)-parseFloat(style.paddingBottom)-2,size=parseFloat(w.getComputedStyle(text).fontSize),maximum=parseFloat(style.getPropertyValue('--quiz-text-max')),fits=text.scrollHeight<=height&&text.scrollWidth<=text.clientWidth; text.style.fontSize=(size+1)+'px'; const canGrow=size+1<=maximum&&text.scrollHeight<=height&&text.scrollWidth<=text.clientWidth; text.style.fontSize=size+'px';return {size,maximum,fits,canGrow,text:text.textContent};});}`);

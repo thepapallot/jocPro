@@ -28,7 +28,7 @@
     border: 1px solid #526772;
     background: transparent;
     color: #a8bbc5;
-    font: 700 18px/1 Arial, sans-serif;
+    font: 700 18px/1 ArchitectureText, Arial, sans-serif;
 }
 
 .p11-timeline-dot.is-current {
@@ -75,7 +75,7 @@
 }
 
 #p11-step-main {
-    font: 700 70px/1.3 Arial, sans-serif;
+    font: 700 70px/1.3 ArchitectureText, Arial, sans-serif;
     color: #f3eee4;
     text-wrap: balance;
 }

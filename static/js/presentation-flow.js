@@ -11,7 +11,7 @@
     gamePath: '/puzzle/1',
     steps: ['cover', 'objective', 'example', 'coordination', 'ready'],
     example: Object.freeze({token: 13, terminal: 5, result: 18, targets: [18, 23, 31, 40]}),
-    assets: Object.freeze({token: asset('shared/gameplay/token_card.png'), terminal: asset('shared/gameplay/terminal_box.png'), buttonsPanel: asset('shared/terminal_3d/buttons_panel_front.png')}),
+    assets: Object.freeze({token: asset('redesign-v2/objects/token_card.png'), terminal: asset('redesign-v2/objects/terminal_box.png'), buttonsPanel: asset('redesign-v2/objects/buttons_panel_front.png')}),
     copy: {
       ca: {
         name: window.PyramidPuzzleNames.name(1,'ca'), nextChallenge: 'La següent prova', brand: 'La Piràmide',
@@ -199,6 +199,27 @@
     "action": "Identifiqueu el color del vostre token → busqueu el llum del mateix color → acosteu-hi el token → continueu amb el color següent."
   }
 };
+  // Player copy and GM notes share the same scoring rules.
+  const timedScore=local(
+    '100 punts. Des de 3:00 de joc, −10 cada minut, fins a 40. A 10:00 sense resoldre: 0 punts.',
+    '100 puntos. Desde 3:00 de juego, −10 cada minuto, hasta 40. A 10:00 sin resolver: 0 puntos.',
+    '100 points. From 3:00 elapsed, −10 each minute, down to 40. Unsolved at 10:00: 0 points.');
+  const attemptScore=local(
+    '100 punts al primer intent. −10 per intent fallit. Si fallen els 10 intents: 0 punts.',
+    '100 puntos al primer intento. −10 por intento fallido. Si fallan los 10 intentos: 0 puntos.',
+    '100 points on the first attempt. −10 per failed attempt. If all 10 attempts fail: 0 points.');
+  const scoringRules={
+    1:local('100 punts. −3 per resposta incorrecta, repetida o fora de temps. Mínim: 0.', '100 puntos. −3 por respuesta incorrecta, repetida o fuera de tiempo. Mínimo: 0.', '100 points. −3 per wrong, repeated or timed-out answer. Minimum: 0.'),
+    2:timedScore,4:timedScore,5:attemptScore,8:attemptScore,
+    3:local('Sumem punts: +10 per pregunta encertada; +20 si és daurada (cada 6a). Els errors no resten.', 'Sumamos puntos: +10 por pregunta acertada; +20 si es dorada (cada 6.ª). Los errores no restan.', 'Earn points: +10 per correct question; +20 for a golden question (every 6th). No points lost for errors.'),
+    6:local('100 punts. −10 cada cop que s’apaguen els llums i es reinicia la càrrega. Mínim: 0.', '100 puntos. −10 cada vez que se apagan las luces y se reinicia la carga. Mínimo: 0.', '100 points. −10 whenever the lights go out and charging restarts. Minimum: 0.'),
+    12:local('100 punts. −10 cada cop que s’esgota el compte enrere. Mínim: 0.', '100 puntos. −10 cada vez que se agota la cuenta atrás. Mínimo: 0.', '100 points. −10 whenever the countdown runs out. Minimum: 0.')
+  };
+  const scoringGuide={
+    ca:{title:'ELS PUNTS SÓN DE TOT L’EQUIP',lead:'La pràctica no puntua. A partir d’ara, cada prova suma al resultat final.',available:'PUNTS EN JOC',availableText:'Els punts que podeu guanyar si supereu la prova. Poden baixar amb el temps o els errors.',earned:'PUNTS GUANYATS',earnedText:'Els punts que ja heu aconseguit. Al QUIZ, s’acumulen amb cada pregunta encertada.',end:'Abans de cada prova veureu la seva regla. Al final, els punts aconseguits.'},
+    es:{title:'LOS PUNTOS SON DE TODO EL EQUIPO',lead:'La práctica no puntúa. A partir de ahora, cada prueba suma al resultado final.',available:'PUNTOS EN JUEGO',availableText:'Los puntos que podéis ganar si superáis la prueba. Pueden bajar con el tiempo o los errores.',earned:'PUNTOS GANADOS',earnedText:'Los puntos que ya habéis conseguido. En el QUIZ, se acumulan con cada pregunta acertada.',end:'Antes de cada prueba veréis su regla. Al final, los puntos conseguidos.'},
+    eng:{title:'THE POINTS BELONG TO THE WHOLE TEAM',lead:'Practice earns no points. From now on, each challenge contributes to your final score.',available:'POINTS AT STAKE',availableText:'The points you can earn by completing the challenge. Time or errors may reduce them.',earned:'POINTS EARNED',earnedText:'The points you have already earned. In the QUIZ, they add up with each correct question.',end:'Each briefing explains its scoring rule. At the end, you will see the points earned.'}
+  };
   for(const id of [tutorialId,...order,finalId]) {
     const intro=byId.get(id);intro.completed=completed;intro.total=total;
     intro.act=actFor(id);intro.isFinal=id===finalId;
@@ -256,7 +277,8 @@
 
       const rule=t.warning||t.coordinateLead;
       t.stepLabels=[local('Objectiu','Objetivo','Goal')[lang],local('Terminals i tokens','Herramientas','Terminals and tokens')[lang],local('Interacció','Interacción','Interaction')[lang]];
-      t.notes=[t.objectiveLead,t.exampleLead,rule];
+      t.scoringRule=scoringRules[id]?.[lang];
+      t.notes=[t.objectiveLead+(t.scoringRule?" "+t.scoringRule:""),t.exampleLead,rule];
       t.footers=[local('Observeu el repte.','Observad el reto.','Look at the challenge.')[lang],local('Aquestes són les vostres eines.','Estas son vuestras herramientas.','These are your tools.')[lang],intro.act.role[lang]];
       t.guidance={role:intro.act.role[lang],hints:[t.objectiveLead,t.exampleLead,rule],rhythm:local('Doneu temps per pensar. Si el grup no sap què fer, oferiu una ajuda; si està provant un pla, deixeu-lo jugar.','Dad tiempo para pensar. Si el grupo no sabe qué hacer, ofreced una ayuda; si está probando un plan, dejadlo jugar.','Allow thinking time. Offer a hint if the group does not know what to do; let them play if they are testing a plan.')[lang]};
       if(id===8){
@@ -322,6 +344,17 @@
         intro.copy[lang].footers.unshift('');
       }
     }
+    if(id===(order[0]||finalId)){
+      intro.scoringGuide=scoringGuide;
+      intro.steps.unshift('scoring-guide');
+      intro.autoAdvanceMs.unshift(0);
+      for(const lang of ['ca','es','eng']){
+        const guide=scoringGuide[lang],t=intro.copy[lang];
+        t.stepLabels.unshift(local('Els punts de l’equip','Los puntos del equipo','Team points')[lang]);
+        t.notes.unshift([guide.lead,guide.available+': '+guide.availableText,guide.earned+': '+guide.earnedText,guide.end].join(' '));
+        t.footers.unshift('');
+      }
+    }
     flow.push(intro);
     if(id===finalId)break;
     const previous=completed;
@@ -370,6 +403,50 @@
     t.stepLabels=flow[1].story.map(b=>b.label[lang]);
     t.notes=flow[1].story.map(b=>b.id==='hold'?b.voice[lang]:window.PyramidOpeningStory.recording(lang)?'Locució: '+b.voice[lang]:local('Guió de veu (gravació pendent): ','Guion de voz (grabación pendiente): ','Voice script (recording pending): ')[lang]+b.voice[lang]);
     t.footers=t.stepLabels.map(()=>t.slogan);
+  }
+  // One manual step per complete card. Keep language-specific card counts and
+  // GM notes together so the player, controller and file preview use one order.
+  const englishCardActions={
+    11:['Read the screen','Perform the action','Next instruction'],
+    2:['Find your snake','Find the shape at a terminal','Scan your token and follow the order'],
+    1:['13 + 5 = 18','One combination → one pending target'],
+    8:['Look and remember','The shapes disappear','Scan at both terminals'],
+    3:['Your option','Decide together','Each terminal answers'],
+    5:['Your light turns on','Count in your head','Scan your token'],
+    12:['Count by colour','Share the presses','Hold them together'],
+    4:['LISTEN · Scan your token','REGISTER · Green → token → next fragment'],
+    6:['Your colour lights up','Reach the terminal','Scan your token']
+  };
+  for(const intro of flow.filter(c=>c.kind==='puzzle')){
+    const originalSteps=intro.steps.slice();
+    intro.localizedSteps={};
+    for(const lang of ['ca','es','eng']){
+      const t=intro.copy[lang],old={labels:t.stepLabels,notes:t.notes,footers:t.footers};
+      t.cardActions=lang==='eng'?englishCardActions[intro.puzzleId]:t.coordinateLead.split(' → ').map(s=>s.replace(/\.$/,''));
+      const steps=[],labels=[],notes=[],footers=[];
+      const add=(key,label,note,footer='')=>{steps.push(key);labels.push(label);notes.push(note);footers.push(footer);};
+      originalSteps.forEach((key,i)=>{
+        if(key==='interaction')return;
+        if(key==='tools'){
+          t.cardActions.forEach((action,n)=>{
+            const extra=n===0?old.notes[i]:n===t.cardActions.length-1?old.notes[originalSteps.indexOf('interaction')]:'';
+            add('card-'+(n+1),`${local('Targeta','Tarjeta','Card')[lang]} ${n+1} · ${action}`,action+(extra?' '+extra:''));
+          });
+        }else if(key==='elements'){
+          const e=intro.elementsCopy[lang];
+          [e.screenTitle,e.tokenTitle,e.terminalTitle].forEach((label,n)=>add('elements-'+(n+1),label,
+            [e.screenLead,e.tokenLead,e.parts.join(' · ')+' '+e.action][n]+' '+old.notes[i]));
+        }else if(key==='scoring-guide'){
+          const g=intro.scoringGuide[lang];
+          [g.available,g.earned].forEach((label,n)=>add('scoring-guide-'+(n+1),label,
+            n===0?g.lead+' '+g.availableText:g.earnedText+' '+g.end));
+        }else add(key,old.labels[i],old.notes[i],old.footers[i]);
+      });
+      intro.localizedSteps[lang]=steps;
+      t.stepLabels=labels;t.notes=notes;t.footers=footers;
+    }
+    intro.steps=intro.localizedSteps.ca;
+    intro.autoAdvanceMs=intro.steps.map(s=>['title','equipment-title'].includes(s)?4200:0);
   }
   window.PyramidActs=acts;
   window.PyramidFlow=flow;

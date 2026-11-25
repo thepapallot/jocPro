@@ -46,7 +46,7 @@
 #p8-exhausted-title {
     margin: 0;
     color: #EDB970;
-    font-family: PiramideDisplay, Arial, sans-serif;
+    font-family: ArchitectureDisplay, ArchitectureText, Arial, sans-serif;
     font-size: 104px;
     line-height: 1.4;
     letter-spacing: 0.04em;
@@ -102,7 +102,7 @@
 
 .points-hud strong {
     color: #F3EEE4;
-    font: 900 48px/1.4 PiramideDisplay, Arial, sans-serif;
+    font: 900 48px/1.4 ArchitectureDisplay, ArchitectureText, Arial, sans-serif;
     font-variant-numeric: tabular-nums;
 }
 
@@ -393,7 +393,7 @@
 
 #p8-instruction-detail {
     color: rgba(214, 237, 246, 0.9);
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-size: 24px;
     line-height: 1.25;
     white-space: nowrap;
@@ -532,30 +532,12 @@
     pointer-events: none;
 }
 
-.p8-symbol-mask {
+.p8-symbol {
+    display: block;
     width: 100%;
     height: 100%;
-    background-color: #808080;
-    -webkit-mask: var(--p8-symbol-mask) center / contain no-repeat;
-    mask: var(--p8-symbol-mask) center / contain no-repeat;
+    object-fit: contain;
 }
-
-.p8-symbol-mask.p8-alpha  { --p8-symbol-mask: url('/static/images/puzzle8/alpha.svg'); }
-.p8-symbol-mask.p8-beta   { --p8-symbol-mask: url('/static/images/puzzle8/beta.svg'); }
-.p8-symbol-mask.p8-delta  { --p8-symbol-mask: url('/static/images/puzzle8/delta.svg'); }
-.p8-symbol-mask.p8-epsilon{ --p8-symbol-mask: url('/static/images/puzzle8/epsilon.svg'); }
-.p8-symbol-mask.p8-gamma  { --p8-symbol-mask: url('/static/images/puzzle8/gamma.svg'); }
-.p8-symbol-mask.p8-lambda { --p8-symbol-mask: url('/static/images/puzzle8/lambda.svg'); }
-.p8-symbol-mask.p8-mu     { --p8-symbol-mask: url('/static/images/puzzle8/mu.svg'); }
-.p8-symbol-mask.p8-omega  { --p8-symbol-mask: url('/static/images/puzzle8/omega.svg'); }
-.p8-symbol-mask.p8-pi     { --p8-symbol-mask: url('/static/images/puzzle8/pi.svg'); }
-.p8-symbol-mask.p8-sigma  { --p8-symbol-mask: url('/static/images/puzzle8/sigma.svg'); }
-.p8-symbol-mask.p8-color-white  { background-color: #fff; }
-.p8-symbol-mask.p8-color-black  { background-color: #000; }
-.p8-symbol-mask.p8-color-red    { background-color: #ff0000; }
-.p8-symbol-mask.p8-color-yellow { background-color: #ffff00; }
-.p8-symbol-mask.p8-color-green  { background-color: #00aa00; }
-.p8-symbol-mask.p8-color-blue   { background-color: #0066ff; }
 
 #p8-grid[data-phase='idle'] .p8-token,
 #p8-grid[data-phase='idle'] .p8-slot {
@@ -615,7 +597,7 @@
 
 .pyramid-game #p8-solved-banner .p8-solved-text {
     color: #fff;
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-size: clamp(3rem, 5.2vw, 5.4rem);
     font-weight: 700;
     line-height: 1.05;

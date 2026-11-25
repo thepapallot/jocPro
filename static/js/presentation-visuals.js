@@ -4,8 +4,11 @@
   const device=(c,type,value='',extra='')=>`<div class="j-device ${extra}"><img src="${c.assets[type]}" alt="${type==='token'?'Token':'Terminal'}">${value?`<b>${value}</b>`:''}</div>`;
   const arrow='<span class="j-arrow" aria-hidden="true">→</span>';
   const chip=(text,style='')=>`<span class="j-chip ${style}">${text}</span>`;
-  const symbol=(id)=>`<img class="j-maze-symbol" src="/static/images/puzzle2/symbols/symbol_${id}.png" alt="${L(document.documentElement.lang,'Símbol','Símbolo','Symbol')} ${id}">`;
-  const shape=(name,color)=>`<i class="j-shape" style="--shape:url('/static/images/puzzle8/${name}.svg');--shape-colour:${color}" role="img" aria-label="${name}"></i>`;
+  const symbol=(id)=>`<img class="j-maze-symbol" src="/static/images/redesign-v2/snakes/symbol_${id}.svg" alt="${L(document.documentElement.lang,'Símbol','Símbolo','Symbol')} ${id}">`;
+  const shape=(name,color)=>{
+    const key=({'#ff0000':'red','#0066ff':'blue','#f15c68':'red','#469dff':'blue','#efd865':'yellow','#44d87b':'green','#edf3f5':'white','#56616f':'black'})[color]||color;
+    return `<img class="j-shape" src="/static/images/redesign-v2/memory-3d/${name}-${key}.png" alt="${name} ${key}">`;
+  };
   const rays=()=>`<div class="j-rays" aria-hidden="true">${Array.from({length:16},(_,i)=>`<i style="--i:${i}"></i>`).join('')}</div>`;
   const pyramid=(c,cls='j-pyramid',award=false)=>PyramidLogo.markup({className:cls,progress:100*(c.completed||0)/(c.total||8),previous:award?100*(c.previous||0)/(c.total||8):undefined,cyan:'#39d6e5',pink:'#dc68a7','progress-color':c.kind==='closing'?'#f5ce80':'#71e7db',bloom:award?.65:.28});
   function progress(c,lang){return `<div class="j-progress" aria-label="${c.completed||0} / ${c.total||8}">${Array.from({length:c.total||8},(_,i)=>`<i class="${i<(c.completed||0)?'done':''} ${i===(c.total||8)-1?'summit':''}"></i>`).join('')}<span>${c.completed||0} / ${c.total||8} ${L(lang,'REPTES','RETOS','CHALLENGES')}</span></div>`;}
@@ -46,10 +49,11 @@
       if(c.kind==='opening')return window.PyramidOpening.markup(c,screen,lang);
       if(c.kind==='closing'&&screen==='score')return PyramidScore.markup(lang);
       if(window.PyramidClosing?.active(c,lang))return PyramidClosing.markup(c,screen,lang);
-      if(screen==='elements'&&c.elementsCopy)return PyramidBriefing.elements(c,lang);
+      if(screen.startsWith('elements-')&&c.elementsCopy)return PyramidBriefing.elements(c,lang);
       if(screen==='journey')return journey(c,lang);
-      if(c.kind==='puzzle'&&c.incremental&&['objective','tools','interaction','attention'].includes(screen))return PyramidBriefing.markup(c,t,lang);
-      if(c.kind==='welcome')return `<div class="j-welcome"><div><span class="j-eyebrow">${L(lang,'EL REPTE ÉS DE TOTS.','EL RETO ES DE TODOS.','ONE TEAM. ONE SHARED CHALLENGE.')}</span><h1>LA<br>PIRÀMIDE</h1><p>${L(lang,'Deu terminals. Un únic equip.','Diez terminales. Un único equipo.','Ten terminals. One team.')}</p><span class="j-wait"><i></i>${L(lang,'Benvinguts','Bienvenidos','Welcome')}</span></div>${beam(c,lang)}</div>`;
+      if(c.kind==='puzzle'&&c.incremental&&(['objective','attention'].includes(screen)||screen.startsWith('card-')))return PyramidBriefing.markup(c,t,lang);
+      if(c.kind==='welcome')return `<div class="a-welcome"><div class="a-masonry" aria-hidden="true">${Array.from({length:8},(_,i)=>`<i style="--course:${i%4}"></i>`).join('')}</div><div class="a-welcome-identity">${beam(c,lang)}<h1>${L(lang,'LA PIRÀMIDE','LA PIRÁMIDE','THE PYRAMID')}</h1><p>${L(lang,'El repte és de tots.','El reto es de todos.','One team. One shared challenge.')}</p></div><div class="a-welcome-footer"><span>${L(lang,'Deu terminals. Un únic equip.','Diez terminales. Un único equipo.','Ten terminals. One team.')}</span><span>${L(lang,'Benvinguts','Bienvenidos','Welcome')}</span></div></div>`;
+      if(screen.startsWith('scoring-guide-'))return PyramidBriefing.scoringGuide(c,lang);
       if(c.kind==='success'&&window.PyramidVictory)return PyramidVictory.markup();
       if(c.kind==='success'||c.kind==='closing'){
         const closing=c.kind==='closing',thanks=screen==='thanks',practice=c.afterPuzzle===11;

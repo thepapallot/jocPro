@@ -247,3 +247,28 @@ fallback castellano. Validación sin hardware: `output/serpiente-presentacion/`.
 En Herramientas de Tras la Serpiente, token, terminal y símbolo se presentan
 como tres elementos independientes y alineados; el símbolo no se superpone al
 terminal.
+
+
+## Presentacions amb targetes
+
+Disseny aprovat i integrat el 25 de novembre de 2026: objectiu superior, una
+imatge i instrucció per targeta, puntuació inferior i Atenció separada. Es
+mantenen els passos del GM i les regles. La capa `presentation-cards.css` es
+carrega després d'`architecture-system.css` tant al visor com a les plantilles.
+
+Revisió local sense servidor: [visor de targetes](../static/previews/presentaciones-tarjetas.html).
+Permet escollir prova, idioma i pas; no inicia partides. Comprovat amb simulació
+a 1920 × 1080 i 1280 × 720. La lectura física en sala continua pendent.
+
+### Explicacions: una targeta per avanç
+
+Les nou proves mostren l’objectiu i després una targeta completa per cada
+**Siguiente**, d’esquerra a dreta. Imatge i instrucció entren juntes; les anteriors
+es mantenen al seu lloc. **Anterior** amaga les posteriors i repetir torna a
+l’inici de la presentació. Atenció, quan existeix, arriba després de l’última
+targeta; aleshores es pot iniciar el joc.
+
+El funcionament general i l’explicació de punts segueixen el mateix criteri.
+Les etiquetes i notes del GM acompanyen cada targeta, també en canviar d’idioma.
+El visor local `static/previews/presentaciones-tarjetas.html` permet assajar-ho
+amb Anterior/Siguiente o les fletxes del teclat, sense obrir cap partida.

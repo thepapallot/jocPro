@@ -9,7 +9,7 @@ function runtime(puzzleId=1,completedIds=[2],language='es'){
  const window={PYRAMID_GAME:game,parent,PyramidLanguage:{normalize:v=>v},addEventListener:(name,fn)=>handlers[name]=fn,removeEventListener(){}};
  const context={window,document:{currentScript:{src:'http://test/static/js/level-victory.js'},body:{classList:{add(){}}},querySelectorAll:()=>[],createElement:()=>({firstElementChild:stage,addEventListener(){}}),getElementById:()=>({append(){}})},Audio:class{constructor(){return audio;}},location:{origin:'http://test',assign:url=>navigation.push(url)},URL,performance:{now:()=>now},requestAnimationFrame:fn=>{frames.set(++raf,fn);return raf;},cancelAnimationFrame:id=>frames.delete(id),addEventListener:(name,fn)=>handlers[name]=fn,matchMedia:()=>({matches:false}),PyramidVictory:{markup:()=>'',create:(_,p)=>{draws.push(p);return{render:t=>renders.push(t)}},musicLevel:t=>t<7.5?.3:.22}};
  vm.runInNewContext(source,context);
- return {complete:()=>window.PyramidLevelVictory.complete(puzzleId),tick(t,wallTime=t){now=wallTime*1000;audio.currentTime=t;audio.ended=t>=8.4;for(const [id,fn]of [...frames]){frames.delete(id);fn();}},command(action){handlers.message({origin:'http://test',source:parent,data:{type:'pyramid-presentation-command',action}})},records:()=>records,draws,renders,navigation,messages,volume,audio,gesture:()=>handlers.click(),leave:()=>handlers.pagehide()};
+ return {complete:result=>window.PyramidLevelVictory.complete(puzzleId,result),tick(t,wallTime=t){now=wallTime*1000;audio.currentTime=t;audio.ended=t>=8.4;for(const [id,fn]of [...frames]){frames.delete(id);fn();}},command(action){handlers.message({origin:'http://test',source:parent,data:{type:'pyramid-presentation-command',action}})},records:()=>records,draws,renders,navigation,messages,volume,audio,gesture:()=>handlers.click(),leave:()=>handlers.pagehide()};
 }
 test('victory holds until the full sequence has finished AND the GM advances',async()=>{
  const h=runtime();h.complete();await new Promise(setImmediate);h.command('next');assert.equal(h.navigation.length,0);
@@ -58,4 +58,16 @@ test('a replaced pending play cannot finish or redraw the current celebration',a
  h.audio.play=()=>Promise.resolve();h.command('restart');await new Promise(setImmediate);h.tick(1);
  const count=h.renders.length;start();await new Promise(setImmediate);assert.equal(h.renders.length,count);
  h.leave();h.tick(8.4);assert.equal(h.messages.at(-1).canNext,false);
+});
+test('celebrations use confirmed result points, including zero, and keep them on replay',()=>{
+ for(const points of [0,70,140]){
+  const h=runtime();h.complete({puzzle_id:1,total_points:points,available_points:100});
+  assert.equal(h.draws.at(-1).earnedPoints,points);
+  h.complete({puzzle_id:1,total_points:999});h.command('restart');
+  assert.equal(h.draws.at(-1).earnedPoints,points);assert.equal(h.records(),1);
+ }
+ for(const result of [undefined,{puzzle_id:2,total_points:70},{puzzle_id:1,available_points:100},{puzzle_id:1,total_points:null},{puzzle_id:1,total_points:-1},{puzzle_id:1,total_points:'70'}]){
+  const h=runtime();h.complete(result);assert.equal(h.draws[0].earnedPoints,null);
+ }
+ const practice=runtime(11);practice.complete({puzzle_id:11,total_points:100});assert.equal(practice.draws[0].earnedPoints,null);
 });

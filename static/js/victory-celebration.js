@@ -17,15 +17,23 @@
   }
   const clamp = n => Math.max(0,Math.min(1,n));
   const smooth = n => {n=clamp(n);return n*n*(3-2*n);};
-  function markup(){return '<section class="v-stage" aria-label="Celebration"><div class="v-atmosphere"></div><div class="v-floor"></div><canvas class="v-particles" width="1920" height="1080" aria-hidden="true"></canvas><div class="v-hero"></div><div class="v-wave" aria-hidden="true"></div><div class="v-impact" aria-hidden="true"></div><h2 class="v-title" aria-live="polite"></h2><div class="v-progress"><div class="v-progress-marks" aria-hidden="true"></div><p></p></div></section>';}
+  function markup(){return '<section class="v-stage" aria-label="Celebration"><div class="v-atmosphere"></div><div class="v-floor"></div><canvas class="v-particles" width="1920" height="1080" aria-hidden="true"></canvas><div class="v-hero"></div><div class="v-wave" aria-hidden="true"></div><div class="v-impact" aria-hidden="true"></div><h2 class="v-title" aria-live="polite"></h2><p class="v-earned-points" role="status" hidden></p><div class="v-progress"><div class="v-progress-marks" aria-hidden="true"></div><p></p></div></section>';}
   // Keep the musical lift below the brick impacts and the final sweep.
   function musicLevel(t){return .12+(.03*smooth(t/3.8)+.05*smooth((t-3.65)/.3))*(1-smooth((t-4.8)/2.7));}
-  function create(stage,{previous=0,completed=0,total=8,puzzleId,language='ca',reduced=false,practice=false}={}) {
+  function create(stage,{previous=0,completed=0,total=8,puzzleId,language='ca',reduced=false,practice=false,earnedPoints=null}={}) {
     const copy=COPY[language==='eng'?'en':language]||COPY.ca;
     total=Math.max(1,Number(total)||1);completed=Math.max(0,Math.min(total,Number(completed)||0));previous=Math.max(0,Math.min(completed,Number(previous)||0));
     const before=100*previous/total,after=100*completed/total;
     stage.setAttribute('aria-label',language==='es'?'Celebración del equipo':language==='ca'?'Celebració de l’equip':'Team celebration');
     stage.classList.toggle('v-reduced',reduced);
+    const earned=stage.querySelector('.v-earned-points');
+    const hasScore=!practice&&Number.isSafeInteger(earnedPoints)&&earnedPoints>=0;
+    stage.classList.toggle('v-has-score',hasScore);
+    if(earned){
+      earned.hidden=!hasScore;
+      const value=hasScore?new Intl.NumberFormat(language==='eng'?'en-GB':language).format(earnedPoints):'';
+      earned.textContent=hasScore?(language==='ca'?`Heu guanyat ${value} punts`:language==='es'?`Habéis ganado ${value} puntos`:`You earned ${value} points`):'';
+    }
     const hero=stage.querySelector('.v-hero');
     hero.innerHTML=PyramidLogo.markup({progress:before,cyan:'#39d6e5',pink:'#dc68a7','progress-color':'#71e7db',bloom:.28});
     const svg=hero.querySelector('svg');

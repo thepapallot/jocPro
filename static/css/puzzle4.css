@@ -46,7 +46,7 @@
     width: 100%;
     box-sizing: border-box;
     color: #f3eee4;
-    font-family: PiramideDisplay, 'Arial Narrow', Arial, sans-serif;
+    font-family: ArchitectureDisplay, 'Arial Narrow', ArchitectureText, Arial, sans-serif;
     font-size: clamp(2rem, 3.2vw, 3rem);
     font-weight: 900;
     letter-spacing: 0.015em;
@@ -90,7 +90,7 @@
     border-radius: 24px;
     box-shadow: 0 0 60px rgba(45,255,155,0.2);
     text-shadow: 0 0 24px rgba(45,255,155,0.6);
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-align: center;
@@ -104,7 +104,7 @@
     color: #fff;
     font-size: clamp(3rem, 5.2vw, 5.4rem);
     line-height: 1.05;
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-weight: 700;
     text-shadow: 0 2px 24px #1a7f4f, 0 0 32px #2dff9b, 0 0 8px #000;
     letter-spacing: 0.04em;
@@ -130,7 +130,7 @@ body.p4-solved-flash {
     --p4-ok: #2dff9b;
     --p4-bad: #ff4f6d;
     --p4-warning: #ffb347;
-    --p4-terminal-icon: url('/static/images/shared/gameplay/terminal_box.png');
+    --p4-terminal-icon: url('/static/images/redesign-v2/objects/terminal_box.png');
 }
 
 body {
@@ -283,7 +283,7 @@ body::after {
 
 .legend-arrow {
     color: #a8bbc5;
-    font: 400 36px/1 Arial, sans-serif;
+    font: 400 36px/1 ArchitectureText, Arial, sans-serif;
     flex: 0 0 auto;
 }
 
@@ -342,7 +342,7 @@ body::after {
 .legend-caption {
     margin: 0;
     color: #a8bbc5;
-    font: 400 26px/1.25 Arial, sans-serif;
+    font: 400 26px/1.25 ArchitectureText, Arial, sans-serif;
 }
 
 .legend-button-action {
@@ -934,7 +934,7 @@ body::after {
 #p4-timer,
 #p4-points-value {
     color: #f3eee4;
-    font: 900 54px/1.05 PiramideDisplay, Arial, sans-serif;
+    font: 900 54px/1.05 ArchitectureDisplay, ArchitectureText, Arial, sans-serif;
     font-variant-numeric: tabular-nums;
 }
 

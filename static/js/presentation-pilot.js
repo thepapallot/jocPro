@@ -22,6 +22,12 @@
   const params = new URLSearchParams(location.search);
   const normalizeLanguage = value => window.PyramidLanguage?.normalize(value,'ca') || (value === 'en' ? 'eng' : Object.hasOwn(config.copy, value) ? value : 'ca');
   let language = normalizeLanguage(page?.language||params.get('lang'));
+  function selectLanguageSteps(){
+    if(!config.localizedSteps)return;
+    config.steps=config.localizedSteps[language];
+    config.autoAdvanceMs=config.steps.map(s=>['title','equipment-title'].includes(s)?4200:0);
+  }
+  selectLanguageSteps();
   let mode = page ? 'live' : params.get('mode') === 'live' && location.protocol !== 'file:' ? 'live' : 'preview';
   // Cinematic earned victories continue into the film; /final-loop remains the photo.
   let step = page?.sceneId==='closing'&&params.get('celebrated')==='1'&&!window.PyramidClosing?.active(config,language)?1:(page?.initialStep||0), revealed = false, phase = 'slides', countdownStart = 0, countdownTimer = null, lastCount = null;
@@ -211,7 +217,7 @@
     const host=page&&window.parent!==window?window.parent:window.opener;
     if (host && !host.closed) host.postMessage({
       type: 'pyramid-presentation-state', sessionId, realPage:!!page, step, revealed, phase, language, mode, automatic:scoreScreen()||!!config.autoAdvanceMs?.[step], autoPaused, guidance:text().guidance||null, act:config.act?.name[language],
-      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el funcionament →',es:'Tokens repartidos · explicar el funcionamiento →',eng:'Tokens handed out · explain the equipment →'}[language]:config.incremental?({'equipment-title':{ca:'Com funciona el joc →',es:'Cómo funciona el juego →',eng:'How the game works →'}[language],title:text().name+' →',elements:language==='ca'?'La missió és a les vostres mans →':'La misión está en vuestras manos →',objective:language==='ca'?'Mostrar objectiu →':'Mostrar objetivo →',tools:language==='ca'?'Mostrar eines →':'Mostrar herramientas →',interaction:language==='ca'?'Mostrar interacció →':'Mostrar interacción →',attention:language==='ca'?'Mostrar atenció →':'Mostrar atención →'}[config.steps[step+1]]||null):null,
+      incremental:!!config.incremental,nextLabel:config.kind==='opening'&&config.steps[step]==='hold'?{ca:'Tokens repartits · explicar el funcionament →',es:'Tokens repartidos · explicar el funcionamiento →',eng:'Tokens handed out · explain the equipment →'}[language]:config.incremental&&text().stepLabels[step+1]?text().stepLabels[step+1]+' →':null,
       name: text().name, screen: config.steps[step], puzzleId: config.puzzleId,
       labels: text().stepLabels, kind: config.kind || 'puzzle',
       sceneIndex, scenes: flow?.map(c=>({id:c.id,name:c.copy[language].name,kind:c.kind,route:page ? routeForScene(c) : null,title:c.kind==='success'?c.copy[language].name:c.copy[language].stepLabels[0]})),
@@ -239,19 +245,20 @@
     stage.dataset.scene=config.id;
     stage.dataset.puzzle=config.puzzleId||'';
     stage.style.setProperty('--act-colour',config.accent||config.act?.colour||'#39d6e5');
-    const immersive=flow&&(['welcome','opening','success','closing'].includes(config.kind)||['title','equipment-title'].includes(config.steps[step]));
+    const immersive=flow&&(['welcome','opening','success','closing'].includes(config.kind)||(['title','equipment-title'].includes(config.steps[step])||config.steps[step].startsWith('scoring-guide-')));
     // Keep the same diagram nodes in place while revealing the next layer.
     const current=stage.querySelector('.p-screen:not(.j-leaving)');
-    const revealStep=['objective','tools','interaction','attention'].indexOf(config.steps[step]);
-    const persistent=config.incremental&&revealStep>=0&&phase==='slides'&&current?.dataset.scene===config.id&&current.dataset.language===language&&current.querySelector('.j-blueprint');
+    const revealStep=window.PyramidBriefing?.revealIndex(config,config.steps[step],language)??-1;
+    const sequence=config.steps[step].startsWith('elements-')?'elements':config.steps[step].startsWith('scoring-guide-')?'scoring-guide':'cards';
+    const persistent=config.incremental&&revealStep>=0&&phase==='slides'&&current?.dataset.scene===config.id&&current.dataset.language===language&&current.querySelector(`[data-sequence="${sequence}"]`);
     if(persistent){
       PyramidBriefing.reveal(persistent,revealStep);
-      current.querySelector('.p-footer').innerHTML=footer(text().footers[step]).replace(/^<footer[^>]*>|<\/footer>$/g,'');
+      if(current.querySelector('.p-footer'))current.querySelector('.p-footer').innerHTML=footer(text().footers[step]).replace(/^<footer[^>]*>|<\/footer>$/g,'');
       updateControls();size();scheduleOpening();return;
     }
     const section=document.createElement('section');section.className='p-screen'+(immersive?' j-immersive':'');
     section.dataset.scene=config.id;section.dataset.language=language;
-    section.innerHTML=`${immersive?'':header(config.steps[step]==='elements'?{ca:'Funcionament del joc',es:'Funcionamiento del juego',eng:'How the game works'}[language]:(config.act?config.act.name[language]+' · ':'')+text().name)}${body()}${immersive?'':footer(text().footers[step])}`;
+    section.innerHTML=`${immersive?'':header(config.steps[step].startsWith('elements-')?{ca:'Funcionament del joc',es:'Funcionamiento del juego',eng:'How the game works'}[language]:(config.act?config.act.name[language]+' · ':'')+text().name)}${body()}${immersive?'':footer(text().footers[step])}`;
     const old=stage.querySelector('.p-screen:not(.j-leaving)');
     stage.querySelectorAll('.j-leaving').forEach(node=>node.remove());
     if(old){const subtitle=old.querySelector('.o-subtitle,.f-subtitle');if(subtitle)subtitle.textContent='';old.classList.add('j-leaving');old.setAttribute('aria-hidden','true');}
@@ -261,10 +268,12 @@
       // Opening a progress page never awards a challenge or replays an earned win.
       PyramidVictory.create(section.querySelector('.v-stage'),{previous:config.completed,completed:config.completed,total:config.total,language,practice:config.afterPuzzle===11,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches}).render(8.4);
     }
-    if(config.incremental&&section.querySelector('.j-blueprint'))PyramidBriefing.reveal(section.querySelector('.j-blueprint'),revealStep);
+    if(config.incremental&&section.querySelector('[data-sequence]'))PyramidBriefing.reveal(section.querySelector('[data-sequence]'),revealStep);
     if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
-      section.animate(cinematicClosing()?[{opacity:0},{opacity:1}]:[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:750,easing:'cubic-bezier(.2,.7,.2,1)'});
-      if(old)old.animate([{opacity:1},{opacity:0}],{duration:450,fill:'forwards'}).finished.then(()=>old.remove());
+      // Briefings share the short reveal cadence; narrated scenes keep their pace.
+      const cinematic=['opening','closing','success'].includes(config.kind);
+      section.animate(cinematicClosing()?[{opacity:0},{opacity:1}]:[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:cinematic?750:280,easing:'cubic-bezier(.22,1,.36,1)'});
+      if(old)old.animate([{opacity:1},{opacity:0}],{duration:cinematic?450:180,fill:'forwards'}).finished.then(()=>old.remove());
     }else old?.remove();
     updateControls();
     size();
@@ -303,7 +312,7 @@
     if (!flow || phase==='countdown' || (phase==='game' && mode==='live')) return;
     if(page) {const target=flow[Math.max(0,Math.min(flow.length-1,index))];navigatePage(routeForScene(target));return;}
     stopCountdown(); sceneIndex=Math.max(0,Math.min(flow.length-1,index));
-    config=flow[sceneIndex]; revealed=false; choose(0);
+    config=flow[sceneIndex]; selectLanguageSteps(); revealed=false; choose(0);
   }
   function completedGame() {
     if (!flow || phase!=='game') return;
@@ -397,7 +406,12 @@
     if (action === 'reveal') reveal();
     if (action === 'start') start();
     if (action === 'restart') { if(page||['puzzle','closing'].includes(config.kind)){revealed=false;choose(0);}else if(flow){loadScene(0);}else {revealed=false; choose(0);} }
-    if (action === 'language' && phase === 'slides') { language=normalizeLanguage(value); if(['opening','closing'].includes(config.kind)||['title','equipment-title'].includes(config.steps[step]))choose(step);else render(); }
+    if (action === 'language' && phase === 'slides') {
+      const screen=config.steps[step];language=normalizeLanguage(value);selectLanguageSteps();
+      let index=config.steps.indexOf(screen);
+      if(index<0&&screen.startsWith('card-'))index=config.steps.indexOf('card-'+text().cardActions.length);
+      choose(index<0?Math.min(step,config.steps.length-1):index);
+    }
     if (action === 'mode' && !page && phase === 'slides') { mode=value==='live' && location.protocol !== 'file:' ? 'live' : 'preview'; render(); }
   });
   // Fullscreen needs a gesture in the player window. A click only expands it;

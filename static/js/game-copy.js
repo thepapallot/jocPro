@@ -2,6 +2,7 @@
 window.PyramidLanguage.register('game', {
   "ca": {
     "quizPoints": "Punts",
+    "quizPointsEarned": "Punts guanyats",
     "quizGoldenTitle": "PREGUNTA DAURADA!",
     "quizGoldenBadge": "PREGUNTA DAURADA",
     "quizGoldenDouble": "Si responeu correctament, sumareu el doble de punts.",
@@ -135,6 +136,7 @@ window.PyramidLanguage.register('game', {
   },
   "es": {
     "quizPoints": "Puntos",
+    "quizPointsEarned": "Puntos ganados",
     "quizGoldenTitle": "¡PREGUNTA DORADA!",
     "quizGoldenBadge": "PREGUNTA DORADA",
     "quizGoldenDouble": "Si respondéis correctamente, sumaréis el doble de puntos.",
@@ -268,6 +270,7 @@ window.PyramidLanguage.register('game', {
   },
   "eng": {
     "quizPoints": "Points",
+    "quizPointsEarned": "Points earned",
     "quizGoldenTitle": "GOLDEN QUESTION!",
     "quizGoldenBadge": "GOLDEN QUESTION",
     "quizGoldenDouble": "Answer correctly to earn double points.",

@@ -126,11 +126,12 @@
 
     function fillAnswer(answer, symbol, color) {
         if (!answer || !symbol) return;
-        const element = document.createElement('div');
-        element.className = `p8-symbol-mask p8-${symbol}`;
+        const element = document.createElement('img');
+        element.className = `p8-symbol p8-${symbol}`;
         element.dataset.symbol = symbol;
-        element.setAttribute('role', 'img');
-        element.setAttribute('aria-label', `${symbol}, ${tr('colour' + (color || ''), color || '')}`);
+        element.dataset.color = color || 'white';
+        element.src = `/static/images/redesign-v2/memory-3d/${symbol}-${color || 'white'}.png`;
+        element.alt = `${symbol}, ${tr('colour' + (color || ''), color || '')}`;
         if (typeof color === 'string' && color) {
             element.classList.add(`${COLOR_PREFIX}${color}`);
         }
@@ -227,7 +228,7 @@
             solved = true;
             stopCountdown();
             setPhase('completed');
-            window.PyramidLevelVictory.complete(8);
+            window.PyramidLevelVictory.complete(8, data);
             return;
         }
 

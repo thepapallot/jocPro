@@ -1,0 +1,94 @@
+/* Approved instruction cards: one action and its illustration on the same face.
+   Shared by the live presentation and the static rehearsal; no gameplay styles. */
+.p-stage .p-screen:has(.c-briefing) {
+    padding: 52px 64px;
+    background: radial-gradient(ellipse at 25% 38%, #202128, transparent 55%), linear-gradient(130deg, #15151a, #101014);
+}
+.p-stage .j-blueprint.c-briefing { padding: 0; }
+.p-stage .j-blueprint.c-briefing .b-heading {
+    display: flex; align-items: center; justify-content: space-between; gap: 30px;
+    height: 108px; margin: 0; padding: 0; border: 0; flex: none;
+}
+.p-stage .j-blueprint.c-briefing .b-heading h1 {
+    font: 700 76px/1.4 var(--a-display); letter-spacing: .01em; margin: 0;
+}
+.c-brand { display: flex; align-items: center; gap: 20px; flex: none; font: 700 25px/1.4 var(--a-display); letter-spacing: 2px; text-transform: uppercase; }
+.c-brand svg { width: 70px; height: 70px; }
+.p-stage .j-blueprint.c-briefing .b-map {
+    display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: 106px 626px 112px;
+    gap: 12px; flex: 1; min-height: 0;
+}
+.p-stage .j-blueprint.c-with-rule .b-map { grid-template-rows: 106px 548px 66px 112px; }
+.c-objective { grid-area: 1 / 1; display: flex; align-items: center; gap: 26px; border-top: 1px solid #44434b; }
+.p-stage .c-objective h2 { font: 500 20px/1.4 var(--a-data); color: #c5c2cf; letter-spacing: 2px; margin: 0; flex: none; }
+.c-objective p { font: 600 38px/1.25 var(--a-text); margin: 0; color: var(--a-paper); }
+.p-stage .j-blueprint.c-briefing .c-cards { grid-area: 2 / 1; display: grid; grid-template-columns: repeat(var(--card-count),minmax(0,1fr)); gap: 24px; }
+.c-card {
+    position: relative; overflow: hidden; padding: 28px; display: flex; flex-direction: column;
+    border: 1px solid #585760; border-radius: 18px;
+    background: linear-gradient(140deg, #34343d, #25252d 44%, #1c1c23);
+    box-shadow: inset 0 1px 0 #ffffff28, inset 0 -2px 0 #0008, 0 12px 28px #0003;
+}
+.c-card::before { content: ''; position: absolute; top: 0; left: 28px; right: 28px; height: 2px; background: linear-gradient(90deg, var(--act-colour), transparent); }
+.c-card-number { display: flex; align-items: center; gap: 14px; height: 48px; flex: none; color: #d5d1dc; }
+.c-card-number b { font: 500 32px/1.4 var(--a-data); color: var(--a-paper); }
+.c-card-number span { font: 500 17px/1.4 var(--a-data); letter-spacing: 2px; }
+.c-card-art { height: 344px; flex: none; position: relative; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 64%, #ffffff06, transparent 68%); }
+.p-stage .c-card-art img { max-width: 100%; width: 100%; height: 100%; object-fit: contain; filter: none; }
+.p-stage .j-blueprint.c-briefing .c-card-art .b-device { width: 100%; height: 100%; }
+.p-stage .j-blueprint.c-briefing .c-card-art .b-device b { font: 500 56px/1.25 var(--a-data); }
+.p-stage .j-blueprint.c-briefing .c-card-art .b-buttons-panel { width: 100%; height: 100%; }
+.p-stage .c-card-art .c-pedestal { width: 112%; max-width: none; }
+.c-card-copy { padding-top: 24px; border-top: 1px solid #ffffff1a; flex: 1; }
+.p-stage .c-card-copy h2 { display: block; font: 650 36px/1.23 var(--a-text); letter-spacing: -.025em; margin: 0; color: var(--a-paper); text-transform: none; text-wrap: pretty; }
+.c-score { grid-area: 3 / 1; display: flex; align-items: center; gap: 20px; border-top: 1px solid #ffffff1b; color: #d0ccd6; }
+.c-score img { width: 52px; height: 52px; flex: none; }
+.c-score p { font: 400 26px/1.4 var(--a-text); margin: 0; }
+.c-action-rule { grid-area: 3 / 1; font: 400 25px/1.35 var(--a-text); margin: 0; display: flex; align-items: center; justify-content: center; gap: 16px; color: #d0ccd6; }
+.c-with-rule .c-card-art { height: 266px; }
+/* Reveal the whole card at once; hidden cards retain their final position. */
+.p-stage [data-sequence] [data-card] { visibility: hidden; opacity: 0; pointer-events: none; transition: opacity 400ms ease; }
+.p-stage [data-sequence] [data-card].is-visible { visibility: visible; opacity: 1; pointer-events: auto; }
+.p-stage .c-briefing .b-layer { transform: none; }
+.p-stage .b-elements[data-sequence] > h1 { line-height: 1.4; }
+.p-stage .c-briefing .b-attention { background: #0a0a0eeb; backdrop-filter: blur(10px); }
+.p-stage .c-briefing .b-attention-card { border-radius: 20px; background: linear-gradient(140deg, #34313b, #202028); box-shadow: inset 0 1px #ffffff40, 0 35px 90px #0007; }
+/* Existing explanatory resources, fitted within a card without changing their codes. */
+.c-device-pair { display: flex; align-items: center; width: 100%; height: 100%; }
+.p-stage .j-blueprint.c-briefing .c-device-pair .b-token { width: 42%; height: 70%; }
+.p-stage .j-blueprint.c-briefing .c-device-pair .b-terminal { width: 58%; height: 90%; }
+.c-find-shape { position: relative; width: 100%; height: 100%; }
+.p-stage .j-blueprint.c-briefing .c-find-shape .b-terminal { position: absolute; width: 88%; height: 95%; right: -17px; bottom: 10px; }
+.p-stage .j-blueprint.c-briefing .c-find-shape .b-greek { position: absolute; width: 33%; height: 44%; left: -6px; top: 14px; }
+.c-card-art > :is(.b-terminal-light,.b-colour-token) { width: 100%; height: 100%; }
+.c-screen-art { width: 100%; max-width: 440px; height: 250px; display: flex; align-items: center; justify-content: center; padding: 20px; border: 1px solid #77717b; border-radius: 10px; background: #15151c; box-shadow: inset 0 1px #ffffff24, 0 8px 20px #0004; }
+.c-screen-art .b-instruction { transform: scale(.65); flex: none; }
+.c-question-mark,.c-wait-dots,.c-example-number { font: 500 120px/1.4 var(--a-data); color: var(--a-paper); }
+.c-snake-example { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
+.p-stage .j-blueprint.c-briefing .c-snake-example .b-token { width: 210px; height: 210px; }
+.c-snake-example .b-snake { padding: 0; gap: 10px; }
+.p-stage .c-snake-example .b-snake .b-symbol { width: 50px; height: 50px; padding: 0; background: none; border: 0; }
+.c-snake-example .b-snake > b { width: 50px; height: 50px; font-size: 32px; }
+.p-stage .c-card-art > .b-symbol { width: 200px; height: 200px; border: 0; padding: 0; background: none; box-shadow: none; }
+.c-decisions { display: flex; align-items: center; justify-content: center; gap: 38px; }
+.c-decisions .b-press { width: 120px; height: 120px; font-size: 66px; }
+.c-sample-balls { display: grid; grid-template-columns: repeat(3,1fr); gap: 30px; }
+.c-sample-balls .b-dot { width: 70px; height: 70px; }
+.c-shared-panels { display: flex; align-items: center; width: 100%; height: 100%; gap: 4px; }
+.p-stage .j-blueprint.c-briefing .c-shared-panels .b-buttons-panel { width: calc(50% - 2px); height: 80%; }
+.c-hold { position: relative; width: 100%; height: 100%; }
+.c-hold > b { position: absolute; right: -4px; bottom: 12px; padding: 8px 18px; border-radius: 8px; border: 1px solid #b9a68d; background: #25232a; color: #edb970; font: 500 48px/1.3 var(--a-data); }
+.c-hold small { font-size: 28px; }
+.c-register { display: flex; align-items: center; width: 100%; height: 100%; gap: 10px; }
+.c-register > .b-press { width: 56px; height: 56px; font-size: 26px; flex: none; }
+.c-register > .b-arrow { font-size: 32px; }
+.c-register > .c-device-pair { flex: 1; min-width: 0; }
+.p-stage .c-card-art .b-wave { gap: 9px; color: var(--act-colour); }
+.p-stage .c-card-art .b-wave i { width: 13px; animation: none; }
+.p-stage .c-action-rule .b-rule-symbols .b-symbol { width: 36px; height: 36px; }
+.p-stage .c-action-rule .b-rule-symbols .b-arrow { font-size: 28px; }
+@media (prefers-reduced-motion: reduce) { .p-stage [data-sequence] [data-card] { transition: none; } }
+
+.c-with-rule .c-score { grid-area: 4 / 1; }
+.p-stage .c-card-copy h2 strong { font-weight: 750; color: #fff; }
+.c-hold > img { display: block; }

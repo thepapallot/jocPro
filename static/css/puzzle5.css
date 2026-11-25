@@ -17,7 +17,7 @@
     border-radius: 24px;
     box-shadow: 0 0 60px rgba(45,255,155,0.2);
     text-shadow: 0 0 24px rgba(45,255,155,0.6);
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-align: center;
@@ -31,7 +31,7 @@
     color: #fff;
     font-size: clamp(3rem, 5.2vw, 5.4rem);
     line-height: 1.05;
-    font-family: Arial, sans-serif;
+    font-family: ArchitectureText, Arial, sans-serif;
     font-weight: 700;
     text-shadow: 0 2px 24px #1a7f4f, 0 0 32px #2dff9b, 0 0 8px #000;
     letter-spacing: 0.04em;
@@ -112,7 +112,7 @@ body.pyramid-game.game-surface[data-puzzle="5"] #streak {
     align-items: center;
     gap: 8px;
     color: #BBCCD4;
-    font: 700 16px/1.2 Arial, sans-serif;
+    font: 700 16px/1.2 ArchitectureText, Arial, sans-serif;
 }
 
 #streak-attempt {
@@ -139,7 +139,7 @@ body.pyramid-game.game-surface[data-puzzle="5"] #streak {
 
 #p5-points-value {
     color: #F3EEE4;
-    font: 900 48px/1.1 PiramideDisplay, Arial, sans-serif;
+    font: 900 48px/1.1 ArchitectureDisplay, ArchitectureText, Arial, sans-serif;
     font-variant-numeric: tabular-nums;
 }
 
@@ -232,7 +232,7 @@ body.pyramid-game.game-surface[data-puzzle="5"] #streak {
 }
 #p5-exhausted-screen h2 {
     margin: 0;
-    font-family: PiramideDisplay, Arial, sans-serif;
+    font-family: ArchitectureDisplay, ArchitectureText, Arial, sans-serif;
     font-size: 100px;
     color: #EDB970;
 }

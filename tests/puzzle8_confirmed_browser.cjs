@@ -5,7 +5,7 @@ const path = require('node:path');
 const cp = require('node:child_process');
 const {WebSocket} = require('undici');
 const base = process.argv[2] || 'http://127.0.0.1:8766';
-const out = path.resolve(__dirname, '../output/memory-confirmados');
+const out = process.env.MEMORY_EVIDENCE || path.resolve(__dirname, '../output/memory-confirmados');
 fs.mkdirSync(out, {recursive: true});
 const profile = fs.mkdtempSync('/tmp/memory-chrome-');
 const chrome = cp.spawn('google-chrome', ['--headless', '--no-sandbox', '--disable-gpu',
@@ -47,8 +47,8 @@ const inspect = () => inner(`(()=>{
     return frames.map(frame=>({
         correct:frame.classList.contains('p8-correct'),wrong:frame.classList.contains('p8-wrong'),
         filled:frame.querySelectorAll('.p8-answer.is-filled').length,
-        symbols:[...frame.querySelectorAll('.p8-symbol-mask')].map(n=>n.dataset.symbol),
-        colors:[...frame.querySelectorAll('.p8-symbol-mask')].map(n=>w.getComputedStyle(n).backgroundColor)
+        symbols:[...frame.querySelectorAll('.p8-symbol')].map(n=>n.dataset.symbol),
+        colors:[...frame.querySelectorAll('.p8-symbol')].map(n=>n.dataset.color)
     }));
 })()`);
 (async () => {
@@ -97,28 +97,33 @@ const inspect = () => inner(`(()=>{
             assert.notEqual(rotation.front, rotation.edge);
             assert.notEqual(rotation.edge, rotation.back);
             for (const phase of ['numbers', 'tokens', 'input']) {
-                await push({phase, clear: phase !== 'tokens', symbols, symbol_sets: sets});
+                await push({phase, clear: phase !== 'tokens', symbols, symbol_sets: sets,
+                    phase_duration_ms: phase === 'input' ? 0 : 6000,
+                    phase_remaining_ms: phase === 'input' ? 0 : 6000});
+                await inner('Promise.all([...w.document.images].map(i=>i.decode()))');
                 const frames = await inspect();
                 assert.equal(frames[1].correct, true, 'confirmed frame stays green in ' + phase);
                 assert.deepEqual(frames[1].symbols, ['delta', 'beta'], 'confirmed arrival order survives');
-                assert.deepEqual(frames[1].colors, ['rgb(0, 102, 255)', 'rgb(0, 0, 0)']);
+                assert.deepEqual(frames[1].colors, ['blue', 'black']);
                 assert.equal(frames[1].filled, 2);
                 assert.equal(frames[0].filled, phase === 'tokens' ? 2 : 0);
                 const layout = await inner(`(()=>{
-                    // Measure content, not answer pseudo-elements: the existing memory
-                    // halo deliberately extends 6px beyond each answer's border.
-                    const nodes=[...w.document.querySelectorAll('.p8-frame,.p8-answer-content,#p8-instruction-detail,#p8-instruction-step,#p8-points,#p8-points-value,.points-hud-label')];
+                    // Measure the visible content, including the phase instruction
+                    // and countdown, inside the scaled game canvas.
+                    const nodes=[...w.document.querySelectorAll('.p8-frame,.p8-answer-content,#p8-instruction-title,#p8-countdown:not([hidden]),#p8-instruction-detail,#p8-instruction-step,#p8-points,#p8-points-value,.points-hud-label')];
                     return {overflow:nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left<0||r.right>w.innerWidth+1||r.bottom>w.innerHeight+1||n.scrollWidth>n.clientWidth+1||n.scrollHeight>n.clientHeight+1}).map(n=>({node:n.className||n.id,width:n.clientWidth,scrollWidth:n.scrollWidth,height:n.clientHeight,scrollHeight:n.scrollHeight,bounds:n.getBoundingClientRect().toJSON()})),
                     missingImages:[...w.document.images].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)};
                 })()`);
                 assert.deepEqual(layout.overflow, []);
                 assert.deepEqual(layout.missingImages, []);
+                assert.equal(await inner("w.document.getElementById('p8-countdown').hidden"), phase === 'input');
                 const overlaps = await inner(`(()=>{
                     const score=w.document.getElementById('p8-points').getBoundingClientRect();
                     const instruction=w.document.getElementById('p8-instruction-detail').getBoundingClientRect();
                     const title=w.document.getElementById('p8-instruction-title').getBoundingClientRect();
                     const pyramid=w.document.querySelector('.game-corner-progress').getBoundingClientRect();
-                    return {instruction:score.left<instruction.right,title:score.left<title.right,pyramid:score.right>pyramid.left};
+                    const intersects=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
+                    return {instruction:intersects(score,instruction),title:intersects(score,title),pyramid:intersects(score,pyramid)};
                 })()`);
                 assert.deepEqual(overlaps, {instruction:false,title:false,pyramid:false});
                 const shot = await command('Page.captureScreenshot', {format: 'png', captureBeyondViewport: false});
