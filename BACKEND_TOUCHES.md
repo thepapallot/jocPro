@@ -14,6 +14,27 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-11-25 — Memory: las letras pendientes cambian en cada reintento
+
+Tipo: `pendiente de revisar`. Cambio de backend autorizado por Olalla.
+
+- `mqtt/puzzles/puzzle8.py`: al reanudar un intento,
+  `_show_numbers_locked(retry=True)` cambia las letras griegas de los
+  contenedores pendientes antes de la fase de memoria. Los contenedores
+  confirmados conservan exactamente la pareja símbolo/color y las entradas del
+  jugador. Con dos o más pendientes, cada posición recibe otra letra y el
+  conjunto conserva las diez letras; además se evita repetir la misma letra en
+  las dos formas de un token cuando existe una combinación válida. Con un solo
+  pendiente hay que reutilizar una letra ya confirmada de ese conjunto, porque
+  las otras nueve se conservan intactas. No cambian la puntuación, los tiempos,
+  los mensajes MQTT ni la fase de reintento.
+- `tests/test_puzzle8.py`: actualiza las pruebas de reintento y añade
+  comprobaciones de que solo cambian los contenedores pendientes, de que los
+  confirmados no se tocan y de que cada conjunto conserva las diez letras.
+
+Validación: 57 pruebas aprobadas (31 de `test_puzzle8`, 7 de
+`test_puzzle8_points` y 19 de `test_scoring`). Sin broker ni hardware.
+
 ## 2026-10-28 — Recuento final de puntos de la sesión
 
 Tipo: `pendiente de revisar`. Ajuste de backend autorizado por Olalla.

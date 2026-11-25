@@ -83,12 +83,15 @@ class Puzzle8UnorderedAnswersTest(unittest.TestCase):
         self.assertEqual(self.client.push_update.call_args.args[0]['total_points'], 100)
 
     def test_actual_retries_reduce_score_ten_points_and_tenth_success_awards_ten(self):
-        first = self.expected(0)[0]
         for attempt in range(1, 11):
             self.assertEqual(self.puzzle.attempt, attempt)
             self.assertEqual(self.puzzle.get_state()['available_points'], 110 - 10 * attempt)
             self.thread.reset_mock()
-            self.fill_round(override_first=[first, first] if attempt < 10 else None)
+            if attempt < 10:
+                first = self.expected(0)[0]
+                self.fill_round(override_first=[first, first])
+            else:
+                self.fill_round()
             result = self.finish_evaluation()
             if attempt < 10:
                 self.assertFalse(result['success'])
@@ -111,10 +114,10 @@ class Puzzle8UnorderedAnswersTest(unittest.TestCase):
         self.assertEqual(self.puzzle.total_points, 90)
 
     def test_ten_failed_attempts_exhaust_without_awarding_partial_points_or_victory(self):
-        first = self.expected(0)[0]
         for attempt in range(1, 11):
             self.thread.reset_mock()
             self.puzzle._schedule.reset_mock()
+            first = self.expected(0)[0]
             self.fill_round(override_first=[first, first])
             self.assertFalse(self.finish_evaluation()['success'])
             if attempt < 10:
@@ -335,6 +338,7 @@ class Puzzle8UnorderedAnswersTest(unittest.TestCase):
         first, _ = self.expected(0)
         self.fill_round(reverse=True, override_first=[first, first])
         self.assertFalse(self.finish_evaluation()['success'])
+        rerolled_pairs = None
         for phase in ['numbers', 'tokens', 'input']:
             if phase == 'tokens':
                 self.puzzle._show_tokens()
@@ -347,7 +351,16 @@ class Puzzle8UnorderedAnswersTest(unittest.TestCase):
                 {'symbol': symbol, 'color': color}
                 for symbol, color in reversed(original_pairs[1])
             ])
-            self.assertEqual([self.expected(box) for box in range(10)], original_pairs)
+            current_pairs = [self.expected(box) for box in range(10)]
+            self.assertEqual(current_pairs[1:], original_pairs[1:])
+            if rerolled_pairs is None:
+                rerolled_pairs = current_pairs
+                # The only pending container cannot keep its old letter: the
+                # replacement reuses a confirmed letter from each set.
+                self.assertNotEqual(rerolled_pairs[0], original_pairs[0])
+                self.assertNotEqual(rerolled_pairs[0][0][0], rerolled_pairs[0][1][0])
+            else:
+                self.assertEqual(current_pairs, rerolled_pairs)
         self.thread.reset_mock()
         state = self.puzzle.get_state()
         self.assertEqual(state['input_counts'][0], 0)
@@ -361,6 +374,28 @@ class Puzzle8UnorderedAnswersTest(unittest.TestCase):
         self.assertTrue(self.finish_evaluation()['success'])
         self.assertTrue(self.puzzle.solved)
         self.client.send_message.assert_called_once_with('FROM_FLASK', 'P8End')
+
+    def test_retry_rerolls_pending_letters_and_keeps_confirmed_pairs(self):
+        original_pairs = [self.expected(box) for box in range(10)]
+        for box in range(10):
+            pairs = self.expected(box)
+            for pair in (pairs if box >= 2 else [pairs[0], pairs[0]]):
+                self.submit(box, pair)
+        self.assertFalse(self.finish_evaluation()['success'])
+        self.assertEqual(self.puzzle.confirmed_boxes, set(range(2, 10)))
+        self.retry_input()
+        rerolled_pairs = [self.expected(box) for box in range(10)]
+        self.assertEqual(rerolled_pairs[2:], original_pairs[2:])
+        for box in (0, 1):
+            self.assertNotEqual(rerolled_pairs[box], original_pairs[box])
+            self.assertNotEqual(rerolled_pairs[box][0][0], rerolled_pairs[box][1][0])
+        for target in self.puzzle.target_sets:
+            self.assertEqual(sorted(target['symbols']), sorted(self.puzzle.symbols))
+        state = self.puzzle.get_state()
+        self.assertEqual(state['confirmed_entries'][2], [
+            {'symbol': symbol, 'color': color}
+            for symbol, color in original_pairs[2]
+        ])
 
     def test_confirmations_accumulate_across_multiple_retries(self):
         for box in range(10):
@@ -382,7 +417,8 @@ class Puzzle8UnorderedAnswersTest(unittest.TestCase):
             self.submit(9, pair)
         self.assertTrue(self.finish_evaluation()['success'])
 
-    def test_all_wrong_retry_keeps_targets_but_no_inputs(self):
+    def test_all_wrong_retry_rerolls_targets_but_clears_inputs(self):
+        original_pairs = [self.expected(box) for box in range(10)]
         for box in range(10):
             first = self.expected(box)[0]
             self.submit(box, first)
@@ -392,6 +428,11 @@ class Puzzle8UnorderedAnswersTest(unittest.TestCase):
         self.assertEqual(self.puzzle.player_symbols, {})
         self.assertEqual(len(self.puzzle.target_sets), 2)
         self.retry_input()
+        for box in range(10):
+            self.assertNotEqual(self.expected(box), original_pairs[box])
+            self.assertNotEqual(self.expected(box)[0][0], self.expected(box)[1][0])
+        for target in self.puzzle.target_sets:
+            self.assertEqual(sorted(target['symbols']), sorted(self.puzzle.symbols))
         self.fill_round()
         self.assertTrue(self.finish_evaluation()['success'])
 
