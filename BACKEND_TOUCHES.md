@@ -14,6 +14,38 @@ Convencion:
 - `utilidad interna`: cambio de soporte, test o tooling
 - `detectado`: comportamiento observado pero no modificado
 
+## 2026-11-25 — Sesiones: crear e iniciar en un clic, reabrir finalizadas y cierre automático
+
+Tipo: `pendiente de revisar`. Cambio de backend autorizado por Olalla.
+
+- `app.py`: `POST /test/session/confirm` ahora permite reabrir una partida
+  finalizada cuando llega `resume: true`. En ese caso llama al nuevo
+  `reopen_session` y devuelve la sesión con `ended_at` a `NULL`, de modo que
+  pueda volver a sumar resultados sin perder la puntuación ya guardada. Sin
+  `resume`, una partida finalizada o con juego registrado sigue devolviendo
+  409 con `resume_required`. La protección de no sustituir otra partida en
+  curso no cambia.
+- `app.py`: se añade un cierre automático de la partida activa al apagar el
+  servidor de forma ordenada (SIGINT/SIGTERM y `atexit`). Reutiliza
+  `test_session_close`, así que conserva resultados, detiene el puzzle y
+  libera la partida. Un corte abrupto (SIGKILL, corte de luz) no ejecuta este
+  cierre: la partida queda «En curso» y se puede retomar desde Sesiones.
+- `telemetry/writer.py`: nuevo método `reopen_session(session_id)` que pone
+  `sessions.ended_at = NULL` manteniendo `started_at` y los puzzles/puntos.
+- `tests/test_sessions.py`: nuevo test de reapertura de una partida finalizada
+  con `resume: true`, comprobando que se conserva la puntuación.
+
+Impacto para Pep: revisar que el `resume: true` de una partida finalizada no
+interfiera con la protección de puntuaciones (la reapertura conserva los
+`puzzles` existentes y añade nuevos registros al mismo ID), y que el cierre por
+señal no entre en conflicto con el `debug=True` de desarrollo (el reloader de
+Werkzeug importa el módulo en dos procesos). No cambia MQTT, reglas, timers ni
+el esquema de SQLite.
+
+Validación: 22 tests Python de `tests/test_sessions.py` en verde, tests Node de
+`session_lifecycle` y `session_close` en verde, y `tests/sessions_browser.cjs`
+completo en verde (11 capturas). Solo simulación, sin broker ni hardware.
+
 ## 2026-11-25 — Memory: las letras pendientes cambian en cada reintento
 
 Tipo: `pendiente de revisar`. Cambio de backend autorizado por Olalla.

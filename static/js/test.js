@@ -953,10 +953,15 @@
       const response = await fetch(`/test/session/${_loadedDbSessionId}`, { cache: "no-store" });
       if (!response.ok) throw new Error("No se ha podido comprobar la partida. Actualiza la lista.");
       const { session, puzzles = [] } = await response.json();
-      if (!session || session.ended_at) throw new Error("Esta partida está finalizada. Crea una partida nueva.");
+      if (!session) throw new Error("No se ha podido encontrar la partida. Actualiza la lista.");
       resume = Boolean(session.started_at || puzzles.length);
-      if (resume && activeSession?.dbSessionId !== _loadedDbSessionId
-          && !window.confirm(`¿Retomar la partida #${_loadedDbSessionId} · «${session.name || "Sin nombre"}»? Ya tiene ${puzzles.length} registros de puzzles. Los nuevos resultados se añadirán a esta misma partida. No se creará una partida nueva.`)) return;
+      if (session.ended_at && !resume) throw new Error("Esta partida está finalizada y no tiene juego registrado. Crea una partida nueva.");
+      if (resume && activeSession?.dbSessionId !== _loadedDbSessionId) {
+        const message = session.ended_at
+          ? `¿Reabrir la partida #${_loadedDbSessionId} · «${session.name || "Sin nombre"}»? Está finalizada con ${puzzles.length} registros de puzzles. Los nuevos resultados se añadirán a esta misma partida.`
+          : `¿Retomar la partida #${_loadedDbSessionId} · «${session.name || "Sin nombre"}»? Ya tiene ${puzzles.length} registros de puzzles. Los nuevos resultados se añadirán a esta misma partida. No se creará una partida nueva.`;
+        if (!window.confirm(message)) return;
+      }
     }
 
     // Confirm exactly the language and details currently visible in the form.
@@ -1028,10 +1033,11 @@
     renderActiveSession();
   }
 
-  async function beginConfirmedSession() {
+  async function beginConfirmedSession(options = {}) {
+    const silent = Boolean(options.silent);
     if (!activeSession) throw new Error("Prepara una partida antes de iniciar el juego.");
     const id = activeSession.dbSessionId;
-    if (!window.confirm(`¿Iniciar la partida #${id} · «${activeSession.sessionName}»? Los puzzles y sus puntos se registrarán en esta partida.`)) return;
+    if (!silent && !window.confirm(`¿Iniciar la partida #${id} · «${activeSession.sessionName}»? Los puzzles y sus puntos se registrarán en esta partida.`)) return;
     const response = await fetch("/test/session/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1042,6 +1048,38 @@
     await syncConfirmedSession();
     goToSessionControl();
     setStatus(`Partida #${id} iniciada. Ya puedes conducir el juego.`);
+  }
+
+  async function closeActiveSessionForNewRun() {
+    const id = activeSession?.dbSessionId;
+    if (id == null) return;
+    // A merely prepared run (no gameplay) can be replaced silently; an in-progress
+    // run must be finalized first, exactly as the user expects from "Començar nova sessió".
+    try {
+      const detail = await (await fetch(`/test/session/${id}`, { cache: "no-store" })).json();
+      const recorded = Boolean(detail.session?.started_at || detail.puzzles?.length);
+      if (!recorded) return;
+      const response = await fetch(`/test/session/${id}/close`, { method: "POST" });
+      if (!response.ok) throw new Error("No se ha podido archivar la partida en curso.");
+      await syncConfirmedSession();
+    } catch (error) {
+      throw new Error(`Archiva la partida #${id} antes de empezar otra. ${error.message}`);
+    }
+  }
+
+  async function startNewSession() {
+    // One click: create a fresh run from the current form, prepare it and start it.
+    await closeActiveSessionForNewRun();
+    _loadedDbSessionId = null;
+    selectedSessionId = null;
+    await confirmSession({ silent: true });
+    await beginConfirmedSession({ silent: true });
+    addSimpleEvent("Nueva sesión iniciada");
+  }
+
+  async function reopenSelectedSession() {
+    if (_loadedDbSessionId === null) throw new Error("Selecciona una partida finalizada para reabrirla.");
+    await confirmSession({ silent: true });
   }
 
   function renderActiveSession() {
@@ -5008,6 +5046,8 @@
       }
     });
     if (els.saveSessionBtn) els.saveSessionBtn.addEventListener("click", () => runSessionAction(() => saveSession()));
+    document.getElementById("gm-start-new-session-btn")?.addEventListener("click", () => runSessionAction(startNewSession));
+    document.getElementById("gm-reopen-session-btn")?.addEventListener("click", () => runSessionAction(reopenSelectedSession));
     document.getElementById("gm-begin-session-btn")?.addEventListener("click", () => runSessionAction(beginConfirmedSession));
     document.getElementById("gm-end-session-btn")?.addEventListener("click", finishGame);
     if (els.deleteSessionBtn) {
@@ -5054,7 +5094,7 @@
   async function runSessionAction(action) {
     if (sessionActionBusy) return;
     sessionActionBusy = true;
-    const controls = [...document.querySelectorAll('#gm-session-form input, #gm-session-form select, #gm-session-form textarea, #gm-session-form button'), els.duplicateSessionBtn, els.newSessionBtn, document.getElementById('gm-new-test-session-btn'), document.getElementById('gm-begin-session-btn'), document.getElementById('gm-end-session-btn')].filter(Boolean);
+    const controls = [...document.querySelectorAll('#gm-session-form input, #gm-session-form select, #gm-session-form textarea, #gm-session-form button'), els.duplicateSessionBtn, els.newSessionBtn, document.getElementById('gm-new-test-session-btn'), document.getElementById('gm-start-new-session-btn'), document.getElementById('gm-reopen-session-btn'), document.getElementById('gm-begin-session-btn'), document.getElementById('gm-end-session-btn')].filter(Boolean);
     const disabled = controls.map(control => control.disabled);
     controls.forEach(control => { control.disabled = true; });
     try { await action(); }

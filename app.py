@@ -7,6 +7,8 @@ from config import PUZZLE_ORDER, PUZZLE_ALIASES, PUZZLE_FINAL, PUZZLE_TUTORIAL, 
 import queue
 import json
 import threading
+import atexit
+import signal
 
 try:
     from telemetry import init_telemetry, TelemetryQueries
@@ -759,15 +761,28 @@ def test_session_confirm():
             return jsonify({'error': 'query_failed', 'detail': str(exc)}), 500
         if not session:
             return jsonify({'error': 'session_not_found'}), 404
-        if session.get('ended_at'):
-            return jsonify({'error': 'Esta partida está finalizada. Crea una partida nueva.'}), 409
+        ended = session.get('ended_at')
+        recorded = bool(session.get('started_at') or session.get('puzzle_count'))
+        resume = data.get('resume') is True
+        if (ended or recorded) and not resume:
+            if ended:
+                return jsonify({'error': f'La partida #{session_id} está finalizada. Confirma que quieres reabrirla para continuar sumando resultados.',
+                                'resume_required': True}), 409
+            return jsonify({'error': f'La partida #{session_id} ya tiene juego registrado. Confirma que quieres retomarla, no crear otra.',
+                            'resume_required': True}), 409
         if _active_game_session_id not in (None, session_id):
             active = _telemetry_queries.get_session_stats(_active_game_session_id)
             if active and (active.get('started_at') or active.get('puzzle_count')) and not active.get('ended_at'):
                 return jsonify({'error': f'La partida #{_active_game_session_id} está en curso. Finalízala y archívala antes de preparar otra.'}), 409
-        if (session.get('started_at') or session.get('puzzle_count')) and data.get('resume') is not True:
-            return jsonify({'error': f'La partida #{session_id} ya tiene juego registrado. Confirma que quieres retomarla, no crear otra.',
-                            'resume_required': True}), 409
+        # Reopen a finalized session so it can keep accumulating results.
+        if ended and resume:
+            if _telemetry_writer is None:
+                return jsonify({'error': 'telemetry_unavailable'}), 503
+            try:
+                _telemetry_writer.reopen_session(session_id)
+            except Exception:
+                return jsonify({'error': 'No se ha podido reabrir la sesión.'}), 500
+            session = _telemetry_queries.get_session_stats(session_id)
         if _active_game_session_id is not None and _active_game_session_id != session_id:
             mqtt_client.stop_current_puzzle()
         _active_game_session_id = session_id
@@ -839,6 +854,46 @@ def test_sessions_pending():
     except Exception as exc:
         return jsonify({'error': 'query_failed', 'detail': str(exc)}), 500
     return jsonify(sessions), 200
+
+
+def _auto_close_active_session():
+    """Finalize the confirmed run when the server shuts down gracefully.
+
+    An abrupt crash or power loss never reaches this handler, so the run stays
+    recorded as "in progress" and can be resumed from the Sessions panel later.
+    """
+    global _active_game_session_id
+    with _active_game_lock:
+        _sid = _active_game_session_id
+    if _sid is None:
+        return
+    try:
+        test_session_close(_sid)
+    except Exception as exc:
+        print(f"[telemetry] auto-close on shutdown failed: {exc}")
+
+
+def _shutdown():
+    _auto_close_active_session()
+    if _telemetry_writer is not None:
+        try:
+            _telemetry_writer.shutdown()
+        except Exception as exc:
+            print(f"[telemetry] writer shutdown failed: {exc}")
+
+
+def _signal_shutdown(signum, frame):
+    _shutdown()
+    raise SystemExit(0)
+
+
+atexit.register(_shutdown)
+try:
+    signal.signal(signal.SIGTERM, _signal_shutdown)
+    signal.signal(signal.SIGINT, _signal_shutdown)
+except ValueError:
+    # Not running in the main thread (e.g. the Flask debug reloader parent).
+    pass
 
 
 if __name__ == '__main__':

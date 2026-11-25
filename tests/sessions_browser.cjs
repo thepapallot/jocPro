@@ -52,7 +52,7 @@ async function panel(){return evaluate('document.querySelector("[data-gm-panel]:
  assert.equal(await evaluate('document.getElementById("gm-session-options").open'),false);
  await checkSessionButtonSizes();await capture('preparar-1920');
  await cmd('Emulation.setDeviceMetricsOverride',{width:1280,height:720,deviceScaleFactor:1,mobile:false});await checkSessionButtonSizes();await capture('preparar-1280');
- const primaryLayout=await evaluate(`({bottom:document.getElementById("gm-confirm-session-btn").getBoundingClientRect().bottom,height:innerHeight,blocks:[...document.querySelectorAll('#gm-session-form>*')].map(el=>({id:el.id||el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height}))})`);
+ const primaryLayout=await evaluate(`({bottom:document.getElementById("gm-start-new-session-btn").getBoundingClientRect().bottom,height:innerHeight,blocks:[...document.querySelectorAll('#gm-session-form>*')].map(el=>({id:el.id||el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height}))})`);
  assert.ok(primaryLayout.bottom<=primaryLayout.height,'Primary action must be visible at 720p: '+JSON.stringify(primaryLayout));
  await cmd('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
  await click('gm-new-test-session-btn');await field('gm-session-language','ca');await field('gm-session-players','1');await field('gm-session-master','Agustí');

@@ -347,6 +347,15 @@ class TelemetryWriter:
             )
             self.db.commit()
 
+    def reopen_session(self, session_id: int) -> None:
+        """Clear ended_at so a finalized session can keep accumulating results."""
+        with self._flush_lock:
+            self.db.execute(
+                "UPDATE sessions SET ended_at = NULL WHERE session_id = ?",
+                (session_id,),
+            )
+            self.db.commit()
+
     def end_puzzle(self, puzzle_id: int, ended_at: Optional[str] = None,
                    total_points: Optional[int] = None) -> None:
         """End a puzzle and optionally save its score atomically (not a session total)."""

@@ -41,27 +41,36 @@ El orden se configura en `config.py`.
 ## Partidas y resultados en Test
 
 1. **Nueva partida real** o **Nueva partida de prueba** abre un formulario
-   nuevo. **Crear y preparar esta partida** guarda un ID nuevo y lo activa,
-   sin iniciar el juego. **Guardar para más adelante** solo crea el registro
-   pendiente. Copiar datos a una partida nueva nunca copia resultados.
-2. Para una partida pendiente existente, **Preparar la partida #ID** utiliza
-   ese registro. Si ya tiene inicio o puzzles registrados, la acción es
+   nuevo. **Comenzar nueva sesión** crea un ID nuevo, lo activa y lo inicia en
+   un solo paso; si había otra partida en curso, se archiva automáticamente
+   antes. **Guardar para más adelante** solo crea el registro pendiente. Copiar
+   datos a una partida nueva nunca copia resultados.
+2. **Crear y preparar esta partida** guarda un ID nuevo y lo activa sin iniciar
+   el juego. Para una partida pendiente existente, **Preparar la partida #ID**
+   utiliza ese registro. Si ya tiene inicio o puzzles registrados, la acción es
    **Retomar la partida #ID** y pide confirmar que se añadirán resultados al
    mismo ID. Cancelar no guarda ni activa nada.
-3. La cabecera fija identifica siempre la **PARTIDA ACTIVA #ID**, nombre y
+3. **Reabrir la partida #ID** permite volver a una partida finalizada y seguir
+   sumando resultados a ese mismo ID, recuperando la puntuación ya registrada.
+4. La cabecera fija identifica siempre la **PARTIDA ACTIVA #ID**, nombre y
    modalidad REAL/PRUEBA. El formulario avisa si se está editando otra partida.
    Guardar cambios en una partida existente no crea una nueva ni la activa.
-4. **Iniciar partida #ID**, en la cabecera, registra el inicio explícito.
-   Hasta entonces no se pueden iniciar puzzles ni la apertura narrativa.
-   Una partida en curso bloquea la preparación de otra hasta finalizarla.
-5. **Finalizar y archivar #ID** conserva resultados y detiene el puzzle activo
+5. **Iniciar partida #ID**, en la cabecera, registra el inicio explícito cuando
+   la partida solo está preparada. Una partida en curso bloquea la preparación
+   de otra hasta finalizarla.
+6. **Finalizar y archivar #ID** conserva resultados y detiene el puzzle activo
    sin conceder puntos por lo incompleto. La cabecera finaliza la partida
    activa; el botón del formulario finaliza la seleccionada. El cierre
    narrativo `/final` utiliza la misma finalización verificada.
 
-El inicio y la reanudación no generan otro ID. Una partida finalizada no se
-puede reabrir; para volver a jugar hay que crear una nueva. Reiniciar un puzzle
-añade otro registro dentro de la partida activa, no otra partida.
+El inicio y la reanudación no generan otro ID. Una partida finalizada se puede
+reabrir con su confirmación; la puntuación ya guardada se conserva y los nuevos
+resultados se suman al mismo ID. Reiniciar un puzzle añade otro registro dentro
+de la partida activa, no otra partida.
+Al apagar el servidor de forma ordenada, la partida activa se archiva
+automáticamente. Si el programa se corta de forma inesperada (corte de luz,
+proceso terminado), la partida queda «En curso» en la base de datos y se puede
+retomar desde Sesiones recuperando su puntuación.
 Recargar Test no convierte la partida anterior en un borrador nuevo ni la
 reactiva tras reiniciar el servidor. No hay cierres automáticos por cambio de día.
 Los registros anteriores, incluida cualquier mezcla histórica, no se migran

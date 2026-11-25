@@ -206,6 +206,25 @@ class SessionTests(unittest.TestCase):
                     json={'session_id': sid, 'resume': True}).status_code, 200)
                 self.assertEqual(self.client.post(f'/test/session/{sid}/close').status_code, 200)
 
+    def test_finalized_session_can_be_reopened_with_explicit_resume(self):
+        sid = self.create()
+        self.client.post('/test/session/confirm', json={'session_id': sid})
+        self.writer.start_session(sid)
+        pid = self.writer.record_puzzle_start(sid, 2, 1, 1)
+        self.writer.end_puzzle(pid, total_points=80)
+        self.writer.end_session(sid)
+        # A finalized run is not silently prepared again.
+        response = self.client.post('/test/session/confirm', json={'session_id': sid})
+        self.assertEqual(response.status_code, 409)
+        self.assertTrue(response.json['resume_required'])
+        # Explicit reopen clears ended_at and keeps the recorded score.
+        self.assertEqual(self.client.post('/test/session/confirm',
+            json={'session_id': sid, 'resume': True}).status_code, 200)
+        detail = self.client.get(f'/test/session/{sid}').json
+        self.assertIsNone(detail['session']['ended_at'])
+        self.assertEqual(detail['puzzles'][0]['total_points'], 80)
+        self.assertEqual(self.client.get('/test/session/active').json['session']['session_id'], sid)
+
     def test_legacy_recorded_session_blocks_switch_even_without_start_timestamp(self):
         first, other = self.create(), self.create()
         self.writer.record_puzzle_start(first, 2, 1, 1)
